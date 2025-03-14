@@ -37,6 +37,11 @@ func (b *Buffer) Render(x, y int, heap *fs.Heap) {
     }
 }
 
+func (b *Buffer) Reset() {
+    b.dx = 0
+    b.dy = 0
+}
+
 func (b *Buffer) GoToBegin() {
     b.dy = 0
 }
