@@ -19,7 +19,7 @@ func (s *Status) Render(x, y int, heap *fs.Heap) {
     info := heap.Path
 
     if len(s.Search) > 0 {
-        info += " > " + s.Search
+        info += s.Search
     }
 
     printEx(x, y, info, termbox.ColorWhite | termbox.AttrBold, termbox.ColorDefault)
