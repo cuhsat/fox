@@ -16,8 +16,13 @@ type Heap struct {
     MMap mmap.MMap // memory map
     SMap SMap      // string map current
     smap SMap      // string map original
-    chain []SMap   // filter chain
+    Chain []CLink  // filter chain
     file *os.File  // file handle
+}
+
+type CLink struct {
+    Name string // filter name
+    smap SMap   // filter string map
 }
 
 func NewHeap(path string) *Heap {
@@ -46,10 +51,22 @@ func NewHeap(path string) *Heap {
 
 func (h *Heap) AddFilter(value string) {
     h.SMap = h.filter([]byte(value))
+    h.Chain = append(h.Chain, CLink{
+        Name: value,
+        smap: h.SMap,
+    })
 }
 
 func (h *Heap) DelFilter() {
-    h.SMap = h.smap
+    if len(h.Chain) > 0 {
+        h.Chain = h.Chain[:len(h.Chain)-1]
+    }
+
+    if len(h.Chain) > 0 {
+        h.SMap = h.Chain[len(h.Chain)-1].smap
+    } else {
+        h.SMap = h.smap
+    }
 }
 
 func (h *Heap) ThrowAway() {
