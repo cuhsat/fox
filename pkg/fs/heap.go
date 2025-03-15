@@ -14,8 +14,9 @@ import (
 type Heap struct {
     Path string    // file path
     MMap mmap.MMap // memory map
-    SMap SMap      // string map
-    rmap SMap      // reserve map
+    SMap SMap      // string map current
+    smap SMap      // string map original
+    chain []SMap   // filter chain
     file *os.File  // file handle
 }
 
@@ -26,21 +27,29 @@ func NewHeap(path string) *Heap {
         Panic(err)
     }
 
-    mm, err := mmap.Map(f, mmap.RDONLY, 0)
+    m, err := mmap.Map(f, mmap.RDONLY, 0)
 
     if err != nil {
         Panic(err)
     }
 
-    sm := smap(mm)
+    s := smap(m)
 
     return &Heap{
         Path: path,
-        MMap: mm,
-        SMap: sm,
-        rmap: sm,
+        MMap: m,
+        SMap: s,
+        smap: s,
         file: f,
     }
+}
+
+func (h *Heap) AddFilter(value string) {
+    h.SMap = h.filter([]byte(value))
+}
+
+func (h *Heap) DelFilter() {
+    h.SMap = h.smap
 }
 
 func (h *Heap) ThrowAway() {
@@ -48,21 +57,17 @@ func (h *Heap) ThrowAway() {
     h.file.Close()
 }
 
-func (h *Heap) Filter(value string) {
+func (h *Heap) filter(b []byte) (f SMap) {
     ls := len(h.SMap)
     lc := min(runtime.GOMAXPROCS(0), ls)
     
     ch := make(chan SEntry, lc)
 
-    var fmap SMap
-
     go func() {
         for s := range ch {
-            fmap = append(fmap, s)
+            f = append(f, s)
         }        
     }()
-
-    b := []byte(value)
 
     var wg sync.WaitGroup
 
@@ -83,15 +88,9 @@ func (h *Heap) Filter(value string) {
 
     close(ch)
 
-    slices.SortFunc(fmap, func(a, b SEntry) int {
-        return cmp.Compare(a.Nr, b.Nr)
-    })
+    h.sort(f)
 
-    h.SMap = fmap
-}
-
-func (h *Heap) Reset() {
-    h.SMap = h.rmap
+    return
 }
 
 func (h *Heap) search(min, max int, b []byte, ch chan<- SEntry) {
@@ -100,4 +99,10 @@ func (h *Heap) search(min, max int, b []byte, ch chan<- SEntry) {
             ch <- s
         }
     }
+}
+
+func (h *Heap) sort(s SMap) {
+    slices.SortFunc(s, func(a, b SEntry) int {
+        return cmp.Compare(a.Nr, b.Nr)
+    })
 }

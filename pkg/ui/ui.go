@@ -6,7 +6,10 @@ import (
 )
 
 const Delta = 1
-const Color = termbox.ColorDefault
+
+const CClear  = termbox.ColorDefault
+const CStatus = termbox.ColorWhite | termbox.AttrBold
+const CSearch = termbox.ColorLightGreen | termbox.AttrBold
 
 var width, height, data, page int
 
@@ -35,7 +38,7 @@ func NewUI() *UI {
 }
 
 func (ui *UI) Render(heap *fs.Heap) {
-    termbox.Clear(Color, Color)
+    termbox.Clear(CClear, CClear)
 
     width, height = termbox.Size()
 
@@ -89,13 +92,13 @@ func (ui *UI) Loop(heap *fs.Heap) {
                 if len(value) > 0 {
                     ui.status.Search += " > " + value
                     ui.buffer.Reset()
-                    heap.Filter(value)
+                    heap.AddFilter(value)
                 }
 
             case termbox.KeyTab:
                 ui.status.Search = ""
                 ui.buffer.Reset()
-                heap.Reset()
+                heap.DelFilter()
 
             case termbox.KeyBackspace2:
             case termbox.KeyBackspace:
