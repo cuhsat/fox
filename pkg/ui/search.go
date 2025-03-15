@@ -19,7 +19,7 @@ func NewSearch() *Search {
 func (s *Search) Render(x, y int) {
     termbox.SetCursor(s.cx + x, y)
 
-    printEx(x, y, s.value, termbox.ColorLightGreen | termbox.AttrBold, termbox.ColorDefault)
+    printEx(x, y, s.value, CSearch, CClear)
 }
 
 func (s *Search) AddChar(r rune) {
