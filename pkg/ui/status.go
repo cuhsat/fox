@@ -5,20 +5,22 @@ import (
 )
 
 type Status struct {
-    Search string
 }
 
 func NewStatus() *Status {
     return &Status{
-        Search: "",
     }
 }
 
 func (s *Status) Render(x, y int, heap *fs.Heap) {
     info := heap.Path
 
-    if len(s.Search) > 0 {
-        info += s.Search
+    for _, l := range heap.Chain {
+        info += " > " + l.Name
+    }
+
+    if len(info) > width {
+        info = info[:width-2] + "…"
     }
 
     printEx(x, y, info, CStatus, CClear)

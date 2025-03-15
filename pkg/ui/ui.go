@@ -90,13 +90,11 @@ func (ui *UI) Loop(heap *fs.Heap) {
                 value := ui.search.GetValue()
 
                 if len(value) > 0 {
-                    ui.status.Search += " > " + value
                     ui.buffer.Reset()
                     heap.AddFilter(value)
                 }
 
             case termbox.KeyTab:
-                ui.status.Search = ""
                 ui.buffer.Reset()
                 heap.DelFilter()
 
