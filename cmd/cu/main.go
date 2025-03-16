@@ -9,16 +9,16 @@ import (
 
 func main() {
     if len(os.Args) < 2 {
-        fs.Usage("cu FILE")
+        fs.Usage("cu <PATH>")
     }
 
-    heap := fs.NewHeap(os.Args[1])
+    hs := fs.NewHeapSet(os.Args[1])
 
-    defer heap.ThrowAway()
+    defer hs.ThrowAway()
 
     ui := ui.NewUI()
 
     defer ui.Close()
 
-    ui.Loop(heap)
+    ui.Loop(hs)
 }

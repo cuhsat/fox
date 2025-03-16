@@ -4,6 +4,8 @@ import (
     "github.com/nsf/termbox-go"
 )
 
+const Prompt = "> "
+
 type Search struct {
     value string // value
     cx    int    // cursor
@@ -17,12 +19,16 @@ func NewSearch() *Search {
 }
 
 func (s *Search) Render(x, y int) {
-    termbox.SetCursor(s.cx + x, y)
+    termbox.SetCursor(len(Prompt) + x + s.cx, y)
 
-    printEx(x, y, s.value, CSearch, CClear)
+    printEx(x, y, Prompt + s.value, SearchFg, SearchBg)
 }
 
 func (s *Search) AddChar(r rune) {
+    if s.cx >= width - (len(Prompt)+1) {
+        return
+    }
+
     s.cx++
     s.value += string(r)
 }
