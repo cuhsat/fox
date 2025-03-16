@@ -13,16 +13,20 @@ import (
 
 type Heap struct {
     Path string    // file path
+    Chain []*SLink // filter chain
     MMap mmap.MMap // memory map
     SMap SMap      // string map current
     rmap SMap      // string map reserve
-    Chain []*SLink // filter chain
     file *os.File  // file handle
 }
 
 type SLink struct {
     Name string // filter name
     smap SMap   // filter string map
+}
+
+type chunk struct {
+    min, max int
 }
 
 func NewHeap(path string) *Heap {
@@ -82,10 +86,14 @@ func (h *Heap) ThrowAway() {
 }
 
 func (h *Heap) filter(b []byte) (s SMap) {
-    ls := len(h.SMap)
-    lc := min(runtime.GOMAXPROCS(0), ls)
-    
-    ch := make(chan *SEntry, lc)
+    cs := h.chunks()
+    ch := make(chan *SEntry)
+
+    defer close(ch)
+
+    var wg sync.WaitGroup
+
+    wg.Add(len(cs))
 
     go func() {
         for se := range ch {
@@ -93,39 +101,43 @@ func (h *Heap) filter(b []byte) (s SMap) {
         }        
     }()
 
-    var wg sync.WaitGroup
-
-    for c := 0; c < lc; c++ {
-        min := c * ls / lc
-        max := ((c+1) * ls) / lc
-
-        wg.Add(1)
-
+    for _, c := range cs {
         go func() {
             defer wg.Done()
-
-            h.search(min, max, b, ch)
+            h.search(b, c, ch)
         }()
     }
 
     wg.Wait()
 
-    close(ch)
-
-    h.sort(s)
+    sorted(s)
 
     return
 }
 
-func (h *Heap) search(min, max int, b []byte, ch chan<- *SEntry) {
-    for _, s := range h.SMap[min:max] {
+func (h *Heap) chunks() (c []*chunk) {
+    n := len(h.SMap)
+    m := min(runtime.GOMAXPROCS(0), n)
+    
+    for i := 0; i < m; i++ {
+        c = append(c, &chunk{
+            min: i * n / m,
+            max: ((i+1) * n) / m,
+        })
+    }
+
+    return
+}
+
+func (h *Heap) search(b []byte, c *chunk, ch chan<- *SEntry) {
+    for _, s := range h.SMap[c.min:c.max] {
         if bytes.Contains(h.MMap[s.Start:s.End], b) {
             ch <- s
         }
     }
 }
 
-func (h *Heap) sort(s SMap) {
+func sorted(s SMap) {
     slices.SortStableFunc(s, func(a, b *SEntry) int {
         return cmp.Compare(a.Nr, b.Nr)
     })
