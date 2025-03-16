@@ -4,7 +4,7 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
-type SMap []SEntry
+type SMap []*SEntry
 
 type SEntry struct {
     Start, End, Nr int
@@ -15,7 +15,7 @@ func smap(m mmap.MMap) (s SMap) {
 
     for i := 0; i < len(m); i++ {
         if m[i] == '\n' {
-            s = append(s, SEntry{
+            s = append(s, &SEntry{
                 Start: j,
                 End: i,
                 Nr: len(s),

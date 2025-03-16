@@ -23,5 +23,5 @@ func (s *Status) Render(x, y int, heap *fs.Heap) {
         info = info[:width-2] + "…"
     }
 
-    printEx(x, y, info, CStatus, CClear)
+    printEx(x, y, info, StatusFg, StatusBg)
 }

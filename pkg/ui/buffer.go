@@ -46,7 +46,7 @@ func (b *Buffer) GoToBegin() {
     b.dy = 0
 }
 
-func (b *Buffer) GoToEnd() {
+func (b *Buffer) GoToEnd() { //
     b.dy = min(data - page, data)
 }
 
@@ -54,7 +54,7 @@ func (b *Buffer) PageUp() {
     b.dy = max(b.dy - page, 0)
 }
 
-func (b *Buffer) PageDown() {
+func (b *Buffer) PageDown() { //
     b.dy = min(b.dy + page, data - page, data)
 }
 
@@ -63,13 +63,13 @@ func (b *Buffer) ScrollUp(delta int) {
 }
 
 func (b *Buffer) ScrollDown(delta int) {
-    b.dy = min(b.dy + delta, data - page, data)
+    b.dy = min(b.dy + delta, max(data - page, 0))
 }
 
 func (b *Buffer) ScrollLeft(delta int) {
     b.dx = max(b.dx - delta, 0)
 }
 
-func (b *Buffer) ScrollRight(delta int) { //
+func (b *Buffer) ScrollRight(delta int) {
     b.dx = min(b.dx + delta, width)
 }

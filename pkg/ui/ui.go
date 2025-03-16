@@ -1,15 +1,22 @@
 package ui
 
 import (
+    "strings"
+
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/nsf/termbox-go"
 )
 
 const Delta = 1
 
-const CClear  = termbox.ColorDefault
-const CStatus = termbox.ColorWhite | termbox.AttrBold
-const CSearch = termbox.ColorLightGreen | termbox.AttrBold
+const CommonFg = termbox.Attribute(248)
+const CommonBg = termbox.Attribute(235)
+
+const StatusFg = termbox.Attribute(248)
+const StatusBg = termbox.Attribute(237)
+
+const SearchFg = termbox.Attribute(248)
+const SearchBg = termbox.Attribute(237)
 
 var width, height, data, page int
 
@@ -27,6 +34,7 @@ func NewUI() *UI {
     }
     
     termbox.SetInputMode(termbox.InputEsc)
+    termbox.SetOutputMode(termbox.Output256)
 
     width, height = termbox.Size()
 
@@ -37,30 +45,22 @@ func NewUI() *UI {
     }
 }
 
-func (ui *UI) Render(heap *fs.Heap) {
-    termbox.Clear(CClear, CClear)
-
-    width, height = termbox.Size()
-
-    data = len(heap.SMap)
-    page = height - 2
-
-    ui.status.Render(0, 0, heap)
-    ui.buffer.Render(0, 1, heap)
-    ui.search.Render(0, height - 1)
-
-    termbox.Flush()
-}
-
-func (ui *UI) Loop(heap *fs.Heap) {
-    ui.Render(heap)
+func (ui *UI) Loop(hs *fs.HeapSet) {
+    ui.render(hs.Heap())
 
     for {
         switch ev := termbox.PollEvent(); ev.Type {
         case termbox.EventKey:
             switch ev.Key {
             case termbox.KeyEsc:
-                return
+                h := hs.Heap()
+
+                if len(h.Chain) > 0 {
+                    ui.buffer.Reset()
+                    h.DelFilter()
+                } else {
+                    return
+                }
 
             case termbox.KeyHome:
                 ui.buffer.GoToBegin()
@@ -87,19 +87,27 @@ func (ui *UI) Loop(heap *fs.Heap) {
                 ui.buffer.ScrollRight(Delta)
 
             case termbox.KeyEnter:
-                value := ui.search.GetValue()
+                v := ui.search.GetValue()
 
-                if len(value) > 0 {
+                if len(v) > 0 {
                     ui.buffer.Reset()
-                    heap.AddFilter(value)
+                    hs.Heap().AddFilter(v)
                 }
 
             case termbox.KeyTab:
-                ui.buffer.Reset()
-                heap.DelFilter()
+                c := hs.Heap().Chain
 
-            case termbox.KeyBackspace2:
-            case termbox.KeyBackspace:
+                ui.buffer.Reset()
+                hs.Cycle()
+
+                h := hs.Heap()
+                h.NoFilter()
+
+                for _, l := range c {
+                    h.AddFilter(l.Name)
+                }
+
+            case termbox.KeyBackspace, termbox.KeyBackspace2:
                 ui.search.DelChar()
 
             case termbox.KeySpace:
@@ -115,7 +123,7 @@ func (ui *UI) Loop(heap *fs.Heap) {
             fs.Error(ev.Err)
         }
 
-        ui.Render(heap)
+        ui.render(hs.Heap())
     }
 }
 
@@ -123,14 +131,37 @@ func (ui *UI) Close() {
     termbox.Close()
 }
 
-func printEx(x, y int, s string, fg, bg termbox.Attribute) {
-    for x, c := range s {
-        termbox.SetCell(x, y, c, fg, bg)
-    }
+func (ui *UI) render(h *fs.Heap) {
+    termbox.Clear(CommonFg, CommonBg)
+    termbox.HideCursor()
+
+    width, height = termbox.Size()
+
+    data = len(h.SMap)
+    page = height - 2
+
+    line := strings.Repeat(" ", width)
+
+    z := height - 1
+
+    printEx(0, 0, line, StatusFg, StatusBg)
+    printEx(0, z, line, SearchFg, SearchBg)
+
+    ui.status.Render(0, 0, h)
+    ui.buffer.Render(0, 1, h)
+    ui.search.Render(0, z)
+
+    termbox.Flush()
 }
 
 func print(x, y int, s string) {
     for x, c := range s {
         termbox.SetChar(x, y, c)
+    }
+}
+
+func printEx(x, y int, s string, fg, bg termbox.Attribute) {
+    for x, c := range s {
+        termbox.SetCell(x, y, c, fg, bg)
     }
 }
