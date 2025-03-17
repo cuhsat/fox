@@ -53,6 +53,16 @@ func NewHeap(path string) *Heap {
     }
 }
 
+func (h *Heap) Copy() []byte {
+    var b []byte
+
+    // for _, s := range h.SMap {
+    //     b = append(b, []byte(h.MMap[s.Start:s.End]))
+    // }
+
+    return b
+}
+
 func (h *Heap) AddFilter(value string) {
     h.SMap = h.filter([]byte(value))
     h.Chain = append(h.Chain, &SLink{
@@ -86,33 +96,24 @@ func (h *Heap) ThrowAway() {
 }
 
 func (h *Heap) filter(b []byte) (s SMap) {
-    cs := h.chunks()
-    ch := make(chan *SEntry)
+    ch := make(chan *SEntry, len(h.SMap))
 
     defer close(ch)
 
     var wg sync.WaitGroup
 
-    wg.Add(len(cs))
+    for _, c := range h.chunks() {
+        wg.Add(1)
 
-    go func() {
-        for se := range ch {
-            s = append(s, se)
-        }        
-    }()
-
-    for _, c := range cs {
         go func() {
-            defer wg.Done()
-            h.search(b, c, ch)
+            h.search(ch, c, b)
+            wg.Done()
         }()
     }
 
     wg.Wait()
 
-    sorted(s)
-
-    return
+    return h.aggregate(ch)
 }
 
 func (h *Heap) chunks() (c []*chunk) {
@@ -129,7 +130,7 @@ func (h *Heap) chunks() (c []*chunk) {
     return
 }
 
-func (h *Heap) search(b []byte, c *chunk, ch chan<- *SEntry) {
+func (h *Heap) search(ch chan<- *SEntry, c *chunk, b []byte) {
     for _, s := range h.SMap[c.min:c.max] {
         if bytes.Contains(h.MMap[s.Start:s.End], b) {
             ch <- s
@@ -137,8 +138,14 @@ func (h *Heap) search(b []byte, c *chunk, ch chan<- *SEntry) {
     }
 }
 
-func sorted(s SMap) {
-    slices.SortStableFunc(s, func(a, b *SEntry) int {
+func (h *Heap) aggregate(ch <-chan *SEntry) (s SMap) {
+    for len(ch) > 0 {
+        s = append(s, <-ch)
+    }
+
+    slices.SortFunc(s, func(a, b *SEntry) int {
         return cmp.Compare(a.Nr, b.Nr)
     })
+
+    return
 }
