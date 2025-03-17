@@ -1,8 +1,0 @@
-.TH man 1 "March 2025" "cu" "cu"
-.SH NAME
-CU
-.SH SYNOPSIS
-cu <PATH>
-.RE
-.SH AUTHORS
-Christian Uhsat <christian@uhsat.de>
