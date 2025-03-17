@@ -54,13 +54,23 @@ func NewHeap(path string) *Heap {
 }
 
 func (h *Heap) Copy() []byte {
-    var b []byte
+    return h.data()
+}
 
-    // for _, s := range h.SMap {
-    //     b = append(b, []byte(h.MMap[s.Start:s.End]))
-    // }
+func (h* Heap) Save() string {
+    fn := h.Path
 
-    return b
+    for _, l := range h.Chain {
+        fn += "-" + l.Name
+    }
+
+    err := os.WriteFile(fn, h.data(), MODE_FILE)
+
+    if err != nil {
+        Error(err)
+    }
+
+    return fn
 }
 
 func (h *Heap) AddFilter(value string) {
@@ -113,7 +123,7 @@ func (h *Heap) filter(b []byte) (s SMap) {
 
     wg.Wait()
 
-    return h.aggregate(ch)
+    return h.gather(ch)
 }
 
 func (h *Heap) chunks() (c []*chunk) {
@@ -138,7 +148,7 @@ func (h *Heap) search(ch chan<- *SEntry, c *chunk, b []byte) {
     }
 }
 
-func (h *Heap) aggregate(ch <-chan *SEntry) (s SMap) {
+func (h *Heap) gather(ch <-chan *SEntry) (s SMap) {
     for len(ch) > 0 {
         s = append(s, <-ch)
     }
@@ -148,4 +158,24 @@ func (h *Heap) aggregate(ch <-chan *SEntry) (s SMap) {
     })
 
     return
+}
+
+func (h *Heap) data() []byte {
+    var b bytes.Buffer
+
+    for _, s := range h.SMap {
+        _, err := b.Write([]byte(h.MMap[s.Start:s.End]))
+
+        if err != nil {
+            Error(err)
+        }
+
+        err = b.WriteByte('\n')
+
+        if err != nil {
+            Error(err)
+        }
+    }
+
+    return b.Bytes()
 }

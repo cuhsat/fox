@@ -16,7 +16,7 @@ const BufferFg = termbox.Attribute(248)
 const BufferBg = termbox.Attribute(235)
 
 // Prompt colors
-const PromptFg = termbox.Attribute(248)
+const PromptFg = termbox.Attribute(223)
 const PromptBg = termbox.Attribute(236)
 
 var width, height, data, page int
@@ -63,11 +63,8 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
             case termbox.KeyCtrlC:
                 clipboard.Write(clipboard.FmtText, hs.Heap().Copy())
 
-            // case termbox.KeyCtrlS:
-            //     // TODO: Save filtered results
-
-            // case termbox.KeyCtrlSpace:
-            //     // TODO: Toggle line numbers
+            case termbox.KeyCtrlS:
+                hs.Heap().Save()
 
             case termbox.KeyHome:
                 ui.buffer.GoToBegin()
