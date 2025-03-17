@@ -4,7 +4,7 @@
 
 ## Usage
 ```
-$ cu <PATH>
+$ cu - or PATH
 ```
 
 ## License

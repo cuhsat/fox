@@ -9,7 +9,7 @@ import (
 
 func main() {
     if len(os.Args) < 2 {
-        fs.Usage("cu <PATH>")
+        fs.Usage("cu - or PATH")
     }
 
     hs := fs.NewHeapSet(os.Args[1])

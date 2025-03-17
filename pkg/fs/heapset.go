@@ -5,6 +5,10 @@ import (
     "path/filepath"
 )
 
+const (
+    PipeStdin = "STDIN"
+)
+
 type HeapSet struct {
     heaps []*Heap // set heaps
     index int     // set index
@@ -13,6 +17,12 @@ type HeapSet struct {
 func NewHeapSet(path string) *HeapSet {
     hs := HeapSet{
         index: 0,
+    }
+
+    if path == "-" {
+        path = PipeStdin
+        
+        Stdin(path)
     }
 
     fi, err := os.Stat(path)
@@ -40,7 +50,7 @@ func NewHeapSet(path string) *HeapSet {
 
         f := filepath.Join(path, e.Name())
 
-        // lazy load but first
+        // lazy load all but first
         if len(hs.heaps) == 0 {
             hs.heaps = append(hs.heaps, NewHeap(f))
         } else {

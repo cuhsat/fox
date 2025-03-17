@@ -9,15 +9,17 @@ import (
     "golang.design/x/clipboard"
 )
 
-const Delta = 1
+const (
+    Delta = 1
 
-// Buffer colors
-const BufferFg = termbox.Attribute(248)
-const BufferBg = termbox.Attribute(235)
+    // Buffer colors
+    BufferFg = termbox.Attribute(248)
+    BufferBg = termbox.Attribute(235)
 
-// Prompt colors
-const PromptFg = termbox.Attribute(223)
-const PromptBg = termbox.Attribute(236)
+    // Prompt colors
+    PromptFg = termbox.Attribute(223)
+    PromptBg = termbox.Attribute(236)
+)
 
 var width, height, data, page int
 
