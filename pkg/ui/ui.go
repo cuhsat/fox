@@ -4,26 +4,26 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/mattn/go-runewidth"
     "github.com/nsf/termbox-go"
+    "golang.design/x/clipboard"
 )
 
 const Delta = 1
 
-const CommonFg = termbox.Attribute(248)
-const CommonBg = termbox.Attribute(235)
+// Buffer colors
+const BufferFg = termbox.Attribute(248)
+const BufferBg = termbox.Attribute(235)
 
-const StatusFg = termbox.Attribute(248)
-const StatusBg = termbox.Attribute(237)
-
-const SearchFg = termbox.Attribute(248)
-const SearchBg = termbox.Attribute(237)
+// Prompt colors
+const PromptFg = termbox.Attribute(248)
+const PromptBg = termbox.Attribute(236)
 
 var width, height, data, page int
 
 type UI struct {
-    status *Status
     buffer *Buffer
-    search *Search
+    prompt *Prompt
 }
 
 func NewUI() *UI {
@@ -33,15 +33,20 @@ func NewUI() *UI {
         fs.Panic(err)
     }
     
+    err = clipboard.Init()
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
     termbox.SetInputMode(termbox.InputEsc)
     termbox.SetOutputMode(termbox.Output256)
 
     width, height = termbox.Size()
 
     return &UI{
-        status: NewStatus(),
         buffer: NewBuffer(),
-        search: NewSearch(),
+        prompt: NewPrompt(),
     }
 }
 
@@ -52,15 +57,17 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
         switch ev := termbox.PollEvent(); ev.Type {
         case termbox.EventKey:
             switch ev.Key {
-            case termbox.KeyEsc:
-                h := hs.Heap()
+            case termbox.KeyEsc, termbox.KeyCtrlQ:
+                return
 
-                if len(h.Chain) > 0 {
-                    ui.buffer.Reset()
-                    h.DelFilter()
-                } else {
-                    return
-                }
+            case termbox.KeyCtrlC:
+                clipboard.Write(clipboard.FmtText, hs.Heap().Copy())
+
+            // case termbox.KeyCtrlS:
+            //     // TODO: Save filtered results
+
+            // case termbox.KeyCtrlSpace:
+            //     // TODO: Toggle line numbers
 
             case termbox.KeyHome:
                 ui.buffer.GoToBegin()
@@ -87,11 +94,11 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
                 ui.buffer.ScrollRight(Delta)
 
             case termbox.KeyEnter:
-                v := ui.search.GetValue()
+                s := ui.prompt.Accept()
 
-                if len(v) > 0 {
+                if len(s) > 0 {
                     ui.buffer.Reset()
-                    hs.Heap().AddFilter(v)
+                    hs.Heap().AddFilter(s)
                 }
 
             case termbox.KeyTab:
@@ -108,14 +115,21 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
                 }
 
             case termbox.KeyBackspace, termbox.KeyBackspace2:
-                ui.search.DelChar()
+                h := hs.Heap()
+
+                if len(ui.prompt.Value) > 0 {
+                    ui.prompt.DelChar()
+                } else if len(h.Chain) > 0 {
+                    ui.buffer.Reset()
+                    h.DelFilter()
+                }
 
             case termbox.KeySpace:
-                ui.search.AddChar(' ')
+                ui.prompt.AddChar(' ')
 
             default:
                 if ev.Ch != 0 {
-                    ui.search.AddChar(ev.Ch)
+                    ui.prompt.AddChar(ev.Ch)
                 }
             }
 
@@ -132,36 +146,48 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) render(h *fs.Heap) {
-    termbox.Clear(CommonFg, CommonBg)
+    termbox.Clear(BufferFg, BufferBg)
     termbox.HideCursor()
 
     width, height = termbox.Size()
 
     data = len(h.SMap)
-    page = height - 2
+    page = height - 1
 
     line := strings.Repeat(" ", width)
 
-    z := height - 1
+    b := height - 1
 
-    printEx(0, 0, line, StatusFg, StatusBg)
-    printEx(0, z, line, SearchFg, SearchBg)
+    print(0, b, line, PromptFg, PromptBg)
 
-    ui.status.Render(0, 0, h)
-    ui.buffer.Render(0, 1, h)
-    ui.search.Render(0, z)
+    ui.buffer.Render(0, 0, h)
+    ui.prompt.Render(0, b, h)
 
     termbox.Flush()
 }
 
-func print(x, y int, s string) {
-    for x, c := range s {
-        termbox.SetChar(x, y, c)
+func length(s string) (l int) {
+    for _, r := range []rune(s) {
+        l += space(r)
+    }
+
+    return
+}
+
+func space(r rune) int {
+    w := runewidth.RuneWidth(r)
+
+    if w == 0 || (w == 2 && runewidth.IsAmbiguousWidth(r)) {
+        return 1
+    } else {
+        return w
     }
 }
 
-func printEx(x, y int, s string, fg, bg termbox.Attribute) {
-    for x, c := range s {
-        termbox.SetCell(x, y, c, fg, bg)
+func print(x, y int, s string, fg, bg termbox.Attribute) {
+    for _, r := range s {
+        termbox.SetCell(x, y, r, fg, bg)
+
+        x += space(r)
     }
 }

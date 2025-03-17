@@ -27,12 +27,16 @@ func (b *Buffer) Render(x, y int, heap *fs.Heap) {
 
         n := min(b.dx, len(str))
 
-        for tx, c := range str[n:] {
+        tx := 0
+
+        for _, r := range str[n:] {
             if tx > width {
                 break
             }
 
-            termbox.SetChar(tx + x, ty + y, c)
+            tx += space(r)
+
+            termbox.SetChar(tx + x, ty + y, r)
         }
     }
 }
