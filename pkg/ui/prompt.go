@@ -5,8 +5,10 @@ import (
     "github.com/nsf/termbox-go"
 )
 
-const Indicator = " ● "
-const Separator = " ❯ "
+const (
+    Indicator = " ● "
+    Separator = " ❯ "
+)
 
 type Prompt struct {
     Value string // value
