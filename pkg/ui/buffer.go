@@ -1,8 +1,10 @@
 package ui
 
 import (
+    "strings"
+
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/nsf/termbox-go"
+    //"github.com/nsf/termbox-go"
 )
 
 type Buffer struct {
@@ -18,8 +20,8 @@ func NewBuffer() *Buffer {
 }
 
 func (b *Buffer) Render(x, y int, heap *fs.Heap) {
-    for ty, s := range heap.SMap[b.dy:] {
-        if ty > page-1 {
+    for l, s := range heap.SMap[b.dy:] {
+        if l > page-1 {
             break
         }
 
@@ -27,17 +29,15 @@ func (b *Buffer) Render(x, y int, heap *fs.Heap) {
 
         n := min(b.dx, len(str))
 
-        tx := 0
+        printLine(x, y + l, str[n:], BufferFg, BufferBg)
 
-        for _, r := range str[n:] {
-            if tx > width {
-                break
-            }
-
-            tx += space(r)
-
-            termbox.SetChar(tx + x, ty + y, r)
+        for z, c := range heap.Chain {
+            mark(x, y + l, z, str[n:], c.Name)
         }
+    }
+
+    for l := len(heap.SMap[b.dy:]); l < height; l++ {
+        printLine(x, y + l, "", BufferFg, BufferBg)
     }
 }
 
@@ -76,4 +76,18 @@ func (b *Buffer) ScrollLeft(delta int) {
 
 func (b *Buffer) ScrollRight(delta int) {
     b.dx = min(b.dx + delta, width)
+}
+
+func mark(x, y, z int, s, n string) {
+    i := strings.Index(s, n)
+
+    // c := termbox.Attribute(10 - z)
+
+    if i > -1 {
+        print(x + i, y, n, SearchFg, SearchBg)
+
+        i++
+
+        mark(x + i, y, z, s[i:], n)
+    }
 }

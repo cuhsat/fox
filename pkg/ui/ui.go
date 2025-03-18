@@ -1,8 +1,6 @@
 package ui
 
 import (
-    "strings"
-
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/mattn/go-runewidth"
     "github.com/nsf/termbox-go"
@@ -11,14 +9,6 @@ import (
 
 const (
     Delta = 1
-
-    // Buffer colors
-    BufferFg = termbox.Attribute(248)
-    BufferBg = termbox.Attribute(235)
-
-    // Prompt colors
-    PromptFg = termbox.Attribute(223)
-    PromptBg = termbox.Attribute(236)
 )
 
 var width, height, data, page int
@@ -28,7 +18,7 @@ type UI struct {
     prompt *Prompt
 }
 
-func NewUI() *UI {
+func NewUI(theme string) *UI {
     err := termbox.Init()
     
     if err != nil {
@@ -45,6 +35,8 @@ func NewUI() *UI {
     termbox.SetOutputMode(termbox.Output256)
 
     width, height = termbox.Size()
+
+    setTheme(theme)
 
     return &UI{
         buffer: NewBuffer(),
@@ -132,6 +124,8 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
                 }
             }
 
+        // case termbox.EventResize:
+
         case termbox.EventError:
             fs.Error(ev.Err)
         }
@@ -145,7 +139,8 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) render(h *fs.Heap) {
-    termbox.Clear(BufferFg, BufferBg)
+    defer termbox.Flush()
+
     termbox.HideCursor()
 
     width, height = termbox.Size()
@@ -153,16 +148,20 @@ func (ui *UI) render(h *fs.Heap) {
     data = len(h.SMap)
     page = height - 1
 
-    line := strings.Repeat(" ", width)
-
     b := height - 1
 
-    print(0, b, line, PromptFg, PromptBg)
+    for y := 0; y < height; y++ {
+        for x := 0; x < width; x++ {
+            termbox.SetBg(x, y, BufferBg)
+        }
+    }
+
+    for x := 0; x < width; x++ {
+        termbox.SetBg(x, b, PromptBg)
+    }
 
     ui.buffer.Render(0, 0, h)
     ui.prompt.Render(0, b, h)
-
-    termbox.Flush()
 }
 
 func length(s string) (l int) {
@@ -185,8 +184,20 @@ func space(r rune) int {
 
 func print(x, y int, s string, fg, bg termbox.Attribute) {
     for _, r := range s {
+        if x > width {
+            break
+        }
+
         termbox.SetCell(x, y, r, fg, bg)
 
         x += space(r)
+    }
+}
+
+func printLine(x, y int, s string, fg, bg termbox.Attribute) {
+    print(x, y, s, fg, bg)
+
+    for x := length(s); x < width; x++ {
+       termbox.SetCell(x, y, ' ', fg, bg)
     }
 }
