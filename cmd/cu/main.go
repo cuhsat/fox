@@ -16,7 +16,7 @@ func main() {
 
     defer hs.ThrowAway()
 
-    ui := ui.NewUI()
+    ui := ui.NewUI("markdown")
 
     defer ui.Close()
 

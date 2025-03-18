@@ -2,12 +2,13 @@ package ui
 
 import (
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/nsf/termbox-go"
 )
 
 const (
-    Indicator = " ● "
+    Indicator = "" //" ● "
     Separator = " ❯ "
+    Cursor = "_"
+    Abbrev = "…"
 )
 
 type Prompt struct {
@@ -23,12 +24,11 @@ func NewPrompt() *Prompt {
 }
 
 func (p *Prompt) Render(x, y int, heap *fs.Heap) {
-    s := status(heap)
-    l := length(s)
+    s := status(heap) + p.Value
 
-    termbox.SetCursor(x + l + p.cx, y)
+    printLine(x, y, s, PromptFg, PromptBg)
 
-    print(x, y, s + p.Value, PromptFg, PromptBg)
+    print(x + length(s), y, Cursor, CursorFg, CursorBg)
 }
 
 func (p *Prompt) AddChar(r rune) {
@@ -61,7 +61,7 @@ func status(h *fs.Heap) string {
     l := length(p)
 
     if l > width-1 {
-        p = string([]rune(p)[:width-1]) + "…"
+        p = string([]rune(p)[:width-1]) + Abbrev
     }
 
     return p + Separator
