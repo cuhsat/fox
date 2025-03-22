@@ -7,5 +7,15 @@
 $ cu - or PATH
 ```
 
+## Keyboard
+* <kbd>Esc</kbd> quit
+* <kbd>Tab</kbd> load next file
+* <kbd>Shift</kbd>+<kbd>Tab</kbd> load prev file
+* <kbd>Enter</kbd> apply filter
+* <kbd>Backspace</kbd> delete filter
+* <kbd>Ctrl</kbd>+<kbd>q</kbd> quit
+* <kbd>Ctrl</kbd>+<kbd>s</kbd> save (filtered) content
+* <kbd>Ctrl</kbd>+<kbd>c</kbd> copy (filtered) content
+
 ## License
 Released under the [MIT License](LICENSE).

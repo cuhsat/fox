@@ -16,7 +16,7 @@ func main() {
 
     defer hs.ThrowAway()
 
-    ui := ui.NewUI("markdown")
+    ui := ui.NewUI("monokai")
 
     defer ui.Close()
 
