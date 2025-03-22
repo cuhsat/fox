@@ -54,7 +54,7 @@ func NewHeap(path string) *Heap {
 }
 
 func (h *Heap) Copy() []byte {
-    return h.data()
+    return h.GetBytes()
 }
 
 func (h* Heap) Save() string {
@@ -64,13 +64,33 @@ func (h* Heap) Save() string {
         fn += "-" + l.Name
     }
 
-    err := os.WriteFile(fn, h.data(), MODE_FILE)
+    err := os.WriteFile(fn, h.GetBytes(), MODE_FILE)
 
     if err != nil {
         Error(err)
     }
 
     return fn
+}
+
+func (h *Heap) GetBytes() []byte {
+    var b bytes.Buffer
+
+    for _, s := range h.SMap {
+        _, err := b.Write([]byte(h.MMap[s.Start:s.End]))
+
+        if err != nil {
+            Error(err)
+        }
+
+        err = b.WriteByte('\n')
+
+        if err != nil {
+            Error(err)
+        }
+    }
+
+    return b.Bytes()
 }
 
 func (h *Heap) AddFilter(value string) {
@@ -158,24 +178,4 @@ func (h *Heap) gather(ch <-chan *SEntry) (s SMap) {
     })
 
     return
-}
-
-func (h *Heap) data() []byte {
-    var b bytes.Buffer
-
-    for _, s := range h.SMap {
-        _, err := b.Write([]byte(h.MMap[s.Start:s.End]))
-
-        if err != nil {
-            Error(err)
-        }
-
-        err = b.WriteByte('\n')
-
-        if err != nil {
-            Error(err)
-        }
-    }
-
-    return b.Bytes()
 }

@@ -1,203 +1,212 @@
 package ui
 
 import (
+    "fmt"
+
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/gdamore/tcell/v2"
+    "github.com/gdamore/tcell/v2/encoding"
     "github.com/mattn/go-runewidth"
-    "github.com/nsf/termbox-go"
-    "golang.design/x/clipboard"
 )
 
 const (
     Delta = 1
 )
 
-var width, height, data, page int
+var (
+    screen tcell.Screen
+)
 
 type UI struct {
-    buffer *Buffer
-    prompt *Prompt
+    info   string
+    input  *Input
+    output *Output
 }
 
 func NewUI(theme string) *UI {
-    err := termbox.Init()
-    
-    if err != nil {
-        fs.Panic(err)
-    }
-    
-    err = clipboard.Init()
+    encoding.Register()
+
+    scr, err := tcell.NewScreen()
 
     if err != nil {
         fs.Panic(err)
     }
 
-    termbox.SetInputMode(termbox.InputEsc)
-    termbox.SetOutputMode(termbox.Output256)
+    err = scr.Init()
 
-    width, height = termbox.Size()
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    screen = scr
 
     setTheme(theme)
 
+    screen.HideCursor()
+    screen.SetStyle(StyleOutput)
+
     return &UI{
-        buffer: NewBuffer(),
-        prompt: NewPrompt(),
+        input:  NewInput(),
+        output: NewOutput(),
     }
 }
 
 func (ui *UI) Loop(hs *fs.HeapSet) {
-    ui.render(hs.Heap())
-
     for {
-        switch ev := termbox.PollEvent(); ev.Type {
-        case termbox.EventKey:
-            switch ev.Key {
-            case termbox.KeyEsc, termbox.KeyCtrlQ:
+        heap := hs.Heap()
+        w, h := ui.render(heap)
+
+        ev := screen.PollEvent()
+
+        switch ev := ev.(type) {
+        case *tcell.EventResize:
+            screen.Sync()
+
+        case *tcell.EventError:
+            fs.Error(ev.Error())
+
+        case *tcell.EventKey:
+            switch ev.Key() {
+            case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
 
-            case termbox.KeyCtrlC:
-                clipboard.Write(clipboard.FmtText, hs.Heap().Copy())
+            case tcell.KeyCtrlC:
+                screen.SetClipboard(heap.Copy())
 
-            case termbox.KeyCtrlS:
-                hs.Heap().Save()
+                ui.info = fmt.Sprintf("%s copied [%d]", heap.Path, len(heap.SMap))
 
-            case termbox.KeyHome:
-                ui.buffer.GoToBegin()
+            case tcell.KeyCtrlS:
+                path := heap.Save()
 
-            case termbox.KeyEnd:
-                ui.buffer.GoToEnd()
+                ui.info = fmt.Sprintf("%s saved [%d]", path, len(heap.SMap))
 
-            case termbox.KeyPgup:
-                ui.buffer.PageUp()
+            case tcell.KeyHome:
+                ui.output.ScrollBegin()
 
-            case termbox.KeyPgdn:
-                ui.buffer.PageDown()
+            case tcell.KeyEnd:
+                ui.output.ScrollEnd(h-1)
 
-            case termbox.KeyArrowUp:
-                ui.buffer.ScrollUp(Delta)
-                
-            case termbox.KeyArrowDown:
-                ui.buffer.ScrollDown(Delta)
-
-            case termbox.KeyArrowLeft:
-                ui.buffer.ScrollLeft(Delta)
-
-            case termbox.KeyArrowRight:
-                ui.buffer.ScrollRight(Delta)
-
-            case termbox.KeyEnter:
-                s := ui.prompt.Accept()
-
-                if len(s) > 0 {
-                    ui.buffer.Reset()
-                    hs.Heap().AddFilter(s)
+            case tcell.KeyUp:
+                if ev.Modifiers() & tcell.ModShift == 1 {
+                    ui.output.ScrollUp(h-1)
+                } else {
+                    ui.output.ScrollUp(Delta)
                 }
 
-            case termbox.KeyTab:
-                c := hs.Heap().Chain
-
-                ui.buffer.Reset()
-                hs.Cycle()
-
-                h := hs.Heap()
-                h.NoFilter()
-
-                for _, l := range c {
-                    h.AddFilter(l.Name)
+            case tcell.KeyDown:
+                if ev.Modifiers() & tcell.ModShift == 1 {
+                    ui.output.ScrollDown(h-1)
+                } else {
+                    ui.output.ScrollDown(Delta)
                 }
 
-            case termbox.KeyBackspace, termbox.KeyBackspace2:
-                h := hs.Heap()
-
-                if len(ui.prompt.Value) > 0 {
-                    ui.prompt.DelChar()
-                } else if len(h.Chain) > 0 {
-                    ui.buffer.Reset()
-                    h.DelFilter()
+            case tcell.KeyLeft:
+                if ev.Modifiers() & tcell.ModShift == 1 {
+                    ui.output.ScrollLeft(w)
+                } else {
+                    ui.output.ScrollLeft(Delta)
                 }
 
-            case termbox.KeySpace:
-                ui.prompt.AddChar(' ')
+            case tcell.KeyRight:
+                if ev.Modifiers() & tcell.ModShift == 1 {
+                    ui.output.ScrollRight(w)
+                } else {
+                    ui.output.ScrollRight(Delta)
+                }
+
+            case tcell.KeyPgUp:
+                ui.output.ScrollPageUp(h-1)
+
+            case tcell.KeyPgDn:
+                ui.output.ScrollPageDown(h-1)
+
+            case tcell.KeyEnter:
+                v := ui.input.Accept()
+
+                if len(v) > 0 {
+                    ui.output.Reset()
+                    heap.AddFilter(v)
+                }
+
+            case tcell.KeyTab:
+                chain := heap.Chain
+
+                ui.output.Reset()
+
+                if ev.Modifiers() & tcell.ModShift == 1 {
+                    heap = hs.Prev()
+                } else {
+                    heap = hs.Next()
+                }
+
+                heap.NoFilter()
+
+                for _, f := range chain {
+                    heap.AddFilter(f.Name)
+                }
+
+            case tcell.KeyBackspace, tcell.KeyBackspace2:
+                if len(ui.input.Value) > 0 {
+                    ui.input.DelRune()
+                } else if len(heap.Chain) > 0 {
+                    ui.output.Reset()
+                    heap.DelFilter()
+                }
 
             default:
-                if ev.Ch != 0 {
-                    ui.prompt.AddChar(ev.Ch)
+                if ev.Rune() != 0 {
+                    ui.input.AddRune(ev.Rune())
                 }
             }
 
-        // case termbox.EventResize:
-
-        case termbox.EventError:
-            fs.Error(ev.Err)
+        case *tcell.EventInterrupt:
+            ui.info = ""
         }
-
-        ui.render(hs.Heap())
     }
 }
 
 func (ui *UI) Close() {
-    termbox.Close()
+    r := recover()
+
+    screen.Fini()
+
+    if r != nil {
+        fs.Panic(r)
+    }
 }
 
-func (ui *UI) render(h *fs.Heap) {
-    defer termbox.Flush()
+func (ui *UI) render(heap *fs.Heap) (w int, h int) {
+    defer screen.Show()
 
-    termbox.HideCursor()
+    screen.Clear()
 
-    width, height = termbox.Size()
+    w, h = screen.Size()
 
-    data = len(h.SMap)
-    page = height - 1
+    ui.output.Render(heap, 0, 0, h-1)
+    ui.input.Render(heap, 0, h-1, w)
 
-    b := height - 1
-
-    for y := 0; y < height; y++ {
-        for x := 0; x < width; x++ {
-            termbox.SetBg(x, y, BufferBg)
-        }
-    }
-
-    for x := 0; x < width; x++ {
-        termbox.SetBg(x, b, PromptBg)
-    }
-
-    ui.buffer.Render(0, 0, h)
-    ui.prompt.Render(0, b, h)
-}
-
-func length(s string) (l int) {
-    for _, r := range []rune(s) {
-        l += space(r)
+    if len(ui.info) > 0 {
+        ui.setInfo(0, h-1)
     }
 
     return
 }
 
-func space(r rune) int {
-    w := runewidth.RuneWidth(r)
-
-    if w == 0 || (w == 2 && runewidth.IsAmbiguousWidth(r)) {
-        return 1
-    } else {
-        return w
+func length(s string) (l int) {
+    for _, r := range s {
+        l += runewidth.RuneWidth(r)
     }
+
+    return
 }
 
-func print(x, y int, s string, fg, bg termbox.Attribute) {
+func print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
-        if x > width {
-            break
+        if r == '\t' {
+            r = tcell.RuneRArrow
         }
 
-        termbox.SetCell(x, y, r, fg, bg)
-
-        x += space(r)
-    }
-}
-
-func printLine(x, y int, s string, fg, bg termbox.Attribute) {
-    print(x, y, s, fg, bg)
-
-    for x := length(s); x < width; x++ {
-       termbox.SetCell(x, y, ' ', fg, bg)
+        screen.SetContent(x, y, r, nil, sty)
+        x += runewidth.RuneWidth(r)
     }
 }

@@ -7,7 +7,7 @@ import (
 type SMap []*SEntry
 
 type SEntry struct {
-    Start, End, Nr int
+    Start, End, Len, Nr int
 }
 
 func smap(m mmap.MMap) (s SMap) {
@@ -18,10 +18,11 @@ func smap(m mmap.MMap) (s SMap) {
             s = append(s, &SEntry{
                 Start: j,
                 End: i,
+                Len: i - j,
                 Nr: len(s),
             })
 
-            j = i+1
+            j = i + 1
         }
     }
 

@@ -72,15 +72,24 @@ func (hs *HeapSet) Heap() *Heap {
     return hs.heaps[hs.index]
 }
 
-func (hs *HeapSet) Cycle() {
-    hs.index = (hs.index+1) % len(hs.heaps)
+func (hs *HeapSet) Prev() *Heap {
+    hs.index -= 1
 
-    h := hs.Heap()
-
-    // lazy loading
-    if h.file == nil {
-        hs.heaps[hs.index] = NewHeap(h.Path)
+    if hs.index < 0 {
+        hs.index = len(hs.heaps)-1
     }
+
+    return hs.lazyLoad()
+}
+
+func (hs *HeapSet) Next() *Heap {
+    hs.index += 1
+
+    if hs.index >= len(hs.heaps) {
+        hs.index = 0
+    }
+
+    return hs.lazyLoad()
 }
 
 func (hs *HeapSet) ThrowAway() {
@@ -90,4 +99,14 @@ func (hs *HeapSet) ThrowAway() {
 
     hs.heaps = hs.heaps[:0]
     hs.index = -1
+}
+
+func (hs *HeapSet) lazyLoad() *Heap {
+    h := hs.Heap()
+
+    if h.file == nil {
+        hs.heaps[hs.index] = NewHeap(h.Path)
+    }
+
+    return hs.heaps[hs.index]
 }
