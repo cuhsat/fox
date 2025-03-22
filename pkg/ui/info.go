@@ -8,7 +8,7 @@ import (
 )
 
 const (
-    Delay = 3
+    Delay = 3 // seconds
 )
 
 func (ui *UI) setInfo(x, y int) {

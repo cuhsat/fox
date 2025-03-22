@@ -4,6 +4,10 @@ import (
     "github.com/gdamore/tcell/v2"
 )
 
+const (
+    ThemeDefault = "monokai"
+)
+
 var Themes = map[string][]int32{
     "monokai": {
         0x7f8490, // foreground
