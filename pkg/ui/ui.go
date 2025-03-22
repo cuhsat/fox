@@ -23,7 +23,7 @@ type UI struct {
     output *Output
 }
 
-func NewUI(theme string) *UI {
+func NewUI() *UI {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -40,7 +40,7 @@ func NewUI(theme string) *UI {
 
     screen = scr
 
-    setTheme(theme)
+    setTheme(ThemeDefault)
 
     screen.HideCursor()
     screen.SetStyle(StyleOutput)
@@ -51,7 +51,7 @@ func NewUI(theme string) *UI {
     }
 }
 
-func (ui *UI) Loop(hs *fs.HeapSet) {
+func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
     for {
         heap := hs.Heap()
         w, h := ui.render(heap)
@@ -73,12 +73,12 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
             case tcell.KeyCtrlC:
                 screen.SetClipboard(heap.Copy())
 
-                ui.info = fmt.Sprintf("%s copied [%d]", heap.Path, len(heap.SMap))
+                ui.info = fmt.Sprintf("%s copied", heap.Path)
 
             case tcell.KeyCtrlS:
                 path := heap.Save()
 
-                ui.info = fmt.Sprintf("%s saved [%d]", path, len(heap.SMap))
+                ui.info = fmt.Sprintf("%s saved", path)
 
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
@@ -87,14 +87,18 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
                 ui.output.ScrollEnd(h-1)
 
             case tcell.KeyUp:
-                if ev.Modifiers() & tcell.ModShift == 1 {
+                if ev.Modifiers() & tcell.ModCtrl == 1 {
+                    ui.input.Value = hi.PrevCommand()
+                } else if ev.Modifiers() & tcell.ModShift == 1 {
                     ui.output.ScrollUp(h-1)
                 } else {
                     ui.output.ScrollUp(Delta)
                 }
 
             case tcell.KeyDown:
-                if ev.Modifiers() & tcell.ModShift == 1 {
+                if ev.Modifiers() & tcell.ModCtrl == 1 {
+                    ui.input.Value = hi.NextCommand()
+                } else if ev.Modifiers() & tcell.ModShift == 1 {
                     ui.output.ScrollDown(h-1)
                 } else {
                     ui.output.ScrollDown(Delta)
@@ -126,6 +130,7 @@ func (ui *UI) Loop(hs *fs.HeapSet) {
                 if len(v) > 0 {
                     ui.output.Reset()
                     heap.AddFilter(v)
+                    hi.AddCommand(v)
                 }
 
             case tcell.KeyTab:

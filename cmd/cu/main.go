@@ -9,16 +9,17 @@ import (
 
 func main() {
     if len(os.Args) < 2 {
-        fs.Usage("cu - or PATH")
+        fs.Usage("cu <DIRECTORY|FILE|->")
     }
 
     hs := fs.NewHeapSet(os.Args[1])
-
     defer hs.ThrowAway()
 
-    ui := ui.NewUI("monokai")
+    hi := fs.NewHistory()
+    defer hi.Close()
 
+    ui := ui.NewUI()
     defer ui.Close()
 
-    ui.Loop(hs)
+    ui.Run(hs, hi)
 }

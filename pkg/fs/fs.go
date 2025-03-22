@@ -18,6 +18,10 @@ const (
     MODE_FILE = 0644
 )
 
+const (
+    FLAG_FILE = os.O_APPEND | os.O_CREATE | os.O_RDWR
+)
+
 func Error(a ...any) {
     fmt.Fprintln(os.Stderr, a...)
 }
