@@ -16,6 +16,7 @@ $ cu <DIRECTORY|FILE|->
 * <kbd>Enter</kbd> apply filter
 * <kbd>Backspace</kbd> delete filter
 * <kbd>Ctrl</kbd>+<kbd>q</kbd> quit
+* <kbd>Ctrl</kbd>+<kbd>n</kbd> toggle line numbers
 * <kbd>Ctrl</kbd>+<kbd>s</kbd> save (filtered) content
 * <kbd>Ctrl</kbd>+<kbd>c</kbd> copy (filtered) content
 
