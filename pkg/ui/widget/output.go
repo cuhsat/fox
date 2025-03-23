@@ -26,7 +26,7 @@ func NewOutput(screen tcell.Screen) *Output {
         widget: widget{
             screen: screen,
         },
-        numbers: false,
+        numbers: true,
         max_n: 0,
         max_x: 0,
         max_y: 0,
@@ -38,7 +38,7 @@ func NewOutput(screen tcell.Screen) *Output {
 func (o *Output) Render(heap *data.Heap, x, y, h int) {
     o.max_x = maxString(heap.SMap)
     o.max_y = len(heap.SMap)
-    o.max_n = int(math.Log10(float64(heap.Length()))) + 1
+    o.max_n = int(math.Log10(float64(heap.Lines()))) + 1
 
     for i, se := range heap.SMap[o.delta_y:] {
         if i > h-1 {

@@ -54,7 +54,7 @@ func NewHeap(path string) *Heap {
     }
 }
 
-func (h *Heap) Length() int {
+func (h *Heap) Lines() int {
     return len(h.rmap)
 }
 
