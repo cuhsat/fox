@@ -10,7 +10,7 @@ import (
 )
 
 const (
-    Delta = 1
+    Delta = 1 // lines
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 type UI struct {
-    info   string
+    info   *Info
     input  *Input
     output *Output
 }
@@ -46,19 +46,27 @@ func NewUI() *UI {
     screen.SetStyle(StyleOutput)
 
     return &UI{
+        info:   NewInfo(),
         input:  NewInput(),
         output: NewOutput(),
     }
 }
 
 func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
+    go ui.info.Watch()
+
     for {
         heap := hs.Heap()
         w, h := ui.render(heap)
 
+        ui.setTitle(heap.Path)
+
         ev := screen.PollEvent()
 
         switch ev := ev.(type) {
+        case *tcell.EventInterrupt:
+            continue
+
         case *tcell.EventResize:
             screen.Sync()
 
@@ -73,12 +81,12 @@ func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlC:
                 screen.SetClipboard(heap.Copy())
 
-                ui.info = fmt.Sprintf("%s copied", heap.Path)
+                ui.info.SendInfo(fmt.Sprintf("%s copied", heap.Path))
 
             case tcell.KeyCtrlS:
                 path := heap.Save()
-
-                ui.info = fmt.Sprintf("%s saved", path)
+                
+                ui.info.SendInfo(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
@@ -163,9 +171,6 @@ func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
                     ui.input.AddRune(ev.Rune())
                 }
             }
-
-        case *tcell.EventInterrupt:
-            ui.info = ""
         }
     }
 }
@@ -173,11 +178,17 @@ func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
 func (ui *UI) Close() {
     r := recover()
 
+    ui.info.Close()
+
     screen.Fini()
 
     if r != nil {
         fs.Panic(r)
     }
+}
+
+func (ui *UI) setTitle(s string) {
+    screen.SetTitle(fmt.Sprintf("cu - %s", s))
 }
 
 func (ui *UI) render(heap *fs.Heap) (w int, h int) {
@@ -189,10 +200,7 @@ func (ui *UI) render(heap *fs.Heap) (w int, h int) {
 
     ui.output.Render(heap, 0, 0, h-1)
     ui.input.Render(heap, 0, h-1, w)
-
-    if len(ui.info) > 0 {
-        ui.setInfo(0, h-1)
-    }
+    ui.info.Render(0, h-1, w)
 
     return
 }
