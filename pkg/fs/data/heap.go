@@ -3,6 +3,7 @@ package data
 import (
     "bytes"
     "cmp"
+    "io"
     "os"
     "runtime"
     "slices"
@@ -59,7 +60,15 @@ func (h *Heap) Lines() int {
 }
 
 func (h *Heap) Copy() []byte {
-    return h.GetBytes()
+    var b bytes.Buffer
+
+    err := h.strings(&b)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    return b.Bytes()
 }
 
 func (h* Heap) Save() string {
@@ -69,33 +78,21 @@ func (h* Heap) Save() string {
         fn += "-" + l.Name
     }
 
-    err := os.WriteFile(fn, h.GetBytes(), fs.MODE_FILE)
+    f, err := os.OpenFile(fn, fs.FLAG_FILE, fs.MODE_FILE)
 
     if err != nil {
-        fs.Error(err)
+        fs.Panic(err)
+    }
+
+    defer f.Close()
+
+    err = h.strings(f)
+
+    if err != nil {
+        fs.Panic(err)
     }
 
     return fn
-}
-
-func (h *Heap) GetBytes() []byte {
-    var b bytes.Buffer
-
-    for _, s := range h.SMap {
-        _, err := b.Write([]byte(h.MMap[s.Start:s.End]))
-
-        if err != nil {
-            fs.Error(err)
-        }
-
-        err = b.WriteByte('\n')
-
-        if err != nil {
-            fs.Error(err)
-        }
-    }
-
-    return b.Bytes()
 }
 
 func (h *Heap) AddFilter(value string) {
@@ -128,6 +125,18 @@ func (h *Heap) ThrowAway() {
     h.file.Close()
 
     runtime.GC()
+}
+
+func (h *Heap) strings(w io.Writer) (err error) {
+    for _, s := range h.SMap {
+        _, err := w.Write([]byte(h.MMap[s.Start:s.End + 1]))
+
+        if err != nil {
+            return err
+        }
+    }
+
+    return nil
 }
 
 func (h *Heap) filter(b []byte) (s SMap) {
