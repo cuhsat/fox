@@ -4,23 +4,22 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/ui/comp"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
-    "github.com/mattn/go-runewidth"
 )
 
 const (
     Delta = 1 // lines
 )
 
-var (
-    screen tcell.Screen
-)
-
 type UI struct {
-    info   *Info
-    input  *Input
-    output *Output
+    screen tcell.Screen
+    output *comp.Output
+    input  *comp.Input
+    info   *comp.Info
 }
 
 func NewUI() *UI {
@@ -38,21 +37,20 @@ func NewUI() *UI {
         fs.Panic(err)
     }
 
-    screen = scr
+    themes.Load(themes.Default)
 
-    setTheme(ThemeDefault)
-
-    screen.HideCursor()
-    screen.SetStyle(StyleOutput)
+    scr.HideCursor()
+    scr.SetStyle(themes.Output)
 
     return &UI{
-        info:   NewInfo(),
-        input:  NewInput(),
-        output: NewOutput(),
+        screen: scr,
+        output: comp.NewOutput(scr),
+        input:  comp.NewInput(scr),
+        info:   comp.NewInfo(scr),
     }
 }
 
-func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
+func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
     go ui.info.Watch()
 
     for {
@@ -61,14 +59,14 @@ func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
 
         ui.setTitle(heap.Path)
 
-        ev := screen.PollEvent()
+        ev := ui.screen.PollEvent()
 
         switch ev := ev.(type) {
         case *tcell.EventInterrupt:
             continue
 
         case *tcell.EventResize:
-            screen.Sync()
+            ui.screen.Sync()
 
         case *tcell.EventError:
             fs.Error(ev.Error())
@@ -79,7 +77,7 @@ func (ui *UI) Run(hs *fs.HeapSet, hi *fs.History) {
                 return
 
             case tcell.KeyCtrlC:
-                screen.SetClipboard(heap.Copy())
+                ui.screen.SetClipboard(heap.Copy())
 
                 ui.info.SendInfo(fmt.Sprintf("%s copied", heap.Path))
 
@@ -180,7 +178,7 @@ func (ui *UI) Close() {
 
     ui.info.Close()
 
-    screen.Fini()
+    ui.screen.Fini()
 
     if r != nil {
         fs.Panic(r)
@@ -188,38 +186,19 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) setTitle(s string) {
-    screen.SetTitle(fmt.Sprintf("cu - %s", s))
+    ui.screen.SetTitle(fmt.Sprintf("cu - %s", s))
 }
 
-func (ui *UI) render(heap *fs.Heap) (w int, h int) {
-    defer screen.Show()
+func (ui *UI) render(heap *data.Heap) (w int, h int) {
+    defer ui.screen.Show()
 
-    screen.Clear()
+    ui.screen.Clear()
 
-    w, h = screen.Size()
+    w, h = ui.screen.Size()
 
     ui.output.Render(heap, 0, 0, h-1)
     ui.input.Render(heap, 0, h-1, w)
     ui.info.Render(0, h-1, w)
 
     return
-}
-
-func length(s string) (l int) {
-    for _, r := range s {
-        l += runewidth.RuneWidth(r)
-    }
-
-    return
-}
-
-func print(x, y int, s string, sty tcell.Style) {
-    for _, r := range s {
-        if r == '\t' {
-            r = tcell.RuneRArrow
-        }
-
-        screen.SetContent(x, y, r, nil, sty)
-        x += runewidth.RuneWidth(r)
-    }
 }

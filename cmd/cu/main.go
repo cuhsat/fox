@@ -4,6 +4,7 @@ import (
     "os"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/data"
     "github.com/cuhsat/cu/pkg/ui"
 )
 
@@ -12,7 +13,7 @@ func main() {
         fs.Usage("cu <DIRECTORY|FILE|->")
     }
 
-    hs := fs.NewHeapSet(os.Args[1])
+    hs := data.NewHeapSet(os.Args[1])
     defer hs.ThrowAway()
 
     hi := fs.NewHistory()
