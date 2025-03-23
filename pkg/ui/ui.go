@@ -5,8 +5,8 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/data"
-    "github.com/cuhsat/cu/pkg/ui/comp"
-    "github.com/cuhsat/cu/pkg/ui/themes"
+    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/widget"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
 )
@@ -17,9 +17,9 @@ const (
 
 type UI struct {
     screen tcell.Screen
-    output *comp.Output
-    input  *comp.Input
-    info   *comp.Info
+    output *widget.Output
+    input  *widget.Input
+    info   *widget.Info
 }
 
 func NewUI() *UI {
@@ -37,16 +37,16 @@ func NewUI() *UI {
         fs.Panic(err)
     }
 
-    themes.Load(themes.Default)
+    theme.Load(theme.Default)
 
+    scr.SetStyle(theme.Output)
     scr.HideCursor()
-    scr.SetStyle(themes.Output)
 
     return &UI{
         screen: scr,
-        output: comp.NewOutput(scr),
-        input:  comp.NewInput(scr),
-        info:   comp.NewInfo(scr),
+        output: widget.NewOutput(scr),
+        input:  widget.NewInput(scr),
+        info:   widget.NewInfo(scr),
     }
 }
 
@@ -57,7 +57,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
         heap := hs.Heap()
         w, h := ui.render(heap)
 
-        ui.setTitle(heap.Path)
+        ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
 
         ev := ui.screen.PollEvent()
 
@@ -85,6 +85,9 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 path := heap.Save()
                 
                 ui.info.SendInfo(fmt.Sprintf("%s saved", path))
+
+            case tcell.KeyCtrlN:
+                ui.output.ToggleNumbers()
 
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
@@ -183,10 +186,6 @@ func (ui *UI) Close() {
     if r != nil {
         fs.Panic(r)
     }
-}
-
-func (ui *UI) setTitle(s string) {
-    ui.screen.SetTitle(fmt.Sprintf("cu - %s", s))
 }
 
 func (ui *UI) render(heap *data.Heap) (w int, h int) {
