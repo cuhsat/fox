@@ -6,7 +6,6 @@ import (
     "github.com/cuhsat/cu/pkg/fs/data"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
-    "github.com/mattn/go-runewidth"
 )
 
 const (
@@ -63,14 +62,6 @@ func (i *Input) DelRune() {
 
 func (i *Input) Accept() (s string) {
     s, i.Value = i.Value, ""
-
-    return
-}
-
-func length(s string) (l int) {
-    for _, r := range s {
-        l += runewidth.RuneWidth(r)
-    }
 
     return
 }

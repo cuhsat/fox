@@ -15,8 +15,20 @@ func (w *widget) print(x, y int, s string, sty tcell.Style) {
             r = tcell.RuneRArrow
         }
 
+        if r == '\r' {
+            r = tcell.RuneLArrow
+        }
+
         w.screen.SetContent(x, y, r, nil, sty)
         
         x += runewidth.RuneWidth(r)
     }
+}
+
+func length(s string) (l int) {
+    for _, r := range s {
+        l += runewidth.RuneWidth(r)
+    }
+
+    return
 }

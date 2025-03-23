@@ -10,15 +10,23 @@ import (
     "github.com/gdamore/tcell/v2"
 )
 
+const (
+    Space = 1
+)
+
 type Output struct {
     widget
 
     numbers bool
-    max_n   int
+    wrap    bool
     max_x   int
     max_y   int
     delta_x int
     delta_y int
+}
+
+type dline struct {
+    n, s string
 }
 
 func NewOutput(screen tcell.Screen) *Output {
@@ -27,7 +35,7 @@ func NewOutput(screen tcell.Screen) *Output {
             screen: screen,
         },
         numbers: true,
-        max_n: 0,
+        wrap: false,
         max_x: 0,
         max_y: 0,
         delta_x: 0,
@@ -35,32 +43,28 @@ func NewOutput(screen tcell.Screen) *Output {
     }
 }
 
-func (o *Output) Render(heap *data.Heap, x, y, h int) {
-    o.max_x = maxString(heap.SMap)
+func (o *Output) Render(heap *data.Heap, x, y, w, h int) {
+    // set output bounds
+    o.max_x = wid(heap.SMap)
     o.max_y = len(heap.SMap)
-    o.max_n = int(math.Log10(float64(heap.Lines()))) + 1
 
-    for i, se := range heap.SMap[o.delta_y:] {
-        if i > h-1 {
-            break
-        }
+    // convert logical to display lines
+    for i, line := range o.buffer(heap, w, h) {
+        line_x := x
+        line_y := y + i
 
-        xn := x
-
+        // line number
         if o.numbers {
-            n := fmt.Sprintf("%0*d", o.max_n, se.Nr)
-            xn += o.max_n + 1
-
-            o.print(x, y + i, n, theme.Number)
+            o.print(line_x, line_y, line.n, theme.Number)
+            
+            line_x += len(line.n) + Space
         }
 
-        s := string(heap.MMap[se.Start:se.End])
-        d := min(o.delta_x, len(s))
+        o.print(line_x, line_y, line.s, theme.Output)
 
-        o.print(xn, y + i, s[d:], theme.Output)
-
-        for z, f := range heap.Chain {
-            o.highlight(xn, y + i, z, s[d:], f.Name)
+        // mark found positions
+        for c, f := range heap.Chain {
+            o.rmark(line_x, line_y, c, line.s, f.Name)
         }
     }
 }
@@ -108,19 +112,71 @@ func (o *Output) ToggleNumbers() {
     o.numbers = !o.numbers
 }
 
-func (o *Output) highlight(x, y, z int, s, f string) {
+func (o *Output) ToggleWrap() {
+    o.wrap = !o.wrap
+}
+
+func (o *Output) buffer(heap *data.Heap, w, h int) (l []dline) {
+    len_nr := int(math.Log10(float64(heap.Lines()))) + 1
+
+    if o.numbers {
+        w -= (len_nr + Space)
+    }
+
+    for i, se := range heap.SMap[o.delta_y:] {
+        if len(l) >= h {
+            return l[:h]
+        }
+
+        if i >= h {
+            return
+        }
+
+        // line number
+        n := fmt.Sprintf("%0*d", len_nr, se.Nr)
+
+        // logical line
+        s := string(heap.MMap[se.Start:se.End])
+        s = s[min(o.delta_x, length(s)):]
+
+        // display lines
+        if o.wrap {
+            for {
+                if length(s) < w+1 {
+                    break
+                }
+
+                l = append(l, dline{
+                    n: n,
+                    s: s[:w-1] + "\r",
+                })
+
+                s = s[w-1:]
+            }
+        }
+
+        l = append(l, dline{
+            n: n,
+            s: s,
+        })
+    }
+
+    return
+}
+
+func (o *Output) rmark(x, y, c int, s, f string) {
     i := strings.Index(s, f)
 
     if i == -1 {
         return
     }
 
-    o.print(x + i, y, f, theme.Colors[z % len(theme.Colors)])
+    o.print(x + i, y, f, theme.Colors[c % len(theme.Colors)])
     
-    o.highlight(x + i+1, y, z, s[i+1:], f)
+    o.rmark(x + i+1, y, c, s[i+1:], f)
 }
 
-func maxString(s data.SMap) (w int) {
+func wid(s data.SMap) (w int) {
     for _, se := range s {
         w = max(w, se.Len)
     }

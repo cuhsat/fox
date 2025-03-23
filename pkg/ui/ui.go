@@ -89,6 +89,9 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlN:
                 ui.output.ToggleNumbers()
 
+            case tcell.KeyCtrlW:
+                ui.output.ToggleWrap()
+
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
 
@@ -195,7 +198,7 @@ func (ui *UI) render(heap *data.Heap) (w int, h int) {
 
     w, h = ui.screen.Size()
 
-    ui.output.Render(heap, 0, 0, h-1)
+    ui.output.Render(heap, 0, 0, w, h-1)
     ui.input.Render(heap, 0, h-1, w)
     ui.info.Render(0, h-1, w)
 
