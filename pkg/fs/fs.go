@@ -32,6 +32,11 @@ func Panic(a ...any) {
     os.Exit(EX_ERROR)
 }
 
+func Print(a ...any) {
+    fmt.Fprintln(os.Stdout, a...)
+    os.Exit(EX_OK)
+}
+
 func Usage(u string) {
     fmt.Fprintln(os.Stdout, "Usage:", u)
     os.Exit(EX_USAGE)
