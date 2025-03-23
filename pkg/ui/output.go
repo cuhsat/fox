@@ -36,8 +36,8 @@ func (o *Output) Render(heap *fs.Heap, x, y, h int) {
 
         print(x, y + i, s[d:], StyleOutput)
 
-        for _, f := range heap.Chain {
-            highlight(x, y + i, s[d:], f.Name)
+        for z, f := range heap.Chain {
+            highlight(x, y + i, z, s[d:], f.Name)
         }
     }
 }
@@ -81,16 +81,16 @@ func (o *Output) ScrollPageDown(page int) {
     o.delta_y = min(o.delta_y + page, o.max_y)
 }
 
-func highlight(x, y int, s, f string) {
+func highlight(x, y, z int, s, f string) {
     i := strings.Index(s, f)
 
     if i == -1 {
         return
     }
 
-    print(x + i, y, f, StyleHighlight)
+    print(x + i, y, f, StyleHighlights[z % len(StyleHighlights)])
 
-    highlight(x + i+1, y, s[i+1:], f)
+    highlight(x + i+1, y, z, s[i+1:], f)
 }
 
 func maxString(s fs.SMap) (w int) {
