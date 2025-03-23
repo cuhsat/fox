@@ -4,6 +4,10 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
+const (
+    LineBreak = '\n'
+)
+
 type SMap []*SEntry
 
 type SEntry struct {
@@ -14,7 +18,7 @@ func smap(m mmap.MMap) (s SMap) {
     var j int = 0
 
     for i := 0; i < len(m); i++ {
-        if m[i] == '\n' {
+        if m[i] == LineBreak {
             s = append(s, &SEntry{
                 Start: j,
                 End: i,

@@ -19,7 +19,8 @@ const (
 )
 
 const (
-    FLAG_FILE = os.O_APPEND | os.O_CREATE | os.O_RDWR
+    FLAG_LOG = os.O_APPEND | os.O_CREATE | os.O_RDWR
+    FLAG_FILE = os.O_TRUNC | os.O_CREATE | os.O_WRONLY
 )
 
 func Error(a ...any) {

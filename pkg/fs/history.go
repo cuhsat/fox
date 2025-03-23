@@ -24,7 +24,7 @@ func NewHistory() *History {
         Panic(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, FileHistory), FLAG_FILE, MODE_FILE)
+    f, err := os.OpenFile(filepath.Join(dir, FileHistory), FLAG_LOG, MODE_FILE)
 
     if err != nil {
         Panic(err)
