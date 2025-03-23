@@ -35,7 +35,7 @@ func (i *Info) Render(x, y, w int) {
     }
 }
 
-func (i *Info) SendInfo(s string) {
+func (i *Info) SendMessage(s string) {
     i.buffer <- s
 }
 

@@ -79,12 +79,12 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlC:
                 ui.screen.SetClipboard(heap.Copy())
 
-                ui.info.SendInfo(fmt.Sprintf("%s copied", heap.Path))
+                ui.info.SendMessage(fmt.Sprintf("%s copied", heap.Path))
 
             case tcell.KeyCtrlS:
                 path := heap.Save()
                 
-                ui.info.SendInfo(fmt.Sprintf("%s saved", path))
+                ui.info.SendMessage(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlN:
                 ui.output.ToggleNumbers()
