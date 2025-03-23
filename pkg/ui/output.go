@@ -88,7 +88,7 @@ func highlight(x, y, z int, s, f string) {
         return
     }
 
-    print(x + i, y, f, StyleHighlights[z % len(StyleHighlights)])
+    print(x + i, y, f, StyleColors[z % len(StyleColors)])
 
     highlight(x + i+1, y, z, s[i+1:], f)
 }
