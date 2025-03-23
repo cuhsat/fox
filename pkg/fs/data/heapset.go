@@ -16,56 +16,20 @@ type HeapSet struct {
     index int     // set index
 }
 
-func NewHeapSet(path string) *HeapSet {
+func NewHeapSet(paths []string) *HeapSet {
     hs := HeapSet{
         index: 0,
     }
 
-    if path == "-" {
-        path = Stdin
-        
-        fs.Stdin(path)
-    }
-
-    fi, err := os.Stat(path)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    if !fi.IsDir() {
-        hs.heaps = append(hs.heaps, NewHeap(path))
-
-        return &hs
-    }
-
-    dir, err := os.ReadDir(path)
-
-    if err != nil {
-        fs.Panic(err)
-    }
- 
-    for _, e := range dir {
-        if e.IsDir() {
-            continue
-        }
-
-        f := filepath.Join(path, e.Name())
-
-        // lazy load all but first
-        if len(hs.heaps) == 0 {
-            hs.heaps = append(hs.heaps, NewHeap(f))
-        } else {
-            hs.heaps = append(hs.heaps, &Heap{
-                Path: f,
-                file: nil,
-            })
-        }
+    for _, path := range paths {
+        hs.loadPath(path)
     }
 
     if len(hs.heaps) == 0 {
         fs.Panic("no files in directory")
     }
+
+    hs.loadLazy()
 
     return &hs
 }
@@ -81,7 +45,7 @@ func (hs *HeapSet) Prev() *Heap {
         hs.index = len(hs.heaps)-1
     }
 
-    return hs.lazyLoad()
+    return hs.loadLazy()
 }
 
 func (hs *HeapSet) Next() *Heap {
@@ -91,7 +55,7 @@ func (hs *HeapSet) Next() *Heap {
         hs.index = 0
     }
 
-    return hs.lazyLoad()
+    return hs.loadLazy()
 }
 
 func (hs *HeapSet) ThrowAway() {
@@ -103,7 +67,48 @@ func (hs *HeapSet) ThrowAway() {
     hs.index = -1
 }
 
-func (hs *HeapSet) lazyLoad() *Heap {
+func (hs *HeapSet) loadPath(p string) {
+    // read stdin
+    if p == "-" {
+        p = Stdin
+        
+        fs.Stdin(p)
+    }
+
+    fi, err := os.Stat(p)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    // load file
+    if !fi.IsDir() {
+        hs.heaps = append(hs.heaps, &Heap{
+            Path: p,
+            file: nil,
+        })
+
+        return
+    }
+
+    // load directory
+    dir, err := os.ReadDir(p)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+ 
+    for _, e := range dir {
+        if !e.IsDir() {
+            hs.heaps = append(hs.heaps, &Heap{
+                Path: filepath.Join(p, e.Name()),
+                file: nil,
+            })
+        }
+    }
+}
+
+func (hs *HeapSet) loadLazy() *Heap {
     h := hs.Heap()
 
     if h.file == nil {

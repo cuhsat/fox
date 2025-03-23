@@ -47,6 +47,8 @@ func (i *Input) Render(heap *data.Heap, x, y, w int) {
         p = string([]rune(p)[:(w-x)-1]) + Abbrev
     }
 
+    // p = fmt.Sprintf("%-*s", w-x, p)
+
     i.print(x, y, p, theme.Filter)
 }
 
