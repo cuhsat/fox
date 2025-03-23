@@ -8,17 +8,41 @@ import (
 )
 
 const (
-    Delay = 3 // seconds
+    Delay = 2 // seconds
 )
 
-func (ui *UI) setInfo(x, y int) {
-    w, _ := screen.Size()
+type Info struct {
+    buffer chan string
+    value  string
+}
 
-    print(x, y, fmt.Sprintf(" %-*s", w, ui.info), StyleInfo)
+func NewInfo() *Info {
+    return &Info{
+        buffer: make(chan string),
+        value: "",
+    }
+}
 
-    go func() {
+func (i *Info) Render(x, y, w int) {
+    if len(i.value) > 0 {
+        print(x, y, fmt.Sprintf(" %-*s", w, i.value), StyleInfo)
+    }
+}
+
+func (i *Info) SendInfo(s string) {
+    i.buffer <- s
+}
+
+func (i *Info) Watch() {
+    for i.value = range i.buffer {
         time.Sleep(Delay * time.Second)
-        
-        screen.PostEvent(tcell.NewEventInterrupt(""))
-    }()
+
+        i.value = ""
+
+        screen.PostEvent(tcell.NewEventInterrupt(nil))
+    }
+}
+
+func (i *Info) Close() {
+    close(i.buffer)
 }
