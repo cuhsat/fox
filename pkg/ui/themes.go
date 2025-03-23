@@ -32,7 +32,7 @@ var (
     StyleInfo       tcell.Style
     StyleFile       tcell.Style
     StyleFilter     tcell.Style
-    StyleHighlights []tcell.Style
+    StyleColors []tcell.Style
 )
 
 func setTheme(name string) {
@@ -55,10 +55,10 @@ func setTheme(name string) {
         Background(tcell.NewHexColor(t[7]))
 
     for i := 8; i < 14; i++ {
-        style := tcell.StyleDefault.
+        s := tcell.StyleDefault.
             Foreground(tcell.NewHexColor(t[i])).
             Background(tcell.NewHexColor(t[1]))
 
-        StyleHighlights = append(StyleHighlights, style)
+        StyleColors = append(StyleColors, s)
     }
 }
