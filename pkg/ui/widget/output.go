@@ -21,6 +21,8 @@ type Output struct {
     wrap    bool
     max_x   int
     max_y   int
+    last_x  int
+    last_y  int
     delta_x int
     delta_y int
 }
@@ -38,18 +40,31 @@ func NewOutput(screen tcell.Screen) *Output {
         wrap: false,
         max_x: 0,
         max_y: 0,
+        last_x: 0,
+        last_y: 0,
         delta_x: 0,
         delta_y: 0,
     }
 }
 
 func (o *Output) Render(heap *data.Heap, x, y, w, h int) {
-    // set output bounds
+    // set output limits
     o.max_x = wid(heap.SMap)
     o.max_y = len(heap.SMap)
 
     // convert logical to display lines
-    for i, line := range o.buffer(heap, w, h) {
+    lines := o.buffer(heap, w, h)
+
+    if len(lines) > 0 {
+        w -= len(lines[0].n) + Space
+    }
+
+    // set buffer bounds
+    o.last_x = max(o.max_x - w, 0)
+    o.last_y = max(o.max_y - h, 0)
+
+    // render buffer
+    for i, line := range lines {
         line_x := x
         line_y := y + i
 
@@ -80,8 +95,8 @@ func (o *Output) ScrollBegin() {
     o.delta_y = 0
 }
 
-func (o *Output) ScrollEnd(page int) {
-    o.delta_y = min(o.max_y, o.max_y - page)
+func (o *Output) ScrollEnd() {
+    o.delta_y = min(o.max_y, o.last_y)
 }
 
 func (o *Output) ScrollUp(delta int) {
@@ -89,7 +104,7 @@ func (o *Output) ScrollUp(delta int) {
 }
 
 func (o *Output) ScrollDown(delta int) {
-    o.delta_y = min(o.delta_y + delta, o.max_y-1)
+    o.delta_y = min(o.delta_y + delta, o.last_y)
 }
 
 func (o *Output) ScrollLeft(delta int) {
@@ -97,15 +112,15 @@ func (o *Output) ScrollLeft(delta int) {
 }
 
 func (o *Output) ScrollRight(delta int) {
-    o.delta_x = min(o.delta_x + delta, o.max_x-1)
+    o.delta_x = min(o.delta_x + delta, o.last_x)
 }
 
-func (o *Output) ScrollPageUp(page int) {
-    o.delta_y = max(o.delta_y - page, 0)
+func (o *Output) ScrollPageUp(delta int) {
+    o.delta_y = max(o.delta_y - delta, 0)
 }
 
-func (o *Output) ScrollPageDown(page int) {
-    o.delta_y = min(o.delta_y + page, o.max_y)
+func (o *Output) ScrollPageDown(delta int) {
+    o.delta_y = min(o.delta_y + delta, o.last_y)
 }
 
 func (o *Output) ToggleNumbers() {

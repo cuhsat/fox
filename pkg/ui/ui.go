@@ -41,6 +41,7 @@ func NewUI() *UI {
 
     scr.SetStyle(theme.Output)
     scr.EnableMouse()
+    scr.EnablePaste()
     scr.HideCursor()
 
     return &UI{
@@ -58,13 +59,14 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
         heap := hs.Heap()
         w, h := ui.render(heap)
 
-        ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
-
         ev := ui.screen.PollEvent()
 
         switch ev := ev.(type) {
         case *tcell.EventInterrupt:
             continue
+
+        case *tcell.EventClipboard:
+            ui.input.Value = string(ev.Data())
 
         case *tcell.EventResize:
             ui.screen.Sync()
@@ -88,9 +90,15 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             }
 
         case *tcell.EventKey:
+            page_w := w
+            page_h := h - 1
+
             switch ev.Key() {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
+
+            case tcell.KeyCtrlP:
+                ui.screen.GetClipboard()
 
             case tcell.KeyCtrlC:
                 ui.screen.SetClipboard(heap.Copy())
@@ -112,13 +120,13 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 ui.output.ScrollBegin()
 
             case tcell.KeyEnd:
-                ui.output.ScrollEnd(h-1)
+                ui.output.ScrollEnd()
 
             case tcell.KeyUp:
                 if ev.Modifiers() & tcell.ModCtrl == 1 {
                     ui.input.Value = hi.PrevCommand()
                 } else if ev.Modifiers() & tcell.ModShift == 1 {
-                    ui.output.ScrollUp(h-1)
+                    ui.output.ScrollUp(page_h)
                 } else {
                     ui.output.ScrollUp(Delta)
                 }
@@ -127,30 +135,30 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 if ev.Modifiers() & tcell.ModCtrl == 1 {
                     ui.input.Value = hi.NextCommand()
                 } else if ev.Modifiers() & tcell.ModShift == 1 {
-                    ui.output.ScrollDown(h-1)
+                    ui.output.ScrollDown(page_h)
                 } else {
                     ui.output.ScrollDown(Delta)
                 }
 
             case tcell.KeyLeft:
                 if ev.Modifiers() & tcell.ModShift == 1 {
-                    ui.output.ScrollLeft(w)
+                    ui.output.ScrollLeft(page_w)
                 } else {
                     ui.output.ScrollLeft(Delta)
                 }
 
             case tcell.KeyRight:
                 if ev.Modifiers() & tcell.ModShift == 1 {
-                    ui.output.ScrollRight(w)
+                    ui.output.ScrollRight(page_w)
                 } else {
                     ui.output.ScrollRight(Delta)
                 }
 
             case tcell.KeyPgUp:
-                ui.output.ScrollPageUp(h-1)
+                ui.output.ScrollPageUp(page_h)
 
             case tcell.KeyPgDn:
-                ui.output.ScrollPageDown(h-1)
+                ui.output.ScrollPageDown(page_h)
 
             case tcell.KeyEnter:
                 v := ui.input.Accept()
@@ -210,6 +218,7 @@ func (ui *UI) Close() {
 func (ui *UI) render(heap *data.Heap) (w int, h int) {
     defer ui.screen.Show()
 
+    ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
     ui.screen.Clear()
 
     w, h = ui.screen.Size()
