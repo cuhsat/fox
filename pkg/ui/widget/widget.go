@@ -12,22 +12,18 @@ type widget struct {
 }
 
 func (w *widget) print(x, y int, s string, sty tcell.Style) {
+    // unicode.PrintRanges[4] = unicode.White_Space
+
     for _, r := range s {
-        // if !isPrint(r) {
-        //     r = tcell.RuneBullet
-        // } else if r == '\t' {
-        //     r = tcell.RuneRArrow
-        // } else if r == '\r' {
-        //     r = tcell.RuneLArrow
-        // }
-
-
-        if r == '\t' {
+        switch r {
+        case '\t':
             r = tcell.RuneRArrow
-        }
-
-        if r == '\r' {
+        case '\r':
             r = tcell.RuneLArrow
+        // default:
+        //     if !unicode.In(r, unicode.PrintRanges...) {
+        //         r = tcell.RuneBullet
+        //     }
         }
 
         w.screen.SetContent(x, y, r, nil, sty)
@@ -35,10 +31,6 @@ func (w *widget) print(x, y int, s string, sty tcell.Style) {
         x += runewidth.RuneWidth(r)
     }
 }
-
-// func isPrint(r rune) bool {
-//     return unicode.In(r, unicode.L, unicode.M, unicode.N, unicode.P, unicode.White_Space)
-// }
 
 func length(s string) (l int) {
     for _, r := range s {

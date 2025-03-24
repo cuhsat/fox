@@ -2,10 +2,10 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/cuhsat/cu?style=flat-square)](https://goreportcard.com/report/github.com/cuhsat/cu)
 [see:you] is a format agnostic, performance optimized text file viewer.
 
-TODO: Gif
+![](assets/cu.gif)
 
 ## Usage
-```sh
+```console
 $ cu [-hv] PATH ...
 ```
 
