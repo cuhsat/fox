@@ -40,6 +40,7 @@ func NewUI() *UI {
     theme.Load(theme.Default)
 
     scr.SetStyle(theme.Output)
+    scr.EnableMouse()
     scr.HideCursor()
 
     return &UI{
@@ -70,6 +71,21 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
 
         case *tcell.EventError:
             fs.Error(ev.Error())
+
+        case *tcell.EventMouse:
+            switch ev.Buttons() {
+            case tcell.WheelUp:
+                ui.output.ScrollUp(Delta)
+
+            case tcell.WheelDown:
+                ui.output.ScrollDown(Delta)
+
+            case tcell.WheelLeft:
+                ui.output.ScrollLeft(Delta)
+
+            case tcell.WheelRight:
+                ui.output.ScrollRight(Delta)
+            }
 
         case *tcell.EventKey:
             switch ev.Key() {
