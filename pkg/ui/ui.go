@@ -17,12 +17,13 @@ const (
 
 type UI struct {
     screen tcell.Screen
+    title  *widget.Title
     output *widget.Output
     input  *widget.Input
     info   *widget.Info
 }
 
-func NewUI() *UI {
+func NewUI(hex bool) *UI {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -46,7 +47,8 @@ func NewUI() *UI {
 
     return &UI{
         screen: scr,
-        output: widget.NewOutput(scr),
+        title:  widget.NewTitle(scr),
+        output: widget.NewOutput(scr, hex),
         input:  widget.NewInput(scr),
         info:   widget.NewInfo(scr),
     }
@@ -56,8 +58,8 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
     go ui.info.Watch()
 
     for {
-        heap := hs.Heap()
-        w, h := ui.render(heap)
+        _, heap := hs.Current()
+        w, h := ui.render(hs)
 
         ev := ui.screen.PollEvent()
 
@@ -97,7 +99,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
 
-            case tcell.KeyCtrlP:
+            case tcell.KeyCtrlV:
                 ui.screen.GetClipboard()
 
             case tcell.KeyCtrlC:
@@ -110,11 +112,18 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 
                 ui.info.SendMessage(fmt.Sprintf("%s saved", path))
 
+            case tcell.KeyCtrlR:
+                ui.output.Reset()
+                heap.Reload()
+
             case tcell.KeyCtrlN:
                 ui.output.ToggleNumbers()
 
             case tcell.KeyCtrlW:
                 ui.output.ToggleWrap()
+
+            case tcell.KeyCtrlX:
+                ui.output.ToggleHex()
 
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
@@ -207,7 +216,6 @@ func (ui *UI) Close() {
     r := recover()
 
     ui.info.Close()
-
     ui.screen.Fini()
 
     if r != nil {
@@ -215,15 +223,18 @@ func (ui *UI) Close() {
     }
 }
 
-func (ui *UI) render(heap *data.Heap) (w int, h int) {
+func (ui *UI) render(hs *data.HeapSet) (w int, h int) {
     defer ui.screen.Show()
+
+    _, heap := hs.Current()
 
     ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
     ui.screen.Clear()
 
     w, h = ui.screen.Size()
 
-    ui.output.Render(heap, 0, 0, w, h-1)
+    ui.title.Render(hs, 0, 0, w)
+    ui.output.Render(heap, 0, 1, w, h-2)
     ui.input.Render(heap, 0, h-1, w)
     ui.info.Render(0, h-1, w)
 

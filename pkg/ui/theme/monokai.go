@@ -7,10 +7,10 @@ var Monokai = []int32 {
     0x85d3f2, // info background
     0x222327, // file foreground
     0xa7df78, // file background
-    0x595f6f, // number foreground
-    0x222327, // number background
-    0xe2e2e3, // filter foreground
-    0x3e3b48, // filter background
+    0x595f6f, // hint foreground
+    0x222327, // hint background
+    0xe2e2e3, // input foreground
+    0x3e3b48, // input background
     0xfc5d7c, // highlight 1
     0xf39660, // highlight 2
     0xe7c664, // highlight 3

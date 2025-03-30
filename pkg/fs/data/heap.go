@@ -55,6 +55,26 @@ func NewHeap(path string) *Heap {
     }
 }
 
+func (h *Heap) Reload() {
+    h.ThrowAway()
+    var err error
+
+    h.file, err = os.OpenFile(h.Path, os.O_RDONLY, fs.MODE_FILE)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    h.SMap = smap(h.MMap)
+    h.rmap = h.SMap
+}
+
 func (h *Heap) Lines() int {
     return len(h.rmap)
 }

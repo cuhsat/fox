@@ -2,6 +2,7 @@ package widget
 
 import (
     "fmt"
+    "strings"
 
     "github.com/cuhsat/cu/pkg/fs/data"
     "github.com/cuhsat/cu/pkg/ui/theme"
@@ -17,7 +18,8 @@ const (
 type Input struct {
     widget
 
-    Value  string
+    Mode  string
+    Value string
 }
 
 func NewInput(screen tcell.Screen) *Input {
@@ -25,14 +27,15 @@ func NewInput(screen tcell.Screen) *Input {
         widget: widget{
             screen: screen,
         },
+        Mode: "TODO",
         Value: "",
     }
 }
 
 func (i *Input) Render(heap *data.Heap, x, y, w int) {
-    file := fmt.Sprintf(" %s ", heap.Path)
+    file := fmt.Sprintf(" %s ", i.Mode)
 
-    i.print(x, y, file, theme.File)
+    i.print(x, y, file, theme.Mode)
 
     x += length(file)
     p := ""
@@ -49,7 +52,11 @@ func (i *Input) Render(heap *data.Heap, x, y, w int) {
 
     // p = fmt.Sprintf("%-*s", w-x, p)
 
-    i.print(x, y, p, theme.Filter)
+    i.print(x, y, p, theme.Input)
+}
+
+func (i *Input) SetMode(m string) {
+    i.Mode = strings.ToUpper(m)
 }
 
 func (i *Input) AddRune(r rune) {

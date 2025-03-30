@@ -1,7 +1,7 @@
 package widget
 
 import (
-    // "unicode"
+    "unicode"
 
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
@@ -12,18 +12,16 @@ type widget struct {
 }
 
 func (w *widget) print(x, y int, s string, sty tcell.Style) {
-    // unicode.PrintRanges[4] = unicode.White_Space
-
     for _, r := range s {
         switch r {
         case '\t':
             r = tcell.RuneRArrow
         case '\r':
             r = tcell.RuneLArrow
-        // default:
-        //     if !unicode.In(r, unicode.PrintRanges...) {
-        //         r = tcell.RuneBullet
-        //     }
+        default:
+            if !unicode.IsPrint(r) {
+                r = tcell.RuneBullet
+            }
         }
 
         w.screen.SetContent(x, y, r, nil, sty)
