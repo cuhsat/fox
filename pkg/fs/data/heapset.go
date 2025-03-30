@@ -34,8 +34,12 @@ func NewHeapSet(paths []string) *HeapSet {
     return &hs
 }
 
-func (hs *HeapSet) Heap() *Heap {
-    return hs.heaps[hs.index]
+func (hs *HeapSet) Length() int {
+    return len(hs.heaps)
+}
+
+func (hs *HeapSet) Current() (int, *Heap) {
+    return hs.index+1, hs.heaps[hs.index]
 }
 
 func (hs *HeapSet) Prev() *Heap {
@@ -109,7 +113,7 @@ func (hs *HeapSet) loadPath(p string) {
 }
 
 func (hs *HeapSet) loadLazy() *Heap {
-    h := hs.Heap()
+    _, h := hs.Current()
 
     if h.file == nil {
         hs.heaps[hs.index] = NewHeap(h.Path)

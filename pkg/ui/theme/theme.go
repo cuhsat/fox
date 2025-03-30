@@ -9,11 +9,12 @@ const (
 )
 
 var (
+    Title  tcell.Style
     Output tcell.Style
     Info   tcell.Style
-    File   tcell.Style
-    Number tcell.Style
-    Filter tcell.Style
+    Mode   tcell.Style
+    Hint   tcell.Style
+    Input  tcell.Style
     Colors []tcell.Style
 )
 
@@ -21,6 +22,10 @@ func Load(name string) {
     t := map[string][]int32{
         "monokai": Monokai,
     }[name]
+
+    Title = tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(t[8])).
+        Background(tcell.NewHexColor(t[7]))
 
     Output = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[0])).
@@ -30,15 +35,15 @@ func Load(name string) {
         Foreground(tcell.NewHexColor(t[2])).
         Background(tcell.NewHexColor(t[3]))
 
-    File = tcell.StyleDefault.
+    Mode = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[4])).
         Background(tcell.NewHexColor(t[5]))
 
-    Number = tcell.StyleDefault.
+    Hint = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[6])).
         Background(tcell.NewHexColor(t[7]))
 
-    Filter = tcell.StyleDefault.
+    Input = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[8])).
         Background(tcell.NewHexColor(t[9]))
 
