@@ -15,15 +15,22 @@ const (
     Delta = 1 // lines
 )
 
+const (
+    ModeShell = 0
+    ModeText  = 1
+    ModeHex   = 2
+)
+
 type UI struct {
     screen tcell.Screen
-    title  *widget.Title
-    output *widget.Output
-    input  *widget.Input
-    info   *widget.Info
+    title   *widget.Title
+    output  *widget.Output
+    input   *widget.Input
+    overlay *widget.Overlay
+    mode    int
 }
 
-func NewUI(hex bool) *UI {
+func NewUI(mode int) *UI {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -46,16 +53,17 @@ func NewUI(hex bool) *UI {
     scr.HideCursor()
 
     return &UI{
-        screen: scr,
-        title:  widget.NewTitle(scr),
-        output: widget.NewOutput(scr, hex),
-        input:  widget.NewInput(scr),
-        info:   widget.NewInfo(scr),
+        screen:  scr,
+        title:   widget.NewTitle(scr),
+        output:  widget.NewOutput(scr, mode == ModeHex),
+        input:   widget.NewInput(scr, mode),
+        overlay: widget.NewOverlay(scr),
+        mode:    mode,
     }
 }
 
 func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
-    go ui.info.Watch()
+    go ui.overlay.Watch()
 
     for {
         _, heap := hs.Current()
@@ -93,7 +101,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
 
         case *tcell.EventKey:
             page_w := w
-            page_h := h - 1
+            page_h := h-1
 
             switch ev.Key() {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
@@ -105,12 +113,15 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlC:
                 ui.screen.SetClipboard(heap.Copy())
 
-                ui.info.SendMessage(fmt.Sprintf("%s copied", heap.Path))
+                ui.overlay.SendMessage(fmt.Sprintf("%s copied", heap.Path))
 
             case tcell.KeyCtrlS:
                 path := heap.Save()
                 
-                ui.info.SendMessage(fmt.Sprintf("%s saved", path))
+                ui.overlay.SendMessage(fmt.Sprintf("%s saved", path))
+
+            case tcell.KeyCtrlY:
+                ui.overlay.SendMessage(fmt.Sprintf("%s SHA256 %x", heap.Path, heap.Hash))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
@@ -123,6 +134,14 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 ui.output.ToggleWrap()
 
             case tcell.KeyCtrlX:
+                if ui.mode == ModeText {
+                    ui.mode = ModeHex
+                } else {
+                    ui.mode = ModeText
+                }
+
+                ui.input.Mode = ui.mode
+
                 ui.output.ToggleHex()
 
             case tcell.KeyHome:
@@ -215,7 +234,8 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
 func (ui *UI) Close() {
     r := recover()
 
-    ui.info.Close()
+    ui.overlay.Close()
+    
     ui.screen.Fini()
 
     if r != nil {
@@ -231,12 +251,18 @@ func (ui *UI) render(hs *data.HeapSet) (w int, h int) {
     ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
     ui.screen.Clear()
 
+    x, y := 0, 0
     w, h = ui.screen.Size()
 
-    ui.title.Render(hs, 0, 0, w)
-    ui.output.Render(heap, 0, 1, w, h-2)
-    ui.input.Render(heap, 0, h-1, w)
-    ui.info.Render(0, h-1, w)
+    for _, widget := range [...]widget.Stackable{
+        ui.title,
+        ui.output,
+        ui.input,
+    }{
+        y += widget.Render(hs, x, y, w, h-y)
+    }
+    
+    ui.overlay.Render(0, 0, w, h)
 
     return
 }

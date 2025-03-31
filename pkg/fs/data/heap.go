@@ -2,6 +2,7 @@ package data
 
 import (
     "bytes"
+    "crypto/sha256"
     "cmp"
     "io"
     "os"
@@ -15,6 +16,7 @@ import (
 
 type Heap struct {
     Path string    // file path
+    Hash []byte    // file hash sum
     Chain []*SLink // filter chain
     MMap mmap.MMap // memory map
     SMap SMap      // string map current
@@ -44,10 +46,19 @@ func NewHeap(path string) *Heap {
         fs.Panic(err)
     }
 
+    sha := sha256.New()
+
+    _, err = io.Copy(sha, f)
+    
+    if err != nil {
+        fs.Panic(err)
+    }
+
     s := smap(m)
 
     return &Heap{
         Path: path,
+        Hash: sha.Sum(nil),
         MMap: m,
         SMap: s,
         rmap: s,
@@ -71,6 +82,15 @@ func (h *Heap) Reload() {
         fs.Panic(err)
     }
 
+    sha := sha256.New()
+
+    _, err = io.Copy(sha, h.file)
+    
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    h.Hash = sha.Sum(nil)
     h.SMap = smap(h.MMap)
     h.rmap = h.SMap
 }

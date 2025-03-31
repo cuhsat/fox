@@ -12,32 +12,34 @@ import (
 const (
     Separator = "❯"
     Cursor = "_"
-    Abbrev = "…"
 )
 
 type Input struct {
     widget
 
-    Mode, Value string
+    Mode int
+    Value string
 }
 
-func NewInput(screen tcell.Screen) *Input {
+func NewInput(screen tcell.Screen, mode int) *Input {
     return &Input{
         widget: widget{
             screen: screen,
         },
-        Mode: "FIND",
+        Mode: mode,
         Value: "",
     }
 }
 
-func (i *Input) Render(heap *data.Heap, x, y, w int) {
-    file := fmt.Sprintf(" %s ", i.Mode)
+func (i *Input) Render(hs *data.HeapSet, x, y, w, h int) int {
+    m := fmt.Sprintf(" %s ", strings.ToUpper(i.mode()))
 
-    i.print(x, y, file, theme.Mode)
+    i.print(x, y, m, theme.Mode)
 
-    x += length(file)
+    x += length(m)
     p := ""
+
+    _, heap := hs.Current()
 
     for _, f := range heap.Chain {
         p = fmt.Sprintf("%s %s %s", p, f.Name, Separator)
@@ -45,17 +47,11 @@ func (i *Input) Render(heap *data.Heap, x, y, w int) {
 
     p = fmt.Sprintf("%s %s%s ", p, i.Value, Cursor)
 
-    if x + length(p) > w + 1 {
-        p = string([]rune(p)[:(w-x)-1]) + Abbrev
-    }
-
     // p = fmt.Sprintf("%-*s", w-x, p)
 
-    i.print(x, y, p, theme.Input)
-}
+    i.print(x, y, abbrev(p, x, w), theme.Input)
 
-func (i *Input) SetMode(m string) {
-    i.Mode = strings.ToUpper(m)
+    return 1
 }
 
 func (i *Input) AddRune(r rune) {
@@ -72,4 +68,17 @@ func (i *Input) Accept() (s string) {
     s, i.Value = i.Value, ""
 
     return
+}
+
+func (i *Input) mode() string {
+    switch i.Mode {
+    case 0:
+        return "Shell"
+    case 1:
+        return "Text"
+    case 2:
+        return "Hex"
+    default:
+        return "Err"
+    }
 }

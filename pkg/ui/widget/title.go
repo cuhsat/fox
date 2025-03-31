@@ -20,11 +20,13 @@ func NewTitle(screen tcell.Screen) *Title {
     }
 }
 
-func (t *Title) Render(hs *data.HeapSet, x, y, w int) {
+func (t *Title) Render(hs *data.HeapSet, x, y, w, h int) int {
     i, heap := hs.Current()
     
-    l := fmt.Sprintf("%s", heap.Path)
     r := fmt.Sprintf("%d/%d", i, hs.Length())
+    l := fmt.Sprintf("%s", abbrev(heap.Path, x, w-(len(r)+1)))
 
     t.print(x, y, fmt.Sprintf("%-*s%s", w-len(r), l, r), theme.Title)
+
+    return 1
 }

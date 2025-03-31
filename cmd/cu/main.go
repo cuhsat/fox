@@ -19,6 +19,8 @@ func main() {
     flag.CommandLine.SetOutput(io.Discard)
     flag.Parse()
 
+    var mode int
+
     if *h || len(flag.Args()) < 1 {
         fs.Usage("cu [-xhv] PATH ...")
     }
@@ -27,13 +29,19 @@ func main() {
         fs.Print("cu", Version)
     }
 
+    if *x {
+        mode = ui.ModeHex
+    } else {
+        mode = ui.ModeText
+    }
+
     hs := data.NewHeapSet(flag.Args())
     defer hs.ThrowAway()
 
     hi := fs.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(*x)
+    ui := ui.NewUI(mode)
     defer ui.Close()
 
     ui.Run(hs, hi)

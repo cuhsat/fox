@@ -47,12 +47,18 @@ func NewOutput(screen tcell.Screen, hex bool) *Output {
     }
 }
 
-func (o *Output) Render(heap *data.Heap, x, y, w, h int) {
+func (o *Output) Render(hs *data.HeapSet, x, y, w, h int) int {
+    _, heap := hs.Current()
+
+    h -= 1 // fill all but least line
+
     if !o.hex {
         o.textRender(heap, x, y, w, h)
     } else {
         o.hexRender(heap, x, y, w, h)
     }
+
+    return h
 }
 
 func (o *Output) Reset() {
@@ -186,6 +192,18 @@ func (o *Output) textBuffer(heap *data.Heap, w, h int) (tl []textLine) {
     return
 }
 
+func (o *Output) textMark(x, y, c int, s, f string) {
+    i := strings.Index(s, f)
+
+    if i == -1 {
+        return
+    }
+
+    o.print(x + i, y, f, theme.Colors[c % len(theme.Colors)])
+    
+    o.textMark(x + i+1, y, c, s[i+1:], f)
+}
+
 func (o *Output) hexRender(heap *data.Heap, x, y, w, h int) {
     // convert logical to display lines
     lines, max_y := o.hexBuffer(heap, w, h)
@@ -269,18 +287,6 @@ func (o *Output) hexBuffer(heap *data.Heap, w, h int) (hl []hexLine, my int) {
     }
 
     return
-}
-
-func (o *Output) textMark(x, y, c int, s, f string) {
-    i := strings.Index(s, f)
-
-    if i == -1 {
-        return
-    }
-
-    o.print(x + i, y, f, theme.Colors[c % len(theme.Colors)])
-    
-    o.textMark(x + i+1, y, c, s[i+1:], f)
 }
 
 func (o *Output) hexMark(x, y, c int, s, f string) {

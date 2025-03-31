@@ -28,6 +28,7 @@ Available options:
 | <kbd>Ctrl</kbd>+<kbd>l</kbd>    | Toggle line numbers |
 | <kbd>Ctrl</kbd>+<kbd>w</kbd>    | Toggle line wrap    |
 | <kbd>Ctrl</kbd>+<kbd>x</kbd>    | Toggle hex mode     |
+| <kbd>Ctrl</kbd>+<kbd>y</kbd>    | Show file hash      |
 | <kbd>Ctrl</kbd>+<kbd>q</kbd>    | Exit                |
 
 ## License
