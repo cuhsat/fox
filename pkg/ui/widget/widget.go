@@ -3,13 +3,18 @@ package widget
 import (
     "unicode"
 
+    "github.com/cuhsat/cu/pkg/fs/data"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
 
-// type render interface {
-//     Render(hs *data.HeapSet, x, y, w, h int) int
-// }
+const (
+    Abbrev = "…"
+)
+
+type Stackable interface {
+    Render(hs *data.HeapSet, x, y, w, h int) int
+}
 
 type widget struct {
     screen tcell.Screen
@@ -32,6 +37,14 @@ func (w *widget) print(x, y int, s string, sty tcell.Style) {
         
         x += runewidth.RuneWidth(r)
     }
+}
+
+func abbrev(s string, x, w int) string {
+    if x + length(s) > w + 1 {
+        s = string([]rune(s)[:(w-x)-1]) + Abbrev
+    }
+
+    return s
 }
 
 func length(s string) (l int) {
