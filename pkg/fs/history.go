@@ -12,7 +12,7 @@ const (
 )
 
 type History struct {
-    file  *os.File // file handle
+    file *os.File  // file handle
     lines []string // buffer lines
     index int      // buffer index
 }

@@ -17,11 +17,9 @@ const (
 type Output struct {
     widget
 
-    hex     bool
-    nrs     bool
-    wrap    bool
-    last_x  int
-    last_y  int
+    hex, nrs, wrap bool
+    last_x int
+    last_y int
     delta_x int
     delta_y int
 }
@@ -286,24 +284,28 @@ func (o *Output) textMark(x, y, c int, s, f string) {
 }
 
 func (o *Output) hexMark(x, y, c int, s, f string) {
-    i := strings.Index(s, f)
+    j := 0
 
-    if i == -1 {
-        return
+    for j < len(s) {
+        i := strings.Index(s[j:], f)
+
+        if i == -1 {
+            break
+        }
+
+        i += j
+
+        for bx, b := range []byte(f) {
+            h := fmt.Sprintf("%02x", b)
+
+            dx := (i*2) + (bx*2)
+            dx += dx / 4
+
+            o.print(x + dx, y, h, theme.Colors[c % len(theme.Colors)])
+        }
+
+        j = i+1
     }
-
-    dx := 0
-
-    for bx, b := range []byte(f) {
-        h := fmt.Sprintf("%02x", b)
-
-        dx = (i*2) + (bx*2)
-        dx += dx / 4
-
-        o.print(x + dx, y, h, theme.Colors[c % len(theme.Colors)])
-    }
-    
-    o.hexMark(x + dx, y, c, s[i+1:], f)
 
     return
 }

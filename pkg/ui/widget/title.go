@@ -23,7 +23,8 @@ func NewTitle(screen tcell.Screen) *Title {
 func (t *Title) Render(hs *data.HeapSet, x, y, w int) {
     i, heap := hs.Current()
     
-    s := fmt.Sprintf("%d/%d %s", i, hs.Length(), heap.Path)
+    l := fmt.Sprintf("%s", heap.Path)
+    r := fmt.Sprintf("%d/%d", i, hs.Length())
 
-    t.print(x, y, fmt.Sprintf("%-*s", w - len(s), s), theme.Title)
+    t.print(x, y, fmt.Sprintf("%-*s%s", w-len(r), l, r), theme.Title)
 }

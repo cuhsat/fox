@@ -7,6 +7,10 @@ import (
     "github.com/mattn/go-runewidth"
 )
 
+// type render interface {
+//     Render(hs *data.HeapSet, x, y, w, h int) int
+// }
+
 type widget struct {
     screen tcell.Screen
 }

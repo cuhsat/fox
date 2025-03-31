@@ -116,7 +116,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 ui.output.Reset()
                 heap.Reload()
 
-            case tcell.KeyCtrlN:
+            case tcell.KeyCtrlL:
                 ui.output.ToggleNumbers()
 
             case tcell.KeyCtrlW:
