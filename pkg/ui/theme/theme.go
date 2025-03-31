@@ -9,12 +9,7 @@ const (
 )
 
 var (
-    Title  tcell.Style
-    Output tcell.Style
-    Info   tcell.Style
-    Mode   tcell.Style
-    Hint   tcell.Style
-    Input  tcell.Style
+    Title, Output, Info, Mode, Hint, Input tcell.Style
     Colors []tcell.Style
 )
 

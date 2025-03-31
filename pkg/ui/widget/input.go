@@ -18,8 +18,7 @@ const (
 type Input struct {
     widget
 
-    Mode  string
-    Value string
+    Mode, Value string
 }
 
 func NewInput(screen tcell.Screen) *Input {
@@ -27,7 +26,7 @@ func NewInput(screen tcell.Screen) *Input {
         widget: widget{
             screen: screen,
         },
-        Mode: "TODO",
+        Mode: "FIND",
         Value: "",
     }
 }

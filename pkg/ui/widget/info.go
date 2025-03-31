@@ -15,40 +15,50 @@ const (
 type Info struct {
     widget
 
-    buffer chan string
-    value  string
+    ch chan message
+    buffer *message
 }
+
+type message struct {
+    value string
+    style tcell.Style
+} 
 
 func NewInfo(screen tcell.Screen) *Info {
     return &Info{
         widget: widget{
             screen: screen,
         },
-        buffer: make(chan string),
-        value: "",
+        ch: make(chan message),
+        buffer: nil,
     }
 }
 
 func (i *Info) Render(x, y, w int) {
-    if len(i.value) > 0 {
-        i.print(x, y, fmt.Sprintf(" %-*s", w, i.value), theme.Info)
+    if i.buffer != nil {
+        i.print(x, y, fmt.Sprintf(" %-*s", w, i.buffer.value), i.buffer.style)
     }
 }
 
 func (i *Info) SendMessage(s string) {
-    i.buffer <- s
+    i.ch <- message{
+        value: s,
+        style: theme.Info,
+    }
 }
 
 func (i *Info) Watch() {
-    for i.value = range i.buffer {
+    for m := range i.ch {
+        i.buffer = &m
+
         time.Sleep(Delay * time.Second)
 
-        i.value = ""
+        i.buffer = nil
 
         i.screen.PostEvent(tcell.NewEventInterrupt(nil))
     }
 }
 
 func (i *Info) Close() {
-    close(i.buffer)
+    close(i.ch)
 }

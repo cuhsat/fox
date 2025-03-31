@@ -25,7 +25,7 @@ Available options:
 | <kbd>Ctrl</kbd>+<kbd>s</kbd>    | Save filtered lines |
 | <kbd>Ctrl</kbd>+<kbd>c</kbd>    | Copy filtered lines |
 | <kbd>Ctrl</kbd>+<kbd>v</kbd>    | Paste filter input  |
-| <kbd>Ctrl</kbd>+<kbd>n</kbd>    | Toggle line numbers |
+| <kbd>Ctrl</kbd>+<kbd>l</kbd>    | Toggle line numbers |
 | <kbd>Ctrl</kbd>+<kbd>w</kbd>    | Toggle line wrap    |
 | <kbd>Ctrl</kbd>+<kbd>x</kbd>    | Toggle hex mode     |
 | <kbd>Ctrl</kbd>+<kbd>q</kbd>    | Exit                |
