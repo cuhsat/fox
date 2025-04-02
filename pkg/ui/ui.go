@@ -5,6 +5,8 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/history"
+    "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/cuhsat/cu/pkg/ui/widget"
     "github.com/gdamore/tcell/v2"
@@ -15,22 +17,17 @@ const (
     Delta = 1 // lines
 )
 
-const (
-    ModeShell = 0
-    ModeText  = 1
-    ModeHex   = 2
-)
-
 type UI struct {
-    screen tcell.Screen
-    title   *widget.Title
+    mode    mode.Mode
+
+    screen  tcell.Screen
+    header  *widget.Header
     output  *widget.Output
     input   *widget.Input
     overlay *widget.Overlay
-    mode    int
 }
 
-func NewUI(mode int) *UI {
+func NewUI(mode mode.Mode) *UI {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -52,17 +49,20 @@ func NewUI(mode int) *UI {
     scr.EnablePaste()
     scr.HideCursor()
 
-    return &UI{
+    ui := UI{
         screen:  scr,
-        title:   widget.NewTitle(scr),
-        output:  widget.NewOutput(scr, mode == ModeHex),
-        input:   widget.NewInput(scr, mode),
+        header:  widget.NewHeader(scr),
+        output:  widget.NewOutput(scr),
+        input:   widget.NewInput(scr),
         overlay: widget.NewOverlay(scr),
-        mode:    mode,
     }
+
+    ui.Switch(mode)
+
+    return &ui
 }
 
-func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
+func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
     go ui.overlay.Watch()
 
     for {
@@ -107,21 +107,30 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
 
+            case tcell.KeyCtrlN, tcell.KeyF1:
+                ui.Switch(mode.Normal)
+
+            case tcell.KeyCtrlX, tcell.KeyF2:
+                ui.Switch(mode.Hex)
+
+            case tcell.KeyCtrlT, tcell.KeyF3:
+                ui.Switch(mode.Shell)
+
             case tcell.KeyCtrlV:
                 ui.screen.GetClipboard()
 
             case tcell.KeyCtrlC:
                 ui.screen.SetClipboard(heap.Copy())
 
-                ui.overlay.SendMessage(fmt.Sprintf("%s copied", heap.Path))
+                ui.overlay.SendStatus(fmt.Sprintf("%s copied", heap.Path))
 
             case tcell.KeyCtrlS:
                 path := heap.Save()
                 
-                ui.overlay.SendMessage(fmt.Sprintf("%s saved", path))
+                ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
-            case tcell.KeyCtrlY:
-                ui.overlay.SendMessage(fmt.Sprintf("%s SHA256 %x", heap.Path, heap.Hash))
+            case tcell.KeyCtrlH:
+                ui.overlay.SendMessage(fmt.Sprintf("%s %x (SHA256)", heap.Path, heap.Hash))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
@@ -133,17 +142,6 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyCtrlW:
                 ui.output.ToggleWrap()
 
-            case tcell.KeyCtrlX:
-                if ui.mode == ModeText {
-                    ui.mode = ModeHex
-                } else {
-                    ui.mode = ModeText
-                }
-
-                ui.input.Mode = ui.mode
-
-                ui.output.ToggleHex()
-
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
 
@@ -151,32 +149,32 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 ui.output.ScrollEnd()
 
             case tcell.KeyUp:
-                if ev.Modifiers() & tcell.ModCtrl == 1 {
+                if ev.Modifiers() & tcell.ModAlt != 0 {
                     ui.input.Value = hi.PrevCommand()
-                } else if ev.Modifiers() & tcell.ModShift == 1 {
+                } else if ev.Modifiers() & tcell.ModShift != 0 {
                     ui.output.ScrollUp(page_h)
                 } else {
                     ui.output.ScrollUp(Delta)
                 }
 
             case tcell.KeyDown:
-                if ev.Modifiers() & tcell.ModCtrl == 1 {
+                if ev.Modifiers() & tcell.ModAlt != 0 {
                     ui.input.Value = hi.NextCommand()
-                } else if ev.Modifiers() & tcell.ModShift == 1 {
+                } else if ev.Modifiers() & tcell.ModShift != 0 {
                     ui.output.ScrollDown(page_h)
                 } else {
                     ui.output.ScrollDown(Delta)
                 }
 
             case tcell.KeyLeft:
-                if ev.Modifiers() & tcell.ModShift == 1 {
+                if ev.Modifiers() & tcell.ModShift != 0 {
                     ui.output.ScrollLeft(page_w)
                 } else {
                     ui.output.ScrollLeft(Delta)
                 }
 
             case tcell.KeyRight:
-                if ev.Modifiers() & tcell.ModShift == 1 {
+                if ev.Modifiers() & tcell.ModShift != 0 {
                     ui.output.ScrollRight(page_w)
                 } else {
                     ui.output.ScrollRight(Delta)
@@ -191,10 +189,22 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
             case tcell.KeyEnter:
                 v := ui.input.Accept()
 
-                if len(v) > 0 {
+                if len(v) == 0 {
+                    continue
+                }
+
+                hi.AddCommand(v)
+
+                if ui.mode == mode.Shell {
+                    err := fs.System(v)
+
+                    if err != nil {
+                        ui.overlay.SendError(err)
+                    }
+                } else if len(v) > 0 {
                     ui.output.Reset()
+                    
                     heap.AddFilter(v)
-                    hi.AddCommand(v)
                 }
 
             case tcell.KeyTab:
@@ -202,7 +212,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
 
                 ui.output.Reset()
 
-                if ev.Modifiers() & tcell.ModShift == 1 {
+                if ev.Modifiers() & tcell.ModShift != 0 {
                     heap = hs.Prev()
                 } else {
                     heap = hs.Next()
@@ -214,11 +224,12 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                     heap.AddFilter(f.Name)
                 }
 
-            case tcell.KeyBackspace, tcell.KeyBackspace2:
+            case tcell.KeyBackspace2:
                 if len(ui.input.Value) > 0 {
                     ui.input.DelRune()
                 } else if len(heap.Chain) > 0 {
                     ui.output.Reset()
+                    
                     heap.DelFilter()
                 }
 
@@ -228,6 +239,16 @@ func (ui *UI) Run(hs *data.HeapSet, hi *fs.History) {
                 }
             }
         }
+    }
+}
+
+func (ui *UI) Switch(m mode.Mode) {
+    ui.mode = m
+
+    ui.input.SetMode(m)
+
+    if m != mode.Shell {
+        ui.output.SetMode(m)
     }
 }
 
@@ -255,7 +276,7 @@ func (ui *UI) render(hs *data.HeapSet) (w int, h int) {
     w, h = ui.screen.Size()
 
     for _, widget := range [...]widget.Stackable{
-        ui.title,
+        ui.header,
         ui.output,
         ui.input,
     }{

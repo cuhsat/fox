@@ -6,6 +6,7 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -17,9 +18,14 @@ const (
 type Output struct {
     widget
 
-    hex, nrs, wrap bool
-    last_x int
-    last_y int
+    mode    mode.Mode
+
+    line    bool
+    wrap    bool
+
+    last_x  int
+    last_y  int
+
     delta_x int
     delta_y int
 }
@@ -30,18 +36,20 @@ type textLine struct {
 
 type hexLine struct {
     off, hex, str string
-} 
+}
 
-func NewOutput(screen tcell.Screen, hex bool) *Output {
+func NewOutput(screen tcell.Screen) *Output {
     return &Output{
         widget: widget{
             screen: screen,
         },
-        hex: hex,
-        nrs: true,
+
+        line: true,
         wrap: false,
+
         last_x: 0,
         last_y: 0,
+
         delta_x: 0,
         delta_y: 0,
     }
@@ -52,10 +60,10 @@ func (o *Output) Render(hs *data.HeapSet, x, y, w, h int) int {
 
     h -= 1 // fill all but least line
 
-    if !o.hex {
-        o.textRender(heap, x, y, w, h)
-    } else {
+    if o.mode == mode.Hex {
         o.hexRender(heap, x, y, w, h)
+    } else {
+        o.textRender(heap, x, y, w, h)
     }
 
     return h
@@ -64,6 +72,12 @@ func (o *Output) Render(hs *data.HeapSet, x, y, w, h int) int {
 func (o *Output) Reset() {
     o.delta_x = 0
     o.delta_y = 0
+}
+
+func (o *Output) SetMode(m mode.Mode) {
+    o.mode = m
+
+    o.Reset()
 }
 
 func (o *Output) ScrollBegin() {
@@ -99,16 +113,11 @@ func (o *Output) ScrollPageDown(delta int) {
 }
 
 func (o *Output) ToggleNumbers() {
-    o.nrs = !o.nrs
+    o.line = !o.line
 }
 
 func (o *Output) ToggleWrap() {
     o.wrap = !o.wrap
-}
-
-func (o *Output) ToggleHex() {
-    o.hex = !o.hex
-    o.Reset()
 }
 
 func (o *Output) textRender(heap *data.Heap, x, y, w, h int) {
@@ -129,7 +138,7 @@ func (o *Output) textRender(heap *data.Heap, x, y, w, h int) {
         line_y := y + i
 
         // line number
-        if o.nrs {
+        if o.line {
             o.print(line_x, line_y, line.nr, theme.Hint)
             line_x += len(line.nr) + Space
         }
@@ -147,7 +156,7 @@ func (o *Output) textRender(heap *data.Heap, x, y, w, h int) {
 func (o *Output) textBuffer(heap *data.Heap, w, h int) (tl []textLine) {
     len_nr := int(math.Log10(float64(heap.Lines()))) + 1
 
-    if o.nrs {
+    if o.line {
         w -= (len_nr + Space)
     }
 

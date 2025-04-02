@@ -8,25 +8,25 @@ import (
     "github.com/gdamore/tcell/v2"
 )
 
-type Title struct {
+type Header struct {
     widget
 }
 
-func NewTitle(screen tcell.Screen) *Title {
-    return &Title{
+func NewHeader(screen tcell.Screen) *Header {
+    return &Header{
         widget: widget{
             screen: screen,
         },
     }
 }
 
-func (t *Title) Render(hs *data.HeapSet, x, y, w, h int) int {
+func (hd *Header) Render(hs *data.HeapSet, x, y, w, h int) int {
     i, heap := hs.Current()
     
-    r := fmt.Sprintf("%d/%d", i, hs.Length())
+    r := fmt.Sprintf("%d / %d", i, hs.Length())
     l := fmt.Sprintf("%s", abbrev(heap.Path, x, w-(len(r)+1)))
 
-    t.print(x, y, fmt.Sprintf("%-*s%s", w-len(r), l, r), theme.Title)
+    hd.print(x, y, fmt.Sprintf("%-*s%s", w-len(r), l, r), theme.Header)
 
     return 1
 }

@@ -6,23 +6,28 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui"
+    "github.com/cuhsat/cu/pkg/ui/mode"
 )
 
 var Version string = "dev"
 
 func main() {
+    var f data.Filter
+
+    m := mode.Normal
     x := flag.Bool("x", false, "Hex mode")
     h := flag.Bool("h", false, "Show help")
     v := flag.Bool("v", false, "Show version")
 
+    flag.Var(&f, "f", "Filter")
+    
     flag.CommandLine.SetOutput(io.Discard)
     flag.Parse()
 
-    var mode int
-
     if *h || len(flag.Args()) < 1 {
-        fs.Usage("cu [-xhv] PATH ...")
+        fs.Usage("cu [-xhv] [-f FILTER] PATH ...")
     }
 
     if *v {
@@ -30,18 +35,16 @@ func main() {
     }
 
     if *x {
-        mode = ui.ModeHex
-    } else {
-        mode = ui.ModeText
+        m = mode.Hex
     }
 
-    hs := data.NewHeapSet(flag.Args())
+    hs := data.NewHeapSet(flag.Args(), f...)
     defer hs.ThrowAway()
 
-    hi := fs.NewHistory()
+    hi := history.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(mode)
+    ui := ui.NewUI(m)
     defer ui.Close()
 
     ui.Run(hs, hi)
