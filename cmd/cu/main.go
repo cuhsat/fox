@@ -5,7 +5,7 @@ import (
     "io"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui"
     "github.com/cuhsat/cu/pkg/ui/mode"
@@ -14,7 +14,7 @@ import (
 var Version string = "dev"
 
 func main() {
-    var f data.Filter
+    var f heap.Filter
 
     m := mode.Normal
     x := flag.Bool("x", false, "Hex mode")
@@ -38,7 +38,7 @@ func main() {
         m = mode.Hex
     }
 
-    hs := data.NewHeapSet(flag.Args(), f...)
+    hs := heap.NewHeapSet(flag.Args(), f...)
     defer hs.ThrowAway()
 
     hi := history.NewHistory()

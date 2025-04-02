@@ -3,7 +3,7 @@ package widget
 import (
     "fmt"
 
-    "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -20,13 +20,25 @@ func NewHeader(screen tcell.Screen) *Header {
     }
 }
 
-func (hd *Header) Render(hs *data.HeapSet, x, y, w, h int) int {
-    i, heap := hs.Current()
-    
-    r := fmt.Sprintf("%d / %d", i, hs.Length())
-    l := fmt.Sprintf("%s", abbrev(heap.Path, x, w-(len(r)+1)))
+func (hd *Header) Render(hs *heap.HeapSet, x, y, w, h int) int {
+    n, heap := hs.Current()
+    m := hs.Length()
 
-    hd.print(x, y, fmt.Sprintf("%-*s%s", w-len(r), l, r), theme.Header)
+    var r string
+
+    if m > 1 {
+        r = fmt.Sprintf(" %d of %d ", n, m)
+    }
+
+    l := abbrev(heap.Path, x, w-len(r))
+
+    hd.blank(x, y, w, theme.Line)
+
+    // render heap file path
+    hd.print(x, y, l, theme.Header)
+
+    // render heapset index
+    hd.print(x + w-len(r), y, r, theme.Input)
 
     return 1
 }

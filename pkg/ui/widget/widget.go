@@ -1,9 +1,10 @@
 package widget
 
 import (
+    "strings"
     "unicode"
 
-    "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
@@ -13,11 +14,15 @@ const (
 )
 
 type Stackable interface {
-    Render(hs *data.HeapSet, x, y, w, h int) int
+    Render(hs *heap.HeapSet, x, y, w, h int) int
 }
 
 type widget struct {
     screen tcell.Screen
+}
+
+func (w *widget) blank(x, y, z int, sty tcell.Style) {
+    w.print(x, y, strings.Repeat(" ", z), sty)
 }
 
 func (w *widget) print(x, y int, s string, sty tcell.Style) {
