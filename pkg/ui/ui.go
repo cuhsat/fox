@@ -4,7 +4,7 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
@@ -18,7 +18,7 @@ const (
 )
 
 type UI struct {
-    mode    mode.Mode
+    mode, last mode.Mode
 
     screen  tcell.Screen
     header  *widget.Header
@@ -62,7 +62,7 @@ func NewUI(mode mode.Mode) *UI {
     return &ui
 }
 
-func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
+func (ui *UI) Run(hs *heap.HeapSet, hi *history.History) {
     go ui.overlay.Watch()
 
     for {
@@ -82,7 +82,7 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
             ui.screen.Sync()
 
         case *tcell.EventError:
-            fs.Error(ev.Error())
+            ui.overlay.SendError(ev.Error())
 
         case *tcell.EventMouse:
             switch ev.Buttons() {
@@ -113,8 +113,8 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
             case tcell.KeyCtrlX, tcell.KeyF2:
                 ui.Switch(mode.Hex)
 
-            case tcell.KeyCtrlT, tcell.KeyF3:
-                ui.Switch(mode.Shell)
+            case tcell.KeyCtrlSpace, tcell.KeyF3:
+                ui.Switch(mode.Goto)
 
             case tcell.KeyCtrlV:
                 ui.screen.GetClipboard()
@@ -130,7 +130,11 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlH:
-                ui.overlay.SendMessage(fmt.Sprintf("%s %x (SHA256)", heap.Path, heap.Hash))
+                hash := heap.Hash()
+
+                z := (w - len(hash)*2) / 2
+
+                ui.overlay.SendMessage(fmt.Sprintf("%*s%X%*s", z, "", hash, z, ""))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
@@ -181,10 +185,10 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
                 }
 
             case tcell.KeyPgUp:
-                ui.output.ScrollPageUp(page_h)
+                ui.output.ScrollUp(page_h)
 
             case tcell.KeyPgDn:
-                ui.output.ScrollPageDown(page_h)
+                ui.output.ScrollDown(page_h)
 
             case tcell.KeyEnter:
                 v := ui.input.Accept()
@@ -195,15 +199,15 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
 
                 hi.AddCommand(v)
 
-                if ui.mode == mode.Shell {
-                    err := fs.System(v)
+                switch ui.mode {
+                case mode.Goto:
+                    ui.output.Goto(v)
 
-                    if err != nil {
-                        ui.overlay.SendError(err)
-                    }
-                } else if len(v) > 0 {
+                    ui.Switch(ui.last)
+
+                default:
                     ui.output.Reset()
-                    
+                
                     heap.AddFilter(v)
                 }
 
@@ -243,11 +247,17 @@ func (ui *UI) Run(hs *data.HeapSet, hi *history.History) {
 }
 
 func (ui *UI) Switch(m mode.Mode) {
+    // allow only goto in normal mode
+    if m == mode.Hex && ui.mode == mode.Goto {
+        return
+    }
+
+    ui.last = ui.mode
     ui.mode = m
 
     ui.input.SetMode(m)
 
-    if m != mode.Shell {
+    if m != mode.Goto {
         ui.output.SetMode(m)
     }
 }
@@ -264,7 +274,7 @@ func (ui *UI) Close() {
     }
 }
 
-func (ui *UI) render(hs *data.HeapSet) (w int, h int) {
+func (ui *UI) render(hs *heap.HeapSet) (w int, h int) {
     defer ui.screen.Show()
 
     _, heap := hs.Current()

@@ -1,4 +1,4 @@
-package data
+package heap
 
 import (
     "github.com/edsrzf/mmap-go"

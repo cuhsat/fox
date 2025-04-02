@@ -9,17 +9,17 @@ type Mode int
 const (
     Normal Mode = iota
     Hex
-    Shell
+    Goto
 )
 
 func (m Mode) String() string {
     modes := [...]string{
         "Normal", 
         "Hex", 
-        "Shell", 
+        "Goto",
     }
 
-    if m < Normal || m > Shell {
+    if m < Normal || m > Goto {
       return "..."
     }
 

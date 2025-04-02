@@ -15,7 +15,9 @@ var (
     Error  tcell.Style
     Mode   tcell.Style
     Hint   tcell.Style
+    Rule   tcell.Style
     Info   tcell.Style
+    Line   tcell.Style
     Colors []tcell.Style
 )
 
@@ -48,11 +50,19 @@ func Load(theme string) {
         Foreground(tcell.NewHexColor(t[10])).
         Background(tcell.NewHexColor(t[11]))
 
-    Info = tcell.StyleDefault.
+    Rule = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[12])).
         Background(tcell.NewHexColor(t[13]))
 
-    for i := 14; i < 20; i++ {
+    Info = tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(t[14])).
+        Background(tcell.NewHexColor(t[15]))
+
+    Line = tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(t[16])).
+        Background(tcell.NewHexColor(t[17]))
+
+    for i := 18; i < 24; i++ {
         s := tcell.StyleDefault.
             Foreground(tcell.NewHexColor(t[i])).
             Background(tcell.NewHexColor(t[1]))

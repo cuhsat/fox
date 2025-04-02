@@ -1,14 +1,10 @@
-package data
+package heap
 
 import (
     "bytes"
-    "crypto/sha256"
-    "cmp"
     "io"
     "os"
     "runtime"
-    "slices"
-    "sync"
  
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/edsrzf/mmap-go"
@@ -16,21 +12,17 @@ import (
 
 type Heap struct {
     Path string    // file path
-    Hash []byte    // file hash sum
     Chain []*SLink // filter chain
     MMap mmap.MMap // memory map
     SMap SMap      // string map current
     rmap SMap      // string map reserve
+    hash []byte    // file hash sum
     file *os.File  // file handle
 }
 
 type SLink struct {
     Name string // filter name
     smap SMap   // filter string map
-}
-
-type chunk struct {
-    min, max int
 }
 
 func NewHeap(path string) *Heap {
@@ -46,19 +38,10 @@ func NewHeap(path string) *Heap {
         fs.Panic(err)
     }
 
-    sha := sha256.New()
-
-    _, err = io.Copy(sha, f)
-    
-    if err != nil {
-        fs.Panic(err)
-    }
-
     s := smap(m)
 
     return &Heap{
         Path: path,
-        Hash: sha.Sum(nil),
         MMap: m,
         SMap: s,
         rmap: s,
@@ -82,17 +65,9 @@ func (h *Heap) Reload() {
         fs.Panic(err)
     }
 
-    sha := sha256.New()
-
-    _, err = io.Copy(sha, h.file)
-    
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    h.Hash = sha.Sum(nil)
     h.SMap = smap(h.MMap)
     h.rmap = h.SMap
+    h.hash = h.hash[:0]
 }
 
 func (h *Heap) Lines() int {
@@ -102,7 +77,7 @@ func (h *Heap) Lines() int {
 func (h *Heap) Copy() []byte {
     var b bytes.Buffer
 
-    err := h.strings(&b)
+    err := h.lines(&b)
 
     if err != nil {
         fs.Panic(err)
@@ -126,7 +101,7 @@ func (h* Heap) Save() string {
 
     defer f.Close()
 
-    err = h.strings(f)
+    err = h.lines(f)
 
     if err != nil {
         fs.Panic(err)
@@ -167,7 +142,7 @@ func (h *Heap) ThrowAway() {
     runtime.GC()
 }
 
-func (h *Heap) strings(w io.Writer) (err error) {
+func (h *Heap) lines(w io.Writer) (err error) {
     for _, s := range h.SMap {
         _, err := w.Write([]byte(h.MMap[s.Start:s.End + 1]))
 
@@ -177,59 +152,4 @@ func (h *Heap) strings(w io.Writer) (err error) {
     }
 
     return nil
-}
-
-func (h *Heap) filter(b []byte) (s SMap) {
-    ch := make(chan *SEntry, len(h.SMap))
-
-    defer close(ch)
-
-    var wg sync.WaitGroup
-
-    for _, c := range h.chunks() {
-        wg.Add(1)
-
-        go func() {
-            h.search(ch, c, b)
-            wg.Done()
-        }()
-    }
-
-    wg.Wait()
-
-    return h.gather(ch)
-}
-
-func (h *Heap) chunks() (c []*chunk) {
-    n := len(h.SMap)
-    m := min(runtime.GOMAXPROCS(0), n)
-    
-    for i := 0; i < m; i++ {
-        c = append(c, &chunk{
-            min: i * n / m,
-            max: ((i+1) * n) / m,
-        })
-    }
-
-    return
-}
-
-func (h *Heap) search(ch chan<- *SEntry, c *chunk, b []byte) {
-    for _, s := range h.SMap[c.min:c.max] {
-        if bytes.Contains(h.MMap[s.Start:s.End], b) {
-            ch <- s
-        }
-    }
-}
-
-func (h *Heap) gather(ch <-chan *SEntry) (s SMap) {
-    for len(ch) > 0 {
-        s = append(s, <-ch)
-    }
-
-    slices.SortFunc(s, func(a, b *SEntry) int {
-        return cmp.Compare(a.Nr, b.Nr)
-    })
-
-    return
 }

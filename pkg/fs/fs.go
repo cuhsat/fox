@@ -4,9 +4,6 @@ import (
     "fmt"
     "io"
     "os"
-    "os/exec"
-
-    "github.com/mattn/go-shellwords"
 )
 
 const (
@@ -57,16 +54,4 @@ func Stdin(path string) {
     if err != nil {
         Panic(err)
     }
-}
-
-func System(cmd string) error {
-    arg, err := shellwords.Parse(cmd)
-
-    if err != nil {
-        return err
-    }
-
-    _, err = exec.Command(arg[0], arg[1:]...).Output()
-
-    return err
 }
