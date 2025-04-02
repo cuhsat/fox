@@ -2,9 +2,9 @@ package widget
 
 import (
     "fmt"
-    "strings"
 
     "github.com/cuhsat/cu/pkg/fs/data"
+    "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -17,22 +17,23 @@ const (
 type Input struct {
     widget
 
-    Mode int
+    mode mode.Mode
+
     Value string
 }
 
-func NewInput(screen tcell.Screen, mode int) *Input {
+func NewInput(screen tcell.Screen) *Input {
     return &Input{
         widget: widget{
             screen: screen,
         },
-        Mode: mode,
+
         Value: "",
     }
 }
 
 func (i *Input) Render(hs *data.HeapSet, x, y, w, h int) int {
-    m := fmt.Sprintf(" %s ", strings.ToUpper(i.mode()))
+    m := fmt.Sprintf(" %s ", i.mode)
 
     i.print(x, y, m, theme.Mode)
 
@@ -46,12 +47,15 @@ func (i *Input) Render(hs *data.HeapSet, x, y, w, h int) int {
     }
 
     p = fmt.Sprintf("%s %s%s ", p, i.Value, Cursor)
-
-    // p = fmt.Sprintf("%-*s", w-x, p)
+    p = fmt.Sprintf("%-*s", w-x, p)
 
     i.print(x, y, abbrev(p, x, w), theme.Input)
 
     return 1
+}
+
+func (i *Input) SetMode(m mode.Mode) {
+    i.mode = m
 }
 
 func (i *Input) AddRune(r rune) {
@@ -68,17 +72,4 @@ func (i *Input) Accept() (s string) {
     s, i.Value = i.Value, ""
 
     return
-}
-
-func (i *Input) mode() string {
-    switch i.Mode {
-    case 0:
-        return "Shell"
-    case 1:
-        return "Text"
-    case 2:
-        return "Hex"
-    default:
-        return "Err"
-    }
 }

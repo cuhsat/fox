@@ -16,7 +16,7 @@ type HeapSet struct {
     index int     // set index
 }
 
-func NewHeapSet(paths []string) *HeapSet {
+func NewHeapSet(paths []string, filter ...string) *HeapSet {
     hs := HeapSet{
         index: 0,
     }
@@ -30,6 +30,10 @@ func NewHeapSet(paths []string) *HeapSet {
     }
 
     hs.loadLazy()
+
+    for _, f := range filter {
+        hs.heaps[0].AddFilter(f)
+    }
 
     return &hs
 }

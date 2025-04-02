@@ -1,14 +1,16 @@
-package fs
+package history
 
 import (
     "bufio"
     "fmt"
     "os"
     "path/filepath"
+
+    "github.com/cuhsat/cu/pkg/fs"
 )
 
 const (
-    FileHistory = ".cu_history"    
+    File = ".cu_history"    
 )
 
 type History struct {
@@ -21,13 +23,13 @@ func NewHistory() *History {
     dir, err := os.UserHomeDir()
 
     if err != nil {
-        Panic(err)
+        fs.Panic(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, FileHistory), FLAG_LOG, MODE_FILE)
+    f, err := os.OpenFile(filepath.Join(dir, File), fs.Append, 0644)
 
     if err != nil {
-        Panic(err)
+        fs.Panic(err)
     }
 
     var l []string
@@ -41,7 +43,7 @@ func NewHistory() *History {
     err = s.Err()
 
     if err != nil {
-        Panic(err)
+        fs.Panic(err)
     }
 
     return &History{
@@ -59,7 +61,7 @@ func (h *History) AddCommand(s string) {
     _, err := fmt.Fprintln(h.file, s)
 
     if err != nil {
-        Error(err)
+        fs.Error(err)
     }
 }
 

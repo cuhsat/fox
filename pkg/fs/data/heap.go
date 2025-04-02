@@ -34,7 +34,7 @@ type chunk struct {
 }
 
 func NewHeap(path string) *Heap {
-    f, err := os.OpenFile(path, os.O_RDONLY, fs.MODE_FILE)
+    f, err := os.OpenFile(path, os.O_RDONLY, 0644)
 
     if err != nil {
         fs.Panic(err)
@@ -70,7 +70,7 @@ func (h *Heap) Reload() {
     h.ThrowAway()
     var err error
 
-    h.file, err = os.OpenFile(h.Path, os.O_RDONLY, fs.MODE_FILE)
+    h.file, err = os.OpenFile(h.Path, os.O_RDONLY, 0644)
 
     if err != nil {
         fs.Panic(err)
@@ -118,7 +118,7 @@ func (h* Heap) Save() string {
         fn += "-" + l.Name
     }
 
-    f, err := os.OpenFile(fn, fs.FLAG_FILE, fs.MODE_FILE)
+    f, err := os.OpenFile(fn, fs.Override, 0644)
 
     if err != nil {
         fs.Panic(err)

@@ -4,23 +4,14 @@ import (
     "fmt"
     "io"
     "os"
+    "os/exec"
+
+    "github.com/mattn/go-shellwords"
 )
 
 const (
-    EX_OK      = 0
-    EX_ERROR   = 1
-    EX_USAGE   = 2
-    EX_DATAERR = 3
-    EX_NOINPUT = 4
-)
-
-const (
-    MODE_FILE = 0644
-)
-
-const (
-    FLAG_LOG = os.O_APPEND | os.O_CREATE | os.O_RDWR
-    FLAG_FILE = os.O_TRUNC | os.O_CREATE | os.O_WRONLY
+    Append   = os.O_CREATE | os.O_APPEND | os.O_RDWR
+    Override = os.O_CREATE | os.O_TRUNC | os.O_WRONLY
 )
 
 func Error(a ...any) {
@@ -29,17 +20,17 @@ func Error(a ...any) {
 
 func Panic(a ...any) {
     fmt.Fprintln(os.Stderr, a...)
-    os.Exit(EX_ERROR)
+    os.Exit(1)
 }
 
 func Print(a ...any) {
     fmt.Fprintln(os.Stdout, a...)
-    os.Exit(EX_OK)
+    os.Exit(0)
 }
 
 func Usage(u string) {
     fmt.Fprintln(os.Stdout, "Usage:", u)
-    os.Exit(EX_USAGE)
+    os.Exit(2)
 }
 
 func Stdin(path string) {
@@ -47,7 +38,7 @@ func Stdin(path string) {
 
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
-        os.Exit(EX_NOINPUT)
+        os.Exit(4)
     }
 
     if (fi.Mode() & os.ModeCharDevice) != 0 {
@@ -58,12 +49,24 @@ func Stdin(path string) {
 
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
-        os.Exit(EX_DATAERR)
+        os.Exit(3)
     }
 
-    err = os.WriteFile(path, b, MODE_FILE)
+    err = os.WriteFile(path, b, 0644)
 
     if err != nil {
         Panic(err)
     }
+}
+
+func System(cmd string) error {
+    arg, err := shellwords.Parse(cmd)
+
+    if err != nil {
+        return err
+    }
+
+    _, err = exec.Command(arg[0], arg[1:]...).Output()
+
+    return err
 }

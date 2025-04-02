@@ -9,40 +9,50 @@ const (
 )
 
 var (
-    Title, Output, Info, Mode, Hint, Input tcell.Style
+    Output tcell.Style
+    Header tcell.Style
+    Input  tcell.Style
+    Error  tcell.Style
+    Mode   tcell.Style
+    Hint   tcell.Style
+    Info   tcell.Style
     Colors []tcell.Style
 )
 
-func Load(name string) {
+func Load(theme string) {
     t := map[string][]int32{
         "monokai": Monokai,
-    }[name]
-
-    Title = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[8])).
-        Background(tcell.NewHexColor(t[7]))
+    }[theme]
 
     Output = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[0])).
         Background(tcell.NewHexColor(t[1]))
 
-    Info = tcell.StyleDefault.
+    Header = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[2])).
         Background(tcell.NewHexColor(t[3]))
 
-    Mode = tcell.StyleDefault.
+    Input = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[4])).
         Background(tcell.NewHexColor(t[5]))
 
-    Hint = tcell.StyleDefault.
+    Error = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[6])).
         Background(tcell.NewHexColor(t[7]))
 
-    Input = tcell.StyleDefault.
+    Mode = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(t[8])).
         Background(tcell.NewHexColor(t[9]))
 
-    for i := 10; i < 16; i++ {
+    Hint = tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(t[10])).
+        Background(tcell.NewHexColor(t[11]))
+
+    Info = tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(t[12])).
+        Background(tcell.NewHexColor(t[13]))
+
+    for i := 14; i < 20; i++ {
         s := tcell.StyleDefault.
             Foreground(tcell.NewHexColor(t[i])).
             Background(tcell.NewHexColor(t[1]))
