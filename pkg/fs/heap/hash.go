@@ -8,6 +8,7 @@ import (
 )
 
 func (h *Heap) Hash() []byte {
+    // lazy calculate hash sum
     if len(h.hash) == 0 {
         sha := sha256.New()
 

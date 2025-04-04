@@ -3,7 +3,7 @@ package widget
 import (
     "fmt"
 
-    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -20,7 +20,7 @@ func NewHeader(screen tcell.Screen) *Header {
     }
 }
 
-func (hd *Header) Render(hs *heap.HeapSet, x, y, w, h int) int {
+func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     n, heap := hs.Current()
     m := hs.Length()
 

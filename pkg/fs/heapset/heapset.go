@@ -1,10 +1,12 @@
-package heap
+package heapset
 
 import (
     "os"
     "path/filepath"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/fsnotify/fsnotify"
 )
 
 const (
@@ -12,17 +14,31 @@ const (
 )
 
 type HeapSet struct {
-    heaps []*Heap // set heaps
-    index int     // set index
+    watcher *fsnotify.Watcher // file watcher
+    watcher_fn Callback       // file watcher callback
+
+    limit   heap.Limit        // heap limit
+    heaps   []*heap.Heap      // set heaps
+    index   int               // set index
 }
 
-func NewHeapSet(paths []string, filter ...string) *HeapSet {
+func NewHeapSet(p []string, l heap.Limit, f ...string) *HeapSet {
+    w, err := fsnotify.NewWatcher()
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
     hs := HeapSet{
+        watcher: w,
+        limit: l,
         index: 0,
     }
 
-    for _, path := range paths {
-        hs.loadPath(path)
+    go hs.notify()
+
+    for _, pp := range p {
+        hs.loadPath(pp)
     }
 
     if len(hs.heaps) == 0 {
@@ -31,8 +47,8 @@ func NewHeapSet(paths []string, filter ...string) *HeapSet {
 
     hs.loadLazy()
 
-    for _, f := range filter {
-        hs.heaps[0].AddFilter(f)
+    for _, ff := range f {
+        hs.heaps[0].AddFilter(ff)
     }
 
     return &hs
@@ -42,11 +58,11 @@ func (hs *HeapSet) Length() int {
     return len(hs.heaps)
 }
 
-func (hs *HeapSet) Current() (int, *Heap) {
+func (hs *HeapSet) Current() (int, *heap.Heap) {
     return hs.index+1, hs.heaps[hs.index]
 }
 
-func (hs *HeapSet) Prev() *Heap {
+func (hs *HeapSet) PrevHeap() *heap.Heap {
     hs.index -= 1
 
     if hs.index < 0 {
@@ -56,7 +72,7 @@ func (hs *HeapSet) Prev() *Heap {
     return hs.loadLazy()
 }
 
-func (hs *HeapSet) Next() *Heap {
+func (hs *HeapSet) NextHeap() *heap.Heap {
     hs.index += 1
 
     if hs.index >= len(hs.heaps) {
@@ -67,6 +83,8 @@ func (hs *HeapSet) Next() *Heap {
 }
 
 func (hs *HeapSet) ThrowAway() {
+    hs.watcher.Close()
+
     for _, h := range hs.heaps {
         h.ThrowAway()
     }
@@ -91,9 +109,8 @@ func (hs *HeapSet) loadPath(p string) {
 
     // load file
     if !fi.IsDir() {
-        hs.heaps = append(hs.heaps, &Heap{
+        hs.heaps = append(hs.heaps, &heap.Heap{
             Path: p,
-            file: nil,
         })
 
         return
@@ -108,20 +125,23 @@ func (hs *HeapSet) loadPath(p string) {
  
     for _, e := range dir {
         if !e.IsDir() {
-            hs.heaps = append(hs.heaps, &Heap{
+            hs.heaps = append(hs.heaps, &heap.Heap{
                 Path: filepath.Join(p, e.Name()),
-                file: nil,
             })
         }
     }
 }
 
-func (hs *HeapSet) loadLazy() *Heap {
-    _, h := hs.Current()
+func (hs *HeapSet) loadLazy() *heap.Heap {
+    h := hs.heaps[hs.index]
 
-    if h.file == nil {
-        hs.heaps[hs.index] = NewHeap(h.Path)
+    if !h.Loaded() {
+        h = heap.NewHeap(h.Path, hs.limit)
+
+        hs.notifyHeap(h)
+
+        hs.heaps[hs.index] = h
     }
 
-    return hs.heaps[hs.index]
+    return h
 }

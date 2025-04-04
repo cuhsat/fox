@@ -27,7 +27,7 @@ func (o *Output) textRender(heap *heap.Heap, x, y, w, h int) {
     }
 
     // set buffer bounds
-    o.last_x = max(wid(heap.SMap) - w, 0)
+    o.last_x = max(heap.SMap.Length() - w, 0)
     o.last_y = max(len(heap.SMap) - h, 0)
 
     // render buffer
@@ -52,7 +52,7 @@ func (o *Output) textRender(heap *heap.Heap, x, y, w, h int) {
 }
 
 func (o *Output) textBuffer(heap *heap.Heap, w, h int) (tl []textLine) {
-    len_nr := int(math.Log10(float64(heap.Lines()))) + 1
+    len_nr := int(math.Log10(float64(heap.Length()))) + 1
 
     if o.line {
         w -= (len_nr + TextSpace)
@@ -125,12 +125,4 @@ func (o *Output) textGoto(s string) {
         delta, _ := strconv.Atoi(s)
         o.delta_y = max(min(delta-1, o.last_y), 0)
     }
-}
-
-func wid(s heap.SMap) (w int) {
-    for _, se := range s {
-        w = max(w, se.Len)
-    }
-
-    return
 }

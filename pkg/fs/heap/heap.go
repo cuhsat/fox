@@ -7,46 +7,44 @@ import (
     "runtime"
  
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/smap"
     "github.com/edsrzf/mmap-go"
 )
 
 type Heap struct {
-    Path string    // file path
-    Chain []*SLink // filter chain
-    MMap mmap.MMap // memory map
-    SMap SMap      // string map current
-    rmap SMap      // string map reserve
-    hash []byte    // file hash sum
-    file *os.File  // file handle
+    Path  string    // file path
+    Limit Limit     // line limit
+
+    Chain []*Link   // filter chain
+
+    MMap  mmap.MMap // memory map
+    SMap  smap.SMap // string map current
+    rmap  smap.SMap // string map reserve
+
+    hash  []byte    // file hash sum
+
+    file  *os.File  // file handle
 }
 
-type SLink struct {
-    Name string // filter name
-    smap SMap   // filter string map
+type Limit struct {
+    Head int // head count
+    Tail int // tail count
 }
 
-func NewHeap(path string) *Heap {
-    f, err := os.OpenFile(path, os.O_RDONLY, 0644)
+type Link struct {
+    Name string    // filter name
+    smap smap.SMap // filter string map
+}
 
-    if err != nil {
-        fs.Panic(err)
+func NewHeap(p string, l Limit) *Heap {
+    h := Heap{
+        Path: p,
+        Limit: l,
     }
 
-    m, err := mmap.Map(f, mmap.RDONLY, 0)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    s := smap(m)
-
-    return &Heap{
-        Path: path,
-        MMap: m,
-        SMap: s,
-        rmap: s,
-        file: f,
-    }
+    h.Reload()
+    
+    return &h
 }
 
 func (h *Heap) Reload() {
@@ -65,19 +63,58 @@ func (h *Heap) Reload() {
         fs.Panic(err)
     }
 
-    h.SMap = smap(h.MMap)
+    h.SMap = smap.Map(h.MMap)
+
+    l := len(h.SMap)
+
+    if h.Limit.Head > 0 {
+        h.SMap = h.SMap[:min(h.Limit.Head, l)]
+    }
+
+    if h.Limit.Tail > 0 {
+        h.SMap = h.SMap[max(l-h.Limit.Tail, 0):]
+    }
+
     h.rmap = h.SMap
     h.hash = h.hash[:0]
 }
 
-func (h *Heap) Lines() int {
+func (h *Heap) Length() int {
     return len(h.rmap)
+}
+
+func (h *Heap) Loaded() bool {
+    return h.file != nil
+}
+
+func (h* Heap) Save() string {
+    p := h.Path
+
+    for _, l := range h.Chain {
+        p += "-" + l.Name
+    }
+
+    f, err := os.OpenFile(p, fs.Override, 0644)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    defer f.Close()
+
+    _, err = h.write(f)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    return p
 }
 
 func (h *Heap) Copy() []byte {
     var b bytes.Buffer
 
-    err := h.lines(&b)
+    _, err := h.write(&b)
 
     if err != nil {
         fs.Panic(err)
@@ -86,70 +123,25 @@ func (h *Heap) Copy() []byte {
     return b.Bytes()
 }
 
-func (h* Heap) Save() string {
-    fn := h.Path
-
-    for _, l := range h.Chain {
-        fn += "-" + l.Name
-    }
-
-    f, err := os.OpenFile(fn, fs.Override, 0644)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    defer f.Close()
-
-    err = h.lines(f)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    return fn
-}
-
-func (h *Heap) AddFilter(value string) {
-    h.SMap = h.filter([]byte(value))
-    h.Chain = append(h.Chain, &SLink{
-        Name: value,
-        smap: h.SMap,
-    })
-}
-
-func (h *Heap) DelFilter() {
-    if len(h.Chain) > 0 {
-        h.Chain = h.Chain[:len(h.Chain)-1]
-    }
-
-    if len(h.Chain) > 0 {
-        h.SMap = h.Chain[len(h.Chain)-1].smap
-    } else {
-        h.SMap = h.rmap
-    }
-}
-
-func (h *Heap) NoFilter() {
-    h.Chain = h.Chain[:0]
-    h.SMap = h.rmap
-}
-
 func (h *Heap) ThrowAway() {
-    h.MMap.Unmap()
-    h.file.Close()
+    if h.file != nil {
+        h.MMap.Unmap()
+        h.file.Close()
+    }
 
     runtime.GC()
 }
 
-func (h *Heap) lines(w io.Writer) (err error) {
+func (h *Heap) write(w io.Writer) (n int, err error) {
     for _, s := range h.SMap {
-        _, err := w.Write([]byte(h.MMap[s.Start:s.End + 1]))
+        m, err := w.Write([]byte(h.MMap[s.Start:s.End + 1]))
 
         if err != nil {
-            return err
+            return n, err
         }
+
+        n += m
     }
 
-    return nil
+    return n, nil
 }
