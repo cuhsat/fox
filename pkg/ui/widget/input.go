@@ -3,7 +3,7 @@ package widget
 import (
     "fmt"
 
-    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
@@ -33,7 +33,7 @@ func NewInput(screen tcell.Screen) *Input {
     }
 }
 
-func (i *Input) Render(hs *heap.HeapSet, x, y, w, h int) int {
+func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     i.blank(x, y, w, theme.Line)
 
     m := fmt.Sprintf(" %s ", i.mode)
@@ -63,7 +63,7 @@ func (i *Input) Render(hs *heap.HeapSet, x, y, w, h int) int {
     i.print(x, y, abbrev(p, x, w-len(c)), theme.Input)
 
     // render count
-    i.print(w-len(c), y, c, theme.Mode)
+    i.print(w-len(c), y, c, theme.Input)
 
     return 1
 }

@@ -1,7 +1,7 @@
 package widget
 
 import (
-    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/gdamore/tcell/v2"
 )
@@ -38,7 +38,7 @@ func NewOutput(screen tcell.Screen) *Output {
     }
 }
 
-func (o *Output) Render(hs *heap.HeapSet, x, y, w, h int) int {
+func (o *Output) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     _, heap := hs.Current()
 
     h -= 1 // fill all but least line

@@ -4,7 +4,7 @@ import (
     "strings"
     "unicode"
 
-    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
@@ -14,7 +14,7 @@ const (
 )
 
 type Stackable interface {
-    Render(hs *heap.HeapSet, x, y, w, h int) int
+    Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
 
 type widget struct {

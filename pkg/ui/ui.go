@@ -4,7 +4,7 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/theme"
@@ -62,7 +62,11 @@ func NewUI(mode mode.Mode) *UI {
     return &ui
 }
 
-func (ui *UI) Run(hs *heap.HeapSet, hi *history.History) {
+func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
+    hs.SetCallback(func() {
+        ui.screen.PostEvent(tcell.NewEventInterrupt(nil))
+    })
+
     go ui.overlay.Watch()
 
     for {
@@ -217,9 +221,9 @@ func (ui *UI) Run(hs *heap.HeapSet, hi *history.History) {
                 ui.output.Reset()
 
                 if ev.Modifiers() & tcell.ModShift != 0 {
-                    heap = hs.Prev()
+                    heap = hs.PrevHeap()
                 } else {
-                    heap = hs.Next()
+                    heap = hs.NextHeap()
                 }
 
                 heap.NoFilter()
@@ -274,7 +278,7 @@ func (ui *UI) Close() {
     }
 }
 
-func (ui *UI) render(hs *heap.HeapSet) (w int, h int) {
+func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     defer ui.screen.Show()
 
     _, heap := hs.Current()
