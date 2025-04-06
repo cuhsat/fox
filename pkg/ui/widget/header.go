@@ -8,6 +8,10 @@ import (
     "github.com/gdamore/tcell/v2"
 )
 
+const (
+    StdIn = "-"
+)
+
 type Header struct {
     widget
 }
@@ -23,22 +27,22 @@ func NewHeader(screen tcell.Screen) *Header {
 func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     n, heap := hs.Current()
     m := hs.Length()
+    p := heap.String()
 
-    var r string
+    var i string
 
     if m > 1 {
-        r = fmt.Sprintf(" %d of %d ", n, m)
+        i = fmt.Sprintf(" %d of %d ", n, m)
     }
 
-    l := abbrev(heap.Path, x, w-len(r))
-
-    hd.blank(x, y, w, theme.Line)
+    // render blank line
+    hd.printBlank(x, y, w, theme.Line)
 
     // render heap file path
-    hd.print(x, y, l, theme.Header)
+    hd.print(x, y, abbrev(p, x, w-len(i)), theme.Header)
 
     // render heapset index
-    hd.print(x + w-len(r), y, r, theme.Input)
+    hd.print(x + w-len(i), y, i, theme.Input)
 
     return 1
 }

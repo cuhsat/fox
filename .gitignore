@@ -24,8 +24,9 @@ go.work.sum
 # Mac crap
 .DS_Store
 
-# stdin pipe
-STDIN
+# File buffers
+.cin
+.cout
 
 # log files
 *.log

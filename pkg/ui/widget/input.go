@@ -34,7 +34,8 @@ func NewInput(screen tcell.Screen) *Input {
 }
 
 func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-    i.blank(x, y, w, theme.Line)
+    // render blank line
+    i.printBlank(x, y, w, theme.Line)
 
     m := fmt.Sprintf(" %s ", i.mode)
 

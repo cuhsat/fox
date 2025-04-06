@@ -138,7 +138,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 z := (w - len(hash)*2) / 2
 
-                ui.overlay.SendMessage(fmt.Sprintf("%*s%X%*s", z, "", hash, z, ""))
+                ui.overlay.SendMessage(fmt.Sprintf("%*s%x%*s", z, "", hash, z, ""))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
@@ -283,7 +283,7 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
 
     _, heap := hs.Current()
 
-    ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap.Path))
+    ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap))
     ui.screen.Clear()
 
     x, y := 0, 0

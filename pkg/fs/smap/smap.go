@@ -35,7 +35,7 @@ func Map(m mmap.MMap) (s SMap) {
     }
 
     // append remaining string
-    if m[len(m)-1] != Break {
+    if len(s) > 0 && m[len(m)-1] != Break {
         l := s[len(s)-1]
         s = append(s, &String{
             Nr: l.Nr + 1,
