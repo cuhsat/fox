@@ -47,6 +47,14 @@ func NewHeap(p string, l Limit) *Heap {
     return &h
 }
 
+func (h *Heap) String() string {
+    if h.Path == fs.In {
+        return "-"
+    }
+
+    return h.Path
+}
+
 func (h *Heap) Reload() {
     h.ThrowAway()
     var err error

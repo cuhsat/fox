@@ -9,10 +9,6 @@ import (
     "github.com/fsnotify/fsnotify"
 )
 
-const (
-    Stdin = "STDIN"
-)
-
 type HeapSet struct {
     watcher *fsnotify.Watcher // file watcher
     watcher_fn Callback       // file watcher callback
@@ -96,7 +92,7 @@ func (hs *HeapSet) ThrowAway() {
 func (hs *HeapSet) loadPath(p string) {
     // read stdin
     if p == "-" {
-        p = Stdin
+        p = fs.In
         
         fs.Stdin(p)
     }

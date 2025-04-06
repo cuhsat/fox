@@ -1,7 +1,6 @@
 package widget
 
 import (
-    "strings"
     "unicode"
 
     "github.com/cuhsat/cu/pkg/fs/heapset"
@@ -10,7 +9,13 @@ import (
 )
 
 const (
-    Abbrev = "…"
+    MinAscii = 0x20
+    MaxAscii = 0x7f
+)
+
+const (
+    Abbreviation = "…"
+    NotPrintable = '.' // tcell.RuneBullet
 )
 
 type Stackable interface {
@@ -21,11 +26,25 @@ type widget struct {
     screen tcell.Screen
 }
 
-func (w *widget) blank(x, y, z int, sty tcell.Style) {
-    w.print(x, y, strings.Repeat(" ", z), sty)
+func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {
+    for i := 0; i < w; i++ {
+        wi.screen.SetContent(x + i, y, ' ', nil, sty)
+    }
 }
 
-func (w *widget) print(x, y int, s string, sty tcell.Style) {
+func (wi *widget) printAscii(x, y int, s string, sty tcell.Style) {
+    for _, r := range s {
+        if r < MinAscii || r > MaxAscii {
+            r = NotPrintable
+        }
+
+        wi.screen.SetContent(x, y, r, nil, sty)
+        
+        x += 1
+    }
+}
+
+func (wi *widget) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         switch r {
         case '\t':
@@ -34,11 +53,11 @@ func (w *widget) print(x, y int, s string, sty tcell.Style) {
             r = tcell.RuneLArrow
         default:
             if !unicode.IsPrint(r) {
-                r = tcell.RuneBullet
+                r = NotPrintable
             }
         }
 
-        w.screen.SetContent(x, y, r, nil, sty)
+        wi.screen.SetContent(x, y, r, nil, sty)
         
         x += runewidth.RuneWidth(r)
     }
@@ -46,7 +65,7 @@ func (w *widget) print(x, y int, s string, sty tcell.Style) {
 
 func abbrev(s string, x, w int) string {
     if x + length(s) > w + 1 {
-        s = string([]rune(s)[:(w-x)-1]) + Abbrev
+        s = string([]rune(s)[:(w-x)-1]) + Abbreviation
     }
 
     return s

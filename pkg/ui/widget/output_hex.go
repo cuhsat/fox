@@ -54,7 +54,7 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
         text_x += HexSpace * 2
 
         // text value
-        o.print(text_x, line_y, line.str, theme.Output)
+        o.printAscii(text_x, line_y, line.str, theme.Output)
 
         // mark found positions
         // for c, f := range heap.Chain {

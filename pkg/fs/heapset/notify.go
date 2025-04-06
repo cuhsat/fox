@@ -1,6 +1,8 @@
 package heapset
 
 import (
+    "path/filepath"
+
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/fsnotify/fsnotify"
@@ -13,7 +15,7 @@ func (hs *HeapSet) SetCallback(fn Callback) {
 }
 
 func (hs *HeapSet) notifyHeap(h *heap.Heap) {
-    err := hs.watcher.Add(h.Path)
+    err := hs.watcher.Add(filepath.Dir(h.Path))
 
     if err != nil {
         fs.Panic(err)
@@ -23,6 +25,13 @@ func (hs *HeapSet) notifyHeap(h *heap.Heap) {
 func (hs *HeapSet) notify() {
     for {
         select {
+        case err, ok := <-hs.watcher.Errors:
+            if !ok {
+                continue
+            }
+            
+            fs.Error(err)
+
         case ev, ok := <-hs.watcher.Events:
             if !ok || !ev.Has(fsnotify.Write) {
                 continue

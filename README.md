@@ -1,5 +1,5 @@
 # cu [see:you]
-Performance oriented viewing for line based text files.
+The Swiss Army Knife for viewing lined based text files. Combining cat, zcat, grep, hexdump, head, tail, wc and sha256 into one performance oriented tool.
 
 ## Usage
 ```
@@ -14,6 +14,8 @@ Available options:
 
 ## Files
 * `~/.cu_history` Input history
+* `~/.cin` Input buffer
+* `~/.cout` Output buffer
 
 ## Keyboard
 | Shortcut                                           | Action                |

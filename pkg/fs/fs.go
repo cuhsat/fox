@@ -7,6 +7,11 @@ import (
 )
 
 const (
+    In  = ".cin"
+    Out = ".cout"
+)
+
+const (
     Append   = os.O_CREATE | os.O_APPEND | os.O_RDWR
     Override = os.O_CREATE | os.O_TRUNC | os.O_WRONLY
 )
