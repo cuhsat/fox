@@ -11,23 +11,23 @@ import (
 )
 
 const (
-    TextSpace = 1
+    LineSpace = 1
 )
 
-type textLine struct {
+type lineData struct {
     nr, str string
 }
 
-func (o *Output) textRender(heap *heap.Heap, x, y, w, h int) {
+func (o *Output) lineRender(heap *heap.Heap, x, y, w, h int) {
     // convert logical to display lines
-    lines := o.textBuffer(heap, w, h)
+    lines := o.lineBuffer(heap, w, h)
 
     if len(lines) > 0 {
-        w -= len(lines[0].nr) + TextSpace
+        w -= len(lines[0].nr) + LineSpace
     }
 
     // set buffer bounds
-    o.last_x = max(heap.SMap.Length() - w, 0)
+    o.last_x = max(heap.SMap.Width() - w, 0)
     o.last_y = max(len(heap.SMap) - h, 0)
 
     // render buffer
@@ -36,9 +36,9 @@ func (o *Output) textRender(heap *heap.Heap, x, y, w, h int) {
         line_y := y + i
 
         // line number
-        if o.line {
+        if o.status.Numbers {
             o.print(line_x, line_y, line.nr, theme.Hint)
-            line_x += len(line.nr) + TextSpace
+            line_x += len(line.nr) + LineSpace
         }
 
         // text value
@@ -46,21 +46,21 @@ func (o *Output) textRender(heap *heap.Heap, x, y, w, h int) {
 
         // mark found positions
         for c, f := range heap.Chain {
-            o.textMark(line_x, line_y, c, line.str, f.Name)
+            o.lineMark(line_x, line_y, c, line.str, f.Name)
         }
     }
 }
 
-func (o *Output) textBuffer(heap *heap.Heap, w, h int) (tl []textLine) {
+func (o *Output) lineBuffer(heap *heap.Heap, w, h int) (ld []lineData) {
     len_nr := int(math.Log10(float64(heap.Length()))) + 1
 
-    if o.line {
-        w -= (len_nr + TextSpace)
+    if o.status.Numbers {
+        w -= (len_nr + LineSpace)
     }
 
     for i, se := range heap.SMap[o.delta_y:] {
-        if len(tl) >= h {
-            return tl[:h]
+        if len(ld) >= h {
+            return ld[:h]
         }
 
         if i >= h {
@@ -75,13 +75,13 @@ func (o *Output) textBuffer(heap *heap.Heap, w, h int) (tl []textLine) {
         str = str[min(o.delta_x, length(str)):]
 
         // display lines
-        if o.wrap {
+        if o.status.Wrap {
             for {
                 if length(str) < w+1 {
                     break
                 }
 
-                tl = append(tl, textLine{
+                ld = append(ld, lineData{
                     nr: nr,
                     str: str[:w-1] + "\r",
                 })
@@ -90,7 +90,7 @@ func (o *Output) textBuffer(heap *heap.Heap, w, h int) (tl []textLine) {
             }
         }
 
-        tl = append(tl, textLine{
+        ld = append(ld, lineData{
             nr: nr,
             str: str,
         })
@@ -99,7 +99,7 @@ func (o *Output) textBuffer(heap *heap.Heap, w, h int) (tl []textLine) {
     return
 }
 
-func (o *Output) textMark(x, y, c int, s, f string) {
+func (o *Output) lineMark(x, y, c int, s, f string) {
     i := strings.Index(s, f)
 
     if i == -1 {
@@ -108,10 +108,10 @@ func (o *Output) textMark(x, y, c int, s, f string) {
 
     o.print(x + i, y, f, theme.Colors[c % len(theme.Colors)])
     
-    o.textMark(x + i+1, y, c, s[i+1:], f)
+    o.lineMark(x + i+1, y, c, s[i+1:], f)
 }
 
-func (o *Output) textGoto(s string) {
+func (o *Output) lineGoto(s string) {
     switch s[0] {
     case '+':
         delta, _ := strconv.Atoi(s[1:])
