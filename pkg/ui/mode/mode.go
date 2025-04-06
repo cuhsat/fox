@@ -7,19 +7,19 @@ import (
 type Mode int
 
 const (
-    Normal Mode = iota
+    Grep Mode = iota
     Hex
     Goto
 )
 
 func (m Mode) String() string {
     modes := [...]string{
-        "Normal", 
+        "Grep", 
         "Hex", 
         "Goto",
     }
 
-    if m < Normal || m > Goto {
+    if m < Grep || m > Goto {
       return "..."
     }
 

@@ -10,7 +10,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/smap"
 )
 
-type heapChunk struct {
+type chunk struct {
     min int
     max int
 }
@@ -35,9 +35,23 @@ func (h *Heap) DelFilter() {
     }
 }
 
-func (h *Heap) NoFilter() {
+func (h *Heap) ResetFilter() {
     h.Chain = h.Chain[:0]
     h.SMap = h.rmap
+}
+
+func (h *Heap) chunks() (c []*chunk) {
+    n := len(h.SMap)
+    m := min(runtime.GOMAXPROCS(0), n)
+    
+    for i := 0; i < m; i++ {
+        c = append(c, &chunk{
+            min: i * n / m,
+            max: ((i+1) * n) / m,
+        })
+    }
+
+    return
 }
 
 func (h *Heap) filter(b []byte) (s smap.SMap) {
@@ -47,21 +61,21 @@ func (h *Heap) filter(b []byte) (s smap.SMap) {
 
     var wg sync.WaitGroup
 
-    for _, c := range chunks(h) {
+    for _, c := range h.chunks() {
         wg.Add(1)
 
         go func() {
-            h.search(ch, c, b)
+            h.grep(ch, c, b)
             wg.Done()
         }()
     }
 
     wg.Wait()
 
-    return gather(ch)
+    return sort(ch)
 }
 
-func (h *Heap) search(ch chan<- *smap.String, c *heapChunk, b []byte) {
+func (h *Heap) grep(ch chan<- *smap.String, c *chunk, b []byte) {
     for _, s := range h.SMap[c.min:c.max] {
         if bytes.Contains(h.MMap[s.Start:s.End], b) {
             ch <- s
@@ -69,7 +83,7 @@ func (h *Heap) search(ch chan<- *smap.String, c *heapChunk, b []byte) {
     }
 }
 
-func gather(ch <-chan *smap.String) (s smap.SMap) {
+func sort(ch <-chan *smap.String) (s smap.SMap) {
     for len(ch) > 0 {
         s = append(s, <-ch)
     }
@@ -77,20 +91,6 @@ func gather(ch <-chan *smap.String) (s smap.SMap) {
     slices.SortFunc(s, func(a, b *smap.String) int {
         return cmp.Compare(a.Nr, b.Nr)
     })
-
-    return
-}
-
-func chunks(h *Heap) (c []*heapChunk) {
-    n := len(h.SMap)
-    m := min(runtime.GOMAXPROCS(0), n)
-    
-    for i := 0; i < m; i++ {
-        c = append(c, &heapChunk{
-            min: i * n / m,
-            max: ((i+1) * n) / m,
-        })
-    }
 
     return
 }

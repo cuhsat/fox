@@ -4,6 +4,7 @@ import (
     "unicode"
 
     "github.com/cuhsat/cu/pkg/fs/heapset"
+    "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
@@ -24,6 +25,7 @@ type Stackable interface {
 
 type widget struct {
     screen tcell.Screen
+    status *status.Status
 }
 
 func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {

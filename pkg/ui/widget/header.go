@@ -39,10 +39,10 @@ func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     hd.printBlank(x, y, w, theme.Line)
 
     // render heap file path
-    hd.print(x, y, abbrev(p, x, w-len(i)), theme.Header)
+    hd.print(x, y, abbrev(p, x, w-length(i)), theme.Header)
 
     // render heapset index
-    hd.print(x + w-len(i), y, i, theme.Input)
+    hd.print(x + w-length(i), y, i, theme.Input)
 
     return 1
 }

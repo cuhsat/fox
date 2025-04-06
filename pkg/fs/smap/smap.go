@@ -35,7 +35,7 @@ func Map(m mmap.MMap) (s SMap) {
     }
 
     // append remaining string
-    if len(s) > 0 && m[len(m)-1] != Break {
+    if len(s) > 0 {
         l := s[len(s)-1]
         s = append(s, &String{
             Nr: l.Nr + 1,
@@ -48,7 +48,7 @@ func Map(m mmap.MMap) (s SMap) {
     return
 }
 
-func (s SMap) Length() (l int) {
+func (s SMap) Width() (l int) {
     for _, str := range s {
         l = max(l, str.Len)
     }

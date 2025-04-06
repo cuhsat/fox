@@ -18,7 +18,7 @@ func main() {
     var f heap.Filters
 
     // flags
-    m := mode.Normal
+    m := mode.Grep
     x := flag.Bool("x", false, "Hex mode")
 
     // limits

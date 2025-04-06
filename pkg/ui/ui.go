@@ -7,6 +7,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
+    "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/cuhsat/cu/pkg/ui/widget"
     "github.com/gdamore/tcell/v2"
@@ -18,9 +19,10 @@ const (
 )
 
 type UI struct {
-    mode, last mode.Mode
-
     screen  tcell.Screen
+
+    status  *status.Status
+
     header  *widget.Header
     output  *widget.Output
     input   *widget.Input
@@ -51,6 +53,7 @@ func NewUI(mode mode.Mode) *UI {
 
     ui := UI{
         screen:  scr,
+        status:  status.NewStatus(),
         header:  widget.NewHeader(scr),
         output:  widget.NewOutput(scr),
         input:   widget.NewInput(scr),
@@ -111,8 +114,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
 
-            case tcell.KeyCtrlN, tcell.KeyF1:
-                ui.Switch(mode.Normal)
+            case tcell.KeyCtrlG, tcell.KeyF1:
+                ui.Switch(mode.Grep)
 
             case tcell.KeyCtrlX, tcell.KeyF2:
                 ui.Switch(mode.Hex)
@@ -134,21 +137,17 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlH:
-                hash := heap.Hash()
-
-                z := (w - len(hash)*2) / 2
-
-                ui.overlay.SendMessage(fmt.Sprintf("%*s%x%*s", z, "", hash, z, ""))
+                ui.overlay.SendMessage(fmt.Sprintf("%s  %x", heap.Path, heap.Hash()))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
                 heap.Reload()
 
-            case tcell.KeyCtrlL:
-                ui.output.ToggleNumbers()
+            case tcell.KeyCtrlN:
+                ui.status.ToggleNumbers()
 
             case tcell.KeyCtrlW:
-                ui.output.ToggleWrap()
+                ui.status.ToggleWrap()
 
             case tcell.KeyHome:
                 ui.output.ScrollBegin()
@@ -203,11 +202,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 hi.AddCommand(v)
 
-                switch ui.mode {
+                switch ui.status.Mode {
                 case mode.Goto:
                     ui.output.Goto(v)
 
-                    ui.Switch(ui.last)
+                    ui.Switch(ui.status.Last)
 
                 default:
                     ui.output.Reset()
@@ -226,7 +225,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                     heap = hs.NextHeap()
                 }
 
-                heap.NoFilter()
+                heap.ResetFilter()
 
                 for _, f := range chain {
                     heap.AddFilter(f.Name)
@@ -251,18 +250,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 }
 
 func (ui *UI) Switch(m mode.Mode) {
-    // allow only goto in normal mode
-    if m == mode.Hex && ui.mode == mode.Goto {
+    if !ui.status.SwitchMode(m) {
         return
     }
 
-    ui.last = ui.mode
-    ui.mode = m
-
-    ui.input.SetMode(m)
+    ui.input.Lock = m == mode.Hex
 
     if m != mode.Goto {
-        ui.output.SetMode(m)
+        ui.output.Reset()
     }
 }
 

@@ -3,16 +3,12 @@ package widget
 import (
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/mode"
+    "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/gdamore/tcell/v2"
 )
 
 type Output struct {
     widget
-
-    mode    mode.Mode
-
-    line    bool
-    wrap    bool
 
     last_x  int
     last_y  int
@@ -25,10 +21,8 @@ func NewOutput(screen tcell.Screen) *Output {
     return &Output{
         widget: widget{
             screen: screen,
+            status: status.NewStatus(),
         },
-
-        line: true,
-        wrap: false,
 
         last_x: 0,
         last_y: 0,
@@ -43,10 +37,10 @@ func (o *Output) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     h -= 1 // fill all but least line
 
-    if o.mode == mode.Hex {
+    if o.status.Mode == mode.Hex {
         o.hexRender(heap, x, y, w, h)
     } else {
-        o.textRender(heap, x, y, w, h)
+        o.lineRender(heap, x, y, w, h)
     }
 
     return h
@@ -58,17 +52,10 @@ func (o *Output) Reset() {
 }
 
 func (o *Output) Goto(s string) {
-    if o.mode == mode.Hex {
+    if o.status.Mode == mode.Hex {
         o.hexGoto(s)
     } else {
-        o.textGoto(s)
-    }
-}
-
-func (o *Output) SetMode(m mode.Mode) {
-    if o.mode != m {
-        o.mode = m
-        o.Reset()        
+        o.lineGoto(s)
     }
 }
 
@@ -94,12 +81,4 @@ func (o *Output) ScrollLeft(delta int) {
 
 func (o *Output) ScrollRight(delta int) {
     o.delta_x = min(o.delta_x + delta, o.last_x)
-}
-
-func (o *Output) ToggleNumbers() {
-    o.line = !o.line
-}
-
-func (o *Output) ToggleWrap() {
-    o.wrap = !o.wrap
 }

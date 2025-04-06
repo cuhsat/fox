@@ -16,7 +16,7 @@ const (
     Rule = "┃"
 )
 
-type hexLine struct {
+type hexData struct {
     off, hex, str string
 }
 
@@ -37,13 +37,17 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
         line_x := x
         line_y := y + i
 
-        // offset number
-        o.print(line_x, line_y, line.off, theme.Hint)
-        hex_x := line_x + len(line.off)
+        hex_x := line_x
 
-        // offset separator
-        o.print(hex_x, line_y, Rule, theme.Rule)
-        hex_x += HexSpace * 2
+        if o.status.Numbers {
+            // offset number
+            o.print(hex_x, line_y, line.off, theme.Hint)
+            hex_x += len(line.off)
+
+            // offset separator
+            o.print(hex_x, line_y, Rule, theme.Rule)
+            hex_x += HexSpace * 2            
+        }
 
         // hex values
         o.print(hex_x, line_y, line.hex, theme.Output)
@@ -64,8 +68,14 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
     }
 }
 
-func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hl []hexLine, my int) {
-    c := int(float64((w - (8 + HexSpace)) + HexSpace) / 3.5)
+func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hd []hexData, my int) {
+    l := 0
+
+    if o.status.Numbers {
+        l = 8
+    }
+
+    c := int(float64((w - (l + HexSpace)) + HexSpace) / 3.5)
     c -= c % 2
 
     hw := int(float64(c) * 2.5)
@@ -79,11 +89,11 @@ func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hl []hexLine, my int) {
     m := heap.MMap[o.delta_y * c:]
 
     for i := 0; i < len(m); i += c {
-        if len(hl) >= h {
-            return hl[:h], my
+        if len(hd) >= h {
+            return hd[:h], my
         }
 
-        l := hexLine{
+        d := hexData{
             off: fmt.Sprintf("%0*X ", 8, o.delta_y + i),
             hex: "",
             str: "",
@@ -96,18 +106,18 @@ func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hl []hexLine, my int) {
 
             b := m[i + j]
 
-            l.str = fmt.Sprintf("%s%c", l.str, b)
-            l.hex = fmt.Sprintf("%s%02X", l.hex, b)
+            d.str = fmt.Sprintf("%s%c", d.str, b)
+            d.hex = fmt.Sprintf("%s%02X", d.hex, b)
 
             // make hex gap
             if (j+1) % 2 == 0 {
-                l.hex += " "
+                d.hex += " "
             }
         }
 
-        l.hex = fmt.Sprintf("%-*s", hw, l.hex)
+        d.hex = fmt.Sprintf("%-*s", hw, d.hex)
 
-        hl = append(hl, l)
+        hd = append(hd, d)
     }
 
     return
