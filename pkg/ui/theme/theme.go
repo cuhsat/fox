@@ -23,6 +23,7 @@ var (
 
 func Load(theme string) {
     t := map[string][]int32{
+        "monochrome": Monochrome,
         "monokai": Monokai,
     }[theme]
 

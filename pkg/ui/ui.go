@@ -29,7 +29,7 @@ type UI struct {
     overlay *widget.Overlay
 }
 
-func NewUI(mode mode.Mode) *UI {
+func NewUI(t string, m mode.Mode) *UI {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -44,7 +44,7 @@ func NewUI(mode mode.Mode) *UI {
         fs.Panic(err)
     }
 
-    theme.Load(theme.Default)
+    theme.Load(t)
 
     scr.SetStyle(theme.Output)
     scr.EnableMouse()
@@ -60,7 +60,7 @@ func NewUI(mode mode.Mode) *UI {
         overlay: widget.NewOverlay(scr),
     }
 
-    ui.State(mode)
+    ui.State(m)
 
     return &ui
 }
@@ -112,7 +112,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
             switch ev.Key() {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
-                return
+                if ui.status.Mode == mode.Goto {
+                    ui.State(ui.status.Last)
+                } else {
+                    return
+                }
 
             case tcell.KeyCtrlL, tcell.KeyF1:
                 ui.State(mode.Less)
@@ -251,6 +255,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 if ev.Rune() == 32 && ui.status.Mode == mode.Less {
                     ui.output.ScrollDown(page_h)
                 } else {
+                    if ui.status.Mode == mode.Less {
+                        ui.State(mode.Grep)                        
+                    }
+
                     ui.input.AddRune(ev.Rune())
                 }
             }
