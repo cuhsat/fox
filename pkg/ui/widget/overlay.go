@@ -4,6 +4,7 @@ import (
     "fmt"
     "time"
 
+    "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -26,10 +27,11 @@ type message struct {
     delay time.Duration
 } 
 
-func NewOverlay(screen tcell.Screen) *Overlay {
+func NewOverlay(screen tcell.Screen, status *status.Status) *Overlay {
     return &Overlay{
         widget: widget{
             screen: screen,
+            status: status,
         },
         
         ch: make(chan message),

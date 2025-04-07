@@ -36,7 +36,7 @@ func (o *Output) lineRender(heap *heap.Heap, x, y, w, h int) {
         line_y := y + i
 
         // line number
-        if o.status.Numbers {
+        if o.status.Line {
             o.print(line_x, line_y, line.nr, theme.Hint)
             line_x += len(line.nr) + LineSpace
         }
@@ -54,7 +54,7 @@ func (o *Output) lineRender(heap *heap.Heap, x, y, w, h int) {
 func (o *Output) lineBuffer(heap *heap.Heap, w, h int) (ld []lineData) {
     len_nr := int(math.Log10(float64(heap.Length()))) + 1
 
-    if o.status.Numbers {
+    if o.status.Line {
         w -= (len_nr + LineSpace)
     }
 

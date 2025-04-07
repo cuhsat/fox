@@ -23,11 +23,11 @@ type Input struct {
     Value string
 }
 
-func NewInput(screen tcell.Screen) *Input {
+func NewInput(screen tcell.Screen, status *status.Status) *Input {
     return &Input{
         widget: widget{
             screen: screen,
-            status: status.NewStatus(),
+            status: status,
         },
 
         Lock: true,
@@ -105,7 +105,7 @@ func (i *Input) formatFilters(h *heap.Heap) (s string) {
 func (i *Input) formatStatus(h *heap.Heap) string {
     n := " "
 
-    if i.status.Numbers {
+    if i.status.Line {
         n = "N"
     }
 

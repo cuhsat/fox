@@ -4,6 +4,7 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
@@ -29,8 +30,10 @@ type UI struct {
     overlay *widget.Overlay
 }
 
-func NewUI(t string, m mode.Mode) *UI {
+func NewUI(c config.Config, m mode.Mode) *UI {
     encoding.Register()
+
+    sts := status.NewStatus(c)
 
     scr, err := tcell.NewScreen()
 
@@ -44,7 +47,7 @@ func NewUI(t string, m mode.Mode) *UI {
         fs.Panic(err)
     }
 
-    theme.Load(t)
+    theme.Load(c.UI.Theme)
 
     scr.SetStyle(theme.Output)
     scr.EnableMouse()
@@ -53,11 +56,11 @@ func NewUI(t string, m mode.Mode) *UI {
 
     ui := UI{
         screen:  scr,
-        status:  status.NewStatus(),
-        header:  widget.NewHeader(scr),
-        output:  widget.NewOutput(scr),
-        input:   widget.NewInput(scr),
-        overlay: widget.NewOverlay(scr),
+        status:  sts,
+        header:  widget.NewHeader(scr, sts),
+        output:  widget.NewOutput(scr, sts),
+        input:   widget.NewInput(scr, sts),
+        overlay: widget.NewOverlay(scr, sts),
     }
 
     ui.State(m)
@@ -114,6 +117,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 if ui.status.Mode == mode.Goto {
                     ui.State(ui.status.Last)
+                } else if ui.status.Mode == mode.Grep {
+                    ui.State(mode.Less)
                 } else {
                     return
                 }
@@ -131,20 +136,36 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.State(mode.Goto)
 
             case tcell.KeyCtrlV:
+                if ui.status.Mode == mode.Hex {
+                    continue
+                }
+
                 ui.screen.GetClipboard()
 
             case tcell.KeyCtrlC:
+                if ui.status.Mode == mode.Hex {
+                    continue
+                }
+
                 ui.screen.SetClipboard(heap.Copy())
 
                 ui.overlay.SendStatus(fmt.Sprintf("%s copied", heap.Path))
 
             case tcell.KeyCtrlS:
+                if ui.status.Mode == mode.Hex {
+                    continue
+                }
+
+                if len(heap.Chain) == 0 {
+                    continue
+                }
+
                 path := heap.Save()
                 
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlH:
-                ui.overlay.SendMessage(fmt.Sprintf("%s  %x", heap.Path, heap.Hash()))
+                ui.overlay.SendMessage(fmt.Sprintf("%s %x", heap.Path, heap.Hash()))
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
@@ -243,23 +264,31 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                     ui.input.DelRune()
                 } else if len(heap.Chain) > 0 {
                     ui.output.Reset()
-                    
                     heap.DelFilter()
+                } else if ui.status.Mode == mode.Goto {
+                    ui.State(ui.status.Last)
+                } else if ui.status.Mode == mode.Grep {
+                    ui.State(mode.Less)
                 }
 
             default:
-                if ev.Rune() == 0 {
-                    continue
-                }
+                r := ev.Rune()
 
-                if ev.Rune() == 32 && ui.status.Mode == mode.Less {
-                    ui.output.ScrollDown(page_h)
-                } else {
+                switch r {
+                case 0: // error
+                    continue
+
+                case 32: // space
+                    if ui.status.Mode == mode.Less {
+                        ui.output.ScrollDown(page_h)                        
+                    }
+
+                default: // all other keys
                     if ui.status.Mode == mode.Less {
                         ui.State(mode.Grep)                        
                     }
 
-                    ui.input.AddRune(ev.Rune())
+                    ui.input.AddRune(r)
                 }
             }
         }
@@ -272,10 +301,10 @@ func (ui *UI) State(m mode.Mode) {
     }
 
     switch m {
-    case mode.Less, mode.Hex:
+    case mode.Less, mode.Hex: // static modes
         ui.input.Lock = true
 
-    case mode.Grep, mode.Goto:
+    case mode.Grep, mode.Goto: // interactive modes
         ui.input.Lock = false
     }
 

@@ -13,9 +13,18 @@ Available options:
 * `-f` Filter value
 
 ## Files
-* `~/.cu_history` Input history
+* `~/.cu_history` History file
+* `~/.curc` Config file
 * `~/.cin` Input buffer
 * `~/.cout` Output buffer
+
+## Config
+```toml
+[UI]
+Theme = "Monokai"
+Line = true
+Wrap = true
+```
 
 ## Keyboard
 
@@ -36,6 +45,7 @@ Available options:
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
 | <kbd>Ctrl</kbd> + <kbd>h</kbd>                     | Show file hash        |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
+| <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle line wrap      |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd>                     | Save buffer content   |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                     | Copy buffer content   |
 
