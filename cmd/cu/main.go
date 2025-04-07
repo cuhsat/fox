@@ -10,6 +10,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui"
     "github.com/cuhsat/cu/pkg/ui/mode"
+    "github.com/cuhsat/cu/pkg/ui/theme"
 )
 
 func main() {
@@ -19,6 +20,9 @@ func main() {
     // flags
     m := mode.Less
     x := flag.Bool("x", false, "Hex mode")
+
+    // theme
+    u := flag.String("u", theme.Default, "Theme")
 
     // limits
     flag.IntVar(&l.Head, "h", 0, "Head count")
@@ -58,7 +62,7 @@ func main() {
     hi := history.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(m)
+    ui := ui.NewUI(*u, m)
     defer ui.Close()
 
     ui.Run(hs, hi)
