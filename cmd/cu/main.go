@@ -1,4 +1,3 @@
-// usage: cu [-x] [-h # | -t #] [-f FILTER] [PATH ...]
 package main
 
 import (
@@ -18,7 +17,7 @@ func main() {
     var f heap.Filters
 
     // flags
-    m := mode.Grep
+    m := mode.Less
     x := flag.Bool("x", false, "Hex mode")
 
     // limits
@@ -41,8 +40,16 @@ func main() {
         m = mode.Hex
     }
 
+    if len(f) > 0 {
+        m = mode.Grep
+    } 
+
     if l.Head > 0 && l.Tail > 0 {
         fs.Panic("either head or tail")
+    }
+
+    if *x && len(f) > 0 {
+        fs.Panic("either hex or filter")
     }
 
     hs := heapset.NewHeapSet(a, l, f...)

@@ -17,9 +17,11 @@ var instance *Status = nil
 
 func NewStatus() *Status {
     if instance == nil {
+
+        // defaults
         instance = &Status{
-            Mode: mode.Grep,
-            Last: mode.Grep,
+            Mode: mode.Less,
+            Last: mode.Less,
             Numbers: true,
             Wrap: false,
         }
@@ -29,7 +31,7 @@ func NewStatus() *Status {
 }
 
 func (s *Status) SwitchMode(m mode.Mode) bool {
-    // allow only goto in grep mode
+    // deny goto in hex mode
     if m == mode.Goto && s.Mode == mode.Hex {
         return false
     }
@@ -45,14 +47,10 @@ func (s *Status) SwitchMode(m mode.Mode) bool {
     return true
 }
 
-func (s *Status) ToggleNumbers() bool {
+func (s *Status) ToggleNumbers() {
     s.Numbers = !s.Numbers
-
-    return s.Numbers
 }
 
-func (s *Status) ToggleWrap() bool {
+func (s *Status) ToggleWrap() {
     s.Wrap = !s.Wrap
-
-    return s.Wrap
 }

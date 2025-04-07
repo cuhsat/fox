@@ -60,7 +60,7 @@ func NewUI(mode mode.Mode) *UI {
         overlay: widget.NewOverlay(scr),
     }
 
-    ui.Switch(mode)
+    ui.State(mode)
 
     return &ui
 }
@@ -108,20 +108,23 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
         case *tcell.EventKey:
             page_w := w
-            page_h := h-1
+            page_h := h-2
 
             switch ev.Key() {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
                 return
 
-            case tcell.KeyCtrlG, tcell.KeyF1:
-                ui.Switch(mode.Grep)
+            case tcell.KeyCtrlL, tcell.KeyF1:
+                ui.State(mode.Less)
 
-            case tcell.KeyCtrlX, tcell.KeyF2:
-                ui.Switch(mode.Hex)
+            case tcell.KeyCtrlG, tcell.KeyF2:
+                ui.State(mode.Grep)
 
-            case tcell.KeyCtrlSpace, tcell.KeyF3:
-                ui.Switch(mode.Goto)
+            case tcell.KeyCtrlX, tcell.KeyF3:
+                ui.State(mode.Hex)
+
+            case tcell.KeyCtrlSpace, tcell.KeyF4:
+                ui.State(mode.Goto)
 
             case tcell.KeyCtrlV:
                 ui.screen.GetClipboard()
@@ -206,7 +209,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 case mode.Goto:
                     ui.output.Goto(v)
 
-                    ui.Switch(ui.status.Last)
+                    ui.State(ui.status.Last)
 
                 default:
                     ui.output.Reset()
@@ -241,7 +244,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 }
 
             default:
-                if ev.Rune() != 0 {
+                if ev.Rune() == 0 {
+                    continue
+                }
+
+                if ev.Rune() == 32 && ui.status.Mode == mode.Less {
+                    ui.output.ScrollDown(page_h)
+                } else {
                     ui.input.AddRune(ev.Rune())
                 }
             }
@@ -249,14 +258,20 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
     }
 }
 
-func (ui *UI) Switch(m mode.Mode) {
+func (ui *UI) State(m mode.Mode) {
     if !ui.status.SwitchMode(m) {
         return
     }
 
-    ui.input.Lock = m == mode.Hex
+    switch m {
+    case mode.Less, mode.Hex:
+        ui.input.Lock = true
 
-    if m != mode.Goto {
+    case mode.Grep, mode.Goto:
+        ui.input.Lock = false
+    }
+
+    if ui.status.Last == mode.Hex || m == mode.Hex {
         ui.output.Reset()
     }
 }

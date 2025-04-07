@@ -3,6 +3,7 @@ package widget
 import (
     "fmt"
 
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
@@ -29,16 +30,16 @@ func NewInput(screen tcell.Screen) *Input {
             status: status.NewStatus(),
         },
 
-        Lock: false,
+        Lock: true,
         Value: "",
     }
 }
 
 func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
+    m := i.formatMode()
+
     // render blank line
     i.printBlank(x, y, w, theme.Line)
-
-    m := fmt.Sprintf(" %s ", i.status.Mode)
 
     // render mode
     i.print(x, y, m, theme.Mode)
@@ -48,39 +49,19 @@ func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     }
 
     x += length(m)
-    p := ""
 
     _, heap := hs.Current()
 
-    // add filters
-    if i.status.Mode == mode.Grep {
-        for _, f := range heap.Chain {
-            p = fmt.Sprintf("%s %s %s", p, f.Name, Separator)
-        }        
-    }
-
-    // add status numbers
-    sn := " "
-
-    if i.status.Numbers {
-        sn = "N"
-    }
-
-    // add status wrap
-    sw := " "
-
-    if i.status.Wrap {
-        sw = "W"
-    }
-
-    p = fmt.Sprintf("%s %s%s ", p, i.Value, Cursor)
-    c := fmt.Sprintf(" %d ∣ %s ∣ %s ", len(heap.SMap), sn, sw)
+    f := i.formatFilters(heap)
+    s := i.formatStatus(heap)
 
     // render filters
-    i.print(x, y, abbrev(p, x, w-len(c)), theme.Input)
+    if !i.Lock {
+        i.print(x, y, abbrev(f, x, w-length(s)), theme.Input)
+    }
 
-    // render count
-    i.print(w-length(c), y, c, theme.Input)
+    // render status
+    i.print(w-length(s), y, s, theme.Input)
 
     return 1
 }
@@ -103,4 +84,36 @@ func (i *Input) Accept() (s string) {
     }
 
     return
+}
+
+func (i *Input) formatMode() string {
+    return fmt.Sprintf(" %s ", i.status.Mode)
+}
+
+func (i *Input) formatFilters(h *heap.Heap) (s string) {
+    if i.status.Mode == mode.Grep {
+        for _, f := range h.Chain {
+            s = fmt.Sprintf("%s %s %s", s, f.Name, Separator)
+        }        
+    }
+
+    s = fmt.Sprintf("%s %s%s ", s, i.Value, Cursor)
+
+    return 
+}
+
+func (i *Input) formatStatus(h *heap.Heap) string {
+    n := " "
+
+    if i.status.Numbers {
+        n = "N"
+    }
+
+    w := " "
+
+    if i.status.Wrap {
+        w = "W"
+    }
+
+    return fmt.Sprintf(" %d ∣ %s ∣ %s ", len(h.SMap), n, w)
 }
