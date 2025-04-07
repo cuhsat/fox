@@ -1,33 +1,27 @@
 package status
 
 import (
+    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/ui/mode"
 )
 
 type Status struct {
-    Mode    mode.Mode
-    Last    mode.Mode
+    Mode mode.Mode
+    Last mode.Mode
     
-    Numbers bool
-    Wrap    bool
+    Line bool
+    Wrap bool
 }
 
-// singleton
-var instance *Status = nil
+func NewStatus(c config.Config) *Status {
+    return &Status{
+        Mode: mode.Less,
+        Last: mode.Less,
 
-func NewStatus() *Status {
-    if instance == nil {
-
-        // defaults
-        instance = &Status{
-            Mode: mode.Less,
-            Last: mode.Less,
-            Numbers: true,
-            Wrap: false,
-        }
+        // init from config
+        Line: c.UI.Line,
+        Wrap: c.UI.Wrap,
     }
-
-    return instance
 }
 
 func (s *Status) SwitchMode(m mode.Mode) bool {
@@ -48,7 +42,7 @@ func (s *Status) SwitchMode(m mode.Mode) bool {
 }
 
 func (s *Status) ToggleNumbers() {
-    s.Numbers = !s.Numbers
+    s.Line = !s.Line
 }
 
 func (s *Status) ToggleWrap() {

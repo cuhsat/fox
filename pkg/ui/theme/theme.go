@@ -5,7 +5,7 @@ import (
 )
 
 const (
-    Default = "monokai"
+    Default = "Monokai"
 )
 
 var (
@@ -23,8 +23,8 @@ var (
 
 func Load(theme string) {
     t := map[string][]int32{
-        "monochrome": Monochrome,
-        "monokai": Monokai,
+        "Monochrome": Monochrome,
+        "Monokai": Monokai,
     }[theme]
 
     Output = tcell.StyleDefault.

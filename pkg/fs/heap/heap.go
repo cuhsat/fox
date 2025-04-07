@@ -141,8 +141,14 @@ func (h *Heap) ThrowAway() {
 }
 
 func (h *Heap) write(w io.Writer) (n int, err error) {
-    for _, s := range h.SMap {
-        m, err := w.Write([]byte(h.MMap[s.Start:s.End + 1]))
+    for i, s := range h.SMap {
+        end := s.End
+
+        if i < len(h.SMap)-1 {
+            end += 1 // include break
+        }
+
+        m, err := w.Write([]byte(h.MMap[s.Start:end]))
 
         if err != nil {
             return n, err

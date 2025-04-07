@@ -17,11 +17,11 @@ type Output struct {
     delta_y int
 }
 
-func NewOutput(screen tcell.Screen) *Output {
+func NewOutput(screen tcell.Screen, status *status.Status) *Output {
     return &Output{
         widget: widget{
             screen: screen,
-            status: status.NewStatus(),
+            status: status,
         },
 
         last_x: 0,

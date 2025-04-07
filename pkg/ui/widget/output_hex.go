@@ -39,7 +39,7 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
 
         hex_x := line_x
 
-        if o.status.Numbers {
+        if o.status.Line {
             // offset number
             o.print(hex_x, line_y, line.off, theme.Hint)
             hex_x += len(line.off)
@@ -71,7 +71,7 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
 func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hd []hexData, my int) {
     l := 0
 
-    if o.status.Numbers {
+    if o.status.Line {
         l = 8
     }
 

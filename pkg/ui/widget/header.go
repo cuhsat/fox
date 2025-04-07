@@ -4,6 +4,7 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs/heapset"
+    "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/gdamore/tcell/v2"
 )
@@ -16,10 +17,11 @@ type Header struct {
     widget
 }
 
-func NewHeader(screen tcell.Screen) *Header {
+func NewHeader(screen tcell.Screen, status *status.Status) *Header {
     return &Header{
         widget: widget{
             screen: screen,
+            status: status,
         },
     }
 }

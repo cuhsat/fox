@@ -25,6 +25,11 @@ func Panic(a ...any) {
     os.Exit(1)
 }
 
+func Usage(a ...any) {
+    fmt.Fprintln(os.Stderr, a...)
+    os.Exit(2)
+}
+
 func Stdin(path string) {
     fi, err := os.Stdin.Stat()
 
