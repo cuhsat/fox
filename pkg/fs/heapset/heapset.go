@@ -135,10 +135,22 @@ func (hs *HeapSet) buffer(t string, fn action) {
 
     f.Close()
 
+    for i, h := range hs.heaps {
+        if h.Title == t {
+            h.Path = f.Name()
+            h.Chain = h.Chain[:0]
+            h.Reload()
+
+            hs.index = i
+
+            return
+        }
+    }
+
     hs.heaps = append(hs.heaps, &heap.Heap{
         Title: t,
-        Flag: heap.StdOut,
         Path: f.Name(),
+        Flag: heap.StdOut,
     })
 
     hs.index = len(hs.heaps)-1
@@ -195,8 +207,6 @@ func (hs *HeapSet) loadLazy() *heap.Heap {
         h.Reload()
 
         hs.notifyHeap(h)
-
-        hs.heaps[hs.index] = h
     }
 
     return h
