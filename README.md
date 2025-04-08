@@ -3,14 +3,14 @@ The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `l
 
 ## Usage
 ```
-$ cu [-h # | -t #] [-x | -f FILTER] [PATH ...]
+$ cu [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]
 ```
 
 Available options:
 * `-x` Hex mode
 * `-h` Head count
 * `-t` Tail count
-* `-f` Filter value
+* `-e` Pattern value
 
 ## Files
 * `~/.cu_history` History file
