@@ -8,27 +8,26 @@ import (
  
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/smap"
+    "github.com/cuhsat/cu/pkg/fs/limit"
     "github.com/edsrzf/mmap-go"
 )
 
 type Heap struct {
-    Path  string    // file path
-    Limit Limit     // line limit
+    Path  string      // file path
+    Limit limit.Limit // heap limit
 
-    Chain []*Link   // filter chain
+    Head  int         // head offset
+    Tail  int         // tail offset
 
-    MMap  mmap.MMap // memory map
-    SMap  smap.SMap // string map current
-    rmap  smap.SMap // string map reserve
+    Chain []*Link     // filter chain
 
-    hash  []byte    // file hash sum
+    MMap  mmap.MMap   // memory map
+    SMap  smap.SMap   // string map current
+    rmap  smap.SMap   // string map reserve
 
-    file  *os.File  // file handle
-}
+    hash  []byte      // file hash sum
 
-type Limit struct {
-    Head int // head count
-    Tail int // tail count
+    file  *os.File    // file handle
 }
 
 type Link struct {
@@ -36,7 +35,7 @@ type Link struct {
     smap smap.SMap // filter string map
 }
 
-func NewHeap(p string, l Limit) *Heap {
+func NewHeap(p string, l limit.Limit) *Heap {
     h := Heap{
         Path: p,
         Limit: l,
@@ -71,17 +70,11 @@ func (h *Heap) Reload() {
         fs.Panic(err)
     }
 
-    h.SMap = smap.Map(h.MMap)
+    // reduced mmap
+    h.MMap, h.Head, h.Tail = h.Limit.ReduceMMap(h.MMap)
 
-    l := len(h.SMap)
-
-    if h.Limit.Head > 0 {
-        h.SMap = h.SMap[:min(h.Limit.Head, l)]
-    }
-
-    if h.Limit.Tail > 0 {
-        h.SMap = h.SMap[max(l-h.Limit.Tail, 0):]
-    }
+    // reduced smap
+    h.SMap = h.Limit.ReduceSMap(smap.Map(h.MMap))
 
     h.rmap = h.SMap
     h.hash = h.hash[:0]
