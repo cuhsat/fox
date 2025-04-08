@@ -4,7 +4,6 @@ import (
     "fmt"
     "strings"
 
-    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/ui/theme"
 )
 
@@ -20,9 +19,9 @@ type hexData struct {
     off, hex, str string
 }
 
-func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
+func (o *Output) hexRender(x, y, w, h int) {
     // convert logical to display lines
-    lines, max_y := o.hexBuffer(heap, w, h)
+    lines, max_y := o.hexBuffer(w, h)
 
     if len(lines) > 0 {
         w -= len(lines[0].off) + HexSpace
@@ -68,7 +67,7 @@ func (o *Output) hexRender(heap *heap.Heap, x, y, w, h int) {
     }
 }
 
-func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hd []hexData, my int) {
+func (o *Output) hexBuffer(w, h int) (hd []hexData, my int) {
     l := 0
 
     if o.status.Line {
@@ -80,13 +79,13 @@ func (o *Output) hexBuffer(heap *heap.Heap, w, h int) (hd []hexData, my int) {
 
     hw := int(float64(c) * 2.5)
 
-    my = len(heap.MMap) / c
+    my = len(o.heap.MMap) / c
 
-    if len(heap.MMap) % c > 0 {
+    if len(o.heap.MMap) % c > 0 {
         my++
     }
 
-    m := heap.MMap[o.delta_y * c:]
+    m := o.heap.MMap[o.delta_y * c:]
 
     for i := 0; i < len(m); i += c {
         if len(hd) >= h {
@@ -148,8 +147,4 @@ func (o *Output) hexMark(x, y, c int, s, f string) {
     }
 
     return
-}
-
-func (o *Output) hexGoto(s string) {
-    // TODO
 }

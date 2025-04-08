@@ -1,7 +1,9 @@
 package widget
 
 import (
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/heapset"
+    "github.com/cuhsat/cu/pkg/fs/smap"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/gdamore/tcell/v2"
@@ -9,6 +11,9 @@ import (
 
 type Output struct {
     widget
+
+    heap *heap.Heap
+    smap smap.SMap
 
     last_x  int
     last_y  int
@@ -33,14 +38,14 @@ func NewOutput(screen tcell.Screen, status *status.Status) *Output {
 }
 
 func (o *Output) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-    _, heap := hs.Current()
+    _, o.heap = hs.Current()
 
     h -= 1 // fill all but least line
 
     if o.status.Mode == mode.Hex {
-        o.hexRender(heap, x, y, w, h)
+        o.hexRender(x, y, w, h)
     } else {
-        o.lineRender(heap, x, y, w, h)
+        o.textRender(x, y, w, h)
     }
 
     return h
@@ -52,10 +57,8 @@ func (o *Output) Reset() {
 }
 
 func (o *Output) Goto(s string) {
-    if o.status.Mode == mode.Hex {
-        o.hexGoto(s)
-    } else {
-        o.lineGoto(s)
+    if o.status.Mode != mode.Hex {
+        o.textGoto(s)
     }
 }
 
@@ -65,6 +68,11 @@ func (o *Output) ScrollBegin() {
 
 func (o *Output) ScrollEnd() {
     o.delta_y = o.last_y
+}
+
+func (o *Output) ScrollTo(x, y int) {
+    o.delta_x = max(min(x, o.last_x), 0)
+    o.delta_y = max(min(y, o.last_y), 0)
 }
 
 func (o *Output) ScrollUp(delta int) {

@@ -48,10 +48,51 @@ func Map(m mmap.MMap) (s SMap) {
     return
 }
 
-func (s SMap) Width() (l int) {
+func (s SMap) Wrap(w int) (r SMap) {
     for _, str := range s {
-        l = max(l, str.Len)
+        s := str.Start
+        l := str.Len
+
+        // break string
+        for l > w {
+            r = append(r, &String{
+                Nr: str.Nr,
+                Start: s,
+                End: s + w,
+                Len: w,
+            })
+
+            s += w
+            l -= w
+        }
+
+        r = append(r, &String{
+            Nr: str.Nr,
+            Start: s,
+            End: str.End,
+            Len: l,
+        })
     }
+
+    return
+}
+
+func (s SMap) Find(nr int) int {
+    for i, str := range s {
+        if str.Nr == nr {
+            return i
+        }
+    }
+
+    return -1
+}
+
+func (s SMap) Size() (w, h int) {
+    for _, str := range s {
+        w = max(w, str.Len)
+    }
+
+    h = len(s)
 
     return
 }

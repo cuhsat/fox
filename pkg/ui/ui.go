@@ -90,6 +90,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
         case *tcell.EventResize:
             ui.screen.Sync()
+            ui.output.Reset()
 
         case *tcell.EventError:
             ui.overlay.SendError(ev.Error())
@@ -115,13 +116,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
             switch ev.Key() {
             case tcell.KeyCtrlQ, tcell.KeyEscape:
-                if ui.status.Mode == mode.Goto {
-                    ui.State(ui.status.Last)
-                } else if ui.status.Mode == mode.Grep {
-                    ui.State(mode.Less)
-                } else {
-                    return
-                }
+                return
 
             case tcell.KeyCtrlL, tcell.KeyF1:
                 ui.State(mode.Less)
