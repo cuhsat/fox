@@ -1,5 +1,5 @@
 # cu [see:you]
-The Swiss Army Knife for viewing lined based text files. Combining `cat`, `zcat`, `less`, `zless`, `grep`, `hexdump`, `head`, `tail`, `wc` and `sha256` into one performance oriented tool.
+The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `less`, `grep`, `hexdump`, `head`, `tail` and `sha256` into one performance oriented tool.
 
 ## Usage
 ```
@@ -22,8 +22,13 @@ Available options:
 ```toml
 [UI]
 Theme = "Monokai"
-Line = true
-Wrap = true
+Line = true  # Line numbers
+Wrap = true  # Wrap text
+```
+
+### Environment
+```console
+CU_THEME="Monokai"
 ```
 
 ## Keyboard
@@ -45,7 +50,7 @@ Wrap = true
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
 | <kbd>Ctrl</kbd> + <kbd>h</kbd>                     | Show file hash        |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
-| <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle line wrap      |
+| <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle wrap text      |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd>                     | Save buffer content   |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                     | Copy buffer content   |
 
@@ -62,6 +67,11 @@ Wrap = true
 | <kbd>Alt</kbd> + <kbd>Up</kbd>                     | Prev input in history |
 | <kbd>Alt</kbd> + <kbd>Down</kbd>                   | Next input in history |
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                     | Paste as input        |
+| <kbd>Any Key</kbd>                                 | Filter buffer content |
+
+## Themes
+* `Monochrome`
+* `Monokai`
 
 ## License
 Released under the [MIT License](LICENSE).
