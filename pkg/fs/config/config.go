@@ -6,6 +6,7 @@ import (
     "path/filepath"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/ui/theme"
     "github.com/BurntSushi/toml"
 )
@@ -15,6 +16,9 @@ const (
 )
 
 type Config struct {
+    CU struct {
+        Hash string `toml:"Hash"`
+    }
     UI struct {
         Theme string `toml:"Theme"`
         Line  bool   `toml:"Line"`
@@ -23,6 +27,10 @@ type Config struct {
 }
 
 func Load() (c Config) {
+    // defaults CU
+    c.CU.Hash = heap.Sha256
+
+    // defaults UI
     c.UI.Theme = theme.Default
     c.UI.Line = true
     c.UI.Wrap = false
