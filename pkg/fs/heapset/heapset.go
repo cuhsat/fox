@@ -6,6 +6,7 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
+    "github.com/cuhsat/cu/pkg/fs/limit"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -13,12 +14,13 @@ type HeapSet struct {
     watcher *fsnotify.Watcher // file watcher
     watcher_fn Callback       // file watcher callback
 
-    limit   heap.Limit        // heap limit
+    Limit   limit.Limit       // heap limit
+    
     heaps   []*heap.Heap      // set heaps
     index   int               // set index
 }
 
-func NewHeapSet(p []string, l heap.Limit, f ...string) *HeapSet {
+func NewHeapSet(p []string, l limit.Limit, f ...string) *HeapSet {
     w, err := fsnotify.NewWatcher()
 
     if err != nil {
@@ -27,7 +29,7 @@ func NewHeapSet(p []string, l heap.Limit, f ...string) *HeapSet {
 
     hs := HeapSet{
         watcher: w,
-        limit: l,
+        Limit: l,
         index: 0,
     }
 
@@ -132,7 +134,7 @@ func (hs *HeapSet) loadLazy() *heap.Heap {
     h := hs.heaps[hs.index]
 
     if !h.Loaded() {
-        h = heap.NewHeap(h.Path, hs.limit)
+        h = heap.NewHeap(h.Path, hs.Limit)
 
         hs.notifyHeap(h)
 

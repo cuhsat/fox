@@ -18,10 +18,9 @@ type String struct {
 }
 
 func Map(m mmap.MMap) (s SMap) {
-    var j int = 0
+    i, j := 0, 0
 
-    // append strings
-    for i := 0; i < len(m); i++ {
+    for ; i < len(m); i++ {
         if m[i] == Break {
             s = append(s, &String{
                 Nr: len(s) + 1,
@@ -34,16 +33,12 @@ func Map(m mmap.MMap) (s SMap) {
         }
     }
 
-    // append remaining string
-    if len(s) > 0 {
-        l := s[len(s)-1]
-        s = append(s, &String{
-            Nr: l.Nr + 1,
-            Start: l.End + 1,
-            End: len(m),
-            Len: len(m) - l.End,
-        })
-    }
+    s = append(s, &String{
+        Nr: len(s) + 1,
+        Start: j,
+        End: len(m),
+        Len: len(m) - i,
+    })
 
     return
 }
@@ -53,7 +48,6 @@ func (s SMap) Wrap(w int) (r SMap) {
         s := str.Start
         l := str.Len
 
-        // break string
         for l > w {
             r = append(r, &String{
                 Nr: str.Nr,

@@ -8,8 +8,10 @@ $ cu [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]
 
 Available options:
 * `-x` Hex mode
-* `-h` Head count
-* `-t` Tail count
+* `-h` Head limit
+* `-t` Tail limit
+* `-n` Lines count
+* `-c` Bytes count
 * `-e` Pattern value
 
 ## Files

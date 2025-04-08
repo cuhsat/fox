@@ -5,7 +5,6 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/ui/theme"
-    "github.com/edsrzf/mmap-go"
 )
 
 const (
@@ -77,12 +76,11 @@ func (o *Output) hexBuffer(w, h int) (hd []hexData, bw, bh int) {
     cols := int(float64((w - off_w) + HexSpace) / 3.5)
     cols -= cols % 2
 
-    mmap, _, tail := o.hexLimit()
+    mmap, tail := o.heap.MMap, o.heap.Tail
 
     hex_w := int(float64(cols) * 2.5)
 
-    bw = w
-    bh = len(mmap) / cols
+    bw, bh = w, len(mmap) / cols
 
     if len(mmap) % cols > 0 {
         bh++
@@ -147,23 +145,6 @@ func (o *Output) hexMark(x, y, c int, s, f string) {
         }
 
         j = i+1
-    }
-
-    return
-}
-
-func (o *Output) hexLimit() (m mmap.MMap, h, t int) {
-    m = o.heap.MMap
-    l := len(m)
-
-    if o.heap.Limit.Head > 0 {
-        h = min(o.heap.Limit.Head, l)
-        m = m[:h]
-    }
-
-    if o.heap.Limit.Tail > 0 {
-        t = max(l-o.heap.Limit.Tail, 0)
-        m = m[t:]
     }
 
     return
