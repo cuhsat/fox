@@ -13,12 +13,12 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-h # | -t #] [-x | -f FILTER] [PATH ...]")
+    fs.Usage("usage: cu [-h # | -t #] [-x | -e PATTERN] [PATH ...]")
 }
 
 func main() {
     var l heap.Limit
-    var f heap.Filters
+    var e heap.Filters
 
     // config
     c := config.Load()
@@ -28,11 +28,11 @@ func main() {
     x := flag.Bool("x", false, "Hex mode")
 
     // limits
-    flag.IntVar(&l.Head, "h", 0, "Head count")
-    flag.IntVar(&l.Tail, "t", 0, "Tail count")
+    flag.IntVar(&l.Head, "h", 0, "Head lines")
+    flag.IntVar(&l.Tail, "t", 0, "Tail lines")
 
     // filters
-    flag.Var(&f, "f", "Filter")
+    flag.Var(&e, "e", "Pattern")
 
     flag.Usage = usage
     flag.Parse()
@@ -47,7 +47,7 @@ func main() {
         m = mode.Hex
     }
 
-    if len(f) > 0 {
+    if len(e) > 0 {
         m = mode.Grep
     } 
 
@@ -55,11 +55,11 @@ func main() {
         fs.Usage("either head or tail")
     }
 
-    if *x && len(f) > 0 {
-        fs.Usage("either hex or filter")
+    if *x && len(e) > 0 {
+        fs.Usage("either hex or pattern")
     }
 
-    hs := heapset.NewHeapSet(a, l, f...)
+    hs := heapset.NewHeapSet(a, l, e...)
     defer hs.ThrowAway()
 
     hi := history.NewHistory()
