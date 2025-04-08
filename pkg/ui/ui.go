@@ -257,11 +257,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyBackspace2:
                 if len(ui.input.Value) > 0 {
                     ui.input.DelRune()
+                } else if ui.status.Mode == mode.Goto {
+                    ui.State(ui.status.Last)
                 } else if len(heap.Chain) > 0 {
                     ui.output.Reset()
                     heap.DelFilter()
-                } else if ui.status.Mode == mode.Goto {
-                    ui.State(ui.status.Last)
                 } else if ui.status.Mode == mode.Grep {
                     ui.State(mode.Less)
                 }
