@@ -7,11 +7,6 @@ import (
 )
 
 const (
-    In  = ".cin"
-    Out = ".cout"
-)
-
-const (
     Append   = os.O_CREATE | os.O_APPEND | os.O_RDWR
     Override = os.O_CREATE | os.O_TRUNC | os.O_WRONLY
 )
@@ -30,7 +25,7 @@ func Usage(a ...any) {
     os.Exit(2)
 }
 
-func Stdin(path string) {
+func Stdin() string {
     fi, err := os.Stdin.Stat()
 
     if err != nil {
@@ -49,9 +44,19 @@ func Stdin(path string) {
         os.Exit(3)
     }
 
-    err = os.WriteFile(path, b, 0644)
+    f, err := os.CreateTemp("", "cu-stdin-")
 
     if err != nil {
         Panic(err)
     }
+
+    defer f.Close()
+
+    _, err = f.Write(b)
+
+    if err != nil {
+        Panic(err)
+    }
+
+    return f.Name()
 }

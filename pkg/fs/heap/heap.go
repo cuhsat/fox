@@ -12,9 +12,12 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
+type Flag int
+
 type Heap struct {
-    Path  string      // file path
-    Limit limit.Limit // heap limit
+    Flag  Flag        // heap flags
+    Path  string      // heap path
+    Limit limit.Limit // heap limit    
 
     Head  int         // head offset
     Tail  int         // tail offset
@@ -35,9 +38,17 @@ type Link struct {
     smap smap.SMap // filter string map
 }
 
-func NewHeap(p string, l limit.Limit) *Heap {
+const (
+    Normal Flag = iota
+    StdIn
+    StdOut
+    StdErr
+)
+
+func NewHeap(p string, f Flag, l limit.Limit) *Heap {
     h := Heap{
         Path: p,
+        Flag: f,
         Limit: l,
     }
 
@@ -47,17 +58,19 @@ func NewHeap(p string, l limit.Limit) *Heap {
 }
 
 func (h *Heap) String() string {
-    if h.Path == fs.In {
+    switch h.Flag {
+    case StdIn:
         return "-"
+    default:
+        return h.Path
     }
-
-    return h.Path
 }
 
 func (h *Heap) Reload() {
-    h.ThrowAway()
     var err error
 
+    h.ThrowAway()
+    
     h.file, err = os.OpenFile(h.Path, os.O_RDONLY, 0644)
 
     if err != nil {
