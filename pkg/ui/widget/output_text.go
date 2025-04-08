@@ -10,7 +10,7 @@ import (
 )
 
 const (
-    LineSpace = 1
+    TextSpace = 1
 )
 
 type textData struct {
@@ -21,7 +21,7 @@ func (o *Output) textRender(x, y, w, h int) {
     lines, bw, bh := o.textBuffer(w, h)
 
     if len(lines) > 0 {
-        w -= len(lines[0].nr) + LineSpace
+        w -= len(lines[0].nr) + TextSpace
     }
 
     // set buffer bounds
@@ -36,7 +36,7 @@ func (o *Output) textRender(x, y, w, h int) {
         // line number
         if o.status.Line {
             o.print(line_x, line_y, line.nr, theme.Hint)
-            line_x += len(line.nr) + LineSpace
+            line_x += len(line.nr) + TextSpace
         }
 
         // text value
@@ -55,7 +55,7 @@ func (o *Output) textBuffer(w, h int) (td []textData, bw, bh int) {
     o.smap = o.heap.SMap
 
     if o.status.Line {
-        w -= (len_nr + LineSpace)
+        w -= (len_nr + TextSpace)
     }
 
     if o.status.Wrap {
