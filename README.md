@@ -15,10 +15,8 @@ Available options:
 * `-e` Pattern value
 
 ## Files
-* `~/.cu_history` History file
 * `~/.curc` Config file
-* `~/.cin` Input buffer
-* `~/.cout` Output buffer
+* `~/.cu_history` History file
 
 ## Config
 ```toml

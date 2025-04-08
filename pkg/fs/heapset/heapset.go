@@ -92,11 +92,11 @@ func (hs *HeapSet) ThrowAway() {
 }
 
 func (hs *HeapSet) loadPath(p string) {
+    var f heap.Flag
+
     // read stdin
     if p == "-" {
-        p = fs.In
-        
-        fs.Stdin(p)
+        p, f = fs.Stdin(), heap.StdIn
     }
 
     fi, err := os.Stat(p)
@@ -109,6 +109,7 @@ func (hs *HeapSet) loadPath(p string) {
     if !fi.IsDir() {
         hs.heaps = append(hs.heaps, &heap.Heap{
             Path: p,
+            Flag: f,
         })
 
         return
@@ -134,7 +135,7 @@ func (hs *HeapSet) loadLazy() *heap.Heap {
     h := hs.heaps[hs.index]
 
     if !h.Loaded() {
-        h = heap.NewHeap(h.Path, hs.Limit)
+        h = heap.NewHeap(h.Path, h.Flag, hs.Limit)
 
         hs.notifyHeap(h)
 
