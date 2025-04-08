@@ -3,10 +3,11 @@ The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `l
 
 ## Usage
 ```
-$ cu [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]
+$ cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]
 ```
 
 Available options:
+* `-f` Follow
 * `-x` Hex mode
 * `-h` Head limit
 * `-t` Tail limit

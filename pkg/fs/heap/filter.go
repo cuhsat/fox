@@ -35,6 +35,16 @@ func (h *Heap) DelFilter() {
     }
 }
 
+func (h* Heap) ApplyFilter() {
+    chain := h.Chain
+
+    h.ResetFilter()
+
+    for _, f := range chain {
+        h.AddFilter(f.Name)
+    }
+}
+
 func (h *Heap) ResetFilter() {
     h.Chain = h.Chain[:0]
     h.SMap = h.rmap

@@ -9,14 +9,19 @@ type Status struct {
     Mode mode.Mode
     Last mode.Mode
     
+    Follow bool
+
     Line bool
     Wrap bool
 }
 
-func NewStatus(c config.Config) *Status {
+func NewStatus(c config.Config, f bool) *Status {
     return &Status{
         Mode: mode.Less,
         Last: mode.Less,
+
+        // init from flags
+        Follow: f,
 
         // init from config
         Line: c.UI.Line,
