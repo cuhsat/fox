@@ -28,7 +28,7 @@ Wrap = true  # Wrap text
 
 ### Environment
 ```console
-CU_THEME="Monokai"
+CU_THEME=Monokai
 ```
 
 ## Keyboard

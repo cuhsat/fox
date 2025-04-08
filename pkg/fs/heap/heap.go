@@ -145,7 +145,7 @@ func (h *Heap) write(w io.Writer) (n int, err error) {
         end := s.End
 
         if i < len(h.SMap)-1 {
-            end += 1 // include break
+            end += 1 // include string breaks
         }
 
         m, err := w.Write([]byte(h.MMap[s.Start:end]))
