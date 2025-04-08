@@ -1,6 +1,7 @@
 package fs
 
 import (
+    "bufio"
     "fmt"
     "io"
     "os"
@@ -29,19 +30,11 @@ func Stdin() string {
     fi, err := os.Stdin.Stat()
 
     if err != nil {
-        fmt.Fprintln(os.Stderr, err)
-        os.Exit(4)
+        Panic(err)
     }
 
     if (fi.Mode() & os.ModeCharDevice) != 0 {
         Panic("invalid mode")
-    }
-
-    b, err := io.ReadAll(os.Stdin)
-
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err)
-        os.Exit(3)
     }
 
     f, err := os.CreateTemp("", "cu-stdin-")
@@ -50,13 +43,29 @@ func Stdin() string {
         Panic(err)
     }
 
-    defer f.Close()
+    go func(f *os.File) {
+        r := bufio.NewReader(os.Stdin)
 
-    _, err = f.Write(b)
+        for {
+            s, err := r.ReadString('\n')
 
-    if err != nil {
-        Panic(err)
-    }
+            switch err {
+            case nil:
+                _, err = f.WriteString(s)
+
+                if err != nil {
+                    Panic(err)
+                }
+
+            case io.EOF:
+                f.Close()
+                break
+
+            default:
+                Panic(err)
+            }
+        }
+    }(f)
 
     return f.Name()
 }

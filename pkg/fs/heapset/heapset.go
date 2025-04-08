@@ -85,6 +85,10 @@ func (hs *HeapSet) ThrowAway() {
 
     for _, h := range hs.heaps {
         h.ThrowAway()
+
+        if h.Flag != heap.Normal {
+            os.Remove(h.Path)
+        }
     }
 
     hs.heaps = hs.heaps[:0]

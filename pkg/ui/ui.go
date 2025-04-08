@@ -30,10 +30,10 @@ type UI struct {
     overlay *widget.Overlay
 }
 
-func NewUI(c config.Config, m mode.Mode) *UI {
+func NewUI(c config.Config, m mode.Mode, f bool) *UI {
     encoding.Register()
 
-    sts := status.NewStatus(c)
+    sts := status.NewStatus(c, f)
 
     scr, err := tcell.NewScreen()
 
@@ -83,6 +83,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
         switch ev := ev.(type) {
         case *tcell.EventInterrupt:
+            if ui.status.Follow {
+                ui.output.ScrollEnd()
+            }
+
             continue
 
         case *tcell.EventClipboard:
@@ -338,7 +342,7 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     }{
         y += widget.Render(hs, x, y, w, h-y)
     }
-    
+
     ui.overlay.Render(0, 0, w, h)
 
     return

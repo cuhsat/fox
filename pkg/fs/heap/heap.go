@@ -15,8 +15,9 @@ import (
 type Flag int
 
 type Heap struct {
+    Path  string      // file path
     Flag  Flag        // heap flags
-    Path  string      // heap path
+    
     Limit limit.Limit // heap limit    
 
     Head  int         // head offset
@@ -91,6 +92,8 @@ func (h *Heap) Reload() {
 
     h.rmap = h.SMap
     h.hash = h.hash[:0]
+
+    h.ApplyFilter()
 }
 
 func (h *Heap) Length() int {
