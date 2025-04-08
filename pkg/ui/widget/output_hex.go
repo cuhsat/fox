@@ -5,6 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/edsrzf/mmap-go"
 )
 
 const (
@@ -20,16 +21,15 @@ type hexData struct {
 }
 
 func (o *Output) hexRender(x, y, w, h int) {
-    // convert logical to display lines
-    lines, max_y := o.hexBuffer(w, h)
+    lines, bw, bh := o.hexBuffer(w, h)
 
     if len(lines) > 0 {
         w -= len(lines[0].off) + HexSpace
     }
 
     // set buffer bounds
-    o.last_x = max(w, 0)
-    o.last_y = max(max_y - h, 0)
+    o.last_x = max(bw, 0)
+    o.last_y = max(bh - h, 0)
 
     // render buffer
     for i, line := range lines {
@@ -67,43 +67,46 @@ func (o *Output) hexRender(x, y, w, h int) {
     }
 }
 
-func (o *Output) hexBuffer(w, h int) (hd []hexData, my int) {
-    l := 0
+func (o *Output) hexBuffer(w, h int) (hd []hexData, bw, bh int) {
+    off_w := 0
 
     if o.status.Line {
-        l = 8
+        off_w = 8 + HexSpace
     }
 
-    c := int(float64((w - (l + HexSpace)) + HexSpace) / 3.5)
-    c -= c % 2
+    cols := int(float64((w - off_w) + HexSpace) / 3.5)
+    cols -= cols % 2
 
-    hw := int(float64(c) * 2.5)
+    mmap, _, tail := o.hexLimit()
 
-    my = len(o.heap.MMap) / c
+    hex_w := int(float64(cols) * 2.5)
 
-    if len(o.heap.MMap) % c > 0 {
-        my++
+    bw = w
+    bh = len(mmap) / cols
+
+    if len(mmap) % cols > 0 {
+        bh++
     }
 
-    m := o.heap.MMap[o.delta_y * c:]
+    mmap = mmap[o.delta_y * cols:]
 
-    for i := 0; i < len(m); i += c {
+    for i := 0; i < len(mmap); i += cols {
         if len(hd) >= h {
-            return hd[:h], my
+            return hd[:h], bw, bh
         }
 
         d := hexData{
-            off: fmt.Sprintf("%0*X ", 8, o.delta_y + i),
+            off: fmt.Sprintf("%0*X ", 8, tail + o.delta_y + i),
             hex: "",
             str: "",
         }
 
-        for j := 0; j < c; j++ {
-            if i + j >= len(m) {
+        for j := 0; j < cols; j++ {
+            if i + j >= len(mmap) {
                 break
             }
 
-            b := m[i + j]
+            b := mmap[i + j]
 
             d.str = fmt.Sprintf("%s%c", d.str, b)
             d.hex = fmt.Sprintf("%s%02X", d.hex, b)
@@ -114,7 +117,7 @@ func (o *Output) hexBuffer(w, h int) (hd []hexData, my int) {
             }
         }
 
-        d.hex = fmt.Sprintf("%-*s", hw, d.hex)
+        d.hex = fmt.Sprintf("%-*s", hex_w, d.hex)
 
         hd = append(hd, d)
     }
@@ -144,6 +147,23 @@ func (o *Output) hexMark(x, y, c int, s, f string) {
         }
 
         j = i+1
+    }
+
+    return
+}
+
+func (o *Output) hexLimit() (m mmap.MMap, h, t int) {
+    m = o.heap.MMap
+    l := len(m)
+
+    if o.heap.Limit.Head > 0 {
+        h = min(o.heap.Limit.Head, l)
+        m = m[:h]
+    }
+
+    if o.heap.Limit.Tail > 0 {
+        t = max(l-o.heap.Limit.Tail, 0)
+        m = m[t:]
     }
 
     return
