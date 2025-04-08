@@ -1,5 +1,5 @@
 # cu [see:you]
-The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `less`, `grep`, `hexdump`, `head`, `tail` and `sha256` into one performance oriented tool.
+The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
 
 ## Usage
 ```
@@ -8,11 +8,11 @@ $ cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]
 
 Available options:
 * `-f` Follow
-* `-x` Hex mode
 * `-h` Head limit
 * `-t` Tail limit
 * `-n` Lines count
 * `-c` Bytes count
+* `-x` Hexdump mode
 * `-e` Pattern value
 
 ## Files
@@ -21,11 +21,19 @@ Available options:
 
 ## Config
 ```toml
+[CU]
+Hash = "sha256"
+
 [UI]
 Theme = "Monokai"
 Line = true  # Line numbers
 Wrap = true  # Wrap text
 ```
+
+### Hashes
+* `md5`
+* `sha1`
+* `sha256`
 
 ### Environment
 ```console
@@ -49,7 +57,8 @@ CU_THEME=Monokai
 | <kbd>Shift</kbd> + <kbd>Left</kbd>                 | Scroll page left      |
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                | Scroll page right     |
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
-| <kbd>Ctrl</kbd> + <kbd>h</kbd>                     | Show file hash        |
+| <kbd>Ctrl</kbd> + <kbd>h</kbd>                     | Show file hashes      |
+| <kbd>Ctrl</kbd> + <kbd>j</kbd>                     | Show file counts      |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle wrap text      |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd>                     | Save buffer content   |

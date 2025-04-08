@@ -44,10 +44,10 @@ func main() {
     flag.Usage = usage
     flag.Parse()
 
-    args := flag.Args()
+    a := flag.Args()
 
-    if len(args) == 0 {
-        args = append(args, ".")
+    if len(a) == 0 {
+        a = append(a, ".")
     }
 
     if *h && *t {
@@ -56,6 +56,10 @@ func main() {
 
     if c.Lines > 0 && c.Bytes > 0 {
         fs.Usage("lines or bytes")
+    }
+
+    if !*x && c.Bytes > 0 {
+        fs.Usage("bytes need hex")
     }
 
     if *x && len(e) > 0 {
@@ -78,7 +82,7 @@ func main() {
         m = mode.Grep
     } 
 
-    hs := heapset.NewHeapSet(args, l, e...)
+    hs := heapset.NewHeapSet(cfg, l, a, e...)
     defer hs.ThrowAway()
 
     hi := history.NewHistory()

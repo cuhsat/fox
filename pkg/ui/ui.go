@@ -148,14 +148,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 ui.screen.SetClipboard(heap.Copy())
 
-                ui.overlay.SendStatus(fmt.Sprintf("%s copied", heap.Path))
+                ui.overlay.SendStatus(fmt.Sprintf("%s copied", heap))
 
             case tcell.KeyCtrlS:
                 if ui.status.Mode == mode.Hex {
                     continue
                 }
 
-                if len(heap.Chain) == 0 {
+                if heap.Flag == 0 && len(heap.Chain) == 0 {
                     continue
                 }
 
@@ -164,7 +164,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlH:
-                ui.overlay.SendMessage(fmt.Sprintf("%s %x", heap.Path, heap.Hash()))
+                hs.Hashes()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
+
+            case tcell.KeyCtrlJ:
+                hs.Counts()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()

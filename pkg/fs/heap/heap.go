@@ -15,10 +15,11 @@ import (
 type Flag int
 
 type Heap struct {
+    Title string      // heap title
     Path  string      // file path
     Flag  Flag        // heap flags
     
-    Limit limit.Limit // heap limit    
+    Limit limit.Limit // heap limit
 
     Head  int         // head offset
     Tail  int         // tail offset
@@ -46,22 +47,14 @@ const (
     StdErr
 )
 
-func NewHeap(p string, f Flag, l limit.Limit) *Heap {
-    h := Heap{
-        Path: p,
-        Flag: f,
-        Limit: l,
-    }
-
-    h.Reload()
-    
-    return &h
-}
-
 func (h *Heap) String() string {
     switch h.Flag {
     case StdIn:
         return "-"
+    case StdOut:
+        return h.Title
+    case StdErr:
+        return h.Title
     default:
         return h.Path
     }
@@ -107,6 +100,10 @@ func (h *Heap) Loaded() bool {
 func (h* Heap) Save() string {
     p := h.Path
 
+    if h.Flag == StdOut || h.Flag == StdErr {
+        p = h.String()
+    }
+
     for _, l := range h.Chain {
         p += "-" + l.Name
     }
@@ -144,6 +141,7 @@ func (h *Heap) ThrowAway() {
     if h.file != nil {
         h.MMap.Unmap()
         h.file.Close()
+        h.file = nil
     }
 
     runtime.GC()

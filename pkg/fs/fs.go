@@ -69,3 +69,13 @@ func Stdin() string {
 
     return f.Name()
 }
+
+func Stdout() *os.File {
+    f, err := os.CreateTemp("", "cu-stdout-")
+
+    if err != nil {
+        Panic(err)
+    }
+
+    return f
+}
