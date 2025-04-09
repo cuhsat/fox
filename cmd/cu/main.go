@@ -17,7 +17,6 @@ func usage() {
 }
 
 func main() {
-    var l limit.Limit
     var c limit.Count
     var e heap.Filters
 
@@ -63,11 +62,11 @@ func main() {
     }
 
     if *h {
-        l.Head = c
+        limit.SetHead(c)
     }
 
     if *t {
-        l.Tail = c
+        limit.SetTail(c)
     }
 
     if *x {
@@ -78,7 +77,7 @@ func main() {
         m = mode.Grep
     } 
 
-    hs := heapset.NewHeapSet(l, a, e...)
+    hs := heapset.NewHeapSet(a, e...)
     defer hs.ThrowAway()
 
     hi := history.NewHistory()

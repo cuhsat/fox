@@ -29,7 +29,7 @@ type Config struct {
 // singleton
 var instance *Config = nil
 
-func NewConfig() *Config {
+func GetConfig() *Config {
     if instance == nil {
         instance = load();
     }

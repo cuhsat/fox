@@ -12,7 +12,7 @@ import (
 type auxiliary func(h *heap.Heap) string
 
 func (hs *HeapSet) AuxHashes() {
-    t := fmt.Sprintf("%ssum", config.NewConfig().CU.Hash)
+    t := fmt.Sprintf("%ssum", config.GetConfig().CU.Hash)
 
     hs.newBuffer(t, heapHash)
 }
@@ -72,7 +72,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
 }
 
 func heapHash(h *heap.Heap) string {
-    return fmt.Sprintf("%x  %s\n", h.Hash(config.NewConfig().CU.Hash), h.Path)
+    return fmt.Sprintf("%x  %s\n", h.Hash(config.GetConfig().CU.Hash), h.Path)
 }
 
 func heapWord(h *heap.Heap) string {

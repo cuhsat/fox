@@ -33,7 +33,7 @@ type UI struct {
 func NewUI(m mode.Mode, f bool) *UI {
     encoding.Register()
 
-    cfg := config.NewConfig()
+    cfg := config.GetConfig()
     sts := status.NewStatus(f)
 
     scr, err := tcell.NewScreen()

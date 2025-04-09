@@ -6,8 +6,8 @@ import (
 )
 
 type Limit struct {
-    Head Count // head limit
-    Tail Count // tail limit
+    head Count // head limit
+    tail Count // tail limit
 }
 
 type Count struct {
@@ -15,16 +15,35 @@ type Count struct {
     Bytes int // bytes count    
 }
 
+// singleton
+var instance *Limit = nil
+
+func GetLimit() *Limit {
+    if instance == nil {
+        instance = new(Limit);
+    }
+
+    return instance;
+}
+
+func SetHead(c Count) {
+    GetLimit().head = c
+}
+
+func SetTail(c Count) {
+    GetLimit().tail = c
+}
+
 func (l *Limit) ReduceMMap(m mmap.MMap) (mmap.MMap, int, int) {
     h, t := 0, 0
 
-    if l.Head.Bytes > 0 {
-        h = min(l.Head.Bytes, len(m))
+    if l.head.Bytes > 0 {
+        h = min(l.head.Bytes, len(m))
         m = m[:h]
     }
 
-    if l.Tail.Bytes > 0 {
-        t = max(len(m) - l.Tail.Bytes, 0)
+    if l.tail.Bytes > 0 {
+        t = max(len(m) - l.tail.Bytes, 0)
         m = m[t:]
     }
 
@@ -32,12 +51,12 @@ func (l *Limit) ReduceMMap(m mmap.MMap) (mmap.MMap, int, int) {
 }
 
 func (l *Limit) ReduceSMap(s smap.SMap) smap.SMap {
-    if l.Head.Lines > 0 {
-        s = s[:min(l.Head.Lines, len(s))]
+    if l.head.Lines > 0 {
+        s = s[:min(l.head.Lines, len(s))]
     }
 
-    if l.Tail.Lines > 0 {
-        s = s[max(len(s) - l.Tail.Lines, 0):]
+    if l.tail.Lines > 0 {
+        s = s[max(len(s) - l.tail.Lines, 0):]
     }
 
     return s

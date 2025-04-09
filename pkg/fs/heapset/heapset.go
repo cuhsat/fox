@@ -6,7 +6,6 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
-    "github.com/cuhsat/cu/pkg/fs/limit"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -14,13 +13,11 @@ type HeapSet struct {
     watcher *fsnotify.Watcher // file watcher
     watcher_fn Callback       // file watcher callback
 
-    limit   limit.Limit       // heap limit
-    
     heaps   []*heap.Heap      // set heaps
     index   int               // set index
 }
 
-func NewHeapSet(l limit.Limit, p []string, f ...string) *HeapSet {
+func NewHeapSet(p []string, f ...string) *HeapSet {
     w, err := fsnotify.NewWatcher()
 
     if err != nil {
@@ -29,7 +26,6 @@ func NewHeapSet(l limit.Limit, p []string, f ...string) *HeapSet {
 
     hs := HeapSet{
         watcher: w,
-        limit: l,
         index: 0,
     }
 
@@ -114,7 +110,6 @@ func (hs *HeapSet) loadPath(p string) {
         hs.heaps = append(hs.heaps, &heap.Heap{
             Path: p,
             Flag: f,
-            Limit: hs.limit,
         })
 
         return
@@ -131,7 +126,6 @@ func (hs *HeapSet) loadPath(p string) {
         if !e.IsDir() {
             hs.heaps = append(hs.heaps, &heap.Heap{
                 Path: filepath.Join(p, e.Name()),
-                Limit: hs.limit,
             })
         }
     }
