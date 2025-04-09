@@ -19,14 +19,13 @@ type HeapSet struct {
     watcher *fsnotify.Watcher // file watcher
     watcher_fn Callback       // file watcher callback
 
-    config  config.Config     // user config
     limit   limit.Limit       // heap limit
     
     heaps   []*heap.Heap      // set heaps
     index   int               // set index
 }
 
-func NewHeapSet(c config.Config, l limit.Limit, p []string, f ...string) *HeapSet {
+func NewHeapSet(l limit.Limit, p []string, f ...string) *HeapSet {
     w, err := fsnotify.NewWatcher()
 
     if err != nil {
@@ -35,7 +34,6 @@ func NewHeapSet(c config.Config, l limit.Limit, p []string, f ...string) *HeapSe
 
     hs := HeapSet{
         watcher: w,
-        config: c,
         limit: l,
         index: 0,
     }
@@ -94,8 +92,10 @@ func (hs *HeapSet) Counts() {
 }
 
 func (hs *HeapSet) Hashes() {
-    hs.buffer(fmt.Sprintf("%ssum", hs.config.CU.Hash), func(h *heap.Heap) string {
-        return fmt.Sprintf("%x  %s\n", h.Hash(hs.config.CU.Hash), h.Path)
+    cfg := config.NewConfig()
+
+    hs.buffer(fmt.Sprintf("%ssum", cfg.CU.Hash), func(h *heap.Heap) string {
+        return fmt.Sprintf("%x  %s\n", h.Hash(cfg.CU.Hash), h.Path)
     })
 }
 

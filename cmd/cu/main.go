@@ -4,7 +4,6 @@ import (
     "flag"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/history"
@@ -21,9 +20,6 @@ func main() {
     var l limit.Limit
     var c limit.Count
     var e heap.Filters
-
-    // config
-    cfg := config.Load()
 
     // flags
     m := mode.Less
@@ -82,13 +78,13 @@ func main() {
         m = mode.Grep
     } 
 
-    hs := heapset.NewHeapSet(cfg, l, a, e...)
+    hs := heapset.NewHeapSet(l, a, e...)
     defer hs.ThrowAway()
 
     hi := history.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(cfg, m, *f)
+    ui := ui.NewUI(m, *f)
     defer ui.Close()
 
     ui.Run(hs, hi)

@@ -26,7 +26,20 @@ type Config struct {
     }
 }
 
-func Load() (c Config) {
+// singleton
+var instance *Config = nil
+
+func NewConfig() *Config {
+    if instance == nil {
+        instance = load();
+    }
+
+    return instance;
+}
+
+func load() *Config {
+    var c Config
+
     // defaults CU
     c.CU.Hash = heap.Sha256
 
@@ -46,7 +59,7 @@ func Load() (c Config) {
     _, err = os.Stat(f)
 
     if errors.Is(err, os.ErrNotExist) {
-        return // defaults
+        return &c // defaults
     } else if err != nil {
         fs.Panic(err)
     }
@@ -63,5 +76,5 @@ func Load() (c Config) {
         c.UI.Theme = env
     }
 
-    return
+    return &c
 }
