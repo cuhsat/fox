@@ -13,7 +13,7 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [PATH ...]")
+    fs.Usage("usage: cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
 }
 
 func main() {

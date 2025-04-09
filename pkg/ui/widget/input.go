@@ -103,6 +103,12 @@ func (i *Input) formatFilters(h *heap.Heap) (s string) {
 }
 
 func (i *Input) formatStatus(h *heap.Heap) string {
+    f := " "
+
+    if i.status.Follow {
+        f = "F"
+    }
+
     n := " "
 
     if i.status.Line {
@@ -115,5 +121,5 @@ func (i *Input) formatStatus(h *heap.Heap) string {
         w = "W"
     }
 
-    return fmt.Sprintf(" %d ∣ %s ∣ %s ", len(h.SMap), n, w)
+    return fmt.Sprintf(" %d ∣ %s ∣ %s ∣ %s ", len(h.SMap), f, n, w)
 }
