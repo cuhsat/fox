@@ -1,19 +1,14 @@
 package heapset
 
 import (
-    "fmt"
-    "io"
     "os"
     "path/filepath"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/limit"
     "github.com/fsnotify/fsnotify"
 )
-
-type action func(h *heap.Heap) string
 
 type HeapSet struct {
     watcher *fsnotify.Watcher // file watcher
@@ -85,20 +80,6 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
     return hs.loadLazy()
 }
 
-func (hs *HeapSet) Counts() {
-    hs.buffer("wc", func(h *heap.Heap) string {
-        return fmt.Sprintf("%8d %8d %s\n", h.Length(), len(h.MMap), h.Path)
-    })
-}
-
-func (hs *HeapSet) Hashes() {
-    cfg := config.NewConfig()
-
-    hs.buffer(fmt.Sprintf("%ssum", cfg.CU.Hash), func(h *heap.Heap) string {
-        return fmt.Sprintf("%x  %s\n", h.Hash(cfg.CU.Hash), h.Path)
-    })
-}
-
 func (hs *HeapSet) ThrowAway() {
     hs.watcher.Close()
 
@@ -112,50 +93,6 @@ func (hs *HeapSet) ThrowAway() {
 
     hs.heaps = hs.heaps[:0]
     hs.index = -1
-}
-
-func (hs *HeapSet) buffer(t string, fn action) {
-    f := fs.Stdout()
-
-    for _, h := range hs.heaps {
-        if h.Flag != heap.Normal {
-            continue
-        }
-
-        if !h.Loaded() {
-            h.Reload()
-        }
-
-        _, err := io.WriteString(f, fn(h))
-
-        if err != nil {
-            fs.Panic(err)
-        }
-    }
-
-    f.Close()
-
-    for i, h := range hs.heaps {
-        if h.Title == t {
-            h.Path = f.Name()
-            h.Chain = h.Chain[:0]
-            h.Reload()
-
-            hs.index = i
-
-            return
-        }
-    }
-
-    hs.heaps = append(hs.heaps, &heap.Heap{
-        Title: t,
-        Path: f.Name(),
-        Flag: heap.StdOut,
-    })
-
-    hs.index = len(hs.heaps)-1
-
-    hs.loadLazy()
 }
 
 func (hs *HeapSet) loadPath(p string) {

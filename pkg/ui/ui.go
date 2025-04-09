@@ -165,13 +165,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
 
             case tcell.KeyCtrlH:
-                hs.Hashes()
+                hs.AuxHashes()
 
                 ui.output.Reset()
                 ui.State(mode.Less)
 
             case tcell.KeyCtrlJ:
-                hs.Counts()
+                hs.AuxCounts()
 
                 ui.output.Reset()
                 ui.State(mode.Less)
