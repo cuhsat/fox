@@ -180,6 +180,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.output.Reset()
                 heap.Reload()
 
+            case tcell.KeyCtrlF:
+                ui.status.ToggleFollow()
+
             case tcell.KeyCtrlN:
                 ui.status.ToggleNumbers()
 

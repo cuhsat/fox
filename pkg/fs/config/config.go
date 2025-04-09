@@ -70,6 +70,7 @@ func load() *Config {
         fs.Panic(err)
     }
 
+    // higher ranking variables
     env := os.Getenv("CU_THEME")
 
     if len(env) > 0 {

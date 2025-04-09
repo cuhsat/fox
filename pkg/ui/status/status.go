@@ -48,6 +48,10 @@ func (s *Status) SwitchMode(m mode.Mode) bool {
     return true
 }
 
+func (s *Status) ToggleFollow() {
+    s.Follow = !s.Follow
+}
+
 func (s *Status) ToggleNumbers() {
     s.Line = !s.Line
 }
