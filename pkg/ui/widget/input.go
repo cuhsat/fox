@@ -103,19 +103,15 @@ func (i *Input) formatFilters(h *heap.Heap) (s string) {
 }
 
 func (i *Input) formatStatus(h *heap.Heap) string {
-    f := " "
+    f, n, w := " ", " ", " "
 
     if i.status.Follow {
         f = "F"
     }
 
-    n := " "
-
     if i.status.Line {
         n = "N"
     }
-
-    w := " "
 
     if i.status.Wrap {
         w = "W"
