@@ -15,7 +15,9 @@ type Status struct {
     Wrap bool
 }
 
-func NewStatus(c config.Config, f bool) *Status {
+func NewStatus(f bool) *Status {
+    cfg := config.NewConfig()
+
     return &Status{
         Mode: mode.Less,
         Last: mode.Less,
@@ -24,8 +26,8 @@ func NewStatus(c config.Config, f bool) *Status {
         Follow: f,
 
         // init from config
-        Line: c.UI.Line,
-        Wrap: c.UI.Wrap,
+        Line: cfg.UI.Line,
+        Wrap: cfg.UI.Wrap,
     }
 }
 

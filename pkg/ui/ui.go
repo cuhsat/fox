@@ -30,10 +30,11 @@ type UI struct {
     overlay *widget.Overlay
 }
 
-func NewUI(c config.Config, m mode.Mode, f bool) *UI {
+func NewUI(m mode.Mode, f bool) *UI {
     encoding.Register()
 
-    sts := status.NewStatus(c, f)
+    cfg := config.NewConfig()
+    sts := status.NewStatus(f)
 
     scr, err := tcell.NewScreen()
 
@@ -47,7 +48,7 @@ func NewUI(c config.Config, m mode.Mode, f bool) *UI {
         fs.Panic(err)
     }
 
-    theme.Load(c.UI.Theme)
+    theme.Load(cfg.UI.Theme)
 
     scr.SetStyle(theme.Output)
     scr.EnableMouse()
