@@ -16,7 +16,7 @@ type Status struct {
 }
 
 func NewStatus(f bool) *Status {
-    cfg := config.NewConfig()
+    cfg := config.GetConfig()
 
     return &Status{
         Mode: mode.Less,

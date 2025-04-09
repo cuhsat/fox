@@ -19,8 +19,6 @@ type Heap struct {
     Path  string      // file path
     Flag  Flag        // heap flags
     
-    Limit limit.Limit // heap limit
-
     Head  int         // head offset
     Tail  int         // tail offset
 
@@ -77,11 +75,13 @@ func (h *Heap) Reload() {
         fs.Panic(err)
     }
 
+    l := limit.GetLimit()
+
     // reduced mmap
-    h.MMap, h.Head, h.Tail = h.Limit.ReduceMMap(h.MMap)
+    h.MMap, h.Head, h.Tail = l.ReduceMMap(h.MMap)
 
     // reduced smap
-    h.SMap = h.Limit.ReduceSMap(smap.Map(h.MMap))
+    h.SMap = l.ReduceSMap(smap.Map(h.MMap))
 
     h.rmap = h.SMap
     h.hash = h.hash[:0]
