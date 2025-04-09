@@ -1,12 +1,18 @@
 package theme
 
 import (
+    "github.com/cuhsat/cu/pkg/ui/theme/palette"
     "github.com/gdamore/tcell/v2"
 )
 
 const (
     Default = "Monokai"
 )
+
+var palettes = map[string][]int32{
+    "Monochrome": palette.Monochrome,
+    "Monokai": palette.Monokai,
+}
 
 var (
     Output tcell.Style
@@ -21,53 +27,48 @@ var (
     Colors []tcell.Style
 )
 
-func Load(theme string) {
-    t := map[string][]int32{
-        "Monochrome": Monochrome,
-        "Monokai": Monokai,
-    }[theme]
+func Load(name string) {
+    p := palettes[name]
 
     Output = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[0])).
-        Background(tcell.NewHexColor(t[1]))
+        Foreground(tcell.NewHexColor(p[0])).
+        Background(tcell.NewHexColor(p[1]))
 
     Header = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[2])).
-        Background(tcell.NewHexColor(t[3]))
+        Foreground(tcell.NewHexColor(p[2])).
+        Background(tcell.NewHexColor(p[3]))
 
     Input = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[4])).
-        Background(tcell.NewHexColor(t[5]))
+        Foreground(tcell.NewHexColor(p[4])).
+        Background(tcell.NewHexColor(p[5]))
 
     Error = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[6])).
-        Background(tcell.NewHexColor(t[7]))
+        Foreground(tcell.NewHexColor(p[6])).
+        Background(tcell.NewHexColor(p[7]))
 
     Mode = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[8])).
-        Background(tcell.NewHexColor(t[9]))
+        Foreground(tcell.NewHexColor(p[8])).
+        Background(tcell.NewHexColor(p[9]))
 
     Hint = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[10])).
-        Background(tcell.NewHexColor(t[11]))
+        Foreground(tcell.NewHexColor(p[10])).
+        Background(tcell.NewHexColor(p[11]))
 
     Rule = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[12])).
-        Background(tcell.NewHexColor(t[13]))
+        Foreground(tcell.NewHexColor(p[12])).
+        Background(tcell.NewHexColor(p[13]))
 
     Info = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[14])).
-        Background(tcell.NewHexColor(t[15]))
+        Foreground(tcell.NewHexColor(p[14])).
+        Background(tcell.NewHexColor(p[15]))
 
     Line = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(t[16])).
-        Background(tcell.NewHexColor(t[17]))
+        Foreground(tcell.NewHexColor(p[16])).
+        Background(tcell.NewHexColor(p[17]))
 
     for i := 18; i < 24; i++ {
-        s := tcell.StyleDefault.
-            Foreground(tcell.NewHexColor(t[i])).
-            Background(tcell.NewHexColor(t[1]))
-
-        Colors = append(Colors, s)
+        Colors = append(Colors, tcell.StyleDefault.
+            Foreground(tcell.NewHexColor(p[i])).
+            Background(tcell.NewHexColor(p[1])))
     }
 }

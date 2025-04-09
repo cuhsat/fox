@@ -5,22 +5,33 @@ import (
     "io"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/fs/heap"
 )
 
 type auxiliary func(h *heap.Heap) string
 
-func (hs *HeapSet) AuxHashes() {
-    t := fmt.Sprintf("%ssum", config.GetConfig().CU.Hash)
-
-    hs.newBuffer(t, heapHash)
+func (hs *HeapSet) Md5() {
+    hs.newBuffer("md5sum", func(h *heap.Heap) string {
+        return fmt.Sprintf("%x  %s\n", h.Md5(), h.Path)
+    })
 }
 
-func (hs *HeapSet) AuxCounts() {
-    t := "wc"
+func (hs *HeapSet) Sha1() {
+    hs.newBuffer("sha1sum", func(h *heap.Heap) string {
+        return fmt.Sprintf("%x  %s\n", h.Sha1(), h.Path)
+    })
+}
 
-    hs.newBuffer(t, heapWord)
+func (hs *HeapSet) Sha256() {
+    hs.newBuffer("sha256sum", func(h *heap.Heap) string {
+        return fmt.Sprintf("%x  %s\n", h.Sha256(), h.Path)
+    })
+}
+
+func (hs *HeapSet) Word() {
+    hs.newBuffer("wc", func(h *heap.Heap) string {
+        return fmt.Sprintf("%8d %8d %s\n", h.Length(), len(h.MMap), h.Path)
+    })
 }
 
 func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
@@ -67,14 +78,5 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     })
 
     hs.index = len(hs.heaps)-1
-
     hs.loadLazy()
-}
-
-func heapHash(h *heap.Heap) string {
-    return fmt.Sprintf("%x  %s\n", h.Hash(config.GetConfig().CU.Hash), h.Path)
-}
-
-func heapWord(h *heap.Heap) string {
-    return fmt.Sprintf("%8d %8d %s\n", h.Length(), len(h.MMap), h.Path)
 }

@@ -28,7 +28,7 @@ type Heap struct {
     SMap  smap.SMap   // string map current
     rmap  smap.SMap   // string map reserve
 
-    hash  []byte      // file hash sum
+    hash  Hash        // file hash sums
 
     file  *os.File    // file handle
 }
@@ -84,7 +84,7 @@ func (h *Heap) Reload() {
     h.SMap = l.ReduceSMap(smap.Map(h.MMap))
 
     h.rmap = h.SMap
-    h.hash = h.hash[:0]
+    h.hash = make(Hash)
 
     h.ApplyFilter()
 }
