@@ -17,9 +17,25 @@ const (
     Sha256 = "sha256"
 )
 
-func (h *Heap) Hash(algo string) []byte {
-    if len(h.hash) > 0 {
-        return h.hash
+type Hash map[string][]byte
+
+func (h *Heap) Md5() []byte {
+    return h.HashSum(Md5)
+}
+
+func (h *Heap) Sha1() []byte {
+    return h.HashSum(Sha1)
+}
+
+func (h *Heap) Sha256() []byte {
+    return h.HashSum(Sha256)
+}
+
+func (h *Heap) HashSum(algo string) []byte {
+    b, ok := h.hash[algo]
+
+    if ok {
+        return b
     }
 
     var a hash.Hash
@@ -35,13 +51,21 @@ func (h *Heap) Hash(algo string) []byte {
         fs.Panic("hash not supported")
     }
 
-    _, err := io.Copy(a, h.file)
+    _, err := h.file.Seek(0, io.SeekStart)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    _, err = io.Copy(a, h.file)
     
     if err != nil {
         fs.Panic(err)
     }
 
-    h.hash = a.Sum(nil)
+    b = a.Sum(nil)
 
-    return h.hash
+    h.hash[algo] = b
+
+    return b
 }

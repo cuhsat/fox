@@ -13,7 +13,7 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
+    fs.Usage("usage: cu [-f | -r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
 }
 
 func main() {
@@ -23,6 +23,7 @@ func main() {
     // flags
     m := mode.Less
     f := flag.Bool("f", false, "Follow")
+    r := flag.Bool("r", false, "Raw mode")
     x := flag.Bool("x", false, "Hex mode")
 
     // limits
@@ -79,6 +80,10 @@ func main() {
 
     hs := heapset.NewHeapSet(a, e...)
     defer hs.ThrowAway()
+
+    if *r {
+
+    }
 
     hi := history.NewHistory()
     defer hi.Close()

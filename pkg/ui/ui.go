@@ -135,6 +135,30 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
+            case tcell.KeyF9:
+                hs.Word()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
+
+            case tcell.KeyF10:
+                hs.Md5()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
+
+            case tcell.KeyF11:
+                hs.Sha1()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
+
+            case tcell.KeyF12:
+                hs.Sha256()
+
+                ui.output.Reset()
+                ui.State(mode.Less)
+
             case tcell.KeyCtrlV:
                 if ui.status.Mode == mode.Hex {
                     continue
@@ -163,18 +187,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 path := heap.Save()
                 
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
-
-            case tcell.KeyCtrlH:
-                hs.AuxHashes()
-
-                ui.output.Reset()
-                ui.State(mode.Less)
-
-            case tcell.KeyCtrlJ:
-                hs.AuxCounts()
-
-                ui.output.Reset()
-                ui.State(mode.Less)
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()

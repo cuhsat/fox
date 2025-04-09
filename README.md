@@ -3,11 +3,12 @@ The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `l
 
 ## Usage
 ```
-$ cu [-f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]
+$ cu [-f | -r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]
 ```
 
 Available options:
 * `-f` Follow
+* `-r` Raw output
 * `-h` Head limit
 * `-t` Tail limit
 * `-n` Lines count
@@ -21,19 +22,11 @@ Available options:
 
 ## Config
 ```toml
-[CU]
-Hash = "sha256"
-
 [UI]
 Theme = "Monokai"
 Line = true  # Line numbers
 Wrap = true  # Wrap text
 ```
-
-### Hashes
-* `md5`
-* `sha1`
-* `sha256`
 
 ### Environment
 ```console
@@ -50,6 +43,10 @@ CU_THEME=Monokai
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>     | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>     | Hex mode              |
 | <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd> | Goto mode             |
+| <kbd>F9</kbd>                                      | Show file(s) counts   |
+| <kbd>F10</kbd>                                     | Show file(s) MD5      |
+| <kbd>F11</kbd>                                     | Show file(s) SHA1     |
+| <kbd>F12</kbd>                                     | Show file(s) SHA256   |
 | <kbd>Tab</kbd>                                     | Load next file        |
 | <kbd>Shift</kbd> + <kbd>Tab</kbd>                  | Load prev file        |
 | <kbd>Shift</kbd> + <kbd>Up</kbd>                   | Scroll page up        |
@@ -57,8 +54,6 @@ CU_THEME=Monokai
 | <kbd>Shift</kbd> + <kbd>Left</kbd>                 | Scroll page left      |
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                | Scroll page right     |
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
-| <kbd>Ctrl</kbd> + <kbd>h</kbd>                     | Show file hashes      |
-| <kbd>Ctrl</kbd> + <kbd>j</kbd>                     | Show file counts      |
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                     | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle wrap text      |
