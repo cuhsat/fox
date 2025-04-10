@@ -2,6 +2,7 @@ package main
 
 import (
     "flag"
+    "os"
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
@@ -13,7 +14,7 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
+    fs.Usage("usage: cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
 }
 
 func main() {
@@ -29,6 +30,9 @@ func main() {
     // limits
     h := flag.Bool("h", false, "Head limit")
     t := flag.Bool("t", false, "Tail limit")
+
+    // output
+    o := flag.String("o", "", "Output file")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
@@ -55,7 +59,7 @@ func main() {
     }
 
     if !*x && c.Bytes > 0 {
-        fs.Usage("bytes need hex")
+        fs.Usage("bytes needs hex")
     }
 
     if *x && len(e) > 0 {
@@ -80,13 +84,18 @@ func main() {
 
     if len(e) > 0 {
         m = mode.Grep
-    } 
+    }
+
+    if len(*o) > 0 {
+        *r = true
+    }
 
     hs := heapset.NewHeapSet(a, e...)
     defer hs.ThrowAway()
 
     if fs.IsStdout() || *r {
-        hs.Print(*x)
+        hs.Print(*o, *x)
+        os.Exit(0)
     }
 
     hi := history.NewHistory()
