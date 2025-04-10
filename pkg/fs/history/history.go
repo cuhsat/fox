@@ -26,7 +26,7 @@ func NewHistory() *History {
         fs.Panic(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, File), fs.Append, 0644)
+    f, err := os.OpenFile(filepath.Join(dir, File), fs.O_HISTORY, 0644)
 
     if err != nil {
         fs.Panic(err)

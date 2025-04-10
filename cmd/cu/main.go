@@ -13,7 +13,7 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-f | -r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
+    fs.Usage("usage: cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]")
 }
 
 func main() {
@@ -85,7 +85,7 @@ func main() {
     hs := heapset.NewHeapSet(a, e...)
     defer hs.ThrowAway()
 
-    if *r {
+    if fs.IsStdout() || *r {
         hs.Print(*x)
     }
 

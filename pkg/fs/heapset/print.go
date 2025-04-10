@@ -8,7 +8,6 @@ import (
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/utils"
     "github.com/cuhsat/cu/pkg/ui/buffer"
-    "github.com/gdamore/tcell/v2"
 )
 
 type Printable interface {
@@ -16,23 +15,17 @@ type Printable interface {
 }
 
 func (hs *HeapSet) Print(hex bool) {
-    ti, err := tcell.LookupTerminfo(os.Getenv("TERM"))
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
     ctx := buffer.Context{
         Line: true,
-        Wrap: true,
+        Wrap: false,
         X: 0,
         Y: 0,
-        W: ti.Columns,
+        W: math.MaxInt,
         H: math.MaxInt,
     }
 
     for _, h := range hs.heaps {
-        if h.Flag != heap.Normal {
+        if h.Flag == heap.StdIn {
             continue
         }
 
@@ -47,9 +40,7 @@ func (hs *HeapSet) Print(hex bool) {
         if hex {
             ctx.W = 68 // use a static width
 
-            if len(hs.heaps) > 1 {
-                fs.Print(utils.Header(h.Path, ctx.W))
-            }
+            fs.Print(utils.Header(h.String(), ctx.W))
 
             p = buffer.Hex(ctx)
         } else {

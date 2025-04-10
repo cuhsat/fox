@@ -1,20 +1,25 @@
 # cu [see:you]
-The Swiss Army Knife for viewing and lined based text files. Combining `cat`, `less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
+The Swiss Army Knife for viewing and lined based text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
 
 ## Usage
 ```
-$ cu [-f | -r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]
+$ cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]
 ```
 
 Available options:
+* `-r` Raw
 * `-f` Follow
-* `-r` Raw output
 * `-h` Head limit
 * `-t` Tail limit
 * `-n` Lines count
 * `-c` Bytes count
 * `-x` Hexdump mode
 * `-e` Pattern value
+
+## Install
+```console
+$ make install
+```
 
 ## Files
 * `~/.curc` Config file
