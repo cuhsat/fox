@@ -1,28 +1,19 @@
 package widget
 
 import (
-    "unicode"
-
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/ui/status"
+    "github.com/cuhsat/cu/pkg/fs/utils"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
 
 const (
-    MinAscii = 0x20
-    MaxAscii = 0x7f
-)
-
-const (
     Tab = '↦'
     Long = '→'
-    Abbrev = "…"
-    NotAscii = '.'
-    NotUnicode = '·'
 )
 
-type Stackable interface {
+type Queueable interface {
     Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
 
@@ -37,18 +28,6 @@ func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {
     }
 }
 
-func (wi *widget) printAscii(x, y int, s string, sty tcell.Style) {
-    for _, r := range s {
-        if r < MinAscii || r > MaxAscii {
-            r = NotAscii
-        }
-
-        wi.screen.SetContent(x, y, r, nil, sty)
-        
-        x += 1
-    }
-}
-
 func (wi *widget) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         switch r {
@@ -57,29 +36,11 @@ func (wi *widget) print(x, y int, s string, sty tcell.Style) {
         case '\r':
             r = Long
         default:
-            if !unicode.IsPrint(r) {
-                r = NotUnicode
-            }
+            r = utils.AsUnicode(r)
         }
 
         wi.screen.SetContent(x, y, r, nil, sty)
         
         x += runewidth.RuneWidth(r)
     }
-}
-
-func abbrev(s string, x, w int) string {
-    if x + length(s) > w + 1 {
-        s = string([]rune(s)[:(w-x)-1]) + Abbrev
-    }
-
-    return s
-}
-
-func length(s string) (l int) {
-    for _, r := range s {
-        l += runewidth.RuneWidth(r)
-    }
-
-    return
 }

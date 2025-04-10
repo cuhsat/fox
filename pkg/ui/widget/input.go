@@ -5,6 +5,7 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/cuhsat/cu/pkg/fs/heapset"
+    "github.com/cuhsat/cu/pkg/fs/utils"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
     "github.com/cuhsat/cu/pkg/ui/theme"
@@ -14,6 +15,9 @@ import (
 const (
     Separator = "❯"
     Cursor = "_"
+    Follow = "F"
+    Line = "N"
+    Wrap = "W"
 )
 
 type Input struct {
@@ -48,7 +52,7 @@ func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
         return 1
     }
 
-    x += length(m)
+    x += utils.Length(m)
 
     _, heap := hs.Current()
 
@@ -57,11 +61,11 @@ func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     // render filters
     if !i.Lock {
-        i.print(x, y, abbrev(f, x, w-length(s)), theme.Input)
+        i.print(x, y, utils.Abbrev(f, x, w-utils.Length(s)), theme.Input)
     }
 
     // render status
-    i.print(w-length(s), y, s, theme.Input)
+    i.print(w-utils.Length(s), y, s, theme.Input)
 
     return 1
 }
@@ -106,15 +110,15 @@ func (i *Input) formatStatus(h *heap.Heap) string {
     f, n, w := " ", " ", " "
 
     if i.status.Follow {
-        f = "F"
+        f = Follow
     }
 
     if i.status.Line {
-        n = "N"
+        n = Line
     }
 
     if i.status.Wrap {
-        w = "W"
+        w = Wrap
     }
 
     return fmt.Sprintf(" %d ∣ %s ∣ %s ∣ %s ", len(h.SMap), f, n, w)

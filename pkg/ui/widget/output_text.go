@@ -1,94 +1,53 @@
 package widget
 
 import (
-    "fmt"
-    "math"
     "strconv"
     "strings"
 
+    "github.com/cuhsat/cu/pkg/ui/buffer"
     "github.com/cuhsat/cu/pkg/ui/theme"
 )
 
-const (
-    TextSpace = 1
-)
-
-type textData struct {
-    nr, str string
-}
-
 func (o *Output) textRender(x, y, w, h int) {
-    lines, bw, bh := o.textBuffer(w, h)
+    tb := buffer.Text(buffer.Context{
+        Heap: o.heap,
+        Line: o.status.Line,
+        Wrap: o.status.Wrap,
+        X: o.delta_x,
+        Y: o.delta_y,
+        W: w,
+        H: h,
+    })
 
-    if len(lines) > 0 {
-        w -= len(lines[0].nr) + TextSpace
+    o.smap = tb.SMap
+
+    if len(tb.Lines) > 0 {
+        w -= len(tb.Lines[0].Nr) + buffer.TextSpace
     }
 
     // set buffer bounds
-    o.last_x = max(bw - w, 0)
-    o.last_y = max(bh - h, 0)
+    o.last_x = max(tb.W - w, 0)
+    o.last_y = max(tb.H - h, 0)
 
     // render buffer
-    for i, line := range lines {
+    for i, line := range tb.Lines {
         line_x := x
         line_y := y + i
 
         // line number
         if o.status.Line {
-            o.print(line_x, line_y, line.nr, theme.Hint)
-            line_x += len(line.nr) + TextSpace
+            o.print(line_x, line_y, line.Nr, theme.Hint)
+            line_x += len(line.Nr) + buffer.TextSpace
         }
 
         // text value
-        o.print(line_x, line_y, line.str, theme.Output)
+        o.print(line_x, line_y, line.Str, theme.Output)
 
         // mark found positions
         for c, f := range o.heap.Chain {
-            o.textMark(line_x, line_y, c, line.str, f.Name)
+            o.textMark(line_x, line_y, c, line.Str, f.Name)
         }
     }
-}
-
-func (o *Output) textBuffer(w, h int) (td []textData, bw, bh int) {
-    len_nr := int(math.Log10(float64(o.heap.Length()))) + 1
-
-    o.smap = o.heap.SMap
-
-    if o.status.Line {
-        w -= (len_nr + TextSpace)
-    }
-
-    if o.status.Wrap {
-        o.smap = o.smap.Wrap(w)
-    }    
-
-    bw, bh = o.smap.Size()
-
-    for i, s := range o.smap[o.delta_y:] {
-        if i >= h {
-            break
-        }
-
-        nr := fmt.Sprintf("%0*d", len_nr, s.Nr)
-
-        str := string(o.heap.MMap[s.Start:s.End])
-        str = str[min(o.delta_x, length(str)):]
-
-        if len(str) > w {
-            str = str[:w-1] + "\r"
-        }
-
-        td = append(td, textData{
-            nr: nr,
-            str: str,
-        })
-    }
-
-    if len(td) >= h {
-        td = td[:h]
-    }
-
-    return
 }
 
 func (o *Output) textMark(x, y, c int, s, f string) {

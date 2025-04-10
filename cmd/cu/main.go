@@ -82,7 +82,7 @@ func main() {
     defer hs.ThrowAway()
 
     if *r {
-
+        hs.Print(*x)
     }
 
     hi := history.NewHistory()

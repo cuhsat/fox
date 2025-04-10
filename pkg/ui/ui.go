@@ -360,7 +360,7 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     x, y := 0, 0
     w, h = ui.screen.Size()
 
-    for _, widget := range [...]widget.Stackable{
+    for _, widget := range [...]widget.Queueable{
         ui.header,
         ui.output,
         ui.input,
