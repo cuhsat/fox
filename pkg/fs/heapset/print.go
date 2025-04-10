@@ -33,21 +33,17 @@ func (hs *HeapSet) Print(hex bool) {
             h.Reload()
         }
 
-        var p Printable
-
         ctx.Heap = h
 
         if hex {
-            ctx.W = 68 // use a static width
+            ctx.W = 68 // use default width
 
             fs.Print(utils.Header(h.String(), ctx.W))
-
-            p = buffer.Hex(ctx)
+            
+            fs.Print(buffer.Hex(ctx))
         } else {
-            p = buffer.Text(ctx)
+            fs.Print(buffer.Text(ctx))
         }
-
-        fs.Print(p)
     }
 
     os.Exit(0)
