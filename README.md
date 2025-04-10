@@ -3,7 +3,7 @@ The Swiss Army Knife for viewing and lined based text files. Combining `(z)cat`,
 
 ## Usage
 ```
-$ cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [- | PATH ...]
+$ cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
 ```
 
 Available options:
@@ -15,6 +15,7 @@ Available options:
 * `-c` Bytes count
 * `-x` Hexdump mode
 * `-e` Pattern value
+* `-o` Output file
 
 ## Install
 ```console

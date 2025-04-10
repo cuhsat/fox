@@ -1,6 +1,7 @@
 package heapset
 
 import (
+    "fmt"
     "math"
     "os"
 
@@ -14,7 +15,21 @@ type Printable interface {
     String() string
 }
 
-func (hs *HeapSet) Print(hex bool) {
+func (hs *HeapSet) Print(p string, hex bool) {
+    var err error
+
+    f := os.Stdout
+
+    if len(p) > 0 {
+        f, err = os.Create(p)
+
+        if err != nil {
+            fs.Panic(err)
+        }
+
+        defer f.Close()
+    }
+
     ctx := buffer.Context{
         Line: true,
         Wrap: false,
@@ -38,13 +53,11 @@ func (hs *HeapSet) Print(hex bool) {
         if hex {
             ctx.W = 68 // use default width
 
-            fs.Print(utils.Header(h.String(), ctx.W))
-            
-            fs.Print(buffer.Hex(ctx))
+            fmt.Fprintln(f, utils.Header(h.String(), ctx.W))
+
+            fmt.Fprintln(f, buffer.Hex(ctx))
         } else {
-            fs.Print(buffer.Text(ctx))
+            fmt.Fprintln(f, buffer.Text(ctx))
         }
     }
-
-    os.Exit(0)
 }
