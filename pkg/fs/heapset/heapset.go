@@ -3,6 +3,7 @@ package heapset
 import (
     "os"
     "path/filepath"
+    "slices"
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
@@ -74,6 +75,17 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
     }
 
     return hs.loadLazy()
+}
+
+func (hs *HeapSet) CloseHeap() *heap.Heap {
+    if len(hs.heaps) == 1 {
+        return nil
+    }    
+
+    hs.heaps = slices.Delete(hs.heaps, hs.index, hs.index+1)
+    hs.index -= 1
+
+    return hs.NextHeap()
 }
 
 func (hs *HeapSet) ThrowAway() {

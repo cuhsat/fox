@@ -38,7 +38,7 @@ CU_THEME=Monokai
 ### General
 | Shortcut                                           | Action                |
 | -------------------------------------------------- | --------------------- |
-| <kbd>Esc</kbd> / <kbd>Ctrl</kbd> + <kbd>q</kbd>    | Exit                  |
+| <kbd>Esc</kbd>                                     | Exit                  |
 | <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>l</kbd>     | Less mode             |
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>     | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>     | Hex mode              |
@@ -53,6 +53,7 @@ CU_THEME=Monokai
 | <kbd>Shift</kbd> + <kbd>Down</kbd>                 | Scroll page down      |
 | <kbd>Shift</kbd> + <kbd>Left</kbd>                 | Scroll page left      |
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                | Scroll page right     |
+| <kbd>Ctrl</kbd> + <kbd>q</kbd>                     | Close file            |
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                     | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
