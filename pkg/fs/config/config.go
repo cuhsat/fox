@@ -16,9 +16,10 @@ const (
 
 type Config struct {
     UI struct {
-        Theme string `toml:"Theme"`
-        Line  bool   `toml:"Line"`
-        Wrap  bool   `toml:"Wrap"`
+        Theme  string `toml:"Theme"`
+        Follow bool   `toml:"Follow"`
+        Line   bool   `toml:"Line"`
+        Wrap   bool   `toml:"Wrap"`
     }
 }
 
@@ -38,6 +39,7 @@ func load() *Config {
 
     // defaults UI
     c.UI.Theme = theme.Default
+    c.UI.Follow = false
     c.UI.Line = true
     c.UI.Wrap = false
 

@@ -1,17 +1,20 @@
 package theme
 
 import (
+    "strings"
+
     "github.com/cuhsat/cu/pkg/ui/theme/palette"
     "github.com/gdamore/tcell/v2"
 )
 
 const (
-    Default = "Monokai"
+    Default = "monokai"
 )
 
 var palettes = map[string][]int32{
-    "Monochrome": palette.Monochrome,
-    "Monokai": palette.Monokai,
+    "catppuccin-latte": palette.Latte,
+    "monochrome": palette.Monochrome,
+    "monokai": palette.Monokai,
 }
 
 var (
@@ -28,7 +31,7 @@ var (
 )
 
 func Load(name string) {
-    p := palettes[name]
+    p := palettes[strings.ToLower(name)]
 
     Output = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(p[0])).

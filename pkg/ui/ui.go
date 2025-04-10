@@ -30,11 +30,11 @@ type UI struct {
     overlay *widget.Overlay
 }
 
-func NewUI(m mode.Mode, f bool) *UI {
+func NewUI(m mode.Mode) *UI {
     encoding.Register()
 
     cfg := config.GetConfig()
-    sts := status.NewStatus(f)
+    sts := status.NewStatus()
 
     scr, err := tcell.NewScreen()
 
