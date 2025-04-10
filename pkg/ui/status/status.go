@@ -10,24 +10,21 @@ type Status struct {
     Last mode.Mode
     
     Follow bool
-
     Line bool
     Wrap bool
 }
 
-func NewStatus(f bool) *Status {
+func NewStatus() *Status {
     cfg := config.GetConfig()
 
     return &Status{
         Mode: mode.Less,
         Last: mode.Less,
-
-        // init from flags
-        Follow: f,
-
+        
         // init from config
-        Line: cfg.UI.Line,
-        Wrap: cfg.UI.Wrap,
+        Follow: cfg.UI.Follow,
+        Line:   cfg.UI.Line,
+        Wrap:   cfg.UI.Wrap,
     }
 }
 

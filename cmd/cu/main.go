@@ -14,7 +14,7 @@ import (
 )
 
 func usage() {
-    fs.Usage("usage: cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
+    fs.Usage("usage: cu [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
 }
 
 func main() {
@@ -23,7 +23,6 @@ func main() {
 
     // flags
     m := mode.Less
-    f := flag.Bool("f", false, "Follow")
     r := flag.Bool("r", false, "Raw mode")
     x := flag.Bool("x", false, "Hex mode")
 
@@ -66,10 +65,6 @@ func main() {
         fs.Usage("hex or pattern")
     }
 
-    if *f && *r {
-        fs.Usage("follow or raw")
-    }
-
     if *h {
         limit.SetHead(c)
     }
@@ -101,7 +96,7 @@ func main() {
     hi := history.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(m, *f)
+    ui := ui.NewUI(m)
     defer ui.Close()
 
     ui.Run(hs, hi)

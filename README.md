@@ -3,12 +3,11 @@ The Swiss Army Knife for viewing and lined based text files. Combining `(z)cat`,
 
 ## Usage
 ```
-$ cu [-r | -f] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
+$ cu [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
 ```
 
 Available options:
 * `-r` Raw
-* `-f` Follow
 * `-h` Head limit
 * `-t` Tail limit
 * `-n` Lines count
@@ -30,8 +29,9 @@ $ make install
 ```toml
 [UI]
 Theme = "Monokai"
-Line = true  # Line numbers
-Wrap = true  # Wrap text
+Follow = true  # Follow file
+Line = true    # Line numbers
+Wrap = true    # Wrap text
 ```
 
 ### Environment
