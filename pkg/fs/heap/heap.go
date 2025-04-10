@@ -43,6 +43,7 @@ const (
     StdIn
     StdOut
     StdErr
+    Deflate
 )
 
 func (h *Heap) String() string {
@@ -52,6 +53,8 @@ func (h *Heap) String() string {
     case StdOut:
         return h.Title
     case StdErr:
+        return h.Title
+    case Deflate:
         return h.Title
     default:
         return h.Path
@@ -100,7 +103,7 @@ func (h *Heap) Loaded() bool {
 func (h* Heap) Save() string {
     p := h.Path
 
-    if h.Flag == StdOut || h.Flag == StdErr {
+    if h.Flag >= StdOut {
         p = h.String()
     }
 
@@ -108,7 +111,7 @@ func (h* Heap) Save() string {
         p += "-" + l.Name
     }
 
-    f, err := os.OpenFile(p, fs.Override, 0644)
+    f, err := os.OpenFile(p, fs.O_OVERRIDE, 0644)
 
     if err != nil {
         fs.Panic(err)

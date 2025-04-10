@@ -6,8 +6,13 @@ import (
     "slices"
 
     "github.com/cuhsat/cu/pkg/fs"
+    "github.com/cuhsat/cu/pkg/fs/gzip"
     "github.com/cuhsat/cu/pkg/fs/heap"
     "github.com/fsnotify/fsnotify"
+)
+
+const (
+    Stdin = "-"
 )
 
 type HeapSet struct {
@@ -32,8 +37,21 @@ func NewHeapSet(p []string, f ...string) *HeapSet {
 
     go hs.notify()
 
-    for _, pp := range p {
-        hs.loadPath(pp)
+    for _, pe := range p {
+        if pe == Stdin {
+            hs.loadPipe()
+            break
+        }
+
+        m, err := filepath.Glob(pe)
+
+        if err != nil {
+            fs.Panic(err)
+        }
+
+        for _, me := range m {
+            hs.loadPath(me)
+        }
     }
 
     if len(hs.heaps) == 0 {
@@ -42,8 +60,8 @@ func NewHeapSet(p []string, f ...string) *HeapSet {
 
     hs.loadLazy()
 
-    for _, ff := range f {
-        hs.heaps[0].AddFilter(ff)
+    for _, fe := range f {
+        hs.heaps[0].AddFilter(fe)
     }
 
     return &hs
@@ -104,30 +122,44 @@ func (hs *HeapSet) ThrowAway() {
 }
 
 func (hs *HeapSet) loadPath(p string) {
-    var f heap.Flag
-
-    // read stdin
-    if p == "-" {
-        p, f = fs.Stdin(), heap.StdIn
-    }
-
     fi, err := os.Stat(p)
 
     if err != nil {
         fs.Panic(err)
     }
 
-    // load file
     if !fi.IsDir() {
-        hs.heaps = append(hs.heaps, &heap.Heap{
-            Path: p,
-            Flag: f,
-        })
+        hs.loadFile(p)
+    } else {
+        hs.loadDir(p)
+    }
+}
 
-        return
+func (hs *HeapSet) loadPipe() {
+    hs.heaps = append(hs.heaps, &heap.Heap{
+        Title: Stdin,
+        Path: fs.Stdin(),
+        Flag: heap.StdIn,
+    })  
+}
+
+func (hs *HeapSet) loadFile(p string) {
+    f := heap.Normal
+    t := p
+
+    if gzip.Detect(p) {
+        p = gzip.Deflate(p, fs.TempFile("gzip"))
+        f = heap.Deflate
     }
 
-    // load directory
+    hs.heaps = append(hs.heaps, &heap.Heap{
+        Title: t,
+        Path: p,
+        Flag: f,
+    })
+}
+
+func (hs *HeapSet) loadDir(p string) {
     dir, err := os.ReadDir(p)
 
     if err != nil {
@@ -136,9 +168,7 @@ func (hs *HeapSet) loadPath(p string) {
  
     for _, e := range dir {
         if !e.IsDir() {
-            hs.heaps = append(hs.heaps, &heap.Heap{
-                Path: filepath.Join(p, e.Name()),
-            })
+            hs.loadFile(filepath.Join(p, e.Name()))
         }
     }
 }

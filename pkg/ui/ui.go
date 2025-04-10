@@ -196,7 +196,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 heap = hs.CloseHeap()
 
                 if heap == nil {
-                    return
+                    return // exit
                 }
 
                 heap.ResetFilter()
