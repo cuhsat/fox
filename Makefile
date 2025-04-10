@@ -1,14 +1,14 @@
 .PHONY: all clean
 
-all: build
+all: build install
 
 build:
 	mkdir -p ./bin
 	go build -v -race -o ./bin/cu cmd/cu/main.go
 
 install: build
-	chmod +x ./bin/cu
-	sudo cp ./bin/cu /usr/local/bin/cu
+	sudo mkdir -p /usr/local/bin/
+	sudo cp ./bin/cu /usr/local/bin/
 
 remove:
 	sudo rm /usr/local/bin/cu
