@@ -12,15 +12,15 @@ const (
 )
 
 type HexBuffer struct {
-    Buffer
-
     Lines []HexLine
+
+    Buffer
 }
 
 type HexLine struct {
-    Line
-
     Hex string
+
+    Line
 }
 
 func Hex(ctx Context) (hb HexBuffer) {

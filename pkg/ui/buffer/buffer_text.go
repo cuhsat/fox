@@ -14,11 +14,11 @@ const (
 )
 
 type TextBuffer struct {
-    Buffer
+    Lines []TextLine
 
     SMap smap.SMap
-    
-    Lines []TextLine
+
+    Buffer
 }
 
 type TextLine struct {

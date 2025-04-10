@@ -5,11 +5,13 @@ import (
 )
 
 type Buffer struct {
-    W, H int
+    W int
+    H int
 }
 
 type Line struct {
-    Nr, Str string
+    Nr  string
+    Str string
 }
 
 type Context struct {
