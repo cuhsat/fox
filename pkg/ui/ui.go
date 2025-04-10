@@ -120,7 +120,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             page_h := h-2
 
             switch ev.Key() {
-            case tcell.KeyCtrlQ, tcell.KeyEscape:
+            case tcell.KeyEscape:
                 return
 
             case tcell.KeyCtrlL, tcell.KeyF1:
@@ -187,6 +187,23 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 path := heap.Save()
                 
                 ui.overlay.SendStatus(fmt.Sprintf("%s saved", path))
+
+            case tcell.KeyCtrlQ:
+                chain := heap.Chain
+
+                ui.output.Reset()
+
+                heap = hs.CloseHeap()
+
+                if heap == nil {
+                    return
+                }
+
+                heap.ResetFilter()
+
+                for _, f := range chain {
+                    heap.AddFilter(f.Name)
+                }
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()

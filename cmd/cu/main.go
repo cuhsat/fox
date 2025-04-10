@@ -62,6 +62,10 @@ func main() {
         fs.Usage("hex or pattern")
     }
 
+    if *f && *r {
+        fs.Usage("follow or raw")
+    }
+
     if *h {
         limit.SetHead(c)
     }
