@@ -12,6 +12,10 @@ const (
     Override = os.O_CREATE | os.O_TRUNC | os.O_WRONLY
 )
 
+func Print(a ...any) {
+    fmt.Fprintln(os.Stdout, a...)
+}
+
 func Error(a ...any) {
     fmt.Fprintln(os.Stderr, a...)
 }
