@@ -34,7 +34,7 @@ func NewOverlay(screen tcell.Screen, status *status.Status) *Overlay {
             status: status,
         },
         
-        ch: make(chan message),
+        ch: make(chan message, 64),
         buffer: nil,
     }
 }

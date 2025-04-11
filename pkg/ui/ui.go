@@ -33,7 +33,7 @@ type UI struct {
 func NewUI(m mode.Mode) *UI {
     encoding.Register()
 
-    sts := status.NewStatus()
+    sta := status.NewStatus()
 
     scr, err := tcell.NewScreen()
 
@@ -53,12 +53,12 @@ func NewUI(m mode.Mode) *UI {
 
     ui := UI{
         screen:  scr,
-        status:  sts,
-        themes:  themes.NewThemes(sts.Theme),
-        header:  widget.NewHeader(scr, sts),
-        output:  widget.NewOutput(scr, sts),
-        input:   widget.NewInput(scr, sts),
-        overlay: widget.NewOverlay(scr, sts),
+        status:  sta,
+        themes:  themes.NewThemes(sta.Theme),
+        header:  widget.NewHeader(scr, sta),
+        output:  widget.NewOutput(scr, sta),
+        input:   widget.NewInput(scr, sta),
+        overlay: widget.NewOverlay(scr, sta),
     }
 
     ui.State(m)
@@ -210,13 +210,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 heap.Reload()
 
             case tcell.KeyCtrlT:
-                t := ui.themes.Cycle()
+                ui.status.Theme = ui.themes.Cycle()
 
                 ui.clear()
 
-                ui.status.Theme = t
-
-                ui.overlay.SendStatus(fmt.Sprintf("Theme %s", t))
+                ui.overlay.SendStatus(fmt.Sprintf("Theme %s", ui.status.Theme))
 
             case tcell.KeyCtrlF:
                 ui.status.ToggleFollow()

@@ -3,6 +3,7 @@ package main
 import (
     "flag"
     "os"
+    "path/filepath"
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/fs/heap"
@@ -13,10 +14,6 @@ import (
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
 )
-
-func usage() {
-    fs.Usage("usage: cu [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
-}
 
 func main() {
     var c limit.Count
@@ -101,4 +98,16 @@ func main() {
     defer ui.Close()
 
     ui.Run(hs, hi)
+}
+
+func usage() {
+    bin, err := os.Executable()
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    bin = filepath.Base(bin)
+
+    fs.Usage("usage:", bin, "[-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
 }

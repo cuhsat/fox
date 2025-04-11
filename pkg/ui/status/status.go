@@ -10,18 +10,18 @@ const (
 )
 
 type Status struct {
+    config.Config
+
     Mode mode.Mode
     Last mode.Mode
-
-    config.Config
 }
 
 func NewStatus() *Status {
     return &Status{
+        Config: *config.Load(),
+
         Mode: DefaultMode,
         Last: DefaultMode,
-
-        Config: *config.GetConfig(),
     }
 }
 

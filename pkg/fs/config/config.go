@@ -22,46 +22,7 @@ type Config struct {
     Wrap   bool   `toml:"Wrap"`
 }
 
-// singleton
-var instance *Config = nil
-
-func GetConfig() *Config {
-    if instance == nil {
-        instance = load();
-    }
-
-    return instance;
-}
-
-func (c *Config) Save() {
-    b := new(bytes.Buffer)
-
-    e := toml.NewEncoder(b)
-    
-    e.Indent = "" // no indent
-
-    err := e.Encode(c)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    dir, err := os.UserHomeDir()
-
-    if err != nil {
-        fs.Panic(err)
-    }
-
-    p := filepath.Join(dir, File)
-
-    err = os.WriteFile(p, b.Bytes(), 0644)
-
-    if err != nil {
-        fs.Panic(err)
-    }
-}
-
-func load() *Config {
+func Load() *Config {
     var c Config
 
     // defaults
@@ -100,4 +61,32 @@ func load() *Config {
     }
 
     return &c
+}
+
+func (c *Config) Save() {
+    b := new(bytes.Buffer)
+
+    e := toml.NewEncoder(b)
+    
+    e.Indent = "" // no indent
+
+    err := e.Encode(c)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    dir, err := os.UserHomeDir()
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    p := filepath.Join(dir, File)
+
+    err = os.WriteFile(p, b.Bytes(), 0644)
+
+    if err != nil {
+        fs.Panic(err)
+    }
 }
