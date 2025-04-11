@@ -1,4 +1,4 @@
-package palette
+package catppuccin
 
 var Latte = []int32 {
     0x4c4f69, // Subtext0

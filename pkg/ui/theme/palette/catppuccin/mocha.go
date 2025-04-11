@@ -1,4 +1,4 @@
-package palette
+package catppuccin
 
 var Mocha = []int32 {
     0xa6adc8, // Subtext0

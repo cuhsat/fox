@@ -83,13 +83,13 @@ CU_THEME=Monokai
 | <kbd>Any Key</kbd>                                 | Filter buffer content |
 
 ## Themes
-* `Latte`
-* `Frappe`
-* `Macchiato`
-* `Mocha`
-* `Matrix`
-* `Monokai`
-* `Monochrome`
+* `catppuccin-latte`
+* `catppuccin-frappe`
+* `catppuccin-macchiato`
+* `catppuccin-mocha`
+* `monokai`
+* `matrix`
+* `monochrome`
 
 ## License
 Released under the [MIT License](LICENSE).

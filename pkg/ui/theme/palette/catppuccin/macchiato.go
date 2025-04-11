@@ -1,4 +1,4 @@
-package palette
+package catppuccin
 
 var Macchiato = []int32 {
     0xa5adcb, // Subtext0

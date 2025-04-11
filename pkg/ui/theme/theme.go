@@ -5,6 +5,8 @@ import (
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/ui/theme/palette"
+    "github.com/cuhsat/cu/pkg/ui/theme/palette/catppuccin"
+    "github.com/cuhsat/cu/pkg/ui/theme/palette/monokai"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -13,13 +15,17 @@ const (
 )
 
 var palettes = map[string][]int32{
-    "latte": palette.Latte,
-    "frappe": palette.Frappe,
-    "macchiato": palette.Macchiato,
-    "mocha": palette.Mocha,
     "matrix": palette.Matrix,
-    "monokai": palette.Monokai,
     "monochrome": palette.Monochrome,
+
+    // monokai theme
+    "monokai": monokai.Monokai,
+
+    // catppuccin themes
+    "catppuccin-latte": catppuccin.Latte,
+    "catppuccin-frappe": catppuccin.Frappe,
+    "catppuccin-macchiato": catppuccin.Macchiato,
+    "catppuccin-mocha": catppuccin.Mocha,    
 }
 
 var (
