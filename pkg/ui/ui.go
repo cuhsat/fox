@@ -71,7 +71,7 @@ func NewUI(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
     hs.SetCallback(func() {
-        ui.screen.PostEvent(tcell.NewEventInterrupt(nil))
+        ui.screen.PostEvent(tcell.NewEventInterrupt(true))
     })
 
     go ui.overlay.Watch()
@@ -84,7 +84,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
         switch ev := ev.(type) {
         case *tcell.EventInterrupt:
-            if ui.status.Follow {
+            v, ok := ev.Data().(bool)
+
+            if v && ok && ui.status.Follow {
                 ui.output.ScrollEnd()
             }
 
