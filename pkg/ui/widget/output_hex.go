@@ -5,7 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/ui/buffer"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
 )
 
 const (
@@ -40,24 +40,24 @@ func (o *Output) hexRender(x, y, w, h int) {
 
         if o.status.Line {
             // offset number
-            o.print(hex_x, line_y, line.Nr, theme.Hint)
+            o.print(hex_x, line_y, line.Nr, themes.Hint)
             hex_x += len(line.Nr)
 
             // offset separator
-            o.print(hex_x, line_y, Rule, theme.Rule)
+            o.print(hex_x, line_y, Rule, themes.Rule)
             hex_x += buffer.HexSpace * 2
         }
 
         // hex values
-        o.print(hex_x, line_y, line.Hex, theme.Output)
+        o.print(hex_x, line_y, line.Hex, themes.Output)
         text_x := hex_x + len(line.Hex)
 
         // hex separator
-        o.print(text_x, line_y, Rule, theme.Rule)
+        o.print(text_x, line_y, Rule, themes.Rule)
         text_x += buffer.HexSpace * 2
 
         // text value
-        o.print(text_x, line_y, line.Str, theme.Output)
+        o.print(text_x, line_y, line.Str, themes.Output)
 
         // mark found positions
         // for c, f := range heap.Chain {
@@ -85,7 +85,7 @@ func (o *Output) hexMark(x, y, c int, s, f string) {
             dx := (i*2) + (bx*2)
             dx += dx / 4
 
-            o.print(x + dx, y, h, theme.Colors[c % len(theme.Colors)])
+            o.print(x + dx, y, h, themes.Colors[c % len(themes.Colors)])
         }
 
         j = i+1

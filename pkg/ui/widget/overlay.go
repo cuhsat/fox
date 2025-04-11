@@ -5,7 +5,7 @@ import (
     "time"
 
     "github.com/cuhsat/cu/pkg/ui/status"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -50,7 +50,7 @@ func (o *Overlay) Render(x, y, w, h int) {
 func (o *Overlay) SendError(err string) {
     o.ch <- message{
         value: err,
-        style: theme.Error,
+        style: themes.Error,
         delay: DelayLong,
     }
 }
@@ -58,16 +58,8 @@ func (o *Overlay) SendError(err string) {
 func (o *Overlay) SendStatus(msg string) {
     o.ch <- message{
         value: msg,
-        style: theme.Info,
+        style: themes.Info,
         delay: DelayShort,
-    }
-}
-
-func (o *Overlay) SendMessage(msg string) {
-    o.ch <- message{
-        value: msg,
-        style: theme.Info,
-        delay: DelayLong,
     }
 }
 

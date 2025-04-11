@@ -5,7 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/cu/pkg/ui/buffer"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
 )
 
 func (o *Output) textRender(x, y, w, h int) {
@@ -36,12 +36,12 @@ func (o *Output) textRender(x, y, w, h int) {
 
         // line number
         if o.status.Line {
-            o.print(line_x, line_y, line.Nr, theme.Hint)
+            o.print(line_x, line_y, line.Nr, themes.Hint)
             line_x += len(line.Nr) + buffer.TextSpace
         }
 
         // text value
-        o.print(line_x, line_y, line.Str, theme.Output)
+        o.print(line_x, line_y, line.Str, themes.Output)
 
         // mark found positions
         for c, f := range o.heap.Chain {
@@ -57,7 +57,7 @@ func (o *Output) textMark(x, y, c int, s, f string) {
         return
     }
 
-    o.print(x + i, y, f, theme.Colors[c % len(theme.Colors)])
+    o.print(x + i, y, f, themes.Colors[c % len(themes.Colors)])
     
     o.textMark(x + i+1, y, c, s[i+1:], f)
 }

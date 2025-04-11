@@ -1,33 +1,20 @@
-package theme
+package themes
 
 import (
-    "strings"
+    "slices"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/ui/theme/palette"
-    "github.com/cuhsat/cu/pkg/ui/theme/palette/catppuccin"
-    "github.com/cuhsat/cu/pkg/ui/theme/palette/monokai"
+    "github.com/cuhsat/cu/pkg/ui/themes/palette"
+    "github.com/cuhsat/cu/pkg/ui/themes/palette/catppuccin"
+    "github.com/cuhsat/cu/pkg/ui/themes/palette/monokai"
     "github.com/gdamore/tcell/v2"
 )
 
 const (
-    Default = "monokai"
+    Default = "Monokai"
 )
 
-var palettes = map[string][]int32{
-    "monochrome": palette.Monochrome,
-    "matrix": palette.Matrix,
-
-    // monokai theme
-    "monokai": monokai.Monokai,
-
-    // catppuccin themes
-    "catppuccin-latte": catppuccin.Latte,
-    "catppuccin-frappe": catppuccin.Frappe,
-    "catppuccin-macchiato": catppuccin.Macchiato,
-    "catppuccin-mocha": catppuccin.Mocha,    
-}
-
+// global styles
 var (
     Output tcell.Style
     Header tcell.Style
@@ -41,12 +28,67 @@ var (
     Colors []tcell.Style
 )
 
-func Load(name string) {
-    p, ok := palettes[strings.ToLower(name)]
+type Palettes [][]int32
 
-    if !ok {
+type Themes struct {
+    palettes Palettes
+    names []string
+    index int
+}
+
+func NewThemes(name string) *Themes {
+    t := Themes{
+        palettes: Palettes{
+            // monokai
+            monokai.Monokai,
+
+            // catppuccin
+            catppuccin.Latte,
+            catppuccin.Frappe,
+            catppuccin.Macchiato,
+            catppuccin.Mocha,    
+
+            // misc palettes
+            palette.Matrix,
+            palette.Monochrome,
+        },
+        names: []string{
+            "Monokai",
+            "Catppuccin-Latte",
+            "Catppuccin-Frappe",
+            "Catppuccin-Macchiato",
+            "Catppuccin-Mocha",
+            "Matrix",
+            "Monochrome",
+        },
+        index: 0,
+    }
+
+    t.load(name)
+
+    return &t
+}
+
+
+func (t *Themes) Cycle() string {
+    t.index += 1
+    t.index %= len(t.names)
+
+    n := t.names[t.index]
+
+    t.load(n)
+
+    return n
+}
+
+func (t *Themes) load(name string) {
+    if !slices.Contains(t.names, name) {
         fs.Panic("theme not found")
     }
+
+    t.index = slices.Index(t.names, name)
+
+    p := t.palettes[t.index]
 
     Output = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(p[0])).
@@ -83,6 +125,8 @@ func Load(name string) {
     Line = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(p[16])).
         Background(tcell.NewHexColor(p[17]))
+
+    Colors = Colors[:0]
 
     for i := 18; i < 24; i++ {
         Colors = append(Colors, tcell.StyleDefault.

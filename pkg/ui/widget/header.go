@@ -6,7 +6,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/utils"
     "github.com/cuhsat/cu/pkg/ui/status"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -39,13 +39,13 @@ func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     }
 
     // render blank line
-    hd.printBlank(x, y, w, theme.Line)
+    hd.printBlank(x, y, w, themes.Line)
 
     // render heap file path
-    hd.print(x, y, utils.Abbrev(p, x, w-utils.Length(i)), theme.Header)
+    hd.print(x, y, utils.Abbrev(p, x, w-utils.Length(i)), themes.Header)
 
     // render heapset index
-    hd.print(x + w-utils.Length(i), y, i, theme.Input)
+    hd.print(x + w-utils.Length(i), y, i, themes.Input)
 
     return 1
 }

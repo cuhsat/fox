@@ -6,7 +6,7 @@ import (
     "path/filepath"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/BurntSushi/toml"
 )
 
@@ -38,7 +38,7 @@ func load() *Config {
     var c Config
 
     // defaults UI
-    c.UI.Theme = theme.Default
+    c.UI.Theme = themes.Default
     c.UI.Follow = false
     c.UI.Line = true
     c.UI.Wrap = false

@@ -9,7 +9,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/cuhsat/cu/pkg/ui/widget"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
@@ -23,6 +23,7 @@ type UI struct {
     screen  tcell.Screen
 
     status  *status.Status
+    themes  *themes.Themes
 
     header  *widget.Header
     output  *widget.Output
@@ -48,9 +49,6 @@ func NewUI(m mode.Mode) *UI {
         fs.Panic(err)
     }
 
-    theme.Load(cfg.UI.Theme)
-
-    scr.SetStyle(theme.Output)
     scr.EnableMouse()
     scr.EnablePaste()
     scr.HideCursor()
@@ -58,6 +56,7 @@ func NewUI(m mode.Mode) *UI {
     ui := UI{
         screen:  scr,
         status:  sts,
+        themes:  themes.NewThemes(cfg.UI.Theme),
         header:  widget.NewHeader(scr, sts),
         output:  widget.NewOutput(scr, sts),
         input:   widget.NewInput(scr, sts),
@@ -71,7 +70,7 @@ func NewUI(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
     hs.SetCallback(func() {
-        ui.screen.PostEvent(tcell.NewEventInterrupt(true))
+        ui.screen.PostEvent(tcell.NewEventInterrupt(ui.status.Follow))
     })
 
     go ui.overlay.Watch()
@@ -86,7 +85,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
         case *tcell.EventInterrupt:
             v, ok := ev.Data().(bool)
 
-            if v && ok && ui.status.Follow {
+            if ok && v {
                 ui.output.ScrollEnd()
             }
 
@@ -211,6 +210,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
                 ui.output.Reset()
                 
                 heap.Reload()
+
+            case tcell.KeyCtrlT:
+                t := ui.themes.Cycle()
+
+                ui.screen.Fill(' ', themes.Output)
+                ui.screen.Show()
+
+                ui.overlay.SendStatus(fmt.Sprintf("Theme %s", t))
 
             case tcell.KeyCtrlF:
                 ui.status.ToggleFollow()
@@ -375,6 +382,7 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     _, heap := hs.Current()
 
     ui.screen.SetTitle(fmt.Sprintf("cu - %s", heap))
+    ui.screen.SetStyle(themes.Output)
     ui.screen.Clear()
 
     x, y := 0, 0
