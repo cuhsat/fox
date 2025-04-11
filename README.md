@@ -59,8 +59,9 @@ CU_THEME=Monokai
 | <kbd>Shift</kbd> + <kbd>Down</kbd>                 | Scroll page down      |
 | <kbd>Shift</kbd> + <kbd>Left</kbd>                 | Scroll page left      |
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                | Scroll page right     |
-| <kbd>Ctrl</kbd> + <kbd>q</kbd>                     | Close file            |
 | <kbd>Ctrl</kbd> + <kbd>r</kbd>                     | Reload file           |
+| <kbd>Ctrl</kbd> + <kbd>q</kbd>                     | Close file            |
+| <kbd>Ctrl</kbd> + <kbd>t</kbd>                     | Cycle themes          |
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                     | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                     | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                     | Toggle wrap text      |
@@ -83,13 +84,13 @@ CU_THEME=Monokai
 | <kbd>Any Key</kbd>                                 | Filter buffer content |
 
 ## Themes
-* `catppuccin-latte`
-* `catppuccin-frappe`
-* `catppuccin-macchiato`
-* `catppuccin-mocha`
-* `monokai`
-* `matrix`
-* `monochrome`
+* `Monokai`
+* `Catppuccin-Latte`
+* `Catppuccin-Frappe`
+* `Catppuccin-Macchiato`
+* `Catppuccin-Mocha`
+* `Matrix`
+* `Monochrome`
 
 ## License
 Released under the [MIT License](LICENSE).

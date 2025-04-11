@@ -8,7 +8,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/utils"
     "github.com/cuhsat/cu/pkg/ui/mode"
     "github.com/cuhsat/cu/pkg/ui/status"
-    "github.com/cuhsat/cu/pkg/ui/theme"
+    "github.com/cuhsat/cu/pkg/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -43,10 +43,10 @@ func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     m := i.formatMode()
 
     // render blank line
-    i.printBlank(x, y, w, theme.Line)
+    i.printBlank(x, y, w, themes.Line)
 
     // render mode
-    i.print(x, y, m, theme.Mode)
+    i.print(x, y, m, themes.Mode)
 
     if i.status.Mode == mode.Hex {
         return 1
@@ -61,11 +61,11 @@ func (i *Input) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     // render filters
     if !i.Lock {
-        i.print(x, y, utils.Abbrev(f, x, w-utils.Length(s)), theme.Input)
+        i.print(x, y, utils.Abbrev(f, x, w-utils.Length(s)), themes.Input)
     }
 
     // render status
-    i.print(w-utils.Length(s), y, s, theme.Input)
+    i.print(w-utils.Length(s), y, s, themes.Input)
 
     return 1
 }
