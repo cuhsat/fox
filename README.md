@@ -27,7 +27,6 @@ $ make install
 
 ## Config
 ```toml
-[UI]
 Theme = "Monokai"
 Follow = true  # Follow file
 Line = true    # Line numbers

@@ -5,26 +5,23 @@ import (
     "github.com/cuhsat/cu/pkg/ui/mode"
 )
 
+const (
+    DefaultMode = mode.Less
+)
+
 type Status struct {
     Mode mode.Mode
     Last mode.Mode
-    
-    Follow bool
-    Line bool
-    Wrap bool
+
+    config.Config
 }
 
 func NewStatus() *Status {
-    cfg := config.GetConfig()
-
     return &Status{
-        Mode: mode.Less,
-        Last: mode.Less,
-        
-        // init from config
-        Follow: cfg.UI.Follow,
-        Line:   cfg.UI.Line,
-        Wrap:   cfg.UI.Wrap,
+        Mode: DefaultMode,
+        Last: DefaultMode,
+
+        Config: *config.GetConfig(),
     }
 }
 
@@ -47,18 +44,12 @@ func (s *Status) SwitchMode(m mode.Mode) bool {
 
 func (s *Status) ToggleFollow() {
     s.Follow = !s.Follow
-
-    config.GetConfig().UI.Follow = s.Follow
 }
 
 func (s *Status) ToggleNumbers() {
     s.Line = !s.Line
-
-    config.GetConfig().UI.Line = s.Line
 }
 
 func (s *Status) ToggleWrap() {
     s.Wrap = !s.Wrap
-
-    config.GetConfig().UI.Wrap = s.Wrap
 }

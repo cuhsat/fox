@@ -11,6 +11,7 @@ import (
     "github.com/cuhsat/cu/pkg/fs/limit"
     "github.com/cuhsat/cu/pkg/ui"
     "github.com/cuhsat/cu/pkg/ui/mode"
+    "github.com/cuhsat/cu/pkg/ui/status"
 )
 
 func usage() {
@@ -22,7 +23,7 @@ func main() {
     var e heap.Filters
 
     // flags
-    m := mode.Less
+    m := status.DefaultMode
     r := flag.Bool("r", false, "Raw mode")
     x := flag.Bool("x", false, "Hex mode")
 
@@ -88,7 +89,7 @@ func main() {
     hs := heapset.NewHeapSet(a, e...)
     defer hs.ThrowAway()
 
-    if fs.IsStdout() || *r {
+    if fs.IsCharDev(os.Stdout) || *r {
         hs.Print(*o, *x)
         os.Exit(0)
     }

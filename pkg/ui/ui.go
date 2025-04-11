@@ -4,7 +4,6 @@ import (
     "fmt"
 
     "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/config"
     "github.com/cuhsat/cu/pkg/fs/heapset"
     "github.com/cuhsat/cu/pkg/fs/history"
     "github.com/cuhsat/cu/pkg/ui/mode"
@@ -23,7 +22,6 @@ type UI struct {
     screen  tcell.Screen
 
     status  *status.Status
-    config  *config.Config
     themes  *themes.Themes
 
     header  *widget.Header
@@ -35,7 +33,6 @@ type UI struct {
 func NewUI(m mode.Mode) *UI {
     encoding.Register()
 
-    cfg := config.GetConfig()
     sts := status.NewStatus()
 
     scr, err := tcell.NewScreen()
@@ -57,8 +54,7 @@ func NewUI(m mode.Mode) *UI {
     ui := UI{
         screen:  scr,
         status:  sts,
-        config:  cfg,
-        themes:  themes.NewThemes(cfg.UI.Theme),
+        themes:  themes.NewThemes(sts.Theme),
         header:  widget.NewHeader(scr, sts),
         output:  widget.NewOutput(scr, sts),
         input:   widget.NewInput(scr, sts),
@@ -218,7 +214,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 ui.clear()
 
-                ui.config.UI.Theme = t
+                ui.status.Theme = t
 
                 ui.overlay.SendStatus(fmt.Sprintf("Theme %s", t))
 
@@ -370,7 +366,7 @@ func (ui *UI) State(m mode.Mode) {
 func (ui *UI) Close() {
     r := recover()
 
-    defer ui.config.Save()
+    defer ui.status.Save()
 
     defer ui.screen.Fini()
 

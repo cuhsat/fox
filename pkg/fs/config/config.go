@@ -16,12 +16,10 @@ const (
 )
 
 type Config struct {
-    UI struct {
-        Theme  string `toml:"Theme"`
-        Follow bool   `toml:"Follow"`
-        Line   bool   `toml:"Line"`
-        Wrap   bool   `toml:"Wrap"`
-    }
+    Theme  string `toml:"Theme"`
+    Follow bool   `toml:"Follow"`
+    Line   bool   `toml:"Line"`
+    Wrap   bool   `toml:"Wrap"`
 }
 
 // singleton
@@ -66,11 +64,11 @@ func (c *Config) Save() {
 func load() *Config {
     var c Config
 
-    // defaults UI
-    c.UI.Theme = themes.Default
-    c.UI.Follow = false
-    c.UI.Line = true
-    c.UI.Wrap = false
+    // defaults
+    c.Theme = themes.Default
+    c.Follow = false
+    c.Line = true
+    c.Wrap = false
 
     dir, err := os.UserHomeDir()
 
@@ -98,7 +96,7 @@ func load() *Config {
     env := os.Getenv("CU_THEME")
 
     if len(env) > 0 {
-        c.UI.Theme = env
+        c.Theme = env
     }
 
     return &c

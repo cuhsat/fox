@@ -12,7 +12,7 @@ const (
     O_OVERRIDE = os.O_TRUNC | os.O_CREATE | os.O_WRONLY
 )
 
-func Print(a ...any) {
+func Debug(a ...any) {
     fmt.Fprintln(os.Stdout, a...)
 }
 
@@ -31,14 +31,8 @@ func Usage(a ...any) {
 }
 
 func Stdin() string {
-    fi, err := os.Stdin.Stat()
-
-    if err != nil {
-        Panic(err)
-    }
-
-    if (fi.Mode() & os.ModeCharDevice) != 0 {
-        Panic("invalid mode")
+    if !IsCharDev(os.Stdin) {
+        Panic("invalid mode")        
     }
 
     f := TempFile("stdin")
@@ -78,8 +72,8 @@ func Stderr() *os.File {
     return TempFile("stderr")
 }
 
-func IsStdout() bool {
-    fi, err := os.Stdout.Stat()
+func IsCharDev(f *os.File) bool {
+    fi, err := f.Stat()
 
     if err != nil {
         Panic(err)
