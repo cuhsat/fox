@@ -1,4 +1,4 @@
-package palette
+package catppuccin
 
 var Frappe = []int32 {
     0xa5adce, // Subtext0

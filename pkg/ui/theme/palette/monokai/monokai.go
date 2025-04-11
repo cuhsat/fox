@@ -1,4 +1,4 @@
-package palette
+package monokai
 
 var Monokai = []int32 {
     0x7f8490, // output foreground

@@ -13,7 +13,7 @@ var Monochrome = []int32 {
     0xffffff, // mode background
     0xffffff, // hint foreground
     0x000000, // hint background
-    0xffffff, // rule foreground
+    0x000000, // rule foreground
     0x000000, // rule background
     0x000000, // info foreground
     0xffffff, // info background
