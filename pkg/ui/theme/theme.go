@@ -15,8 +15,8 @@ const (
 )
 
 var palettes = map[string][]int32{
-    "matrix": palette.Matrix,
     "monochrome": palette.Monochrome,
+    "matrix": palette.Matrix,
 
     // monokai theme
     "monokai": monokai.Monokai,
