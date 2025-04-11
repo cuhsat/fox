@@ -3,6 +3,7 @@ package fs
 import (
     "bufio"
     "fmt"
+    "log"
     "io"
     "os"
 )
@@ -13,14 +14,20 @@ const (
 )
 
 func Debug(a ...any) {
+    log.Println(a...)
+
     fmt.Fprintln(os.Stdout, a...)
 }
 
 func Error(a ...any) {
+    log.Println(a...)
+
     fmt.Fprintln(os.Stderr, a...)
 }
 
 func Panic(a ...any) {
+    log.Println(a...)
+    
     fmt.Fprintln(os.Stderr, a...)
     os.Exit(1)
 }
