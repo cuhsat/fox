@@ -1,17 +1,19 @@
 .PHONY: all clean
 
-all: build install
+bin = /usr/local/bin/
+
+all: build install symlink
 
 build:
 	mkdir -p ./bin
 	go build -v -race -o ./bin/cu cmd/cu/main.go
 
 install: build
-	sudo mkdir -p /usr/local/bin/
-	sudo cp ./bin/cu /usr/local/bin/
+	sudo mkdir -p $(bin)
+	sudo cp ./bin/cu $(bin)
 
-remove:
-	sudo rm /usr/local/bin/cu
+symlink: install
+	sudo ln -s $(bin)/cu $(bin)/icu
 
 clean:
 	rm -rf ./bin
