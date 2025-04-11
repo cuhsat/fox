@@ -3,6 +3,7 @@ package theme
 import (
     "strings"
 
+    "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/ui/theme/palette"
     "github.com/gdamore/tcell/v2"
 )
@@ -12,9 +13,13 @@ const (
 )
 
 var palettes = map[string][]int32{
-    "catppuccin-latte": palette.Latte,
-    "monochrome": palette.Monochrome,
+    "latte": palette.Latte,
+    "frappe": palette.Frappe,
+    "macchiato": palette.Macchiato,
+    "mocha": palette.Mocha,
+    "matrix": palette.Matrix,
     "monokai": palette.Monokai,
+    "monochrome": palette.Monochrome,
 }
 
 var (
@@ -31,7 +36,11 @@ var (
 )
 
 func Load(name string) {
-    p := palettes[strings.ToLower(name)]
+    p, ok := palettes[strings.ToLower(name)]
+
+    if !ok {
+        fs.Panic("theme not found")
+    }
 
     Output = tcell.StyleDefault.
         Foreground(tcell.NewHexColor(p[0])).
