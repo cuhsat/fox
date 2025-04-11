@@ -1,5 +1,5 @@
 # cu [see:you]
-The Swiss Army Knife for viewing and lined based text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
+The Swiss Army Knife for viewing and searching lined based text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
 
 ## Usage
 ```

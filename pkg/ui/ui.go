@@ -209,6 +209,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
 
             case tcell.KeyCtrlR:
                 ui.output.Reset()
+                
                 heap.Reload()
 
             case tcell.KeyCtrlF:
