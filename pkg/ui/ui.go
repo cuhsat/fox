@@ -23,6 +23,7 @@ type UI struct {
     screen  tcell.Screen
 
     status  *status.Status
+    config  *config.Config
     themes  *themes.Themes
 
     header  *widget.Header
@@ -56,6 +57,7 @@ func NewUI(m mode.Mode) *UI {
     ui := UI{
         screen:  scr,
         status:  sts,
+        config:  cfg,
         themes:  themes.NewThemes(cfg.UI.Theme),
         header:  widget.NewHeader(scr, sts),
         output:  widget.NewOutput(scr, sts),
@@ -214,8 +216,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyCtrlT:
                 t := ui.themes.Cycle()
 
-                ui.screen.Fill(' ', themes.Output)
-                ui.screen.Show()
+                ui.clear()
+
+                ui.config.UI.Theme = t
 
                 ui.overlay.SendStatus(fmt.Sprintf("Theme %s", t))
 
@@ -367,13 +370,20 @@ func (ui *UI) State(m mode.Mode) {
 func (ui *UI) Close() {
     r := recover()
 
-    ui.overlay.Close()
-    
-    ui.screen.Fini()
+    defer ui.config.Save()
 
+    defer ui.screen.Fini()
+
+    defer ui.overlay.Close()
+    
     if r != nil {
         fs.Panic(r)
     }
+}
+
+func (ui *UI) clear() {
+    ui.screen.Fill(' ', themes.Output)
+    ui.screen.Show()
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {

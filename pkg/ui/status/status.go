@@ -47,12 +47,18 @@ func (s *Status) SwitchMode(m mode.Mode) bool {
 
 func (s *Status) ToggleFollow() {
     s.Follow = !s.Follow
+
+    config.GetConfig().UI.Follow = s.Follow
 }
 
 func (s *Status) ToggleNumbers() {
     s.Line = !s.Line
+
+    config.GetConfig().UI.Line = s.Line
 }
 
 func (s *Status) ToggleWrap() {
     s.Wrap = !s.Wrap
+
+    config.GetConfig().UI.Wrap = s.Wrap
 }

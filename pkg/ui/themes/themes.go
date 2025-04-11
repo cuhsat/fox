@@ -1,7 +1,7 @@
 package themes
 
 import (
-    "slices"
+    "strings"
 
     "github.com/cuhsat/cu/pkg/fs"
     "github.com/cuhsat/cu/pkg/ui/themes/palette"
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-    Default = "Monokai"
+    Default = "monokai"
 )
 
 // global styles
@@ -64,11 +64,10 @@ func NewThemes(name string) *Themes {
         index: 0,
     }
 
-    t.load(name)
+    t.Load(name)
 
     return &t
 }
-
 
 func (t *Themes) Cycle() string {
     t.index += 1
@@ -76,17 +75,23 @@ func (t *Themes) Cycle() string {
 
     n := t.names[t.index]
 
-    t.load(n)
+    t.Load(n)
 
     return n
 }
 
-func (t *Themes) load(name string) {
-    if !slices.Contains(t.names, name) {
-        fs.Panic("theme not found")
+func (t *Themes) Load(name string) {
+    t.index = -1
+
+    for i, n := range t.names {
+        if strings.ToLower(n) == strings.ToLower(name) {
+            t.index = i
+        }
     }
 
-    t.index = slices.Index(t.names, name)
+    if t.index == -1 {
+        fs.Panic("theme not found")
+    }
 
     p := t.palettes[t.index]
 
@@ -126,7 +131,7 @@ func (t *Themes) load(name string) {
         Foreground(tcell.NewHexColor(p[16])).
         Background(tcell.NewHexColor(p[17]))
 
-    Colors = Colors[:0]
+    Colors = Colors[:0] // reset
 
     for i := 18; i < 24; i++ {
         Colors = append(Colors, tcell.StyleDefault.

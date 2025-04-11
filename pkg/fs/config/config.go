@@ -1,6 +1,7 @@
 package config
 
 import (
+    "bytes"
     "errors"
     "os"
     "path/filepath"
@@ -34,6 +35,34 @@ func GetConfig() *Config {
     return instance;
 }
 
+func (c *Config) Save() {
+    b := new(bytes.Buffer)
+
+    e := toml.NewEncoder(b)
+    
+    e.Indent = "" // no indent
+
+    err := e.Encode(c)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    dir, err := os.UserHomeDir()
+
+    if err != nil {
+        fs.Panic(err)
+    }
+
+    p := filepath.Join(dir, File)
+
+    err = os.WriteFile(p, b.Bytes(), 0644)
+
+    if err != nil {
+        fs.Panic(err)
+    }
+}
+
 func load() *Config {
     var c Config
 
@@ -49,9 +78,9 @@ func load() *Config {
         fs.Panic(err)
     }
 
-    f := filepath.Join(dir, File)
+    p := filepath.Join(dir, File)
 
-    _, err = os.Stat(f)
+    _, err = os.Stat(p)
 
     if errors.Is(err, os.ErrNotExist) {
         return &c // defaults
@@ -59,7 +88,7 @@ func load() *Config {
         fs.Panic(err)
     }
 
-    _, err = toml.DecodeFile(f, &c)
+    _, err = toml.DecodeFile(p, &c)
 
     if err != nil {
         fs.Panic(err)
