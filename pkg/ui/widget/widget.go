@@ -9,7 +9,7 @@ import (
 )
 
 const (
-    Tab = '↦'
+    // Tab = '↦'
     Long = '→'
 )
 
@@ -31,8 +31,8 @@ func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {
 func (wi *widget) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         switch r {
-        case '\t':
-            r = Tab
+        // case '\t':
+        //     r = Tab
         case '\r':
             r = Long
         default:
@@ -40,7 +40,11 @@ func (wi *widget) print(x, y int, s string, sty tcell.Style) {
         }
 
         wi.screen.SetContent(x, y, r, nil, sty)
-        
+
         x += runewidth.RuneWidth(r)
     }
+}
+
+func (wi *widget) error(err error) {
+    wi.screen.PostEvent(tcell.NewEventError(err))
 }

@@ -18,6 +18,15 @@ const (
     Delta = 1 // lines
 )
 
+const (
+    Less Mode = iota
+    Grep
+    Hex
+    Goto
+)
+
+type Mode int
+
 type UI struct {
     screen  tcell.Screen
 
