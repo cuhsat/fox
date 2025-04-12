@@ -93,3 +93,6 @@ CU_THEME=Monokai
 
 ## License
 Released under the [MIT License](LICENSE).
+
+----
+Sponsored by [codecentric](https://www.codecentric.de/) company time.
