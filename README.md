@@ -1,14 +1,14 @@
-# Forensic Examiner
-The Swiss Army Knife for examining text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented forensic tool.
+# Forensic Examiner 🛠️
+The Swiss Army Knife for examining text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performant forensic tool.
 
 ## Install
 ```console
-$ make build install
+$ make install
 ```
 
 ## Usage
 ```
-$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
+$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
 
 Available options:
@@ -93,9 +93,6 @@ FX_THEME=Monokai
 * `Terminal`
 * `Matrix`
 * `Monochrome`
-
-## License
-Released under the [MIT License](LICENSE).
 
 ## Support
 Supported by [codecentric](https://codecentric.de).

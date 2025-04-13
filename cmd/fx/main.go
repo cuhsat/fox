@@ -17,7 +17,7 @@ const (
 )
 
 func usage() {
-    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
+    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
 }
 
 func main() {
