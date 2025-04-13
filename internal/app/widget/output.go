@@ -1,10 +1,10 @@
 package widget
 
 import (
-    "github.com/cuhsat/cu/internal/sys/heap"
-    "github.com/cuhsat/cu/internal/sys/heapset"
-    "github.com/cuhsat/cu/internal/sys/types/mode"
-    "github.com/cuhsat/cu/internal/sys/types/smap"
+    "github.com/cuhsat/fx/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys/heapset"
+    "github.com/cuhsat/fx/internal/sys/types/mode"
+    "github.com/cuhsat/fx/internal/sys/types/smap"
     "github.com/gdamore/tcell/v2"
 )
 

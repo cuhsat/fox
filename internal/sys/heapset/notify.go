@@ -3,8 +3,8 @@ package heapset
 import (
     "path/filepath"
 
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/heap"
     "github.com/fsnotify/fsnotify"
 )
 

@@ -5,10 +5,10 @@ import (
     "math"
     "os"
 
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/heap"
-    "github.com/cuhsat/cu/internal/sys/text"
-    "github.com/cuhsat/cu/internal/sys/types/block"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys/text"
+    "github.com/cuhsat/fx/internal/sys/types/block"
 )
 
 type Printable interface {

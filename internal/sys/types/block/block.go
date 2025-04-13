@@ -1,7 +1,7 @@
 package block
 
 import (
-    "github.com/cuhsat/cu/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys/heap"
 )
 
 type Block struct {

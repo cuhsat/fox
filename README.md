@@ -1,14 +1,14 @@
-# cu
-The Swiss Army Knife for viewing and searching lined based text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
+# Forensic Examiner
+The Swiss Army Knife for examining text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented forensic tool.
 
 ## Install
 ```console
-$ make install
+$ make build install
 ```
 
 ## Usage
 ```
-$ cu [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
+$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]
 ```
 
 Available options:
@@ -20,6 +20,10 @@ Available options:
 * `-x` Hexdump mode
 * `-e` Pattern value
 * `-o` Output file
+
+Standard options:
+* `--help` Usage information
+* `--version` Version number
 
 ## Keyboard
 
@@ -66,7 +70,7 @@ Available options:
 | <kbd>Any Key</kbd>                                 | Filter buffer content |
 
 ## Config
-> Located under `~/.curc`.
+> Located under `~/.fxrc`.
 
 ```toml
 Theme = "Monokai"
@@ -77,7 +81,7 @@ Wrap = true    # Wrap text
 
 ### Environment
 ```console
-CU_THEME=Monokai
+FX_THEME=Monokai
 ```
 
 ### Themes
@@ -86,8 +90,12 @@ CU_THEME=Monokai
 * `Catppuccin-Frappe`
 * `Catppuccin-Macchiato`
 * `Catppuccin-Mocha`
+* `Terminal`
 * `Matrix`
 * `Monochrome`
 
 ## License
 Released under the [MIT License](LICENSE).
+
+## Support
+Supported by [codecentric](https://codecentric.de).

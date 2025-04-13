@@ -3,7 +3,7 @@ package themes
 import (
     "strings"
 
-    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/fx/internal/sys"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -44,13 +44,13 @@ func NewThemes(name string) *Themes {
                 0x222327, // error foreground
                 0xff6077, // error background
                 0x222327, // mode foreground
-                0xa7df78, // mode background
+                0x85d3f2, // mode background
                 0x595f6f, // hint foreground
                 0x222327, // hint background
                 0x2c2e34, // rule foreground
                 0x222327, // rule background
                 0x222327, // info foreground
-                0x85d3f2, // info background
+                0xa7df78, // info background
                 0x595f6f, // line foreground
                 0x2c2e34, // line background
                 0xfc5d7c, // highlight 1
@@ -71,13 +71,13 @@ func NewThemes(name string) *Themes {
                 0xeff1f5, // Base
                 0xd20f39, // Red
                 0xeff1f5, // Base
-                0x40a02b, // Green
+                0x1e66f5, // Blue
                 0xacb0be, // Surface2
                 0xeff1f5, // Base
                 0xccd0da, // Surface0
                 0xeff1f5, // Base
                 0xeff1f5, // Base
-                0x1e66f5, // Blue
+                0x40a02b, // Green                
                 0xacb0be, // Surface2
                 0xccd0da, // Surface0
                 0xd20f39, // Red
@@ -98,13 +98,13 @@ func NewThemes(name string) *Themes {
                 0x303446, // Base
                 0xe78284, // Red
                 0x303446, // Base
-                0xa6d189, // Green
+                0x8caaee, // Blue
                 0x626880, // Surface2
                 0x303446, // Base
                 0x414559, // Surface0
                 0x303446, // Base
                 0x303446, // Base
-                0x8caaee, // Blue
+                0xa6d189, // Green
                 0x626880, // Surface2
                 0x414559, // Surface0
                 0xe78284, // Red
@@ -125,13 +125,13 @@ func NewThemes(name string) *Themes {
                 0x24273a, // Base
                 0xed8796, // Red
                 0x24273a, // Base
-                0xa6da95, // Green
+                0x8aadf4, // Blue
                 0x5b6078, // Surface2
                 0x24273a, // Base
                 0x363a4f, // Surface0
                 0x24273a, // Base
                 0x24273a, // Base
-                0x8aadf4, // Blue
+                0xa6da95, // Green
                 0x5b6078, // Surface2
                 0x363a4f, // Surface0
                 0xed8796, // Red
@@ -152,13 +152,13 @@ func NewThemes(name string) *Themes {
                 0x1e1e2e, // Base
                 0xf38ba8, // Red
                 0x1e1e2e, // Base
-                0xa6e3a1, // Green
+                0x89b4fa, // Blue
                 0x585b70, // Surface2
                 0x1e1e2e, // Base
                 0x313244, // Surface0
                 0x1e1e2e, // Base
                 0x1e1e2e, // Base
-                0x89b4fa, // Blue
+                0xa6e3a1, // Green
                 0x585b70, // Surface2
                 0x313244, // Surface0
                 0xf38ba8, // Red
@@ -167,7 +167,34 @@ func NewThemes(name string) *Themes {
                 0x94e2d5, // Teal
                 0x94e2d5, // Sky
                 0x74c7ec, // Sapphire
-            },    
+            }, 
+
+            "Terminal": []int32 {
+                0xC0C0C0, // output foreground
+                0x000000, // output background
+                0xffffff, // header foreground
+                0x808080, // header background
+                0x000000, // input foreground
+                0xC0C0C0, // input background
+                0x000000, // error foreground
+                0x800000, // error background
+                0xffffff, // mode foreground
+                0x000080, // mode background
+                0x808080, // hint foreground
+                0x000000, // hint background
+                0x808080, // rule foreground
+                0x000000, // rule background
+                0x000000, // info foreground
+                0x008000, // info background
+                0xffffff, // line foreground
+                0x808080, // line background
+                0xff0000, // highlight 1
+                0xff00ff, // highlight 2
+                0xffff00, // highlight 3
+                0x00ffff, // highlight 4
+                0x0000ff, // highlight 5
+                0x00ff00, // highlight 6
+            },
 
             "Matrix": []int32 {
                 0x008f11, // output foreground
@@ -229,6 +256,7 @@ func NewThemes(name string) *Themes {
             "Catppuccin-Frappe",
             "Catppuccin-Macchiato",
             "Catppuccin-Mocha",
+            "Terminal",
             "Matrix",
             "Monochrome",
         },

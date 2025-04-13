@@ -1,17 +1,14 @@
 bin = /usr/local/bin/
 
-all: build install symlink
+all: build install
 
 build:
 	mkdir -p ./bin
-	go build -v -race -o ./bin/cu cmd/cu/main.go
+	go build -v -race -o ./bin/fx cmd/fx/main.go
 
 install: build
 	sudo mkdir -p $(bin)
-	sudo cp ./bin/cu $(bin)
-
-symlink: install
-	sudo ln -s $(bin)/cu $(bin)/icu
+	sudo cp ./bin/fx $(bin)
 
 clean:
 	rm -rf ./bin

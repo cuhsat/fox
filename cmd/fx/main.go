@@ -3,15 +3,22 @@ package main
 import (
     "flag"
     "os"
-    "path/filepath"
 
-    "github.com/cuhsat/cu/internal/app"
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/files/history"
-    "github.com/cuhsat/cu/internal/sys/heapset"
-    "github.com/cuhsat/cu/internal/sys/types"
-    "github.com/cuhsat/cu/internal/sys/types/mode"
+    "github.com/cuhsat/fx/internal/app"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/files/history"
+    "github.com/cuhsat/fx/internal/sys/heapset"
+    "github.com/cuhsat/fx/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types/mode"
 )
+
+const (
+    Version = "dev"
+)
+
+func usage() {
+    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
+}
 
 func main() {
     c := new(types.Counts)
@@ -22,7 +29,7 @@ func main() {
     m := mode.Default
     r := flag.Bool("r", false, "Raw mode")
     x := flag.Bool("x", false, "Hex mode")
-
+    
     // limits
     h := flag.Bool("h", false, "Head limit")
     t := flag.Bool("t", false, "Tail limit")
@@ -36,6 +43,9 @@ func main() {
 
     // filters
     flag.Var(e, "e", "Pattern")
+
+    // standards
+    v := flag.Bool("version", false, "Version")
 
     flag.Usage = usage
     flag.Parse()
@@ -60,6 +70,11 @@ func main() {
 
     if *x && len(*e) > 0 {
         sys.Usage("hex or pattern")
+    }
+
+    if *v {
+        sys.Print(Version)
+        os.Exit(0)
     }
 
     if *h {
@@ -97,16 +112,4 @@ func main() {
     defer app.Close()
 
     app.Run(hs, hi)
-}
-
-func usage() {
-    bin, err := os.Executable()
-
-    if err != nil {
-        sys.Fatal(err)
-    }
-
-    bin = filepath.Base(bin)
-
-    sys.Usage("usage:", bin, "[-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
 }

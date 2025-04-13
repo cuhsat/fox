@@ -1,8 +1,8 @@
 package widget
 
 import (
-    "github.com/cuhsat/cu/internal/sys/heapset"
-    "github.com/cuhsat/cu/internal/sys/text"
+    "github.com/cuhsat/fx/internal/sys/heapset"
+    "github.com/cuhsat/fx/internal/sys/text"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )

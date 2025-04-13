@@ -17,22 +17,16 @@ func GetFilters() *Filters {
     return filters;
 }
 
-// func (f *Filters) Push(s string) {
-//     *f = append(*f, s)
-// }
-
-// func (f *Filters) Pop() (s string) {
-//     s = *f[len(*f)-1]
-//     *f = *f[:len(*f)-1]
-
-//     return
-// }
-
 func (f *Filters) String() string {
     return fmt.Sprintf("%v", *f)
 }
 
 func (f *Filters) Set(s string) error {
     *f = append(*f, s)
+
     return nil
+}
+
+func (f *Filters) Pop() {
+    *f = (*f)[:len(*f)-1]
 }

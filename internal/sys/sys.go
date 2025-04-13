@@ -16,6 +16,10 @@ func Debug(a ...any) {
     fmt.Fprintln(os.Stdout, a...)
 }
 
+func Print(a ...any) {
+    fmt.Fprintln(os.Stdout, a...)
+}
+
 func Error(a ...any) {
     fmt.Fprintln(os.Stderr, a...)
 }
@@ -83,7 +87,7 @@ func IsPiped(f *os.File) bool {
 }
 
 func TempFile(s string) *os.File {
-    f, err := os.CreateTemp("", fmt.Sprintf("cu-%s-", s))
+    f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-", s))
 
     if err != nil {
         Fatal(err)

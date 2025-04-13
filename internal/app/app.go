@@ -3,12 +3,13 @@ package app
 import (
     "fmt"
 
-    "github.com/cuhsat/cu/internal/app/themes"
-    "github.com/cuhsat/cu/internal/app/widget"
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/files/history"
-    "github.com/cuhsat/cu/internal/sys/heapset"
-    "github.com/cuhsat/cu/internal/sys/types/mode"
+    "github.com/cuhsat/fx/internal/app/themes"
+    "github.com/cuhsat/fx/internal/app/widget"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/files/history"
+    "github.com/cuhsat/fx/internal/sys/heapset"
+    "github.com/cuhsat/fx/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types/mode"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
 )
@@ -74,6 +75,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
 
     for {
         _, heap := hs.Current()
+
         w, h := app.render(hs)
 
         ev := app.screen.PollEvent()
@@ -114,6 +116,8 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
             }
 
         case *tcell.EventKey:
+            mods := ev.Modifiers()
+
             page_w := w
             page_h := h-2
 
@@ -122,6 +126,8 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 return
 
             case tcell.KeyCtrlL, tcell.KeyF1:
+                heap.ClearFilters()
+
                 app.State(mode.Less)
 
             case tcell.KeyCtrlG, tcell.KeyF2:
@@ -136,26 +142,14 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyF9:
                 hs.Word()
 
-                app.output.Reset()
-                app.State(mode.Less)
-
             case tcell.KeyF10:
                 hs.Md5()
-
-                app.output.Reset()
-                app.State(mode.Less)
 
             case tcell.KeyF11:
                 hs.Sha1()
 
-                app.output.Reset()
-                app.State(mode.Less)
-
             case tcell.KeyF12:
                 hs.Sha256()
-
-                app.output.Reset()
-                app.State(mode.Less)
 
             case tcell.KeyCtrlV:
                 if app.status.Mode == mode.Hex {
@@ -178,7 +172,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                     continue
                 }
 
-                if heap.Flag == 0 && len(heap.Chain) == 0 {
+                if heap.Flag == 0 && len(*types.GetFilters()) == 0 {
                     continue
                 }
 
@@ -194,8 +188,6 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 if heap == nil {
                     return // exit
                 }
-
-                heap.ApplyFilters()
 
             case tcell.KeyCtrlR:
                 app.output.Reset()
@@ -226,32 +218,36 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 app.output.ScrollEnd()
 
             case tcell.KeyUp:
-                if ev.Modifiers() & tcell.ModAlt != 0 {
+                if mods & tcell.ModAlt != 0 {
                     app.prompt.Value = hi.PrevCommand()
-                } else if ev.Modifiers() & tcell.ModShift != 0 {
+                } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
+                    app.output.ScrollBegin()
+                } else if mods & tcell.ModShift != 0 {
                     app.output.ScrollUp(page_h)
                 } else {
                     app.output.ScrollUp(Delta)
                 }
 
             case tcell.KeyDown:
-                if ev.Modifiers() & tcell.ModAlt != 0 {
+                if mods & tcell.ModAlt != 0 {
                     app.prompt.Value = hi.NextCommand()
-                } else if ev.Modifiers() & tcell.ModShift != 0 {
+                } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
+                    app.output.ScrollEnd()
+                } else if mods & tcell.ModShift != 0 {
                     app.output.ScrollDown(page_h)
                 } else {
                     app.output.ScrollDown(Delta)
                 }
 
             case tcell.KeyLeft:
-                if ev.Modifiers() & tcell.ModShift != 0 {
+                if mods & tcell.ModShift != 0 {
                     app.output.ScrollLeft(page_w)
                 } else {
                     app.output.ScrollLeft(Delta)
                 }
 
             case tcell.KeyRight:
-                if ev.Modifiers() & tcell.ModShift != 0 {
+                if mods & tcell.ModShift != 0 {
                     app.output.ScrollRight(page_w)
                 } else {
                     app.output.ScrollRight(Delta)
@@ -287,20 +283,18 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyTab:
                 app.output.Reset()
 
-                if ev.Modifiers() & tcell.ModShift != 0 {
+                if mods & tcell.ModShift != 0 {
                     heap = hs.PrevHeap()
                 } else {
                     heap = hs.NextHeap()
                 }
-
-                heap.ApplyFilters()
 
             case tcell.KeyBackspace2:
                 if len(app.prompt.Value) > 0 {
                     app.prompt.DelRune()
                 } else if app.status.Mode == mode.Goto {
                     app.State(app.status.Last)
-                } else if len(heap.Chain) > 0 {
+                } else if len(*types.GetFilters()) > 0 {
                     app.output.Reset()
                     heap.DelFilter()
                 } else if app.status.Mode == mode.Grep {
@@ -370,7 +364,7 @@ func (app *App) render(hs *heapset.HeapSet) (w int, h int) {
 
     _, heap := hs.Current()
 
-    app.screen.SetTitle(fmt.Sprintf("cu - %s", heap))
+    app.screen.SetTitle(fmt.Sprintf("fx - %s", heap))
     app.screen.SetStyle(themes.Output)
     app.screen.Clear()
 

@@ -1,7 +1,7 @@
 package types
 
 import (
-    "github.com/cuhsat/cu/internal/sys/types/smap"
+    "github.com/cuhsat/fx/internal/sys/types/smap"
     "github.com/edsrzf/mmap-go"
 )
 

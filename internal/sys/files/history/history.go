@@ -6,11 +6,11 @@ import (
     "os"
     "path/filepath"
 
-    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/fx/internal/sys"
 )
 
 const (
-    File = ".cu_history"    
+    File = ".fx_history"    
 )
 
 type History struct {
