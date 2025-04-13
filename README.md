@@ -1,5 +1,10 @@
-# cu [see:you]
+# cu
 The Swiss Army Knife for viewing and searching lined based text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performance oriented tool.
+
+## Install
+```console
+$ make install
+```
 
 ## Usage
 ```
@@ -15,28 +20,6 @@ Available options:
 * `-x` Hexdump mode
 * `-e` Pattern value
 * `-o` Output file
-
-## Install
-```console
-$ make install
-```
-
-## Files
-* `~/.curc` Config file
-* `~/.cu_history` History file
-
-## Config
-```toml
-Theme = "Monokai"
-Follow = true  # Follow file
-Line = true    # Line numbers
-Wrap = true    # Wrap text
-```
-
-### Environment
-```console
-CU_THEME=Monokai
-```
 
 ## Keyboard
 
@@ -82,7 +65,22 @@ CU_THEME=Monokai
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                     | Paste as input        |
 | <kbd>Any Key</kbd>                                 | Filter buffer content |
 
-## Themes
+## Config
+> Located under `~/.curc`.
+
+```toml
+Theme = "Monokai"
+Follow = true  # Follow file
+Line = true    # Line numbers
+Wrap = true    # Wrap text
+```
+
+### Environment
+```console
+CU_THEME=Monokai
+```
+
+### Themes
 * `Monokai`
 * `Catppuccin-Latte`
 * `Catppuccin-Frappe`
@@ -93,6 +91,3 @@ CU_THEME=Monokai
 
 ## License
 Released under the [MIT License](LICENSE).
-
-----
-Sponsored by [codecentric](https://www.codecentric.de/) company time.

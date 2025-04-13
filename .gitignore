@@ -23,13 +23,3 @@ go.work.sum
 
 # Mac crap
 .DS_Store
-
-# File buffers
-.cin
-.cout
-
-# log files
-*.log
-
-# tests
-test.*

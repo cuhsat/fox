@@ -1,0 +1,46 @@
+package widget
+
+import (
+    "fmt"
+
+    "github.com/cuhsat/cu/internal/app/themes"
+    "github.com/cuhsat/cu/internal/sys/heapset"
+    "github.com/cuhsat/cu/internal/sys/text"
+    "github.com/gdamore/tcell/v2"
+)
+
+type Header struct {
+    widget
+}
+
+func NewHeader(screen tcell.Screen, status *Status) *Header {
+    return &Header{
+        widget: widget{
+            screen: screen,
+            status: status,
+        },
+    }
+}
+
+func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
+    n, heap := hs.Current()
+    m := hs.Length()
+    p := heap.String()
+
+    var i string
+
+    if m > 1 {
+        i = fmt.Sprintf(" %d of %d ", n, m)
+    }
+
+    // render blank line
+    hd.printBlank(x, y, w, themes.Line)
+
+    // render heap file path
+    hd.print(x, y, text.Abbrev(p, x, w-text.Length(i)), themes.Header)
+
+    // render heapset index
+    hd.print(x + w-text.Length(i), y, i, themes.Input)
+
+    return 1
+}
