@@ -1,4 +1,4 @@
-# Forensic Examiner 🔍
+# 🔎 Forensic Examiner
 The Swiss Army Knife for examining text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum` and `wc` into one performant forensic tool.
 
 ## Install
@@ -95,4 +95,4 @@ FX_THEME=Monokai
 * `Monochrome`
 
 ---
-Supported by [codecentric](https://codecentric.de) opt time.
+Supported by [codecentric](https://codecentric.de) OPT time.
