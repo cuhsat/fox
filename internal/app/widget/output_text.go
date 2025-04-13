@@ -4,9 +4,9 @@ import (
     "strconv"
     "strings"
 
-    "github.com/cuhsat/cu/internal/app/themes"
-    "github.com/cuhsat/cu/internal/sys/types"
-    "github.com/cuhsat/cu/internal/sys/types/block"
+    "github.com/cuhsat/fx/internal/app/themes"
+    "github.com/cuhsat/fx/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types/block"
 )
 
 func (o *Output) textRender(x, y, w, h int) {

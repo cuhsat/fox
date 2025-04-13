@@ -7,7 +7,7 @@ import (
     "slices"
     "sync"
 
-    "github.com/cuhsat/cu/internal/sys/types/smap"
+    "github.com/cuhsat/fx/internal/sys/types/smap"
 )
 
 type chunk struct {
@@ -15,7 +15,28 @@ type chunk struct {
     max int
 }
 
-func (h *Heap) chunks() (c []*chunk) {
+func (h *Heap) filter(b []byte) (s smap.SMap) {
+    ch := make(chan *smap.String, len(h.SMap))
+
+    defer close(ch)
+
+    var wg sync.WaitGroup
+
+    for _, c := range chunks(h) {
+        wg.Add(1)
+
+        go func() {
+            grep(ch, h, c, b)
+            wg.Done()
+        }()
+    }
+
+    wg.Wait()
+
+    return sort(ch)
+}
+
+func chunks(h *Heap) (c []*chunk) {
     n := len(h.SMap)
     m := min(runtime.GOMAXPROCS(0), n)
     
@@ -29,28 +50,7 @@ func (h *Heap) chunks() (c []*chunk) {
     return
 }
 
-func (h *Heap) filter(b []byte) (s smap.SMap) {
-    ch := make(chan *smap.String, len(h.SMap))
-
-    defer close(ch)
-
-    var wg sync.WaitGroup
-
-    for _, c := range h.chunks() {
-        wg.Add(1)
-
-        go func() {
-            h.grep(ch, c, b)
-            wg.Done()
-        }()
-    }
-
-    wg.Wait()
-
-    return sort(ch)
-}
-
-func (h *Heap) grep(ch chan<- *smap.String, c *chunk, b []byte) {
+func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
     for _, s := range h.SMap[c.min:c.max] {
         if bytes.Contains(h.MMap[s.Start:s.End], b) {
             ch <- s

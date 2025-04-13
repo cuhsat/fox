@@ -1,8 +1,8 @@
 package widget
 
 import (
-    "github.com/cuhsat/cu/internal/app/themes"
-    "github.com/cuhsat/cu/internal/sys/types/block"
+    "github.com/cuhsat/fx/internal/app/themes"
+    "github.com/cuhsat/fx/internal/sys/types/block"
 )
 
 const (

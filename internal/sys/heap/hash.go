@@ -6,9 +6,10 @@ import (
     "crypto/sha256"
     "hash"
     "io"
+    "os"
     "strings"
 
-    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/fx/internal/sys"
 )
 
 const (
@@ -51,13 +52,15 @@ func (h *Heap) HashSum(algo string) []byte {
         sys.Fatal("hash not supported")
     }
 
-    _, err := h.file.Seek(0, io.SeekStart)
+    f, err := os.Open(h.Base)
 
     if err != nil {
         sys.Fatal(err)
     }
 
-    _, err = io.Copy(a, h.file)
+    defer f.Close()
+
+    _, err = io.Copy(a, f)
     
     if err != nil {
         sys.Fatal(err)

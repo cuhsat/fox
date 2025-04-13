@@ -6,13 +6,13 @@ import (
     "os"
     "path/filepath"
 
-    "github.com/cuhsat/cu/internal/app/themes"
-    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/fx/internal/app/themes"
+    "github.com/cuhsat/fx/internal/sys"
     "github.com/BurntSushi/toml"
 )
 
 const (
-    File = ".curc"
+    File = ".fxrc"
 )
 
 type Config struct {
@@ -54,7 +54,7 @@ func Load() *Config {
     }
 
     // higher ranking variables
-    env := os.Getenv("CU_THEME")
+    env := os.Getenv("FX_THEME")
 
     if len(env) > 0 {
         c.Theme = env

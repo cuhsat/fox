@@ -4,7 +4,7 @@ import (
     "fmt"
     "strings"
 
-    "github.com/cuhsat/cu/internal/sys/text"
+    "github.com/cuhsat/fx/internal/sys/text"
 )
 
 const (

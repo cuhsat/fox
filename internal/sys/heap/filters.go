@@ -1,39 +1,62 @@
 package heap
 
 import (
-    "github.com/cuhsat/cu/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types"
 )
 
+var (
+    filters = types.GetFilters()
+)
+
+func (h* Heap) ApplyFilters() {
+    h.SMap = h.rmap
+
+    h.chain = h.chain[:0]
+
+    for _, f := range *filters {
+        h.addLink(f)
+    }
+}
+
+func (h* Heap) ClearFilters() {
+    for len(*filters) > 0{
+        h.DelFilter()
+    }
+}
+
 func (h *Heap) AddFilter(value string) {
+    filters.Set(value)
+
+    h.addLink(value)
+}
+
+func (h *Heap) DelFilter() {
+    filters.Pop()
+
+    h.delLink()
+}
+
+func (h *Heap) addLink(value string) {
     h.SMap = h.filter([]byte(value))
 
-    h.Chain = append(h.Chain, &Link{
+    h.chain = append(h.chain, &Link{
         Name: value,
         smap: h.SMap,
     })
 }
 
-func (h *Heap) DelFilter() {
-    if len(h.Chain) > 0 {
-        h.Chain = h.Chain[:len(h.Chain)-1]
+func (h *Heap) delLink() {
+    l := len(h.chain)
+
+    if l > 0 {
+        h.chain = h.chain[:l-1]
     }
 
-    if len(h.Chain) > 0 {
-        h.SMap = h.Chain[len(h.Chain)-1].smap
+    l -= 1
+
+    if l > 0 {
+        h.SMap = h.chain[l-1].smap
     } else {
         h.SMap = h.rmap
     }
-}
-
-func (h* Heap) ApplyFilters() {
-    h.ResetFilters()
-
-    for _, f := range *types.GetFilters() {
-        h.AddFilter(f)
-    }
-}
-
-func (h *Heap) ResetFilters() {
-    h.Chain = h.Chain[:0]
-    h.SMap = h.rmap
 }

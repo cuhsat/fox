@@ -6,7 +6,7 @@ import (
     "os"
     "io"
 
-    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/fx/internal/sys"
 )
 
 var (

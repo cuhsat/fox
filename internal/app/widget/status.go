@@ -1,8 +1,8 @@
 package widget
 
 import (
-    "github.com/cuhsat/cu/internal/sys/files/config"
-    "github.com/cuhsat/cu/internal/sys/types/mode"
+    "github.com/cuhsat/fx/internal/sys/files/config"
+    "github.com/cuhsat/fx/internal/sys/types/mode"
 )
 
 type Status struct {

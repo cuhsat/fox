@@ -6,9 +6,9 @@ import (
     "os"
     "runtime"
  
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/types"
-    "github.com/cuhsat/cu/internal/sys/types/smap"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types/smap"
     "github.com/edsrzf/mmap-go"
 )
 
@@ -17,16 +17,18 @@ type Flag int
 type Heap struct {
     Title string      // heap title
     Path  string      // file path
+    Base  string      // base path
+
     Flag  Flag        // heap flags
     
     Head  int         // head offset
     Tail  int         // tail offset
 
-    Chain []*Link     // filter chain
-
     MMap  mmap.MMap   // memory map
     SMap  smap.SMap   // string map current
     rmap  smap.SMap   // string map reserve
+
+    chain []*Link     // filter chain
 
     hash  Hash        // file hash sums
 
@@ -39,7 +41,7 @@ type Link struct {
 }
 
 const (
-    Normal Flag = iota
+    Regular Flag = iota
     StdIn
     StdOut
     StdErr
@@ -55,7 +57,7 @@ func (h *Heap) String() string {
     case StdErr:
         return h.Title
     case Deflate:
-        return h.Title
+        return h.Base
     default:
         return h.Path
     }
@@ -101,13 +103,13 @@ func (h *Heap) Loaded() bool {
 }
 
 func (h* Heap) Save() string {
-    p := h.Path
+    p := h.Base
 
     if h.Flag >= StdOut {
         p = h.String()
     }
 
-    for _, l := range h.Chain {
+    for _, l := range h.chain {
         p += "-" + l.Name
     }
 

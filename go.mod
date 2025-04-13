@@ -1,4 +1,4 @@
-module github.com/cuhsat/cu
+module github.com/cuhsat/fx
 
 go 1.24.2
 

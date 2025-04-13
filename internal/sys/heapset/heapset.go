@@ -5,10 +5,9 @@ import (
     "path/filepath"
     "slices"
 
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/gzip"
-    "github.com/cuhsat/cu/internal/sys/heap"
-    "github.com/cuhsat/cu/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/gzip"
+    "github.com/cuhsat/fx/internal/sys/heap"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -56,10 +55,6 @@ func NewHeapSet(p []string) *HeapSet {
     }
 
     hs.load()
-
-    for _, f := range *types.GetFilters() {
-        hs.heaps[0].AddFilter(f)
-    }
 
     return &hs
 }
@@ -109,7 +104,7 @@ func (hs *HeapSet) ThrowAway() {
     for _, h := range hs.heaps {
         h.ThrowAway()
 
-        if h.Flag != heap.Normal {
+        if h.Flag != heap.Regular {
             os.Remove(h.Path)
         }
     }
@@ -140,8 +135,8 @@ func (hs *HeapSet) loadPipe() {
 }
 
 func (hs *HeapSet) loadFile(p string) {
-    f := heap.Normal
-    t := p
+    f := heap.Regular
+    b := p
 
     if gzip.Detect(p) {
         p = gzip.Deflate(p, sys.TempFile("gzip"))
@@ -149,8 +144,8 @@ func (hs *HeapSet) loadFile(p string) {
     }
 
     hs.heaps = append(hs.heaps, &heap.Heap{
-        Title: t,
         Path: p,
+        Base: b,
         Flag: f,
     })
 }
@@ -177,6 +172,8 @@ func (hs *HeapSet) load() *heap.Heap {
 
         hs.notifyHeap(h)
     }
+
+    h.ApplyFilters()
 
     return h
 }

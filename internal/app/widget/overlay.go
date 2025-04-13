@@ -4,7 +4,7 @@ import (
     "fmt"
     "time"
 
-    "github.com/cuhsat/cu/internal/app/themes"
+    "github.com/cuhsat/fx/internal/app/themes"
     "github.com/gdamore/tcell/v2"
 )
 

@@ -4,8 +4,8 @@ import (
     "fmt"
     "io"
 
-    "github.com/cuhsat/cu/internal/sys"
-    "github.com/cuhsat/cu/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/heap"
 )
 
 type auxiliary func(h *heap.Heap) string
@@ -30,7 +30,7 @@ func (hs *HeapSet) Sha256() {
 
 func (hs *HeapSet) Word() {
     hs.newBuffer("wc", func(h *heap.Heap) string {
-        return fmt.Sprintf("%8d %8d %s\n", h.Length(), len(h.MMap), h.String())
+        return fmt.Sprintf("%8dL %8dB  %s\n", h.Length(), len(h.MMap), h.String())
     })
 }
 
@@ -38,7 +38,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     f := sys.Stdout()
 
     for _, h := range hs.heaps {
-        if h.Flag != heap.Normal && h.Flag != heap.Deflate {
+        if h.Flag != heap.Regular && h.Flag != heap.Deflate {
             continue
         }
 
@@ -56,14 +56,13 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     f.Close()
 
     for i, h := range hs.heaps {
-        if h.Flag == heap.Normal {
+        if h.Flag == heap.Regular {
             continue
         }
 
         if h.Title == t {
             h.Path = f.Name()
-            h.Chain = h.Chain[:0]
-            
+
             h.Reload()
 
             hs.index = i
