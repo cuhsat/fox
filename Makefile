@@ -1,5 +1,3 @@
-.PHONY: all clean
-
 bin = /usr/local/bin/
 
 all: build install symlink
@@ -18,3 +16,5 @@ symlink: install
 clean:
 	rm -rf ./bin
 	go clean
+
+.PHONY: all clean

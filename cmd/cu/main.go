@@ -5,22 +5,21 @@ import (
     "os"
     "path/filepath"
 
-    "github.com/cuhsat/cu/pkg/fs"
-    "github.com/cuhsat/cu/pkg/fs/heap"
-    "github.com/cuhsat/cu/pkg/fs/heapset"
-    "github.com/cuhsat/cu/pkg/fs/history"
-    "github.com/cuhsat/cu/pkg/fs/limit"
-    "github.com/cuhsat/cu/pkg/ui"
-    "github.com/cuhsat/cu/pkg/ui/mode"
-    "github.com/cuhsat/cu/pkg/ui/status"
+    "github.com/cuhsat/cu/internal/app"
+    "github.com/cuhsat/cu/internal/sys"
+    "github.com/cuhsat/cu/internal/sys/files/history"
+    "github.com/cuhsat/cu/internal/sys/heapset"
+    "github.com/cuhsat/cu/internal/sys/types"
+    "github.com/cuhsat/cu/internal/sys/types/mode"
 )
 
 func main() {
-    var c limit.Count
-    var e heap.Filters
+    c := new(types.Counts)
+    l := types.GetLimits()
+    e := types.GetFilters()
 
     // flags
-    m := status.DefaultMode
+    m := mode.Default
     r := flag.Bool("r", false, "Raw mode")
     x := flag.Bool("x", false, "Hex mode")
 
@@ -36,7 +35,7 @@ func main() {
     flag.IntVar(&c.Bytes, "c", 0, "Bytes count")
 
     // filters
-    flag.Var(&e, "e", "Pattern")
+    flag.Var(e, "e", "Pattern")
 
     flag.Usage = usage
     flag.Parse()
@@ -48,34 +47,34 @@ func main() {
     }
 
     if *h && *t {
-        fs.Usage("head or tail")
+        sys.Usage("head or tail")
     }
 
     if c.Lines > 0 && c.Bytes > 0 {
-        fs.Usage("lines or bytes")
+        sys.Usage("lines or bytes")
     }
 
     if !*x && c.Bytes > 0 {
-        fs.Usage("bytes needs hex")
+        sys.Usage("bytes needs hex")
     }
 
-    if *x && len(e) > 0 {
-        fs.Usage("hex or pattern")
+    if *x && len(*e) > 0 {
+        sys.Usage("hex or pattern")
     }
 
     if *h {
-        limit.SetHead(c)
+        l.Head = *c
     }
 
     if *t {
-        limit.SetTail(c)
+        l.Tail = *c
     }
 
     if *x {
         m = mode.Hex
     }
 
-    if len(e) > 0 {
+    if len(*e) > 0 {
         m = mode.Grep
     }
 
@@ -83,10 +82,10 @@ func main() {
         *r = true
     }
 
-    hs := heapset.NewHeapSet(a, e...)
+    hs := heapset.NewHeapSet(a)
     defer hs.ThrowAway()
 
-    if fs.IsCharDev(os.Stdout) || *r {
+    if sys.IsPiped(os.Stdout) || *r {
         hs.Print(*o, *x)
         os.Exit(0)
     }
@@ -94,20 +93,20 @@ func main() {
     hi := history.NewHistory()
     defer hi.Close()
 
-    ui := ui.NewUI(m)
-    defer ui.Close()
+    app := app.NewApp(m)
+    defer app.Close()
 
-    ui.Run(hs, hi)
+    app.Run(hs, hi)
 }
 
 func usage() {
     bin, err := os.Executable()
 
     if err != nil {
-        fs.Panic(err)
+        sys.Fatal(err)
     }
 
     bin = filepath.Base(bin)
 
-    fs.Usage("usage:", bin, "[-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
+    sys.Usage("usage:", bin, "[-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [- | PATH ...]")
 }

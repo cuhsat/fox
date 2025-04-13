@@ -1,0 +1,61 @@
+package widget
+
+import (
+    "github.com/cuhsat/cu/internal/app/themes"
+    "github.com/cuhsat/cu/internal/sys/types/block"
+)
+
+const (
+    Rule = "┃"
+)
+
+func (o *Output) hexRender(x, y, w, h int) {
+    rule_w := block.SpaceHex * 2
+
+    hb := block.Hex(block.Context{
+        Heap: o.heap,
+        Line: o.status.Line,
+        Wrap: o.status.Wrap,
+        X: o.delta_x,
+        Y: o.delta_y,
+        W: w - (rule_w * 2),
+        H: h,
+    })
+
+    if len(hb.Lines) > 0 {
+        w -= len(hb.Lines[0].Nr) + block.SpaceHex
+    }
+
+    // set block bounds
+    o.last_x = max(hb.W, 0)
+    o.last_y = max(hb.H - h, 0)
+
+    // render block
+    for i, line := range hb.Lines {
+        line_x := x
+        line_y := y + i
+
+        hex_x := line_x
+
+        if o.status.Line {
+            // offset number
+            o.print(hex_x, line_y, line.Nr, themes.Hint)
+            hex_x += len(line.Nr)
+
+            // offset separator
+            o.print(hex_x, line_y, Rule, themes.Rule)
+            hex_x += rule_w
+        }
+
+        // hex values
+        o.print(hex_x, line_y, line.Hex, themes.Output)
+        text_x := hex_x + len(line.Hex)
+
+        // hex separator
+        o.print(text_x, line_y, Rule, themes.Rule)
+        text_x += rule_w
+
+        // text value
+        o.print(text_x, line_y, line.Str, themes.Output)
+    }
+}
