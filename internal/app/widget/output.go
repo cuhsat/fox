@@ -61,7 +61,7 @@ func (o *Output) Goto(s string) {
     }
 }
 
-func (o *Output) ScrollBegin() {
+func (o *Output) ScrollStart() {
     o.delta_y = 0
 }
 

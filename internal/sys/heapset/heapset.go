@@ -6,8 +6,10 @@ import (
     "slices"
 
     "github.com/cuhsat/fx/internal/sys"
-    "github.com/cuhsat/fx/internal/sys/gzip"
     "github.com/cuhsat/fx/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys/types"
+    "github.com/cuhsat/fx/internal/sys/types/gzip"
+    "github.com/cuhsat/fx/internal/sys/types/json"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -135,18 +137,24 @@ func (hs *HeapSet) loadPipe() {
 }
 
 func (hs *HeapSet) loadFile(p string) {
-    f := heap.Regular
-    b := p
+    var fn types.Format
+
+    b, f, fn := p, heap.Regular, nil
 
     if gzip.Detect(p) {
         p = gzip.Deflate(p, sys.TempFile("gzip"))
         f = heap.Deflate
     }
 
+    if json.Detect(p) {
+        fn = json.Pretty
+    }
+
     hs.heaps = append(hs.heaps, &heap.Heap{
         Path: p,
         Base: b,
         Flag: f,
+        Fmt: fn,
     })
 }
 
