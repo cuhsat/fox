@@ -12,34 +12,6 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
-type Flag int
-
-type Heap struct {
-    Title string      // heap title
-    Path  string      // file path
-    Base  string      // base path
-
-    Flag  Flag        // heap flags
-    
-    Head  int         // head offset
-    Tail  int         // tail offset
-
-    MMap  mmap.MMap   // memory map
-    SMap  smap.SMap   // string map current
-    rmap  smap.SMap   // string map reserve
-
-    chain []*Link     // filter chain
-
-    hash  Hash        // file hash sums
-
-    file  *os.File    // file handle
-}
-
-type Link struct {
-    Name string    // filter name
-    smap smap.SMap // filter string map
-}
-
 const (
     Regular Flag = iota
     StdIn
@@ -47,6 +19,36 @@ const (
     StdErr
     Deflate
 )
+
+type Flag int
+
+type Heap struct {
+    Title string       // heap title
+    Path  string       // file path
+    Base  string       // base path
+
+    Flag  Flag         // heap flags
+    
+    Head  int          // head offset
+    Tail  int          // tail offset
+
+    Fmt   types.Format // format callback
+
+    MMap  mmap.MMap    // memory map
+    SMap  smap.SMap    // string map current
+    rmap  smap.SMap    // string map reserve
+
+    chain []*Link      // filter chain
+
+    hash  Hash         // file hash sums
+
+    file  *os.File     // file handle
+}
+
+type Link struct {
+    Name string    // filter name
+    smap smap.SMap // filter string map
+}
 
 func (h *Heap) String() string {
     switch h.Flag {

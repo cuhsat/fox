@@ -5,6 +5,7 @@ import (
     "math"
     "strings"
 
+    "github.com/cuhsat/fx/internal/sys"
     "github.com/cuhsat/fx/internal/sys/text"
     "github.com/cuhsat/fx/internal/sys/types/smap"
 )
@@ -52,29 +53,67 @@ func Text(ctx Context) (tb TextBlock) {
         ctx.W -= (len_nr + SpaceText)
     }
 
-    if ctx.Wrap {
+    if ctx.Wrap && ctx.Heap.Fmt == nil {
         tb.SMap = tb.SMap.Wrap(ctx.W)
-    }    
+    }
 
-    tb.W, tb.H = tb.SMap.Size()
+    if ctx.Heap.Fmt != nil {
+        // TODO: set size
+        for _, s := range tb.SMap[ctx.Y:] {
+            nr := fmt.Sprintf("%0*d", len_nr, s.Nr)
 
-    for i, s := range tb.SMap[ctx.Y:] {
-        if i >= ctx.H {
-            break
+            str := string(ctx.Heap.MMap[s.Start:s.End])
+
+            sys.Debug(">>>", str)
+
+            if len(str) == 0 {
+                tb.Lines = append(tb.Lines, TextLine{
+                    Line: Line{Nr: nr, Str: ""},
+                })
+
+                continue
+            }
+
+            for _, l := range ctx.Heap.Fmt(str) {
+                if len(tb.Lines) >= ctx.H {
+                    break
+                }
+
+                // str = str[min(ctx.X, text.Length(str)):]
+
+                if len(str) > ctx.W {
+                    str = str[:ctx.W-1] + "\r"
+                }
+
+                tb.Lines = append(tb.Lines, TextLine{
+                    Line: Line{Nr: nr, Str: l},
+                })
+            }
         }
 
-        nr := fmt.Sprintf("%0*d", len_nr, s.Nr)
+        tb.W, tb.H = 80, len(tb.Lines)
 
-        str := string(ctx.Heap.MMap[s.Start:s.End])
-        str = str[min(ctx.X, text.Length(str)):]
+    } else {
+        tb.W, tb.H = tb.SMap.Size()
 
-        if len(str) > ctx.W {
-            str = str[:ctx.W-1] + "\r"
+        for _, s := range tb.SMap[ctx.Y:] {
+            if len(tb.Lines) >= ctx.H {
+                break
+            }
+
+            nr := fmt.Sprintf("%0*d", len_nr, s.Nr)
+
+            str := string(ctx.Heap.MMap[s.Start:s.End])
+            str = str[min(ctx.X, text.Length(str)):]
+
+            if len(str) > ctx.W {
+                str = str[:ctx.W-1] + "\r"
+            }
+
+            tb.Lines = append(tb.Lines, TextLine{
+                Line: Line{Nr: nr, Str: str},
+            })
         }
-
-        tb.Lines = append(tb.Lines, TextLine{
-            Line: Line{Nr: nr, Str: str},
-        })
     }
 
     if len(tb.Lines) >= ctx.H {

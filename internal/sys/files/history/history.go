@@ -5,6 +5,8 @@ import (
     "fmt"
     "os"
     "path/filepath"
+    "time"
+    "strings"
 
     "github.com/cuhsat/fx/internal/sys"
 )
@@ -37,7 +39,11 @@ func NewHistory() *History {
     s := bufio.NewScanner(f)
     
     for s.Scan() {
-        l = append(l, s.Text())
+        t := strings.SplitN(s.Text(), ";", 1)
+        
+        if len(t) > 1 {
+            l = append(l, t[1])            
+        }
     }
     
     err = s.Err()
@@ -53,12 +59,14 @@ func NewHistory() *History {
     }
 }
 
-func (h *History) AddCommand(s string) {
+func (h *History) AddCommand(cmd string) {
     defer h.Reset()
 
-    h.lines = append(h.lines, s)
+    s := fmt.Sprintf("%10d;%s", time.Now().Unix(), cmd)
 
     _, err := fmt.Fprintln(h.file, s)
+
+    h.lines = append(h.lines, cmd)
 
     if err != nil {
         sys.Error(err)

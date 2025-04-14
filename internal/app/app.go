@@ -212,7 +212,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 app.status.ToggleWrap()
 
             case tcell.KeyHome:
-                app.output.ScrollBegin()
+                app.output.ScrollStart()
 
             case tcell.KeyEnd:
                 app.output.ScrollEnd()
@@ -221,7 +221,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 if mods & tcell.ModAlt != 0 {
                     app.prompt.Value = hi.PrevCommand()
                 } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
-                    app.output.ScrollBegin()
+                    app.output.ScrollStart()
                 } else if mods & tcell.ModShift != 0 {
                     app.output.ScrollUp(page_h)
                 } else {
@@ -310,7 +310,11 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 case 32: // space
                     if app.status.Mode == mode.Less {
-                        app.output.ScrollDown(page_h)
+                        if mods & tcell.ModShift != 0 {
+                            app.output.ScrollUp(page_h)
+                        } else {
+                            app.output.ScrollDown(page_h)
+                        }
                     } else {
                         app.prompt.AddRune(r)
                     }

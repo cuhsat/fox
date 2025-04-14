@@ -169,7 +169,7 @@ func NewThemes(name string) *Themes {
                 0x74c7ec, // Sapphire
             }, 
 
-            "Terminal": []int32 {
+            "Ansi": []int32 {
                 0xC0C0C0, // output foreground
                 0x000000, // output background
                 0xffffff, // header foreground
@@ -256,7 +256,7 @@ func NewThemes(name string) *Themes {
             "Catppuccin-Frappe",
             "Catppuccin-Macchiato",
             "Catppuccin-Mocha",
-            "Terminal",
+            "Ansi",
             "Matrix",
             "Monochrome",
         },
