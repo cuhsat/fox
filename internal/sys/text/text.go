@@ -8,7 +8,7 @@ import (
     "github.com/cuhsat/fx/internal/sys"
 )
 
-func Lines(p string) (l int) {
+func Lines(p string) (c int) {
     r, err := os.Open(p)
 
     if err != nil {
@@ -22,7 +22,7 @@ func Lines(p string) (l int) {
     for {
         n, err := r.Read(b)
 
-        l += bytes.Count(b[:n], []byte{'\n'})
+        c += bytes.Count(b[:n], []byte{'\n'})
 
         switch {
         case err == io.EOF:

@@ -7,6 +7,7 @@ import (
     "github.com/cuhsat/fx/internal/app/themes"
     "github.com/cuhsat/fx/internal/app/widget"
     "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/files/bag"
     "github.com/cuhsat/fx/internal/sys/files/history"
     "github.com/cuhsat/fx/internal/sys/heapset"
     "github.com/cuhsat/fx/internal/sys/types"
@@ -72,7 +73,7 @@ func NewApp(m mode.Mode) *App {
     return &app
 }
 
-func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
+func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.SetCallback(func() {
         app.screen.PostEvent(tcell.NewEventInterrupt(app.status.Follow))
     })
@@ -197,6 +198,15 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
                 path := heap.Save()
                 
                 app.overlay.SendStatus(fmt.Sprintf("%s saved", path))
+
+            case tcell.KeyCtrlE, tcell.KeyPrint:
+                if app.status.Mode == mode.Hex {
+                    continue
+                }
+
+                bag.Put(heap)
+
+                app.overlay.SendStatus(fmt.Sprintf("%s bagged", heap))
 
             case tcell.KeyCtrlQ:
                 app.output.Reset()

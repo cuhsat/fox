@@ -12,7 +12,7 @@ import (
 )
 
 const (
-    File = ".fx_history"    
+    File = ".fx_history"
 )
 
 type History struct {
