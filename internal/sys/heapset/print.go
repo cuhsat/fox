@@ -53,7 +53,7 @@ func (hs *HeapSet) Print(p string, hex bool) {
         if hex {
             ctx.W = 68 // use default width
 
-            fmt.Fprintln(f, text.Header(h.String(), ctx.W))
+            fmt.Fprintln(f, text.Block(h.String(), ctx.W))
 
             fmt.Fprintln(f, block.Hex(ctx))
         } else {

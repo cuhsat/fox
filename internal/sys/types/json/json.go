@@ -5,32 +5,31 @@ import (
     "encoding/json"
     "path/filepath"
     "strings"
-
-    "github.com/cuhsat/fx/internal/sys"
 )
 
 const (
-    Json  = ".json"
     JsonL = ".jsonl"
 )
 
 const (
-    Indent = "    "
+    Indent = "  "
 )
 
 func Detect(p string) bool {
-    ext := strings.ToLower(filepath.Ext(p))
-
-    return ext == Json || ext == JsonL
+    return strings.ToLower(filepath.Ext(p)) == JsonL
 }
 
-func Pretty(j string) (s []string) {
+func Pretty(s string) []string {
     var b bytes.Buffer
 
-    err := json.Indent(&b, []byte(j), "", Indent)
+    if len(s) == 0 {
+        return []string{""}
+    }
+
+    err := json.Indent(&b, []byte(s), "", Indent)
 
     if err != nil {
-        sys.Fatal(err)
+        return []string{err.Error()}
     }
 
     return strings.Split(b.String(), "\n")

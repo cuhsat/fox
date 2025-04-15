@@ -52,7 +52,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
         return 1
     }
 
-    x += text.Length(m)
+    x += text.Len(m)
 
     _, heap := hs.Current()
 
@@ -61,11 +61,11 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     // render filters
     if !p.Lock {
-        p.print(x, y, text.Abbrev(f, x, w-text.Length(s)), themes.Input)
+        p.print(x, y, text.Abr(f, x, w-text.Len(s)), themes.Input)
     }
 
     // render status
-    p.print(w-text.Length(s), y, s, themes.Input)
+    p.print(w-text.Len(s), y, s, themes.Input)
 
     return 1
 }
