@@ -1,10 +1,10 @@
 # 🔎 Forensic Examiner
 The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone binary.
 
-> AS THIS IS A FORENSIC TOOL, NO WRITE ACCESS MUST BE GRANTED OR WILL BE USED!
-
 ![](assets/grep.png "Grep Mode")
 ![](assets/hex.png "Hex Mode")
+
+> AS THIS IS A FORENSIC TOOL, NO WRITE ACCESS MUST BE GRANTED OR WILL BE USED!
 
 ## Install
 ```console
@@ -41,7 +41,7 @@ Standard options:
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
 | <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto mode             |
-| <kbd>F8</kbd> / <kbd>Ctrl</kbd> + <kbd>b</kbd>       | Save evidence         |
+| <kbd>F8</kbd> / <kbd>Ctrl</kbd> + <kbd>b</kbd>       | Save buffer evidence  |
 | <kbd>F9</kbd>                                        | Show file(s) counts   |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |
