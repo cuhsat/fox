@@ -3,10 +3,17 @@ package gzip
 import (
     "bytes"
     "compress/gzip"
-    "os"
     "io"
+    "os"
+    "path/filepath"
+    "strings"
 
     "github.com/cuhsat/fx/internal/sys"
+)
+
+const (
+    Z    = ".Z"  // old style compress
+    GZip = ".gz" // new style compress
 )
 
 var (
@@ -33,7 +40,7 @@ func Detect(p string) bool {
     return bytes.Equal(b[:], Magic[:])
 }
 
-func Deflate(p string, f *os.File) string {
+func Deflate(p string) string {
     g, err := os.Open(p)
 
     if err != nil {
@@ -50,13 +57,20 @@ func Deflate(p string, f *os.File) string {
 
     defer r.Close()
 
+    n := filepath.Base(p)
+
+    n = strings.TrimSuffix(n, Z)
+    n = strings.TrimSuffix(n, GZip)
+
+    f := sys.TempFile("gzip", filepath.Ext(n))
+
+    defer f.Close()
+
     _, err = io.Copy(f, r)
 
     if err != nil {
         sys.Fatal(err)
     }
-
-    defer f.Close()
 
     return f.Name()
 }

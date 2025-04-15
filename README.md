@@ -1,8 +1,10 @@
 # 🔎 Forensic Examiner
-The Swiss Army Knife for examining text files. Combining `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant forensic tool.
+The Swiss Army Knife for examining text files. Combining the most useful functions from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant forensic tool.
 
 ![](assets/grep.png "Grep Mode")
 ![](assets/hex.png "Hex Mode")
+
+> As this is a forensic tool, no write access must be granted.
 
 ## Install
 ```console

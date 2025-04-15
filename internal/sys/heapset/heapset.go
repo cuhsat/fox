@@ -142,7 +142,7 @@ func (hs *HeapSet) loadFile(p string) {
     b, f, fn := p, heap.Regular, nil
 
     if gzip.Detect(p) {
-        p = gzip.Deflate(p, sys.TempFile("gzip"))
+        p = gzip.Deflate(p)
         f = heap.Deflate
     }
 

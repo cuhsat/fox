@@ -2,6 +2,7 @@ package app
 
 import (
     "fmt"
+    "strings"
 
     "github.com/cuhsat/fx/internal/app/themes"
     "github.com/cuhsat/fx/internal/app/widget"
@@ -16,6 +17,11 @@ import (
 
 const (
     Delta = 1 // lines
+)
+
+const (
+    LBracket = "ESC[200~" // bracketed paste start
+    RBracket = "ESC[201~" // bracketed paste end
 )
 
 type App struct {
@@ -91,7 +97,16 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
             continue
 
         case *tcell.EventClipboard:
-            app.prompt.Value = string(ev.Data())
+            if app.status.Mode == mode.Hex {
+                continue
+            }
+
+            v := string(ev.Data())
+
+            v = strings.TrimPrefix(v, LBracket)
+            v = strings.TrimSuffix(v, RBracket)
+
+            app.prompt.Value = v
 
         case *tcell.EventResize:
             app.screen.Sync()
@@ -113,6 +128,9 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
 
             case tcell.WheelRight:
                 app.output.ScrollRight(Delta)
+
+            case tcell.ButtonMiddle:
+                app.screen.GetClipboard()
             }
 
         case *tcell.EventKey:
