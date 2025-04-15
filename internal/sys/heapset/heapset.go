@@ -6,6 +6,7 @@ import (
     "slices"
 
     "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/files/bag"
     "github.com/cuhsat/fx/internal/sys/heap"
     "github.com/cuhsat/fx/internal/sys/types"
     "github.com/cuhsat/fx/internal/sys/types/gzip"
@@ -106,7 +107,7 @@ func (hs *HeapSet) ThrowAway() {
     for _, h := range hs.heaps {
         h.ThrowAway()
 
-        if h.Flag != heap.Regular {
+        if h.Type > types.Regular {
             os.Remove(h.Path)
         }
     }
@@ -132,18 +133,22 @@ func (hs *HeapSet) loadPath(p string) {
 func (hs *HeapSet) loadPipe() {
     hs.heaps = append(hs.heaps, &heap.Heap{
         Path: sys.Stdin(),
-        Flag: heap.StdIn,
+        Type: types.StdIn,
     })  
 }
 
 func (hs *HeapSet) loadFile(p string) {
     var fn types.Format
 
-    b, f, fn := p, heap.Regular, nil
+    b, t, fn := p, types.Regular, nil
+
+    if bag.IsEvidence(b) {
+        return // ignore bags
+    }
 
     if gzip.Detect(p) {
         p = gzip.Deflate(p)
-        f = heap.Deflate
+        t = types.Deflate
     }
 
     if json.Detect(p) {
@@ -153,7 +158,7 @@ func (hs *HeapSet) loadFile(p string) {
     hs.heaps = append(hs.heaps, &heap.Heap{
         Path: p,
         Base: b,
-        Flag: f,
+        Type: t,
         Fmt: fn,
     })
 }

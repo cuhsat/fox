@@ -6,6 +6,7 @@ import (
 
     "github.com/cuhsat/fx/internal/sys"
     "github.com/cuhsat/fx/internal/sys/heap"
+    "github.com/cuhsat/fx/internal/sys/types"
 )
 
 type auxiliary func(h *heap.Heap) string
@@ -38,7 +39,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     f := sys.Stdout()
 
     for _, h := range hs.heaps {
-        if h.Flag != heap.Regular && h.Flag != heap.Deflate {
+        if h.Type != types.Regular && h.Type != types.Deflate {
             continue
         }
 
@@ -56,7 +57,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     f.Close()
 
     for i, h := range hs.heaps {
-        if h.Flag == heap.Regular {
+        if h.Type == types.Regular {
             continue
         }
 
@@ -74,7 +75,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     hs.heaps = append(hs.heaps, &heap.Heap{
         Title: t,
         Path: f.Name(),
-        Flag: heap.StdOut,
+        Type: types.StdOut,
     })
 
     hs.index = len(hs.heaps)-1

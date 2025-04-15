@@ -12,27 +12,16 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
-const (
-    Regular Flag = iota
-    StdIn
-    StdOut
-    StdErr
-    Deflate
-)
-
-type Flag int
-
 type Heap struct {
     Title string       // heap title
     Path  string       // file path
     Base  string       // base path
 
-    Flag  Flag         // heap flags
-    
+    Type  types.Heap   // heap type
+    Fmt   types.Format // format callback
+
     Head  int          // head offset
     Tail  int          // tail offset
-
-    Fmt   types.Format // format callback
 
     MMap  mmap.MMap    // memory map
     SMap  smap.SMap    // string map current
@@ -51,14 +40,14 @@ type Link struct {
 }
 
 func (h *Heap) String() string {
-    switch h.Flag {
-    case StdIn:
+    switch h.Type {
+    case types.StdIn:
         return "-"
-    case StdOut:
+    case types.StdOut:
         return h.Title
-    case StdErr:
+    case types.StdErr:
         return h.Title
-    case Deflate:
+    case types.Deflate:
         return h.Base
     default:
         return h.Path
@@ -107,7 +96,7 @@ func (h *Heap) Loaded() bool {
 func (h* Heap) Save() string {
     p := h.Base
 
-    if h.Flag >= StdOut {
+    if h.Type >= types.StdOut {
         p = h.String()
     }
 

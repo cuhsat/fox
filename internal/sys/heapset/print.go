@@ -6,8 +6,8 @@ import (
     "os"
 
     "github.com/cuhsat/fx/internal/sys"
-    "github.com/cuhsat/fx/internal/sys/heap"
     "github.com/cuhsat/fx/internal/sys/text"
+    "github.com/cuhsat/fx/internal/sys/types"
     "github.com/cuhsat/fx/internal/sys/types/block"
 )
 
@@ -40,7 +40,7 @@ func (hs *HeapSet) Print(p string, hex bool) {
     }
 
     for _, h := range hs.heaps {
-        if h.Flag == heap.StdIn {
+        if h.Type == types.StdIn {
             continue
         }
 
