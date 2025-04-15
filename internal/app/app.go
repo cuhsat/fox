@@ -158,6 +158,15 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 app.State(mode.Goto)
 
+            case tcell.KeyCtrlB, tcell.KeyF8:
+                if app.status.Mode == mode.Hex {
+                    continue
+                }
+
+                bag.Put(heap)
+
+                app.overlay.SendStatus(fmt.Sprintf("%s evidence bagged", heap))
+
             case tcell.KeyF9:
                 hs.Word()
 
@@ -191,22 +200,13 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     continue
                 }
 
-                if heap.Flag == 0 && len(*types.GetFilters()) == 0 {
+                if heap.Type == types.Regular && len(*types.GetFilters()) == 0 {
                     continue
                 }
 
                 path := heap.Save()
                 
                 app.overlay.SendStatus(fmt.Sprintf("%s saved", path))
-
-            case tcell.KeyCtrlE, tcell.KeyPrint:
-                if app.status.Mode == mode.Hex {
-                    continue
-                }
-
-                bag.Put(heap)
-
-                app.overlay.SendStatus(fmt.Sprintf("%s bagged", heap))
 
             case tcell.KeyCtrlQ:
                 app.output.Reset()

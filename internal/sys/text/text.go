@@ -24,11 +24,11 @@ func Lines(p string) (c int) {
 
         c += bytes.Count(b[:n], []byte{'\n'})
 
-        switch {
-        case err == io.EOF:
+        switch err {
+        case io.EOF:
             return
-
-        case err != nil:
+        case nil:
+        default:
             sys.Fatal(err)
         }
     }
