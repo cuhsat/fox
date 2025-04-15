@@ -8,18 +8,34 @@ import (
 )
 
 const (
-    Cut = "…"
+    Dots = "…"
 )
 
-func Abbrev(s string, x, w int) string {
-    if x + Length(s) > w + 1 {
-        s = string([]rune(s)[:(w-x)-1]) + Cut
+func Pos(s string, x int) string {
+    if x < Len(s) {
+        return string([]rune(s)[x:])
+    }
+
+    return ""
+}
+
+func Cut(s string, w int) string {
+    if w < Len(s) {
+        return string([]rune(s)[:w-1])
+    }
+
+    return ""
+}
+
+func Abr(s string, x, w int) string {
+    if x + Len(s) > w + 1 {
+        s = Cut(s, (w-x)) + Dots
     }
 
     return s
 }
 
-func Length(s string) (l int) {
+func Len(s string) (l int) {
     for _, r := range s {
         l += runewidth.RuneWidth(r)
     }
@@ -27,7 +43,7 @@ func Length(s string) (l int) {
     return
 }
 
-func Header(s string, w int) (h string) {
+func Block(s string, w int) (h string) {
     b := [...]string{"┌","─","┐","│","└","┘"}
     
     l := strings.Repeat(b[1], w-2)

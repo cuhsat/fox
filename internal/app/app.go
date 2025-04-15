@@ -211,6 +211,8 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
             case tcell.KeyCtrlW:
                 app.status.ToggleWrap()
 
+                app.output.Reset()
+
             case tcell.KeyHome:
                 app.output.ScrollStart()
 
@@ -310,11 +312,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History) {
 
                 case 32: // space
                     if app.status.Mode == mode.Less {
-                        if mods & tcell.ModShift != 0 {
-                            app.output.ScrollUp(page_h)
-                        } else {
-                            app.output.ScrollDown(page_h)
-                        }
+                        app.output.ScrollDown(page_h)
                     } else {
                         app.prompt.AddRune(r)
                     }
