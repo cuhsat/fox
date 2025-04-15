@@ -6,6 +6,7 @@ import (
 
     "github.com/cuhsat/fx/internal/app"
     "github.com/cuhsat/fx/internal/sys"
+    "github.com/cuhsat/fx/internal/sys/files/bag"
     "github.com/cuhsat/fx/internal/sys/files/history"
     "github.com/cuhsat/fx/internal/sys/heapset"
     "github.com/cuhsat/fx/internal/sys/types"
@@ -17,7 +18,7 @@ const (
 )
 
 func usage() {
-    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
+    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [-b FILE] [PATH ... | -]")
 }
 
 func main() {
@@ -34,8 +35,9 @@ func main() {
     h := flag.Bool("h", false, "Head limit")
     t := flag.Bool("t", false, "Tail limit")
 
-    // output
+    // outputs
     o := flag.String("o", "", "Output file")
+    b := flag.String("b", "", "Evidence file")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
@@ -108,8 +110,11 @@ func main() {
     hi := history.NewHistory()
     defer hi.Close()
 
+    bag := bag.NewBag(*b)
+    defer bag.Close()
+
     app := app.NewApp(m)
     defer app.Close()
 
-    app.Run(hs, hi)
+    app.Run(hs, hi, bag)
 }

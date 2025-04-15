@@ -29,6 +29,16 @@ func Detect(p string) bool {
 
     defer r.Close()
 
+    fi, err := r.Stat()
+
+    if err != nil {
+        sys.Fatal(err)
+    }
+
+    if fi.Size() < 3 {
+        return false
+    }
+
     var b [3]byte
 
     _, err = io.ReadFull(r, b[:])

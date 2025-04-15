@@ -162,7 +162,7 @@ func (h *Heap) write(w io.Writer) (n int, err error) {
             end += 1 // include breaks between strings
         }
 
-        m, err := w.Write([]byte(h.MMap[s.Start:end]))
+        m, err := w.Write(h.MMap[s.Start:end])
 
         if err != nil {
             return n, err

@@ -1,10 +1,10 @@
 # 🔎 Forensic Examiner
-The Swiss Army Knife for examining text files. Combining the most useful functions from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant forensic tool.
+The Swiss Army Knife for examining text files. Combining the most useful functionality from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant forensic tool.
+
+> AS THIS IS A FORENSIC TOOL, NO WRITE ACCESS MUST BE GRANTED OR WILL BE USED.
 
 ![](assets/grep.png "Grep Mode")
 ![](assets/hex.png "Hex Mode")
-
-> As this is a forensic tool, no write access must be granted.
 
 ## Install
 ```console
@@ -13,7 +13,7 @@ $ make install
 
 ## Usage
 ```
-$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
+$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [-b FILE] [PATH ... | -]
 ```
 
 Available options:
@@ -25,6 +25,7 @@ Available options:
 * `-x` Hexdump mode
 * `-e` Pattern value
 * `-o` Output file
+* `-b` Evidence file
 
 Standard options:
 * `--help` Usage information
@@ -69,6 +70,7 @@ Standard options:
 ### Grep Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
+| <kbd>Print</kbd> / <kbd>Ctrl</kbd> + <kbd>e</kbd>    | Save evidence in file |
 | <kbd>Enter</kbd>                                     | Append filter         |
 | <kbd>Backspace</kbd>                                 | Delete filter         |
 | <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |

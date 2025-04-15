@@ -9,6 +9,7 @@ import (
 
 const (
     O_HISTORY = os.O_APPEND | os.O_CREATE | os.O_RDWR
+    O_EVIDENCE = os.O_APPEND | os.O_CREATE | os.O_WRONLY
     O_OVERRIDE = os.O_TRUNC | os.O_CREATE | os.O_WRONLY
 )
 

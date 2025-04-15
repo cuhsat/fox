@@ -23,3 +23,6 @@ go.work.sum
 
 # Mac crap
 .DS_Store
+
+# Evidence file
+EVIDENCE
