@@ -5,9 +5,12 @@ import (
     "encoding/json"
     "path/filepath"
     "strings"
+
+    "github.com/cuhsat/fx/internal/sys/text"
 )
 
 const (
+    Json  = ".json"
     JsonL = ".jsonl"
 )
 
@@ -16,7 +19,9 @@ const (
 )
 
 func Detect(p string) bool {
-    return strings.ToLower(filepath.Ext(p)) == JsonL
+    e := strings.ToLower(filepath.Ext(p))
+
+    return e == JsonL || (e == Json && text.Lines(p) <= 1)
 }
 
 func Pretty(s string) []string {

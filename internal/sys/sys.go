@@ -39,7 +39,7 @@ func Stdin() string {
         Fatal("invalid mode")        
     }
 
-    f := TempFile("stdin")
+    f := TempFile("stdin", "txt")
 
     go func(f *os.File) {
         r := bufio.NewReader(os.Stdin)
@@ -69,11 +69,11 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-    return TempFile("stdout")
+    return TempFile("stdout", "txt")
 }
 
 func Stderr() *os.File {
-    return TempFile("stderr")
+    return TempFile("stderr", "txt")
 }
 
 func IsPiped(f *os.File) bool {
@@ -86,8 +86,8 @@ func IsPiped(f *os.File) bool {
     return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func TempFile(s string) *os.File {
-    f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-", s))
+func TempFile(n, e string) *os.File {
+    f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", n, e))
 
     if err != nil {
         Fatal(err)
