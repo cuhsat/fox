@@ -65,6 +65,16 @@ func (h *Heap) Reload() {
         sys.Fatal(err)
     }
 
+    fi, err := h.file.Stat()
+
+    if err != nil {
+        sys.Fatal(err)
+    }
+
+    if fi.Size() == 0 {
+        return
+    }    
+
     h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
 
     if err != nil {
