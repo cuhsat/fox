@@ -1,11 +1,9 @@
 package bag
 
 import (
-    "bufio"
     "fmt"
-    "io"
-    "math"
     "os"
+    "os/user"
     "strings"
     "time"
 
@@ -19,99 +17,77 @@ const (
     File = "EVIDENCE"
 )
 
-const (
-    Header = "Forensic Examiner - Evidence Bag"
-)
-
 type Bag struct {
-    path string   // file path
+    Path string   // file path
+    
     file *os.File // file handle
 }
 
 func NewBag(p string) *Bag {
     return &Bag{
-        path: p,
+        Path: p,
     }
 }
 
-func (b *Bag) Init() {
+func (bag *Bag) Init() {
     var err error
 
-    if len(b.path) == 0 {
-        b.path = File
+    if len(bag.Path) == 0 {
+        bag.Path = File
     }
 
-    b.file, err = os.OpenFile(b.path, sys.O_EVIDENCE, 0644)
-
-    if err != nil {
-        sys.Fatal(err)
-    }
-
-    _, err = b.file.WriteString(Header + "\n")
+    bag.file, err = os.OpenFile(bag.Path, sys.O_EVIDENCE, 0600)
 
     if err != nil {
         sys.Fatal(err)
     }
 }
 
-func (b *Bag) Put(h *heap.Heap) {
-    if b.file == nil {
-        b.Init()
+func (bag *Bag) Put(h *heap.Heap) {
+    if bag.file == nil {
+        bag.Init()
     }
 
-    t := fmt.Sprintf("%s :: %s", time.Now().UTC(), h.String())
-    f := types.GetFilters()
+    var b []string
 
-    if len(*f) > 0 {
-        t = fmt.Sprintf("%s > %s", t, f)
-    }
-
-    _, err := b.file.WriteString(text.Block(t, len(t)+4) + "\n")
+    u, err := user.Current()
 
     if err != nil {
         sys.Fatal(err)
     }
 
-    len_nr := int(math.Log10(float64(h.Length()))) + 1
+    f := *types.GetFilters()
+    t := append([]string{h.String()}, f...)
+
+    b = append(b, strings.Join(t, " > "))
+    b = append(b, fmt.Sprintf("%s @ %s", u.Username, time.Now().UTC()))
+    b = append(b, fmt.Sprintf("%x", h.Sha256()))
+
+    _, err = fmt.Fprintln(bag.file, text.Block(b, -1))
+
+    if err != nil {
+        sys.Error(err)
+    } 
+
+    d := text.Dec(h.Length())
 
     for _, s := range h.SMap {
-        l := fmt.Sprintf("%0*d: %v\n", len_nr, s.Nr, string(h.MMap[s.Start:s.End]))
+        str := string(h.MMap[s.Start:s.End])
 
-        _, err = b.file.WriteString(l)
+        l := fmt.Sprintf(" %0*d  %v", d, s.Nr, str)
+
+        _, err = fmt.Fprintln(bag.file, l)
 
         if err != nil {
-            sys.Fatal(err)
-        }
+            sys.Error(err)
+        } 
     }
+
+    _, err = fmt.Fprintln(bag.file, "")
 }
 
-func (b *Bag) Close() {
-    if b.file != nil {
-        b.file.Close()        
+func (bag *Bag) Close() {
+    if bag.file == nil {
+        bag.file.Close()
     }
-}
-
-func IsEvidence(p string) bool {
-     f, err := os.Open(p)
-
-     if err != nil {
-         sys.Fatal(err)
-     }
-
-     defer f.Close()
-
-     r := bufio.NewReader(f)
-
-     l, _, err := r.ReadLine()
-
-     switch err {
-     case io.EOF:
-         return false
-     case nil:
-         return strings.Compare(string(l), Header) == 0
-     default:
-         sys.Fatal(err)
-     }
-
-     return false
 }

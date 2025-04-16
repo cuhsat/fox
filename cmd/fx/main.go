@@ -75,7 +75,7 @@ func main() {
     }
 
     if *v {
-        sys.Print(Version)
+        sys.Print("fx", Version)
         os.Exit(0)
     }
 

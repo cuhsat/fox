@@ -84,7 +84,7 @@ func (c *Config) Save() {
 
     p := filepath.Join(dir, File)
 
-    err = os.WriteFile(p, b.Bytes(), 0644)
+    err = os.WriteFile(p, b.Bytes(), 0600)
 
     if err != nil {
         sys.Fatal(err)

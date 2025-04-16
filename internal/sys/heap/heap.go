@@ -59,7 +59,7 @@ func (h *Heap) Reload() {
 
     h.ThrowAway()
     
-    h.file, err = os.OpenFile(h.Path, os.O_RDONLY, 0644)
+    h.file = sys.Open(h.Path)
 
     if err != nil {
         sys.Fatal(err)
@@ -93,35 +93,7 @@ func (h *Heap) Loaded() bool {
     return h.file != nil
 }
 
-func (h* Heap) Save() string {
-    p := h.Base
-
-    if h.Type >= types.StdOut {
-        p = h.String()
-    }
-
-    for _, l := range h.chain {
-        p += "-" + l.Name
-    }
-
-    f, err := os.OpenFile(p, sys.O_OVERRIDE, 0644)
-
-    if err != nil {
-        sys.Fatal(err)
-    }
-
-    defer f.Close()
-
-    _, err = h.write(f)
-
-    if err != nil {
-        sys.Fatal(err)
-    }
-
-    return p
-}
-
-func (h *Heap) Copy() []byte {
+func (h *Heap) Bytes() []byte {
     var b bytes.Buffer
 
     _, err := h.write(&b)

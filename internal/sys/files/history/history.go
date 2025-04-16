@@ -28,7 +28,7 @@ func NewHistory() *History {
         sys.Fatal(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, File), sys.O_HISTORY, 0644)
+    f, err := os.OpenFile(filepath.Join(dir, File), sys.O_HISTORY, 0600)
 
     if err != nil {
         sys.Fatal(err)

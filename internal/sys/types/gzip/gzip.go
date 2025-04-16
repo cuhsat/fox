@@ -4,7 +4,6 @@ import (
     "bytes"
     "compress/gzip"
     "io"
-    "os"
     "path/filepath"
     "strings"
 
@@ -21,15 +20,11 @@ var (
 )
 
 func Detect(p string) bool {
-    r, err := os.Open(p)
+    g := sys.Open(p)
 
-    if err != nil {
-        sys.Fatal(err)
-    }
+    defer g.Close()
 
-    defer r.Close()
-
-    fi, err := r.Stat()
+    fi, err := g.Stat()
 
     if err != nil {
         sys.Fatal(err)
@@ -41,7 +36,7 @@ func Detect(p string) bool {
 
     var b [3]byte
 
-    _, err = io.ReadFull(r, b[:])
+    _, err = io.ReadFull(g, b[:])
 
     if err != nil {
         sys.Fatal(err)
@@ -51,11 +46,7 @@ func Detect(p string) bool {
 }
 
 func Deflate(p string) string {
-    g, err := os.Open(p)
-
-    if err != nil {
-        sys.Fatal(err)
-    }
+    g := sys.Open(p)
 
     defer g.Close()
 

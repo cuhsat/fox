@@ -2,6 +2,7 @@ package text
 
 import (
     "fmt"
+    "math"
     "strings"
 
     "github.com/mattn/go-runewidth"
@@ -10,6 +11,10 @@ import (
 const (
     Dots = "…"
 )
+
+func Dec(n int) int {
+    return int(math.Log10(float64(n))) + 1
+}
 
 func Pos(s string, x int) string {
     if x < Len(s) {
@@ -43,14 +48,30 @@ func Len(s string) (l int) {
     return
 }
 
-func Block(s string, w int) (h string) {
-    b := [...]string{"┌","─","┐","│","└","┘"}
-    
-    l := strings.Repeat(b[1], w-2)
+func Title(s string, w int) string {
+    return Block([]string{s}, w)
+}
 
-    h += fmt.Sprintf("%s%s%s\n", b[0], l, b[2])
-    h += fmt.Sprintf("%s %-*s %s\n", b[3], w-4, s, b[3])
-    h += fmt.Sprintf("%s%s%s", b[4], l, b[5])
+func Block(s []string, w int) (r string) {
+    if w < 0 {
+        for _, ss := range s {
+            w = max(w, len(ss))
+        }
+        w += 4
+    }
+
+    l := strings.Repeat("─", w-2)
+
+    // header
+    r += fmt.Sprintf("┌%s┐\n", l)
+
+    // body
+    for _, ss := range s {
+        r += fmt.Sprintf("│ %-*s │\n", w-4, ss)
+    }
+
+    // footer
+    r += fmt.Sprintf("└%s┘", l)
 
     return
 }

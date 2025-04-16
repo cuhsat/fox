@@ -41,7 +41,6 @@ Standard options:
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
 | <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto mode             |
-| <kbd>F8</kbd> / <kbd>Ctrl</kbd> + <kbd>b</kbd>       | Save buffer evidence  |
 | <kbd>F9</kbd>                                        | Show file(s) counts   |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |
@@ -60,8 +59,8 @@ Standard options:
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                       | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle wrap text      |
-| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save buffer content   |
-| <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy buffer content   |
+| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save as evidence      |
+| <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
 
 ### Less Mode
 | Shortcut                                             | Action                |
@@ -76,7 +75,7 @@ Standard options:
 | <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
 | <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste as input        |
-| <kbd>Any Key</kbd>                                   | Filter buffer content |
+| <kbd>Any Key</kbd>                                   | Filter content        |
 
 ## Config
 > Located under `~/.fxrc`.
