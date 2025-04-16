@@ -6,11 +6,10 @@ import (
     "slices"
 
     "github.com/cuhsat/fx/internal/sys"
-    "github.com/cuhsat/fx/internal/sys/files/bag"
     "github.com/cuhsat/fx/internal/sys/heap"
     "github.com/cuhsat/fx/internal/sys/types"
     "github.com/cuhsat/fx/internal/sys/types/gzip"
-    "github.com/cuhsat/fx/internal/sys/types/json"
+    "github.com/cuhsat/fx/internal/sys/types/jsonl"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -142,17 +141,13 @@ func (hs *HeapSet) loadFile(p string) {
 
     b, t, fn := p, types.Regular, nil
 
-    if bag.IsEvidence(b) {
-        return // ignore bags
-    }
-
     if gzip.Detect(p) {
         p = gzip.Deflate(p)
         t = types.Deflate
     }
 
-    if json.Detect(p) {
-        fn = json.Pretty
+    if jsonl.Detect(p) {
+        fn = jsonl.Pretty
     }
 
     hs.heaps = append(hs.heaps, &heap.Heap{

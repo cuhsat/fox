@@ -2,7 +2,6 @@ package block
 
 import (
     "fmt"
-    "math"
     "strings"
 
     "github.com/cuhsat/fx/internal/sys/text"
@@ -44,18 +43,18 @@ func (tl TextLine) String() string {
 }
 
 func Text(ctx Context) (tb TextBlock) {
-    len_nr := int(math.Log10(float64(ctx.Heap.Length()))) + 1
+    d := text.Dec(ctx.Heap.Length())
 
     tb.SMap = ctx.Heap.SMap
 
     if ctx.Line {
-        ctx.W -= (len_nr + SpaceText)
+        ctx.W -= (d + SpaceText)
     }
 
     if ctx.Wrap && ctx.Heap.Fmt != nil {
-        textFormat(ctx, len_nr, &tb)
+        textFormat(ctx, d, &tb)
     } else {
-        textNormal(ctx, len_nr, &tb)
+        textNormal(ctx, d, &tb)
     }
 
     if len(tb.Lines) >= ctx.H {
@@ -65,9 +64,9 @@ func Text(ctx Context) (tb TextBlock) {
     return
 }
 
-func textFormat(ctx Context, nrw int, tb *TextBlock) {
+func textFormat(ctx Context, d int, tb *TextBlock) {
     for _, s := range tb.SMap {
-        nr := fmt.Sprintf("%0*d", nrw, s.Nr)
+        nr := fmt.Sprintf("%0*d", d, s.Nr)
 
         str := string(ctx.Heap.MMap[s.Start:s.End])
 
@@ -83,7 +82,7 @@ func textFormat(ctx Context, nrw int, tb *TextBlock) {
     tb.Lines = tb.Lines[ctx.Y:]
 }
 
-func textNormal(ctx Context, nrw int, tb *TextBlock) {
+func textNormal(ctx Context, d int, tb *TextBlock) {
     if ctx.Wrap {
         tb.SMap = tb.SMap.Wrap(ctx.W)
     }
@@ -95,7 +94,7 @@ func textNormal(ctx Context, nrw int, tb *TextBlock) {
             break
         }
 
-        nr := fmt.Sprintf("%0*d", nrw, s.Nr)
+        nr := fmt.Sprintf("%0*d", d, s.Nr)
 
         str := string(ctx.Heap.MMap[s.Start:s.End])
 

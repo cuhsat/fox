@@ -1,7 +1,7 @@
 package types
 
 import (
-    "strings"
+    "fmt"
 )
 
 type Filters []string
@@ -18,7 +18,7 @@ func GetFilters() *Filters {
 }
 
 func (f *Filters) String() string {
-    return strings.Join(*f, " > ")
+    return fmt.Sprintf("%v", *f)
 }
 
 func (f *Filters) Set(s string) error {

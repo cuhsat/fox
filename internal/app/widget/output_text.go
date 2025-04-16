@@ -5,6 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/internal/app/themes"
+    "github.com/cuhsat/fx/internal/sys/text"
     "github.com/cuhsat/fx/internal/sys/types"
     "github.com/cuhsat/fx/internal/sys/types/block"
 )
@@ -58,9 +59,11 @@ func (o *Output) textMark(x, y, c int, s, f string) {
         return
     }
 
-    o.print(x + i, y, f, themes.Colors[c % len(themes.Colors)])
+    len_i := text.Len(s[:i])
+
+    o.print(x + len_i, y, f, themes.Colors[c % len(themes.Colors)])
     
-    o.textMark(x + i+1, y, c, s[i+1:], f)
+    o.textMark(x + len_i+1, y, c, s[i+1:], f)
 }
 
 func (o *Output) textGoto(s string) {

@@ -51,9 +51,9 @@ func (hs *HeapSet) Print(p string, hex bool) {
         ctx.Heap = h
 
         if hex {
-            ctx.W = 68 // use default width
+            ctx.W = 67 // use default width
 
-            fmt.Fprintln(f, text.Block(h.String(), ctx.W))
+            fmt.Fprintln(f, text.Title(h.String(), ctx.W))
 
             fmt.Fprintln(f, block.Hex(ctx))
         } else {

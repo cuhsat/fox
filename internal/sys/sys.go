@@ -8,9 +8,8 @@ import (
 )
 
 const (
-    O_HISTORY = os.O_APPEND | os.O_CREATE | os.O_RDWR
-    O_EVIDENCE = os.O_APPEND | os.O_CREATE | os.O_WRONLY
-    O_OVERRIDE = os.O_TRUNC | os.O_CREATE | os.O_WRONLY
+    O_HISTORY  = os.O_CREATE | os.O_APPEND | os.O_RDWR
+    O_EVIDENCE = os.O_CREATE | os.O_APPEND | os.O_WRONLY
 )
 
 func Debug(a ...any) {
@@ -89,6 +88,16 @@ func IsPiped(f *os.File) bool {
 
 func TempFile(n, e string) *os.File {
     f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", n, e))
+
+    if err != nil {
+        Fatal(err)
+    }
+
+    return f
+}
+
+func Open(p string) *os.File {
+    f, err := os.OpenFile(p, os.O_RDONLY, 0400)
 
     if err != nil {
         Fatal(err)
