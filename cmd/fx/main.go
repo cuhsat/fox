@@ -18,7 +18,7 @@ const (
 )
 
 func usage() {
-    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [-b FILE] [PATH ... | -]")
+    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
 }
 
 func main() {
@@ -35,9 +35,8 @@ func main() {
     h := flag.Bool("h", false, "Head limit")
     t := flag.Bool("t", false, "Tail limit")
 
-    // outputs
+    // output
     o := flag.String("o", "", "Output file")
-    b := flag.String("b", "", "Evidence file")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
@@ -95,22 +94,22 @@ func main() {
         m = mode.Grep
     }
 
-    if len(*o) > 0 {
+    if sys.IsPipe(os.Stdout) {
         *r = true
     }
 
     hs := heapset.NewHeapSet(a)
     defer hs.ThrowAway()
 
-    if sys.IsPiped(os.Stdout) || *r {
-        hs.Print(*o, *x)
+    if *r {
+        hs.Print(*x)
         os.Exit(0)
     }
 
     hi := history.NewHistory()
     defer hi.Close()
 
-    bag := bag.NewBag(*b)
+    bag := bag.NewBag(*o)
     defer bag.Close()
 
     app := app.NewApp(m)
