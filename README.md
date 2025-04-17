@@ -4,7 +4,7 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 ![](assets/grep.png "Grep Mode")
 ![](assets/hex.png "Hex Mode")
 
-> AS THIS IS A FORENSIC TOOL, NO WRITE ACCESS MUST BE GRANTED OR WILL BE USED!
+> AS THIS IS A FORENSIC TOOL NO WRITE ACTIONS WILL BE PERFORMED
 
 ## Install
 ```console
@@ -41,17 +41,17 @@ Reading directly from standard input:
 $ fx -
 ```
 
-Reading a `gzip` compressed file:
+Reading `gzip` compressed files:
 ```console
-$ fx foo.bar.gz
+$ fx foo.gz bar.gz
 ```
 
-Reading all `.log` files in the `foo` and `bar` directories:
+Reading all `.jsonl` files in all subdirectories:
 ```console
-$ fx foo/*.log bar/*.log
+$ fx ./*/*.jsonl
 ```
 
-Writing all lines containing `John Doe` from all files to standard output:
+Writing all lines containing `John Doe` of all files to standard output:
 ```console
 $ fx -r -e "John Doe"
 ```
