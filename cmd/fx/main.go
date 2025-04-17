@@ -28,22 +28,22 @@ func main() {
 
     // flags
     m := mode.Default
-    r := flag.Bool("r", false, "Raw mode")
-    x := flag.Bool("x", false, "Hex mode")
+    r := flag.Bool("r", false, "Raw output")
+    x := flag.Bool("x", false, "Hexdump mode")
     
     // limits
     h := flag.Bool("h", false, "Head limit")
     t := flag.Bool("t", false, "Tail limit")
 
     // output
-    o := flag.String("o", "", "Output file")
+    o := flag.String("o", "", "Evidence file")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
     flag.IntVar(&c.Bytes, "c", 0, "Bytes count")
 
     // filters
-    flag.Var(e, "e", "Pattern")
+    flag.Var(e, "e", "Pattern value")
 
     // standards
     v := flag.Bool("version", false, "Version")

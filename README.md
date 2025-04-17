@@ -17,18 +17,54 @@ $ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
 
 Available options:
-* `-r` Raw
+* `-r` Raw output
 * `-h` Head limit
 * `-t` Tail limit
 * `-n` Lines count
 * `-c` Bytes count
 * `-x` Hexdump mode
 * `-e` Pattern value
-* `-o` Output file
+* `-o` Evidence file
 
 Standard options:
 * `--help` Usage information
 * `--version` Version number
+
+### Examples
+Reading all files in the current directory:
+```console
+$ fx
+```
+
+Reading directly from standard input:
+```console
+$ fx -
+```
+
+Reading a `gzip` compressed file:
+```console
+$ fx foo.bar.gz
+```
+
+Reading all `.log` files in the `foo` and `bar` directories:
+```console
+$ fx foo/*.log bar/*.log
+```
+
+Writing all lines containing `John Doe` from all files to standard output:
+```console
+$ fx -r -e "John Doe"
+```
+
+Writing the first `10` lines of `foo` to `bar`:
+```console
+$ fx -h -n 10 foo > bar
+```
+
+Writing the last `8` bytes of `foo` to `bar` in hex:
+```console
+$ fx -t -c 8 -x foo > bar
+```
 
 ## Keyboard
 
