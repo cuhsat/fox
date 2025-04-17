@@ -8,15 +8,11 @@ import (
 )
 
 const (
-    JSONL = ".jsonl"
-)
-
-const (
-    Indent = "  "
+    indent = "  "
 )
 
 func Detect(p string) bool {
-    return strings.ToLower(filepath.Ext(p)) == JSONL
+    return strings.ToLower(filepath.Ext(p)) == ".jsonl"
 }
 
 func Pretty(s string) []string {
@@ -26,7 +22,7 @@ func Pretty(s string) []string {
         return []string{""}
     }
 
-    err := json.Indent(&b, []byte(s), "", Indent)
+    err := json.Indent(&b, []byte(s), "", indent)
 
     if err != nil {
         return []string{err.Error()}

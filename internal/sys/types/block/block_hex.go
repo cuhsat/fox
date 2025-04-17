@@ -8,7 +8,7 @@ import (
 )
 
 const (
-    SpaceHex = 1
+    HexSpace = 1
 )
 
 type HexBlock struct {
@@ -45,10 +45,10 @@ func Hex(ctx Context) (hb HexBlock) {
     off_w := 0
 
     if ctx.Line {
-        off_w = 8 + SpaceHex
+        off_w = 8 + HexSpace
     }
 
-    cols := int(float64((ctx.W - off_w) + SpaceHex) / 3.5)
+    cols := int(float64((ctx.W - off_w) + HexSpace) / 3.5)
     cols -= cols % 2
 
     mmap := ctx.Heap.MMap

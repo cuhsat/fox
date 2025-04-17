@@ -13,11 +13,11 @@ import (
 )
 
 const (
-    Separator = "❯"
-    Cursor = "_"
-    Follow = "F"
-    Line = "N"
-    Wrap = "W"
+    cursor = "_"
+    filter = "❯"
+    follow = "F"
+    line = "N"
+    wrap = "W"
 )
 
 type Prompt struct {
@@ -97,11 +97,11 @@ func (p *Prompt) formatMode() string {
 func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
     if p.status.Mode == mode.Grep {
         for _, f := range *types.GetFilters() {
-            s = fmt.Sprintf("%s %s %s", s, f, Separator)
+            s = fmt.Sprintf("%s %s %s", s, f, filter)
         }        
     }
 
-    s = fmt.Sprintf("%s %s%s ", s, p.Value, Cursor)
+    s = fmt.Sprintf("%s %s%s ", s, p.Value, cursor)
 
     return 
 }
@@ -110,15 +110,15 @@ func (p *Prompt) formatStatus(h *heap.Heap) string {
     f, n, w := " ", " ", " "
 
     if p.status.Follow {
-        f = Follow
+        f = follow
     }
 
     if p.status.Line {
-        n = Line
+        n = line
     }
 
     if p.status.Wrap {
-        w = Wrap
+        w = wrap
     }
 
     return fmt.Sprintf(" %d ∣ %s ∣ %s ∣ %s ", len(h.SMap), f, n, w)

@@ -4,10 +4,6 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
-const (
-    Break = '\n'
-)
-
 type SMap []*String
 
 type String struct {
@@ -21,7 +17,7 @@ func Map(m mmap.MMap) (s SMap) {
     i, j := 0, 0
 
     for ; i < len(m); i++ {
-        if m[i] == Break {
+        if m[i] == '\n' {
             s = append(s, &String{
                 Nr: len(s) + 1,
                 Start: j,

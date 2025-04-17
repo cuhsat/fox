@@ -14,7 +14,7 @@ import (
 )
 
 const (
-    Version = "dev"
+    version = "dev"
 )
 
 func usage() {
@@ -74,7 +74,7 @@ func main() {
     }
 
     if *v {
-        sys.Print("fx", Version)
+        sys.Print("fx", version)
         os.Exit(0)
     }
 
@@ -98,7 +98,7 @@ func main() {
         *r = true
     }
 
-    hs := heapset.NewHeapSet(a)
+    hs := heapset.New(a)
     defer hs.ThrowAway()
 
     if *r {
@@ -106,13 +106,13 @@ func main() {
         os.Exit(0)
     }
 
-    hi := history.NewHistory()
+    hi := history.New()
     defer hi.Close()
 
-    bag := bag.NewBag(*o)
+    bag := bag.New(*o)
     defer bag.Close()
 
-    app := app.NewApp(m)
+    app := app.New(m)
     defer app.Close()
 
     app.Run(hs, hi, bag)

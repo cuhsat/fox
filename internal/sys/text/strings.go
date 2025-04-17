@@ -8,10 +8,6 @@ import (
     "github.com/mattn/go-runewidth"
 )
 
-const (
-    Dots = "…"
-)
-
 func Dec(n int) int {
     return int(math.Log10(float64(n))) + 1
 }
@@ -34,7 +30,7 @@ func Cut(s string, w int) string {
 
 func Abr(s string, x, w int) string {
     if x + Len(s) > w + 1 {
-        s = Cut(s, (w-x)) + Dots
+        s = Cut(s, (w-x)) + "…"
     }
 
     return s

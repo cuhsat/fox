@@ -26,8 +26,8 @@ func (h *Heap) filter(b []byte) (s smap.SMap) {
         wg.Add(1)
 
         go func() {
+            defer wg.Done()
             grep(ch, h, c, b)
-            wg.Done()
         }()
     }
 

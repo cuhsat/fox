@@ -9,7 +9,7 @@ import (
 )
 
 const (
-    SpaceText = 1
+    TextSpace = 1
 )
 
 type TextBlock struct {
@@ -48,7 +48,7 @@ func Text(ctx Context) (tb TextBlock) {
     tb.SMap = ctx.Heap.SMap
 
     if ctx.Line {
-        ctx.W -= (d + SpaceText)
+        ctx.W -= (d + TextSpace)
     }
 
     if ctx.Wrap && ctx.Heap.Fmt != nil {

@@ -7,10 +7,6 @@ import (
     "github.com/mattn/go-runewidth"
 )
 
-const (
-    Long = '→'
-)
-
 type Queueable interface {
     Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
@@ -30,7 +26,7 @@ func (wi *widget) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         switch r {
         case '\r':
-            r = Long
+            r = '→'
         default:
             r = text.AsUnicode(r)
         }

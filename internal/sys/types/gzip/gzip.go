@@ -10,13 +10,8 @@ import (
     "github.com/cuhsat/fx/internal/sys"
 )
 
-const (
-    Z    = ".Z"  // old style compress
-    GZip = ".gz" // new style compress
-)
-
 var (
-    Magic = [...]byte{0x1F, 0x8B, 0x08}
+    magic = [...]byte{0x1F, 0x8B, 0x08}
 )
 
 func Detect(p string) bool {
@@ -42,7 +37,7 @@ func Detect(p string) bool {
         sys.Fatal(err)
     }
 
-    return bytes.Equal(b[:], Magic[:])
+    return bytes.Equal(b[:], magic[:])
 }
 
 func Deflate(p string) string {
@@ -60,8 +55,8 @@ func Deflate(p string) string {
 
     n := filepath.Base(p)
 
-    n = strings.TrimSuffix(n, Z)
-    n = strings.TrimSuffix(n, GZip)
+    n = strings.TrimSuffix(n, ".Z")  // old style compress
+    n = strings.TrimSuffix(n, ".gz") // new style compress
 
     f := sys.Temp("gzip", filepath.Ext(n))
 

@@ -31,7 +31,7 @@ type Themes struct {
     index int
 }
 
-func NewThemes(name string) *Themes {
+func New(name string) *Themes {
     t := Themes{
         palettes: map[string][]int32{
             "Monokai": []int32 {

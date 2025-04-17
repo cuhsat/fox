@@ -21,7 +21,7 @@ type HeapSet struct {
     index   int               // set index
 }
 
-func NewHeapSet(p []string) *HeapSet {
+func New(p []string) *HeapSet {
     w, err := fsnotify.NewWatcher()
 
     if err != nil {

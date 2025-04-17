@@ -26,7 +26,7 @@ func GetLimits() *Limits {
     return limits;
 }
 
-func (l *Limits) ReduceMMap(m mmap.MMap) (mmap.MMap, int, int) {
+func (l *Limits) MMapReduce(m mmap.MMap) (mmap.MMap, int, int) {
     h, t := 0, 0
 
     if l.Head.Bytes > 0 {
@@ -42,7 +42,7 @@ func (l *Limits) ReduceMMap(m mmap.MMap) (mmap.MMap, int, int) {
     return m, h, t
 }
 
-func (l *Limits) ReduceSMap(s smap.SMap) smap.SMap {
+func (l *Limits) SMapReduce(s smap.SMap) smap.SMap {
     if l.Head.Lines > 0 {
         s = s[:min(l.Head.Lines, len(s))]
     }
