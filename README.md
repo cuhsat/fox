@@ -56,9 +56,9 @@ Writing all lines containing `John Doe` from all files to standard output:
 $ fx -r -e "John Doe"
 ```
 
-Writing the first `10` lines of `foo` to `bar`:
+Writing the first `3` lines of `foo` to `bar`:
 ```console
-$ fx -h -n 10 foo > bar
+$ fx -h -n 3 foo > bar
 ```
 
 Writing the last `8` bytes of `foo` to `bar` in hex:
