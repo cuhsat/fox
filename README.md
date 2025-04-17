@@ -36,7 +36,7 @@ Reading all files in the current directory:
 $ fx
 ```
 
-Reading directly from standard input:
+Reading directly from stdin:
 ```console
 $ fx -
 ```
@@ -51,7 +51,7 @@ Reading all `.jsonl` files in all subdirectories:
 $ fx ./*/*.jsonl
 ```
 
-Writing all lines containing `John Doe` of all files to standard output:
+Writing all lines containing `John Doe` of all files to stdout:
 ```console
 $ fx -r -e "John Doe"
 ```
