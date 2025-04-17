@@ -21,11 +21,11 @@ type Output struct {
     delta_y int
 }
 
-func NewOutput(screen tcell.Screen, status *Status) *Output {
+func NewOutput(ctx *Context, screen tcell.Screen) *Output {
     return &Output{
         widget: widget{
+            ctx: ctx,
             screen: screen,
-            status: status,
         },
 
         last_x: 0,
@@ -41,7 +41,7 @@ func (o *Output) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     h -= 1 // fill all but least line
 
-    if o.status.Mode == mode.Hex {
+    if o.ctx.Mode == mode.Hex {
         o.hexRender(x, y, w, h)
     } else {
         o.textRender(x, y, w, h)
@@ -56,7 +56,7 @@ func (o *Output) Reset() {
 }
 
 func (o *Output) Goto(s string) {
-    if o.status.Mode != mode.Hex {
+    if o.ctx.Mode != mode.Hex {
         o.textGoto(s)
     }
 }

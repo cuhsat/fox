@@ -12,8 +12,8 @@ type Queueable interface {
 }
 
 type widget struct {
+    ctx    *Context
     screen tcell.Screen
-    status *Status
 }
 
 func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {

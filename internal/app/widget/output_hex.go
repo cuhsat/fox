@@ -14,8 +14,8 @@ func (o *Output) hexRender(x, y, w, h int) {
 
     hb := block.Hex(block.Context{
         Heap: o.heap,
-        Line: o.status.Line,
-        Wrap: o.status.Wrap,
+        Line: o.ctx.Line,
+        Wrap: o.ctx.Wrap,
         X: o.delta_x,
         Y: o.delta_y,
         W: w - (rule_w * 2),
@@ -37,7 +37,7 @@ func (o *Output) hexRender(x, y, w, h int) {
 
         hex_x := line_x
 
-        if o.status.Line {
+        if o.ctx.Line {
             // offset number
             o.print(hex_x, line_y, line.Nr, themes.Subtext0)
             hex_x += len(line.Nr)

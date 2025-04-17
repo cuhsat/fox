@@ -13,8 +13,8 @@ import (
 func (o *Output) textRender(x, y, w, h int) {
     tb := block.Text(block.Context{
         Heap: o.heap,
-        Line: o.status.Line,
-        Wrap: o.status.Wrap,
+        Line: o.ctx.Line,
+        Wrap: o.ctx.Wrap,
         X: o.delta_x,
         Y: o.delta_y,
         W: w,
@@ -37,7 +37,7 @@ func (o *Output) textRender(x, y, w, h int) {
         line_y := y + i
 
         // line number
-        if o.status.Line {
+        if o.ctx.Line {
             o.print(line_x, line_y, line.Nr, themes.Subtext0)
             line_x += len(line.Nr) + block.TextSpace
         }
