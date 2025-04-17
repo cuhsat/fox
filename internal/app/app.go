@@ -381,7 +381,7 @@ func (app *App) render(hs *heapset.HeapSet) (w int, h int) {
 
     _, heap := hs.Current()
 
-    app.screen.SetTitle(fmt.Sprintf("fx - %s", heap))
+    app.screen.SetTitle(fmt.Sprintf("Forensic Examiner - %s", heap))
     app.screen.SetStyle(themes.Base)
     app.screen.Clear()
 
