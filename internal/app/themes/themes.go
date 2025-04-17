@@ -26,15 +26,17 @@ var (
 )
 
 type Themes struct {
-    palettes map[string][]int32
+    palettes map[string]palette
     names []string
     index int
 }
 
+type palette []int32
+
 func New(name string) *Themes {
     t := Themes{
-        palettes: map[string][]int32{
-            "Monokai": []int32 {
+        palettes: map[string]palette{
+            "Monokai": palette {
                 0x7f8490, 0x222327,
                 0x595f6f, 0x2c2e34,
                 0xe2e2e3, 0x414550,
@@ -52,7 +54,7 @@ func New(name string) *Themes {
                 0xb39df3,
             },
 
-            "Catppuccin-Latte": []int32 {
+            "Catppuccin-Latte": palette {
                 0x4c4f69, 0xeff1f5,
                 0xacb0be, 0xccd0da,
                 0x4c4f69, 0xbcc0cc,
@@ -70,7 +72,7 @@ func New(name string) *Themes {
                 0x209fb5,
             },
 
-            "Catppuccin-Frappe": []int32 {
+            "Catppuccin-Frappe": palette {
                 0xa5adce, 0x303446,
                 0x626880, 0x414559,
                 0xc6d0f5, 0x51576d,
@@ -88,7 +90,7 @@ func New(name string) *Themes {
                 0x85c1dc,
             },
 
-            "Catppuccin-Macchiato": []int32 {
+            "Catppuccin-Macchiato": palette {
                 0xa5adcb, 0x24273a,
                 0x5b6078, 0x363a4f,
                 0xcad3f5, 0x494d64,
@@ -106,7 +108,7 @@ func New(name string) *Themes {
                 0x7dc4e4,
             },
 
-            "Catppuccin-Mocha": []int32 {
+            "Catppuccin-Mocha": palette {
                 0xa6adc8, 0x1e1e2e,
                 0x585b70, 0x313244,
                 0xcdd6f4, 0x45475a,
@@ -124,7 +126,7 @@ func New(name string) *Themes {
                 0x74c7ec,
             }, 
 
-            "Ansi": []int32 {
+            "Ansi": palette {
                 0xC0C0C0, 0x000000,
                 0xffffff, 0x808080,
                 0x000000, 0xC0C0C0,
@@ -142,7 +144,7 @@ func New(name string) *Themes {
                 0x00ff00,
             },
 
-            "Matrix": []int32 {
+            "Matrix": palette {
                 0x008f11, 0x0d0208,
                 0x003b00, 0x0d0208,
                 0x00ff41, 0x0d0208,
@@ -160,7 +162,7 @@ func New(name string) *Themes {
                 0x00ff41,
             },
 
-            "Monochrome": []int32 {
+            "Monochrome": palette {
                 0xffffff, 0x000000,
                 0xffffff, 0x000000,
                 0xffffff, 0x000000,
@@ -223,47 +225,25 @@ func (t *Themes) Load(name string) {
 
     p := t.palettes[t.names[t.index]]
 
-    Base = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[0])).
-        Background(tcell.NewHexColor(p[1]))
-
-    Surface0 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[2])).
-        Background(tcell.NewHexColor(p[3]))
-
-    Surface1 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[4])).
-        Background(tcell.NewHexColor(p[5]))
-
-    Surface2 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[6])).
-        Background(tcell.NewHexColor(p[7]))
-
-    Surface3 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[8])).
-        Background(tcell.NewHexColor(p[9]))
-
-    Overlay0 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[10])).
-        Background(tcell.NewHexColor(p[11]))
-
-    Overlay1 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[12])).
-        Background(tcell.NewHexColor(p[13]))
-
-    Subtext0 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[14])).
-        Background(tcell.NewHexColor(p[15]))
-
-    Subtext1 = tcell.StyleDefault.
-        Foreground(tcell.NewHexColor(p[16])).
-        Background(tcell.NewHexColor(p[17]))
+    Base = newStyle(p[0], p[1])
+    Surface0 = newStyle(p[2], p[3])
+    Surface1 = newStyle(p[4], p[5])
+    Surface2 = newStyle(p[6], p[7])
+    Surface3 = newStyle(p[8], p[9])
+    Overlay0 = newStyle(p[10], p[11])
+    Overlay1 = newStyle(p[12], p[13])
+    Subtext0 = newStyle(p[14], p[15])
+    Subtext1 = newStyle(p[16], p[17])
 
     Colors = Colors[:0] // reset
 
     for i := 18; i < 24; i++ {
-        Colors = append(Colors, tcell.StyleDefault.
-            Foreground(tcell.NewHexColor(p[i])).
-            Background(tcell.NewHexColor(p[1])))
+        Colors = append(Colors, newStyle(p[i], p[1]))
     }
+}
+
+func newStyle(fg, bg int32) tcell.Style {
+    return tcell.StyleDefault.
+        Foreground(tcell.NewHexColor(fg)).
+        Background(tcell.NewHexColor(bg))
 }
