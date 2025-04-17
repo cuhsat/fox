@@ -53,7 +53,7 @@ func NewHeapSet(p []string) *HeapSet {
     }
 
     if len(hs.heaps) == 0 {
-        sys.Fatal("no files in directory")
+        sys.Fatal("no files found")
     }
 
     hs.load()
