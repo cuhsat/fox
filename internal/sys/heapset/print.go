@@ -3,9 +3,7 @@ package heapset
 import (
     "fmt"
     "math"
-    "os"
 
-    "github.com/cuhsat/fx/internal/sys"
     "github.com/cuhsat/fx/internal/sys/text"
     "github.com/cuhsat/fx/internal/sys/types"
     "github.com/cuhsat/fx/internal/sys/types/block"
@@ -15,21 +13,7 @@ type Printable interface {
     String() string
 }
 
-func (hs *HeapSet) Print(p string, hex bool) {
-    var err error
-
-    f := os.Stdout
-
-    if len(p) > 0 {
-        f, err = os.Create(p)
-
-        if err != nil {
-            sys.Fatal(err)
-        }
-
-        defer f.Close()
-    }
-
+func (hs *HeapSet) Print(hex bool) {
     ctx := block.Context{
         Line: true,
         Wrap: false,
@@ -53,11 +37,11 @@ func (hs *HeapSet) Print(p string, hex bool) {
         if hex {
             ctx.W = 67 // use default width
 
-            fmt.Fprintln(f, text.Title(h.String(), ctx.W))
+            fmt.Println(text.Title(h.String(), ctx.W))
 
-            fmt.Fprintln(f, block.Hex(ctx))
+            fmt.Println(block.Hex(ctx))
         } else {
-            fmt.Fprintln(f, block.Text(ctx))
+            fmt.Println(block.Text(ctx))
         }
     }
 }

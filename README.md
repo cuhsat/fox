@@ -13,7 +13,7 @@ $ make install
 
 ## Usage
 ```
-$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [-b FILE] [PATH ... | -]
+$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
 
 Available options:
@@ -25,7 +25,6 @@ Available options:
 * `-x` Hexdump mode
 * `-e` Pattern value
 * `-o` Output file
-* `-b` Evidence file
 
 Standard options:
 * `--help` Usage information

@@ -15,6 +15,10 @@ const (
     File = ".fx_history"
 )
 
+const (
+    Flag = os.O_CREATE | os.O_APPEND | os.O_RDWR
+)
+
 type History struct {
     file *os.File  // file handle
     lines []string // buffer lines
@@ -28,7 +32,7 @@ func NewHistory() *History {
         sys.Fatal(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, File), sys.O_HISTORY, 0600)
+    f, err := os.OpenFile(filepath.Join(dir, File), Flag, 0600)
 
     if err != nil {
         sys.Fatal(err)

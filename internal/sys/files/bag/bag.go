@@ -17,6 +17,10 @@ const (
     File = "EVIDENCE"
 )
 
+const (
+    Flag = os.O_CREATE | os.O_APPEND | os.O_WRONLY
+)
+
 type Bag struct {
     Path string   // file path
     
@@ -36,7 +40,7 @@ func (bag *Bag) Init() {
         bag.Path = File
     }
 
-    bag.file, err = os.OpenFile(bag.Path, sys.O_EVIDENCE, 0600)
+    bag.file, err = os.OpenFile(bag.Path, Flag, 0600)
 
     if err != nil {
         sys.Fatal(err)

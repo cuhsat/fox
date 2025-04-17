@@ -63,7 +63,7 @@ func Deflate(p string) string {
     n = strings.TrimSuffix(n, Z)
     n = strings.TrimSuffix(n, GZip)
 
-    f := sys.TempFile("gzip", filepath.Ext(n))
+    f := sys.Temp("gzip", filepath.Ext(n))
 
     defer f.Close()
 

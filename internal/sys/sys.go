@@ -7,11 +7,6 @@ import (
     "os"
 )
 
-const (
-    O_HISTORY  = os.O_CREATE | os.O_APPEND | os.O_RDWR
-    O_EVIDENCE = os.O_CREATE | os.O_APPEND | os.O_WRONLY
-)
-
 func Debug(a ...any) {
     fmt.Fprintln(os.Stdout, a...)
 }
@@ -35,11 +30,11 @@ func Usage(a ...any) {
 }
 
 func Stdin() string {
-    if !IsPiped(os.Stdin) {
+    if !IsPipe(os.Stdin) {
         Fatal("invalid mode")        
     }
 
-    f := TempFile("stdin", "txt")
+    f := Temp("stdin", "txt")
 
     go func(f *os.File) {
         r := bufio.NewReader(os.Stdin)
@@ -69,14 +64,14 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-    return TempFile("stdout", "txt")
+    return Temp("stdout", "txt")
 }
 
 func Stderr() *os.File {
-    return TempFile("stderr", "txt")
+    return Temp("stderr", "txt")
 }
 
-func IsPiped(f *os.File) bool {
+func IsPipe(f *os.File) bool {
     fi, err := f.Stat()
 
     if err != nil {
@@ -86,7 +81,7 @@ func IsPiped(f *os.File) bool {
     return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func TempFile(n, e string) *os.File {
+func Temp(n, e string) *os.File {
     f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", n, e))
 
     if err != nil {
