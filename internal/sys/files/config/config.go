@@ -12,7 +12,7 @@ import (
 )
 
 const (
-    File = ".fxrc"
+    filename = ".fxrc"
 )
 
 type Config struct {
@@ -37,7 +37,7 @@ func Load() *Config {
         sys.Fatal(err)
     }
 
-    p := filepath.Join(dir, File)
+    p := filepath.Join(dir, filename)
 
     _, err = os.Stat(p)
 
@@ -82,7 +82,7 @@ func (c *Config) Save() {
         sys.Fatal(err)
     }
 
-    p := filepath.Join(dir, File)
+    p := filepath.Join(dir, filename)
 
     err = os.WriteFile(p, b.Bytes(), 0600)
 

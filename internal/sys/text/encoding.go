@@ -6,13 +6,13 @@ import (
 )
 
 const (
-    MinASCII = 0x20
-    MaxASCII = 0x7f
+    minASCII = 0x20
+    maxASCII = 0x7f
 )
 
 const (
-    NotASCII = '.'
-    NotUnicode = '·'
+    notASCII = '.'
+    notUnicode = '·'
 )
 
 func ToASCII(s string) string {
@@ -26,8 +26,8 @@ func ToASCII(s string) string {
 }
 
 func AsASCII(r rune) rune {
-    if r < MinASCII || r > MaxASCII {
-        return NotASCII
+    if r < minASCII || r > maxASCII {
+        return notASCII
     } else {
         return r
     }
@@ -35,7 +35,7 @@ func AsASCII(r rune) rune {
 
 func AsUnicode(r rune) rune {
     if !unicode.IsPrint(r) {
-        return NotUnicode
+        return notUnicode
     } else {
         return r
     }

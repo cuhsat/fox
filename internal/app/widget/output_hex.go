@@ -6,11 +6,11 @@ import (
 )
 
 const (
-    Rule = "┃"
+    rule = "┃"
 )
 
 func (o *Output) hexRender(x, y, w, h int) {
-    rule_w := block.SpaceHex * 2
+    rule_w := block.HexSpace * 2
 
     hb := block.Hex(block.Context{
         Heap: o.heap,
@@ -23,7 +23,7 @@ func (o *Output) hexRender(x, y, w, h int) {
     })
 
     if len(hb.Lines) > 0 {
-        w -= len(hb.Lines[0].Nr) + block.SpaceHex
+        w -= len(hb.Lines[0].Nr) + block.HexSpace
     }
 
     // set block bounds
@@ -43,7 +43,7 @@ func (o *Output) hexRender(x, y, w, h int) {
             hex_x += len(line.Nr)
 
             // offset separator
-            o.print(hex_x, line_y, Rule, themes.Subtext1)
+            o.print(hex_x, line_y, rule, themes.Subtext1)
             hex_x += rule_w
         }
 
@@ -52,7 +52,7 @@ func (o *Output) hexRender(x, y, w, h int) {
         text_x := hex_x + len(line.Hex)
 
         // hex separator
-        o.print(text_x, line_y, Rule, themes.Subtext1)
+        o.print(text_x, line_y, rule, themes.Subtext1)
         text_x += rule_w
 
         // text value

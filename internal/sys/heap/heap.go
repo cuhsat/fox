@@ -83,11 +83,11 @@ func (h *Heap) Reload() {
 
     l := types.GetLimits()
 
-    // reduced mmap
-    h.MMap, h.Head, h.Tail = l.ReduceMMap(h.MMap)
+    // reduce mmap
+    h.MMap, h.Head, h.Tail = l.MMapReduce(h.MMap)
 
-    // reduced smap
-    h.SMap = l.ReduceSMap(smap.Map(h.MMap))
+    // reduce smap
+    h.SMap = l.SMapReduce(smap.Map(h.MMap))
 
     h.rmap = h.SMap
     h.hash = make(Hash)

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-    DelayShort = 2 // seconds
-    DelayLong  = 5 // seconds
+    delayShort = 2 // seconds
+    delayLong  = 5 // seconds
 )
 
 type Overlay struct {
@@ -50,7 +50,7 @@ func (o *Overlay) SendError(err string) {
     o.ch <- message{
         value: err,
         style: themes.Overlay0,
-        delay: DelayLong,
+        delay: delayLong,
     }
 }
 
@@ -58,7 +58,7 @@ func (o *Overlay) SendStatus(msg string) {
     o.ch <- message{
         value: msg,
         style: themes.Overlay1,
-        delay: DelayShort,
+        delay: delayShort,
     }
 }
 

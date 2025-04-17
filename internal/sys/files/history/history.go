@@ -12,11 +12,7 @@ import (
 )
 
 const (
-    File = ".fx_history"
-)
-
-const (
-    Flag = os.O_CREATE | os.O_APPEND | os.O_RDWR
+    filename = ".fx_history"
 )
 
 type History struct {
@@ -25,14 +21,16 @@ type History struct {
     index int      // buffer index
 }
 
-func NewHistory() *History {
+func New() *History {
     dir, err := os.UserHomeDir()
 
     if err != nil {
         sys.Fatal(err)
     }
 
-    f, err := os.OpenFile(filepath.Join(dir, File), Flag, 0600)
+    p := filepath.Join(dir, filename)
+
+    f, err := os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
     if err != nil {
         sys.Fatal(err)

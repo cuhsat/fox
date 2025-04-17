@@ -17,12 +17,12 @@ import (
 )
 
 const (
-    Delta = 1 // lines
+    delta = 1 // lines
 )
 
 const (
-    LBracket = "ESC[200~" // bracketed paste start
-    RBracket = "ESC[201~" // bracketed paste end
+    bracketL = "ESC[200~" // bracketed paste start
+    bracketR = "ESC[201~" // bracketed paste end
 )
 
 type App struct {
@@ -37,7 +37,7 @@ type App struct {
     overlay *widget.Overlay
 }
 
-func NewApp(m mode.Mode) *App {
+func New(m mode.Mode) *App {
     encoding.Register()
 
     scr, err := tcell.NewScreen()
@@ -61,7 +61,7 @@ func NewApp(m mode.Mode) *App {
     app := App{
         screen:  scr,
         status:  stt,
-        themes:  themes.NewThemes(stt.Theme),
+        themes:  themes.New(stt.Theme),
         header:  widget.NewHeader(scr, stt),
         output:  widget.NewOutput(scr, stt),
         prompt:  widget.NewPrompt(scr, stt),
@@ -104,8 +104,8 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
             v := string(ev.Data())
 
-            v = strings.TrimPrefix(v, LBracket)
-            v = strings.TrimSuffix(v, RBracket)
+            v = strings.TrimPrefix(v, bracketL)
+            v = strings.TrimSuffix(v, bracketR)
 
             app.prompt.Value = v
 
@@ -119,16 +119,16 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         case *tcell.EventMouse:
             switch ev.Buttons() {
             case tcell.WheelUp:
-                app.output.ScrollUp(Delta)
+                app.output.ScrollUp(delta)
 
             case tcell.WheelDown:
-                app.output.ScrollDown(Delta)
+                app.output.ScrollDown(delta)
 
             case tcell.WheelLeft:
-                app.output.ScrollLeft(Delta)
+                app.output.ScrollLeft(delta)
 
             case tcell.WheelRight:
-                app.output.ScrollRight(Delta)
+                app.output.ScrollRight(delta)
 
             case tcell.ButtonMiddle:
                 app.screen.GetClipboard()
@@ -242,7 +242,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 } else if mods & tcell.ModShift != 0 {
                     app.output.ScrollUp(page_h)
                 } else {
-                    app.output.ScrollUp(Delta)
+                    app.output.ScrollUp(delta)
                 }
 
             case tcell.KeyDown:
@@ -253,21 +253,21 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 } else if mods & tcell.ModShift != 0 {
                     app.output.ScrollDown(page_h)
                 } else {
-                    app.output.ScrollDown(Delta)
+                    app.output.ScrollDown(delta)
                 }
 
             case tcell.KeyLeft:
                 if mods & tcell.ModShift != 0 {
                     app.output.ScrollLeft(page_w)
                 } else {
-                    app.output.ScrollLeft(Delta)
+                    app.output.ScrollLeft(delta)
                 }
 
             case tcell.KeyRight:
                 if mods & tcell.ModShift != 0 {
                     app.output.ScrollRight(page_w)
                 } else {
-                    app.output.ScrollRight(Delta)
+                    app.output.ScrollRight(delta)
                 }
 
             case tcell.KeyPgUp:

@@ -24,7 +24,7 @@ func (o *Output) textRender(x, y, w, h int) {
     o.smap = tb.SMap
 
     if len(tb.Lines) > 0 {
-        w -= len(tb.Lines[0].Nr) + block.SpaceText
+        w -= len(tb.Lines[0].Nr) + block.TextSpace
     }
 
     // set block bounds
@@ -39,7 +39,7 @@ func (o *Output) textRender(x, y, w, h int) {
         // line number
         if o.status.Line {
             o.print(line_x, line_y, line.Nr, themes.Subtext0)
-            line_x += len(line.Nr) + block.SpaceText
+            line_x += len(line.Nr) + block.TextSpace
         }
 
         // text value

@@ -14,11 +14,7 @@ import (
 )
 
 const (
-    File = "EVIDENCE"
-)
-
-const (
-    Flag = os.O_CREATE | os.O_APPEND | os.O_WRONLY
+    filename = "EVIDENCE"
 )
 
 type Bag struct {
@@ -27,29 +23,15 @@ type Bag struct {
     file *os.File // file handle
 }
 
-func NewBag(p string) *Bag {
+func New(p string) *Bag {
     return &Bag{
         Path: p,
     }
 }
 
-func (bag *Bag) Init() {
-    var err error
-
-    if len(bag.Path) == 0 {
-        bag.Path = File
-    }
-
-    bag.file, err = os.OpenFile(bag.Path, Flag, 0600)
-
-    if err != nil {
-        sys.Fatal(err)
-    }
-}
-
 func (bag *Bag) Put(h *heap.Heap) {
     if bag.file == nil {
-        bag.Init()
+        bag.mustInit()
     }
 
     var b []string
@@ -95,3 +77,18 @@ func (bag *Bag) Close() {
         bag.file.Close()
     }
 }
+
+func (bag *Bag) mustInit() {
+    var err error
+
+    if len(bag.Path) == 0 {
+        bag.Path = filename
+    }
+
+    bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+
+    if err != nil {
+        sys.Fatal(err)
+    }
+}
+
