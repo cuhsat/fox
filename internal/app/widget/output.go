@@ -21,11 +21,11 @@ type Output struct {
     delta_y int
 }
 
-func NewOutput(ctx *Context, screen tcell.Screen) *Output {
+func NewOutput(ctx *Context, term tcell.Screen) *Output {
     return &Output{
         widget: widget{
             ctx: ctx,
-            screen: screen,
+            term: term,
         },
 
         last_x: 0,

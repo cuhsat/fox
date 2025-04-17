@@ -28,9 +28,9 @@ const (
 type App struct {
     ctx *widget.Context
 
-    screen  tcell.Screen
+    term tcell.Screen
 
-    themes  *themes.Themes
+    themes *themes.Themes
 
     header  *widget.Header
     output  *widget.Output
@@ -41,35 +41,35 @@ type App struct {
 func New(m mode.Mode) *App {
     encoding.Register()
 
-    scr, err := tcell.NewScreen()
+    term, err := tcell.NewScreen()
 
     if err != nil {
         sys.Fatal(err)
     }
 
-    err = scr.Init()
+    err = term.Init()
 
     if err != nil {
         sys.Fatal(err)
     }
 
-    scr.EnableMouse()
-    scr.EnablePaste()
-    scr.HideCursor()
+    term.EnableMouse()
+    term.EnablePaste()
+    term.HideCursor()
 
     ctx := widget.NewContext()
 
     app := App{
         ctx: ctx,
 
-        screen: scr,
+        term: term,
 
         themes: themes.New(ctx.Theme),
 
-        header:  widget.NewHeader(ctx, scr),
-        output:  widget.NewOutput(ctx, scr),
-        prompt:  widget.NewPrompt(ctx, scr),
-        overlay: widget.NewOverlay(ctx, scr),
+        header:  widget.NewHeader(ctx, term),
+        output:  widget.NewOutput(ctx, term),
+        prompt:  widget.NewPrompt(ctx, term),
+        overlay: widget.NewOverlay(ctx, term),
     }
 
     app.State(m)
@@ -79,7 +79,7 @@ func New(m mode.Mode) *App {
 
 func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.SetCallback(func() {
-        app.screen.PostEvent(tcell.NewEventInterrupt(app.ctx.Follow))
+        app.term.PostEvent(tcell.NewEventInterrupt(app.ctx.Follow))
     })
 
     go app.overlay.Watch()
@@ -89,7 +89,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
         w, h := app.render(hs)
 
-        ev := app.screen.PollEvent()
+        ev := app.term.PollEvent()
 
         switch ev := ev.(type) {
         case *tcell.EventInterrupt:
@@ -114,7 +114,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             app.prompt.Value = v
 
         case *tcell.EventResize:
-            app.screen.Sync()
+            app.term.Sync()
             app.output.Reset()
 
         case *tcell.EventError:
@@ -135,7 +135,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 app.output.ScrollRight(delta)
 
             case tcell.ButtonMiddle:
-                app.screen.GetClipboard()
+                app.term.GetClipboard()
             }
 
         case *tcell.EventKey:
@@ -179,14 +179,14 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     continue
                 }
 
-                app.screen.GetClipboard()
+                app.term.GetClipboard()
 
             case tcell.KeyCtrlC:
                 if app.ctx.Mode == mode.Hex {
                     continue
                 }
 
-                app.screen.SetClipboard(heap.Bytes())
+                app.term.SetClipboard(heap.Bytes())
 
                 app.overlay.SendInfo("Copied to clipboard")
 
@@ -216,8 +216,8 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlT:
                 app.ctx.Theme = app.themes.Cycle()
 
-                app.screen.Fill(' ', themes.Base)
-                app.screen.Show()
+                app.term.Fill(' ', themes.Base)
+                app.term.Show()
 
                 app.overlay.SendInfo(fmt.Sprintf("Theme %s", app.ctx.Theme))
 
@@ -371,7 +371,7 @@ func (app *App) Close() {
 
     defer app.ctx.Save()
 
-    defer app.screen.Fini()
+    defer app.term.Fini()
 
     defer app.overlay.Close()
     
@@ -381,16 +381,16 @@ func (app *App) Close() {
 }
 
 func (app *App) render(hs *heapset.HeapSet) (w int, h int) {
-    defer app.screen.Show()
+    defer app.term.Show()
 
     _, heap := hs.Current()
 
-    app.screen.SetTitle(fmt.Sprintf("Forensic Examiner - %s", heap))
-    app.screen.SetStyle(themes.Base)
-    app.screen.Clear()
+    app.term.SetTitle(fmt.Sprintf("Forensic Examiner - %s", heap))
+    app.term.SetStyle(themes.Base)
+    app.term.Clear()
 
     x, y := 0, 0
-    w, h = app.screen.Size()
+    w, h = app.term.Size()
 
     for _, widget := range [...]widget.Queueable{
         app.header,

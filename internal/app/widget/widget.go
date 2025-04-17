@@ -12,13 +12,13 @@ type Queueable interface {
 }
 
 type widget struct {
-    ctx    *Context
-    screen tcell.Screen
+    ctx *Context
+    term tcell.Screen
 }
 
 func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {
     for i := 0; i < w; i++ {
-        wi.screen.SetContent(x + i, y, ' ', nil, sty)
+        wi.term.SetContent(x + i, y, ' ', nil, sty)
     }
 }
 
@@ -31,12 +31,12 @@ func (wi *widget) print(x, y int, s string, sty tcell.Style) {
             r = text.AsUnicode(r)
         }
 
-        wi.screen.SetContent(x, y, r, nil, sty)
+        wi.term.SetContent(x, y, r, nil, sty)
 
         x += runewidth.RuneWidth(r)
     }
 }
 
 func (wi *widget) error(err error) {
-    wi.screen.PostEvent(tcell.NewEventError(err))
+    wi.term.PostEvent(tcell.NewEventError(err))
 }
