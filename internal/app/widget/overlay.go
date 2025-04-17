@@ -26,11 +26,11 @@ type message struct {
     delay time.Duration
 } 
 
-func NewOverlay(screen tcell.Screen, status *Status) *Overlay {
+func NewOverlay(ctx *Context, screen tcell.Screen) *Overlay {
     return &Overlay{
         widget: widget{
+            ctx: ctx,
             screen: screen,
-            status: status,
         },
         
         ch: make(chan message, 64),
@@ -54,7 +54,7 @@ func (o *Overlay) SendError(err string) {
     }
 }
 
-func (o *Overlay) SendStatus(msg string) {
+func (o *Overlay) SendInfo(msg string) {
     o.ch <- message{
         value: msg,
         style: themes.Overlay1,

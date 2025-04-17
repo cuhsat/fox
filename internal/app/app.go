@@ -26,11 +26,12 @@ const (
 )
 
 type App struct {
+    ctx *widget.Context
+
     screen  tcell.Screen
 
     themes  *themes.Themes
 
-    status  *widget.Status
     header  *widget.Header
     output  *widget.Output
     prompt  *widget.Prompt
@@ -56,16 +57,19 @@ func New(m mode.Mode) *App {
     scr.EnablePaste()
     scr.HideCursor()
 
-    stt := widget.NewStatus()
+    ctx := widget.NewContext()
 
     app := App{
-        screen:  scr,
-        status:  stt,
-        themes:  themes.New(stt.Theme),
-        header:  widget.NewHeader(scr, stt),
-        output:  widget.NewOutput(scr, stt),
-        prompt:  widget.NewPrompt(scr, stt),
-        overlay: widget.NewOverlay(scr, stt),
+        ctx: ctx,
+
+        screen: scr,
+
+        themes: themes.New(ctx.Theme),
+
+        header:  widget.NewHeader(ctx, scr),
+        output:  widget.NewOutput(ctx, scr),
+        prompt:  widget.NewPrompt(ctx, scr),
+        overlay: widget.NewOverlay(ctx, scr),
     }
 
     app.State(m)
@@ -75,7 +79,7 @@ func New(m mode.Mode) *App {
 
 func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.SetCallback(func() {
-        app.screen.PostEvent(tcell.NewEventInterrupt(app.status.Follow))
+        app.screen.PostEvent(tcell.NewEventInterrupt(app.ctx.Follow))
     })
 
     go app.overlay.Watch()
@@ -98,7 +102,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             continue
 
         case *tcell.EventClipboard:
-            if app.status.Mode == mode.Hex {
+            if app.ctx.Mode == mode.Hex {
                 continue
             }
 
@@ -171,29 +175,29 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 hs.Sha256()
 
             case tcell.KeyCtrlV:
-                if app.status.Mode == mode.Hex {
+                if app.ctx.Mode == mode.Hex {
                     continue
                 }
 
                 app.screen.GetClipboard()
 
             case tcell.KeyCtrlC:
-                if app.status.Mode == mode.Hex {
+                if app.ctx.Mode == mode.Hex {
                     continue
                 }
 
                 app.screen.SetClipboard(heap.Bytes())
 
-                app.overlay.SendStatus("Copied to clipboard")
+                app.overlay.SendInfo("Copied to clipboard")
 
             case tcell.KeyCtrlS:
-                if app.status.Mode == mode.Hex {
+                if app.ctx.Mode == mode.Hex {
                     continue
                 }
 
                 bag.Put(heap)
 
-                app.overlay.SendStatus(fmt.Sprintf("Saved to %s", bag.Path))
+                app.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
 
             case tcell.KeyCtrlQ:
                 app.output.Reset()
@@ -210,21 +214,21 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 heap.Reload()
 
             case tcell.KeyCtrlT:
-                app.status.Theme = app.themes.Cycle()
+                app.ctx.Theme = app.themes.Cycle()
 
                 app.screen.Fill(' ', themes.Base)
                 app.screen.Show()
 
-                app.overlay.SendStatus(fmt.Sprintf("Theme %s", app.status.Theme))
+                app.overlay.SendInfo(fmt.Sprintf("Theme %s", app.ctx.Theme))
 
             case tcell.KeyCtrlF:
-                app.status.ToggleFollow()
+                app.ctx.ToggleFollow()
 
             case tcell.KeyCtrlN:
-                app.status.ToggleNumbers()
+                app.ctx.ToggleNumbers()
 
             case tcell.KeyCtrlW:
-                app.status.ToggleWrap()
+                app.ctx.ToggleWrap()
 
                 app.output.Reset()
 
@@ -285,11 +289,11 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 hi.AddCommand(v)
 
-                switch app.status.Mode {
+                switch app.ctx.Mode {
                 case mode.Goto:
                     app.output.Goto(v)
 
-                    app.State(app.status.Last)
+                    app.State(app.ctx.Last)
 
                 default:
                     app.output.Reset()
@@ -309,12 +313,12 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyBackspace2:
                 if len(app.prompt.Value) > 0 {
                     app.prompt.DelRune()
-                } else if app.status.Mode == mode.Goto {
-                    app.State(app.status.Last)
+                } else if app.ctx.Mode == mode.Goto {
+                    app.State(app.ctx.Last)
                 } else if len(*types.GetFilters()) > 0 {
                     app.output.Reset()
                     heap.DelFilter()
-                } else if app.status.Mode == mode.Grep {
+                } else if app.ctx.Mode == mode.Grep {
                     app.State(mode.Less)
                 }
 
@@ -326,14 +330,14 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     continue
 
                 case 32: // space
-                    if app.status.Mode == mode.Less {
+                    if app.ctx.Mode == mode.Less {
                         app.output.ScrollDown(page_h)
                     } else {
                         app.prompt.AddRune(r)
                     }
 
                 default: // all other keys
-                    if app.status.Mode == mode.Less {
+                    if app.ctx.Mode == mode.Less {
                         app.State(mode.Grep)
                     }
 
@@ -345,7 +349,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 }
 
 func (app *App) State(m mode.Mode) {
-    if !app.status.SwitchMode(m) {
+    if !app.ctx.SwitchMode(m) {
         return
     }
 
@@ -357,7 +361,7 @@ func (app *App) State(m mode.Mode) {
         app.prompt.Lock = false
     }
 
-    if app.status.Last == mode.Hex || m == mode.Hex {
+    if app.ctx.Last == mode.Hex || m == mode.Hex {
         app.output.Reset()
     }
 }
@@ -365,7 +369,7 @@ func (app *App) State(m mode.Mode) {
 func (app *App) Close() {
     r := recover()
 
-    defer app.status.Save()
+    defer app.ctx.Save()
 
     defer app.screen.Fini()
 

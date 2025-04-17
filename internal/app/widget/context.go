@@ -5,15 +5,15 @@ import (
     "github.com/cuhsat/fx/internal/sys/types/mode"
 )
 
-type Status struct {
+type Context struct {
     config.Config
 
     Mode mode.Mode
     Last mode.Mode
 }
 
-func NewStatus() *Status {
-    return &Status{
+func NewContext() *Context {
+    return &Context{
         Config: *config.Load(),
 
         Mode: mode.Default,
@@ -21,31 +21,31 @@ func NewStatus() *Status {
     }
 }
 
-func (s *Status) SwitchMode(m mode.Mode) bool {
+func (ctx *Context) SwitchMode(m mode.Mode) bool {
     // deny goto in hex mode
-    if m == mode.Goto && s.Mode == mode.Hex {
+    if m == mode.Goto && ctx.Mode == mode.Hex {
         return false
     }
 
     // react only to mode changes
-    if m == s.Mode {
+    if m == ctx.Mode {
         return false
     }
 
-    s.Last = s.Mode
-    s.Mode = m
+    ctx.Last = ctx.Mode
+    ctx.Mode = m
 
     return true
 }
 
-func (s *Status) ToggleFollow() {
-    s.Follow = !s.Follow
+func (ctx *Context) ToggleFollow() {
+    ctx.Follow = !ctx.Follow
 }
 
-func (s *Status) ToggleNumbers() {
-    s.Line = !s.Line
+func (ctx *Context) ToggleNumbers() {
+    ctx.Line = !ctx.Line
 }
 
-func (s *Status) ToggleWrap() {
-    s.Wrap = !s.Wrap
+func (ctx *Context) ToggleWrap() {
+    ctx.Wrap = !ctx.Wrap
 }

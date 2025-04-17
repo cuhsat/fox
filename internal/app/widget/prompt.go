@@ -27,11 +27,11 @@ type Prompt struct {
     Value string
 }
 
-func NewPrompt(screen tcell.Screen, status *Status) *Prompt {
+func NewPrompt(ctx *Context, screen tcell.Screen) *Prompt {
     return &Prompt{
         widget: widget{
+            ctx: ctx,
             screen: screen,
-            status: status,
         },
 
         Lock: true,
@@ -48,7 +48,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     // render mode
     p.print(x, y, m, themes.Surface3)
 
-    if p.status.Mode == mode.Hex {
+    if p.ctx.Mode == mode.Hex {
         return 1
     }
 
@@ -91,11 +91,11 @@ func (p *Prompt) Accept() (s string) {
 }
 
 func (p *Prompt) formatMode() string {
-    return fmt.Sprintf(" %s ", p.status.Mode)
+    return fmt.Sprintf(" %s ", p.ctx.Mode)
 }
 
 func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
-    if p.status.Mode == mode.Grep {
+    if p.ctx.Mode == mode.Grep {
         for _, f := range *types.GetFilters() {
             s = fmt.Sprintf("%s %s %s", s, f, filter)
         }        
@@ -109,15 +109,15 @@ func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
 func (p *Prompt) formatStatus(h *heap.Heap) string {
     f, n, w := " ", " ", " "
 
-    if p.status.Follow {
+    if p.ctx.Follow {
         f = follow
     }
 
-    if p.status.Line {
+    if p.ctx.Line {
         n = line
     }
 
-    if p.status.Wrap {
+    if p.ctx.Wrap {
         w = wrap
     }
 
