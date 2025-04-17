@@ -39,23 +39,23 @@ func (o *Output) hexRender(x, y, w, h int) {
 
         if o.status.Line {
             // offset number
-            o.print(hex_x, line_y, line.Nr, themes.Hint)
+            o.print(hex_x, line_y, line.Nr, themes.Subtext0)
             hex_x += len(line.Nr)
 
             // offset separator
-            o.print(hex_x, line_y, Rule, themes.Rule)
+            o.print(hex_x, line_y, Rule, themes.Subtext1)
             hex_x += rule_w
         }
 
         // hex values
-        o.print(hex_x, line_y, line.Hex, themes.Output)
+        o.print(hex_x, line_y, line.Hex, themes.Base)
         text_x := hex_x + len(line.Hex)
 
         // hex separator
-        o.print(text_x, line_y, Rule, themes.Rule)
+        o.print(text_x, line_y, Rule, themes.Subtext1)
         text_x += rule_w
 
         // text value
-        o.print(text_x, line_y, line.Str, themes.Output)
+        o.print(text_x, line_y, line.Str, themes.Base)
     }
 }

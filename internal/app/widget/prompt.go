@@ -43,10 +43,10 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     m := p.formatMode()
 
     // render blank line
-    p.printBlank(x, y, w, themes.Line)
+    p.printBlank(x, y, w, themes.Surface0)
 
     // render mode
-    p.print(x, y, m, themes.Mode)
+    p.print(x, y, m, themes.Surface3)
 
     if p.status.Mode == mode.Hex {
         return 1
@@ -61,11 +61,11 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     // render filters
     if !p.Lock {
-        p.print(x, y, text.Abr(f, x, w-text.Len(s)), themes.Input)
+        p.print(x, y, text.Abr(f, x, w-text.Len(s)), themes.Surface1)
     }
 
     // render status
-    p.print(w-text.Len(s), y, s, themes.Input)
+    p.print(w-text.Len(s), y, s, themes.Surface1)
 
     return 1
 }
