@@ -4,8 +4,8 @@ import (
     "fmt"
     "strings"
 
+    "github.com/cuhsat/fx/internal/app/library"
     "github.com/cuhsat/fx/internal/app/themes"
-    "github.com/cuhsat/fx/internal/app/widget"
     "github.com/cuhsat/fx/internal/sys"
     "github.com/cuhsat/fx/internal/sys/files/bag"
     "github.com/cuhsat/fx/internal/sys/files/history"
@@ -26,16 +26,17 @@ const (
 )
 
 type App struct {
-    ctx *widget.Context
+    ctx *library.Context
 
     term tcell.Screen
 
     themes *themes.Themes
 
-    header  *widget.Header
-    output  *widget.Output
-    prompt  *widget.Prompt
-    overlay *widget.Overlay
+    title  *library.Title
+    buffer *library.Buffer
+    prompt *library.Prompt
+    
+    overlay *library.Overlay
 }
 
 func New(m mode.Mode) *App {
@@ -57,7 +58,7 @@ func New(m mode.Mode) *App {
     term.EnablePaste()
     term.HideCursor()
 
-    ctx := widget.NewContext()
+    ctx := library.NewContext()
 
     app := App{
         ctx: ctx,
@@ -66,10 +67,10 @@ func New(m mode.Mode) *App {
 
         themes: themes.New(ctx.Theme),
 
-        header:  widget.NewHeader(ctx, term),
-        output:  widget.NewOutput(ctx, term),
-        prompt:  widget.NewPrompt(ctx, term),
-        overlay: widget.NewOverlay(ctx, term),
+        title:   library.NewTitle(ctx, term),
+        buffer:  library.NewBuffer(ctx, term),
+        prompt:  library.NewPrompt(ctx, term),
+        overlay: library.NewOverlay(ctx, term),
     }
 
     app.State(m)
@@ -96,7 +97,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             v, ok := ev.Data().(bool)
 
             if ok && v {
-                app.output.ScrollEnd()
+                app.buffer.ScrollEnd()
             }
 
             continue
@@ -115,7 +116,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
         case *tcell.EventResize:
             app.term.Sync()
-            app.output.Reset()
+            app.buffer.Reset()
 
         case *tcell.EventError:
             app.overlay.SendError(ev.Error())
@@ -123,16 +124,16 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         case *tcell.EventMouse:
             switch ev.Buttons() {
             case tcell.WheelUp:
-                app.output.ScrollUp(delta)
+                app.buffer.ScrollUp(delta)
 
             case tcell.WheelDown:
-                app.output.ScrollDown(delta)
+                app.buffer.ScrollDown(delta)
 
             case tcell.WheelLeft:
-                app.output.ScrollLeft(delta)
+                app.buffer.ScrollLeft(delta)
 
             case tcell.WheelRight:
-                app.output.ScrollRight(delta)
+                app.buffer.ScrollRight(delta)
 
             case tcell.ButtonMiddle:
                 app.term.GetClipboard()
@@ -200,7 +201,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 app.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
 
             case tcell.KeyCtrlQ:
-                app.output.Reset()
+                app.buffer.Reset()
 
                 heap = hs.CloseHeap()
 
@@ -209,7 +210,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 }
 
             case tcell.KeyCtrlR:
-                app.output.Reset()
+                app.buffer.Reset()
                 
                 heap.Reload()
 
@@ -230,55 +231,55 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlW:
                 app.ctx.ToggleWrap()
 
-                app.output.Reset()
+                app.buffer.Reset()
 
             case tcell.KeyHome:
-                app.output.ScrollStart()
+                app.buffer.ScrollStart()
 
             case tcell.KeyEnd:
-                app.output.ScrollEnd()
+                app.buffer.ScrollEnd()
 
             case tcell.KeyUp:
                 if mods & tcell.ModAlt != 0 {
                     app.prompt.Value = hi.PrevCommand()
                 } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
-                    app.output.ScrollStart()
+                    app.buffer.ScrollStart()
                 } else if mods & tcell.ModShift != 0 {
-                    app.output.ScrollUp(page_h)
+                    app.buffer.ScrollUp(page_h)
                 } else {
-                    app.output.ScrollUp(delta)
+                    app.buffer.ScrollUp(delta)
                 }
 
             case tcell.KeyDown:
                 if mods & tcell.ModAlt != 0 {
                     app.prompt.Value = hi.NextCommand()
                 } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
-                    app.output.ScrollEnd()
+                    app.buffer.ScrollEnd()
                 } else if mods & tcell.ModShift != 0 {
-                    app.output.ScrollDown(page_h)
+                    app.buffer.ScrollDown(page_h)
                 } else {
-                    app.output.ScrollDown(delta)
+                    app.buffer.ScrollDown(delta)
                 }
 
             case tcell.KeyLeft:
                 if mods & tcell.ModShift != 0 {
-                    app.output.ScrollLeft(page_w)
+                    app.buffer.ScrollLeft(page_w)
                 } else {
-                    app.output.ScrollLeft(delta)
+                    app.buffer.ScrollLeft(delta)
                 }
 
             case tcell.KeyRight:
                 if mods & tcell.ModShift != 0 {
-                    app.output.ScrollRight(page_w)
+                    app.buffer.ScrollRight(page_w)
                 } else {
-                    app.output.ScrollRight(delta)
+                    app.buffer.ScrollRight(delta)
                 }
 
             case tcell.KeyPgUp:
-                app.output.ScrollUp(page_h)
+                app.buffer.ScrollUp(page_h)
 
             case tcell.KeyPgDn:
-                app.output.ScrollDown(page_h)
+                app.buffer.ScrollDown(page_h)
 
             case tcell.KeyEnter:
                 v := app.prompt.Accept()
@@ -291,18 +292,18 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 switch app.ctx.Mode {
                 case mode.Goto:
-                    app.output.Goto(v)
+                    app.buffer.Goto(v)
 
                     app.State(app.ctx.Last)
 
                 default:
-                    app.output.Reset()
+                    app.buffer.Reset()
                 
                     heap.AddFilter(v)
                 }
 
             case tcell.KeyTab:
-                app.output.Reset()
+                app.buffer.Reset()
 
                 if mods & tcell.ModShift != 0 {
                     heap = hs.PrevHeap()
@@ -316,7 +317,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 } else if app.ctx.Mode == mode.Goto {
                     app.State(app.ctx.Last)
                 } else if len(*types.GetFilters()) > 0 {
-                    app.output.Reset()
+                    app.buffer.Reset()
                     heap.DelFilter()
                 } else if app.ctx.Mode == mode.Grep {
                     app.State(mode.Less)
@@ -331,7 +332,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 case 32: // space
                     if app.ctx.Mode == mode.Less {
-                        app.output.ScrollDown(page_h)
+                        app.buffer.ScrollDown(page_h)
                     } else {
                         app.prompt.AddRune(r)
                     }
@@ -362,7 +363,7 @@ func (app *App) State(m mode.Mode) {
     }
 
     if app.ctx.Last == mode.Hex || m == mode.Hex {
-        app.output.Reset()
+        app.buffer.Reset()
     }
 }
 
@@ -392,12 +393,12 @@ func (app *App) render(hs *heapset.HeapSet) (w int, h int) {
     x, y := 0, 0
     w, h = app.term.Size()
 
-    for _, widget := range [...]widget.Queueable{
-        app.header,
-        app.output,
+    for _, base := range [...]library.Queueable{
+        app.title,
+        app.buffer,
         app.prompt,
-    }{
-        y += widget.Render(hs, x, y, w, h-y)
+    } {
+        y += base.Render(hs, x, y, w, h-y)
     }
 
     app.overlay.Render(0, 0, w, h)

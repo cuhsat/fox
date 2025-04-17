@@ -1,4 +1,4 @@
-package widget
+package library
 
 import (
     "fmt"
@@ -9,20 +9,20 @@ import (
     "github.com/gdamore/tcell/v2"
 )
 
-type Header struct {
-    widget
+type Title struct {
+    base
 }
 
-func NewHeader(ctx *Context, term tcell.Screen) *Header {
-    return &Header{
-        widget: widget{
+func NewTitle(ctx *Context, term tcell.Screen) *Title {
+    return &Title{
+        base: base{
             ctx: ctx,
             term: term,
         },
     }
 }
 
-func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
+func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     n, heap := hs.Current()
     m := hs.Length()
     p := heap.String()
@@ -34,13 +34,13 @@ func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     }
 
     // render blank line
-    hd.printBlank(x, y, w, themes.Surface0)
+    t.blank(x, y, w, themes.Surface0)
 
     // render heap file path
-    hd.print(x, y, text.Abr(p, x, w-text.Len(i)), themes.Surface2)
+    t.print(x, y, text.Abr(p, x, w-text.Len(i)), themes.Surface2)
 
     // render heapset index
-    hd.print(x + w-text.Len(i), y, i, themes.Surface1)
+    t.print(x + w-text.Len(i), y, i, themes.Surface1)
 
     return 1
 }
