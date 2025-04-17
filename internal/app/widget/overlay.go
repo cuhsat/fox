@@ -26,11 +26,11 @@ type message struct {
     delay time.Duration
 } 
 
-func NewOverlay(ctx *Context, screen tcell.Screen) *Overlay {
+func NewOverlay(ctx *Context, term tcell.Screen) *Overlay {
     return &Overlay{
         widget: widget{
             ctx: ctx,
-            screen: screen,
+            term: term,
         },
         
         ch: make(chan message, 64),
@@ -70,7 +70,7 @@ func (o *Overlay) Watch() {
 
         o.buffer = nil
 
-        o.screen.PostEvent(tcell.NewEventInterrupt(nil))
+        o.term.PostEvent(tcell.NewEventInterrupt(nil))
     }
 }
 

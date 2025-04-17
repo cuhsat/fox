@@ -27,11 +27,11 @@ type Prompt struct {
     Value string
 }
 
-func NewPrompt(ctx *Context, screen tcell.Screen) *Prompt {
+func NewPrompt(ctx *Context, term tcell.Screen) *Prompt {
     return &Prompt{
         widget: widget{
             ctx: ctx,
-            screen: screen,
+            term: term,
         },
 
         Lock: true,

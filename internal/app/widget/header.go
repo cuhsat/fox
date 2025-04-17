@@ -13,11 +13,11 @@ type Header struct {
     widget
 }
 
-func NewHeader(ctx *Context, screen tcell.Screen) *Header {
+func NewHeader(ctx *Context, term tcell.Screen) *Header {
     return &Header{
         widget: widget{
             ctx: ctx,
-            screen: screen,
+            term: term,
         },
     }
 }
