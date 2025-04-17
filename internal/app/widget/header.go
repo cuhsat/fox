@@ -34,13 +34,13 @@ func (hd *Header) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     }
 
     // render blank line
-    hd.printBlank(x, y, w, themes.Line)
+    hd.printBlank(x, y, w, themes.Surface0)
 
     // render heap file path
-    hd.print(x, y, text.Abr(p, x, w-text.Len(i)), themes.Header)
+    hd.print(x, y, text.Abr(p, x, w-text.Len(i)), themes.Surface2)
 
     // render heapset index
-    hd.print(x + w-text.Len(i), y, i, themes.Input)
+    hd.print(x + w-text.Len(i), y, i, themes.Surface1)
 
     return 1
 }

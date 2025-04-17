@@ -49,7 +49,7 @@ func (o *Overlay) Render(x, y, w, h int) {
 func (o *Overlay) SendError(err string) {
     o.ch <- message{
         value: err,
-        style: themes.Error,
+        style: themes.Overlay0,
         delay: DelayLong,
     }
 }
@@ -57,7 +57,7 @@ func (o *Overlay) SendError(err string) {
 func (o *Overlay) SendStatus(msg string) {
     o.ch <- message{
         value: msg,
-        style: themes.Info,
+        style: themes.Overlay1,
         delay: DelayShort,
     }
 }

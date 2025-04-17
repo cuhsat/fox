@@ -38,12 +38,12 @@ func (o *Output) textRender(x, y, w, h int) {
 
         // line number
         if o.status.Line {
-            o.print(line_x, line_y, line.Nr, themes.Hint)
+            o.print(line_x, line_y, line.Nr, themes.Subtext0)
             line_x += len(line.Nr) + block.SpaceText
         }
 
         // text value
-        o.print(line_x, line_y, line.Str, themes.Output)
+        o.print(line_x, line_y, line.Str, themes.Base)
 
         // mark found positions
         for c, f := range *types.GetFilters() {

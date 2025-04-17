@@ -212,7 +212,7 @@ func (app *App) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlT:
                 app.status.Theme = app.themes.Cycle()
 
-                app.screen.Fill(' ', themes.Output)
+                app.screen.Fill(' ', themes.Base)
                 app.screen.Show()
 
                 app.overlay.SendStatus(fmt.Sprintf("Theme %s", app.status.Theme))
@@ -382,7 +382,7 @@ func (app *App) render(hs *heapset.HeapSet) (w int, h int) {
     _, heap := hs.Current()
 
     app.screen.SetTitle(fmt.Sprintf("fx - %s", heap))
-    app.screen.SetStyle(themes.Output)
+    app.screen.SetStyle(themes.Base)
     app.screen.Clear()
 
     x, y := 0, 0
