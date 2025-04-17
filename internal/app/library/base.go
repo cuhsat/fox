@@ -1,4 +1,4 @@
-package widget
+package library
 
 import (
     "github.com/cuhsat/fx/internal/sys/heapset"
@@ -11,18 +11,18 @@ type Queueable interface {
     Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
 
-type widget struct {
+type base struct {
     ctx *Context
     term tcell.Screen
 }
 
-func (wi *widget) printBlank(x, y, w int, sty tcell.Style) {
+func (b *base) blank(x, y, w int, sty tcell.Style) {
     for i := 0; i < w; i++ {
-        wi.term.SetContent(x + i, y, ' ', nil, sty)
+        b.term.SetContent(x + i, y, ' ', nil, sty)
     }
 }
 
-func (wi *widget) print(x, y int, s string, sty tcell.Style) {
+func (b *base) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         switch r {
         case '\r':
@@ -31,12 +31,12 @@ func (wi *widget) print(x, y int, s string, sty tcell.Style) {
             r = text.AsUnicode(r)
         }
 
-        wi.term.SetContent(x, y, r, nil, sty)
+        b.term.SetContent(x, y, r, nil, sty)
 
         x += runewidth.RuneWidth(r)
     }
 }
 
-func (wi *widget) error(err error) {
-    wi.term.PostEvent(tcell.NewEventError(err))
+func (b *base) error(err error) {
+    b.term.PostEvent(tcell.NewEventError(err))
 }

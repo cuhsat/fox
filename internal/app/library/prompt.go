@@ -1,4 +1,4 @@
-package widget
+package library
 
 import (
     "fmt"
@@ -21,7 +21,7 @@ const (
 )
 
 type Prompt struct {
-    widget
+    base
 
     Lock bool
     Value string
@@ -29,7 +29,7 @@ type Prompt struct {
 
 func NewPrompt(ctx *Context, term tcell.Screen) *Prompt {
     return &Prompt{
-        widget: widget{
+        base: base{
             ctx: ctx,
             term: term,
         },
@@ -43,7 +43,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     m := p.formatMode()
 
     // render blank line
-    p.printBlank(x, y, w, themes.Surface0)
+    p.blank(x, y, w, themes.Surface0)
 
     // render mode
     p.print(x, y, m, themes.Surface3)

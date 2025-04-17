@@ -1,4 +1,4 @@
-package widget
+package library
 
 import (
     "fmt"
@@ -14,7 +14,7 @@ const (
 )
 
 type Overlay struct {
-    widget
+    base
 
     ch chan message
     buffer *message
@@ -28,7 +28,7 @@ type message struct {
 
 func NewOverlay(ctx *Context, term tcell.Screen) *Overlay {
     return &Overlay{
-        widget: widget{
+        base: base{
             ctx: ctx,
             term: term,
         },

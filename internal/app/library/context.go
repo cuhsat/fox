@@ -1,4 +1,4 @@
-package widget
+package library
 
 import (
     "github.com/cuhsat/fx/internal/sys/files/config"
