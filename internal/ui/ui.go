@@ -79,8 +79,10 @@ func New(m mode.Mode) *UI {
 }
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
-    hs.SetCallback(func() {
+    hs.Bind(func() {
         ui.term.PostEvent(tcell.NewEventInterrupt(ui.ctx.Follow))
+    }, func(err error) {
+        ui.term.PostEvent(tcell.NewEventError(err))
     })
 
     go ui.overlay.Watch()

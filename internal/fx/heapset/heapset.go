@@ -13,12 +13,18 @@ import (
     "github.com/fsnotify/fsnotify"
 )
 
-type HeapSet struct {
-    watcher *fsnotify.Watcher // file watcher
-    watcher_fn Callback       // file watcher callback
+type WatchFn func()
 
-    heaps []*heap.Heap        // set heaps
-    index int                 // set index
+type ErrorFn func(err error)
+
+type HeapSet struct {
+    watch *fsnotify.Watcher // file watcher
+    watch_fn WatchFn        // file watcher callback
+
+    error_fn ErrorFn        // error callback
+
+    heaps []*heap.Heap      // set heaps
+    index int               // set index
 }
 
 func New(paths []string) *HeapSet {
@@ -29,7 +35,7 @@ func New(paths []string) *HeapSet {
     }
 
     hs := HeapSet{
-        watcher: w,
+        watch: w,
         index: 0,
     }
 
@@ -59,6 +65,11 @@ func New(paths []string) *HeapSet {
     hs.load()
 
     return &hs
+}
+
+func (hs *HeapSet) Bind(w_fn WatchFn, e_fn ErrorFn) {
+    hs.watch_fn = w_fn
+    hs.error_fn = e_fn
 }
 
 func (hs *HeapSet) Length() int {
@@ -101,7 +112,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) ThrowAway() {
-    hs.watcher.Close()
+    hs.watch.Close()
 
     for _, h := range hs.heaps {
         h.ThrowAway()

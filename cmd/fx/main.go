@@ -90,7 +90,8 @@ func main() {
         m = mode.Grep
     }
 
-    fx.Init()
+    lf := fx.Init()
+    defer lf.Close()
 
     if fx.IsPiped(os.Stdout) {
         *r = true
