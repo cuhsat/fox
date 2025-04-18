@@ -5,8 +5,6 @@ import (
     "encoding/json"
     "path/filepath"
     "strings"
-
-    "github.com/cuhsat/fx/internal/fx"
 )
 
 const (
@@ -29,7 +27,6 @@ func Pretty(s string) []string {
     err := json.Indent(&buf, []byte(s), "", indent)
 
     if err != nil {
-        fx.Error(err)
         return []string{s}
     }
 
