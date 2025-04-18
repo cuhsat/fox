@@ -38,13 +38,13 @@ func Load() *Config {
     if errors.Is(err, os.ErrNotExist) {
         return cfg
     } else if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
     }
 
     _, err = toml.DecodeFile(p, &cfg)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
     }
 
     // higher ranking variables
@@ -66,7 +66,8 @@ func (cfg *Config) Save() {
     err := enc.Encode(cfg)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return
     }
 
     dir, err := os.UserHomeDir()

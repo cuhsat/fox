@@ -8,6 +8,14 @@ import (
     "os"
 )
 
+func Init() {
+    f := Stderr()
+
+    // log.Println(f.Name())
+
+    log.SetOutput(f)
+}
+
 func Error(a ...any) {
     log.Println(a...)
 }
@@ -21,7 +29,7 @@ func Stdin() string {
         Fatal("invalid mode")
     }
 
-    f := Temp("stdin", "txt")
+    f := Temp("stdin", ".txt")
 
     go func(f *os.File) {
         r := bufio.NewReader(os.Stdin)
@@ -51,18 +59,20 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-    return Temp("stdout", "txt")
+    return Temp("stdout", ".txt")
 }
 
 func Stderr() *os.File {
-    return Temp("stderr", "txt")
+    return Temp("stderr", ".txt")
 }
 
 func IsPiped(f *os.File) bool {
     fi, err := f.Stat()
 
     if err != nil {
-        Fatal(err)
+        Error(err)
+
+        return false
     }
 
     is := (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice

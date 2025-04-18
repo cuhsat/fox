@@ -60,14 +60,11 @@ func (h *Heap) Reload() {
     
     h.file = fx.Open(h.Path)
 
-    if err != nil {
-        fx.Fatal(err)
-    }
-
     fi, err := h.file.Stat()
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return
     }
 
     if fi.Size() == 0 {
@@ -77,7 +74,8 @@ func (h *Heap) Reload() {
     h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return
     }
 
     l := types.GetLimits()

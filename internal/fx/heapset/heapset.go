@@ -164,6 +164,7 @@ func (hs *HeapSet) loadDir(path string) {
 
     if err != nil {
         fx.Error(err)
+        return
     }
  
     for _, f := range dir {

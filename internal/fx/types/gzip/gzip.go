@@ -23,7 +23,8 @@ func Detect(path string) bool {
     fi, err := gz.Stat()
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return false
     }
 
     if fi.Size() < 3 {
@@ -33,7 +34,8 @@ func Detect(path string) bool {
     _, err = io.ReadFull(gz, buf[:])
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return false
     }
 
     return bytes.Equal(buf[:], magic[:])
@@ -46,7 +48,8 @@ func Deflate(path string) string {
     r, err := gzip.NewReader(gz)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return path
     }
 
     defer r.Close()
@@ -59,7 +62,8 @@ func Deflate(path string) string {
     _, err = io.Copy(f, r)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return path
     }
 
     return f.Name()

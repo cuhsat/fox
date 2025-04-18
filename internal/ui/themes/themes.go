@@ -220,7 +220,9 @@ func (t *Themes) Load(name string) error {
     }
 
     if t.index == -1 {
-        fx.Fatal("theme not found")
+        fx.Error("theme not found")
+
+        t.index = 0
     }
 
     p := t.palettes[t.names[t.index]]
