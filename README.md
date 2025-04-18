@@ -1,8 +1,4 @@
 ![](assets/logo.png "Forensic Examiner")
-![](assets/logo1.png "Forensic Examiner")
-![](assets/logo4.png "Forensic Examiner")
-![](assets/logo2.png "Forensic Examiner")
-![](assets/logo3.png "Forensic Examiner")
 
 The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone binary. 🔎
 
