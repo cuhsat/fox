@@ -8,12 +8,18 @@ import (
     "os"
 )
 
-func Init() {
+var (
+    Logfile *os.File
+)
+
+func Init() *os.File {
     f := Stderr()
 
-    // log.Println(f.Name())
-
     log.SetOutput(f)
+
+    Logfile = f
+
+    return f
 }
 
 func Error(a ...any) {

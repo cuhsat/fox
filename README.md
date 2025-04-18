@@ -1,17 +1,24 @@
-# 🔎 Forensic Examiner
-The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone binary.
+![](assets/logo.png "Forensic Examiner")
+![](assets/logo1.png "Forensic Examiner")
+![](assets/logo2.png "Forensic Examiner")
+![](assets/logo3.png "Forensic Examiner")
+![](assets/logo4.png "Forensic Examiner")
+![](assets/logo5.png "Forensic Examiner")
+![](assets/logo6.png "Forensic Examiner")
+
+The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone binary. 🔎
 
 ![](assets/grep.png "Grep Mode")
 ![](assets/hex.png "Hex Mode")
 
 > AS THIS IS A FORENSIC TOOL NO WRITE ACTIONS WILL BE PERFORMED
 
-## Install
+# Install
 ```console
 $ make install
 ```
 
-## Usage
+# Usage
 ```
 $ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
@@ -30,7 +37,7 @@ Standard options:
 * `--help` Usage information
 * `--version` Version number
 
-### Examples
+## Examples
 Reading all files in the current directory:
 ```console
 $ fx
@@ -66,9 +73,9 @@ Writing the last `8` bytes of `foo` to `bar` in hex:
 $ fx -t -c 8 -x foo > bar
 ```
 
-## Keyboard
+# Keyboard
 
-### General
+## General
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Esc</kbd>                                       | Exit                  |
@@ -97,12 +104,12 @@ $ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save as evidence      |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
 
-### Less Mode
+## Less Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-### Grep Mode
+## Grep Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Append filter         |
@@ -112,7 +119,7 @@ $ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste as input        |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
-## Config
+# Config
 > Located under `~/.fxrc`.
 
 ```toml
@@ -122,12 +129,12 @@ Line = true    # Line numbers
 Wrap = true    # Wrap text
 ```
 
-### Environment
+## Environment
 ```console
 FX_THEME=Monokai
 ```
 
-### Themes
+## Themes
 * `Monokai`
 * `Catppuccin-Latte`
 * `Catppuccin-Frappe`
@@ -138,4 +145,4 @@ FX_THEME=Monokai
 * `Monochrome`
 
 ---
-Supported by [codecentric](https://codecentric.de) opt time.
+Developed with [codecentric](https://codecentric.de) opt time
