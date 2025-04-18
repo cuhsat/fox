@@ -1,0 +1,66 @@
+package gzip
+
+import (
+    "bytes"
+    "compress/gzip"
+    "io"
+    "path/filepath"
+    "strings"
+
+    "github.com/cuhsat/fx/internal/fx"
+)
+
+var (
+    magic = [...]byte{0x1F, 0x8B, 0x08}
+)
+
+func Detect(path string) bool {
+    var buf [3]byte
+
+    gz := fx.Open(path)
+    defer gz.Close()
+
+    fi, err := gz.Stat()
+
+    if err != nil {
+        fx.Fatal(err)
+    }
+
+    if fi.Size() < 3 {
+        return false
+    }
+
+    _, err = io.ReadFull(gz, buf[:])
+
+    if err != nil {
+        fx.Fatal(err)
+    }
+
+    return bytes.Equal(buf[:], magic[:])
+}
+
+func Deflate(path string) string {
+    gz := fx.Open(path)
+    defer gz.Close()
+
+    r, err := gzip.NewReader(gz)
+
+    if err != nil {
+        fx.Fatal(err)
+    }
+
+    defer r.Close()
+
+    b := strings.TrimSuffix(filepath.Base(path), ".gz")
+
+    f := fx.Temp("gzip", filepath.Ext(b))
+    defer f.Close()
+
+    _, err = io.Copy(f, r)
+
+    if err != nil {
+        fx.Fatal(err)
+    }
+
+    return f.Name()
+}

@@ -2,24 +2,21 @@ package main
 
 import (
     "flag"
+    "fmt"
     "os"
 
-    "github.com/cuhsat/fx/internal/app"
-    "github.com/cuhsat/fx/internal/sys"
-    "github.com/cuhsat/fx/internal/sys/files/bag"
-    "github.com/cuhsat/fx/internal/sys/files/history"
-    "github.com/cuhsat/fx/internal/sys/heapset"
-    "github.com/cuhsat/fx/internal/sys/types"
-    "github.com/cuhsat/fx/internal/sys/types/mode"
+    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/files/bag"
+    "github.com/cuhsat/fx/internal/fx/files/history"
+    "github.com/cuhsat/fx/internal/fx/heapset"
+    "github.com/cuhsat/fx/internal/fx/types"
+    "github.com/cuhsat/fx/internal/fx/types/mode"
+    "github.com/cuhsat/fx/internal/ui"
 )
 
 const (
-    version = "dev"
+    Version = "dev"
 )
-
-func usage() {
-    sys.Usage("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
-}
 
 func main() {
     c := new(types.Counts)
@@ -58,24 +55,23 @@ func main() {
     }
 
     if *h && *t {
-        sys.Usage("head or tail")
+        fx.Fatal("head or tail")
     }
 
     if c.Lines > 0 && c.Bytes > 0 {
-        sys.Usage("lines or bytes")
+        fx.Fatal("lines or bytes")
     }
 
     if !*x && c.Bytes > 0 {
-        sys.Usage("bytes needs hex")
+        fx.Fatal("bytes needs hex")
     }
 
     if *x && len(*e) > 0 {
-        sys.Usage("hex or pattern")
+        fx.Fatal("hex or pattern")
     }
 
     if *v {
-        sys.Print("fx", version)
-        os.Exit(0)
+        version()
     }
 
     if *h {
@@ -94,7 +90,7 @@ func main() {
         m = mode.Grep
     }
 
-    if sys.IsPipe(os.Stdout) {
+    if fx.IsPiped(os.Stdout) {
         *r = true
     }
 
@@ -109,11 +105,21 @@ func main() {
     hi := history.New()
     defer hi.Close()
 
-    bag := bag.New(*o)
-    defer bag.Close()
+    bg := bag.New(*o)
+    defer bg.Close()
 
-    app := app.New(m)
-    defer app.Close()
+    ui := ui.New(m)
+    defer ui.Close()
 
-    app.Run(hs, hi, bag)
+    ui.Run(hs, hi, bg)
+}
+
+func usage() {
+    fmt.Println("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
+    os.Exit(2)
+}
+
+func version() {
+    fmt.Println("fx", version)
+    os.Exit(0)
 }
