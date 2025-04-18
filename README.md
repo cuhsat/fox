@@ -17,7 +17,7 @@ $ make install
 $ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
 
-Available options:
+Special options:
 * `-r` Raw output
 * `-h` Head limit
 * `-t` Tail limit
@@ -27,7 +27,7 @@ Available options:
 * `-e` Pattern value
 * `-o` Evidence file
 
-Standard options:
+Default options:
 * `--help` Usage information
 * `--version` Version number
 
@@ -52,7 +52,7 @@ Reading all `.jsonl` files in all subdirectories:
 $ fx ./*/*.jsonl
 ```
 
-Writing all lines containing `John Doe` of all files to stdout:
+Writing all lines with `John Doe` from all files to stdout:
 ```console
 $ fx -r -e "John Doe"
 ```
@@ -124,7 +124,7 @@ Wrap = true    # Wrap text
 ```
 
 ## Environment
-```console
+```bash
 FX_THEME=Monokai
 ```
 
