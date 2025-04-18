@@ -22,6 +22,10 @@ type History struct {
 }
 
 func New() *History {
+    h := History{
+        lines: make([]string, 0),
+    }
+
     dir, err := os.UserHomeDir()
 
     if err != nil {
@@ -30,21 +34,20 @@ func New() *History {
 
     p := filepath.Join(dir, filename)
 
-    f, err := os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+    h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Error(err)
+        return &h
     }
 
-    var lines []string
-
-    s := bufio.NewScanner(f)
+    s := bufio.NewScanner(h.file)
     
     for s.Scan() {
         t := strings.SplitN(s.Text(), ";", 1)
         
         if len(t) > 1 {
-            lines = append(lines, t[1])            
+            h.lines = append(h.lines, t[1])
         }
     }
     
@@ -54,15 +57,19 @@ func New() *History {
         fx.Error(err)
     }
 
-    return &History{
-        file: f,
-        lines: lines,
-        index: len(lines),
-    }
+    h.index = len(h.lines)
+
+    return &h
 }
 
 func (h *History) AddCommand(cmd string) {
     defer h.Reset()
+
+    h.lines = append(h.lines, cmd)
+
+    if h.file == nil {
+        return
+    }
 
     l := fmt.Sprintf("%10d;%s", time.Now().Unix(), cmd)
 
@@ -71,8 +78,6 @@ func (h *History) AddCommand(cmd string) {
     if err != nil {
         fx.Error(err)
     }
-
-    h.lines = append(h.lines, cmd)
 }
 
 func (h *History) PrevCommand() string {
@@ -98,5 +103,7 @@ func (h *History) Reset() {
 }
 
 func (h *History) Close() {
-    h.file.Close()
+    if h.file != nil {
+        h.file.Close()        
+    }
 }

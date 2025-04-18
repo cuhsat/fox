@@ -48,7 +48,9 @@ func (h *Heap) HashSum(algo string) []byte {
     case Sha256:
         imp = sha256.New()
     default:
-        fx.Fatal("hash not supported")
+        fx.Error("hash not supported")
+
+        return sum
     }
 
     f := fx.Open(h.Base)
