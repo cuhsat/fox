@@ -91,10 +91,6 @@ func textNormal(ctx *Context, tb *TextBlock, d int) {
 
     tb.W, tb.H = tb.SMap.Size()
 
-    if ctx.Line {
-        ctx.W -= (d + TextSpace)
-    }
-
     for i, s := range tb.SMap[ctx.Y:] {
         if i >= ctx.H {
             break

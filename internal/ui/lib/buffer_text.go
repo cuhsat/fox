@@ -23,8 +23,8 @@ func (b *Buffer) textRender(x, y, w, h int) {
 
     b.smap = tb.SMap
 
-    if len(tb.Lines) > 0 {
-        w -= len(tb.Lines[0].Nr) + block.TextSpace
+    if b.ctx.Line {
+        w -= text.Dec(b.heap.Length()) + block.TextSpace
     }
 
     // set block bounds
