@@ -140,4 +140,4 @@ FX_THEME=Default
 * `Monochrome`
 
 ---
-Made with ❤️ in Go
+Made with ❤ in Go

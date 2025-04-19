@@ -2,7 +2,7 @@ package lib
 
 import (
     "github.com/cuhsat/fx/internal/fx/heapset"
-    // "github.com/cuhsat/fx/internal/fx/text"
+    "github.com/cuhsat/fx/internal/fx/text"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
@@ -22,62 +22,58 @@ func (b *base) blank(x, y, w int, sty tcell.Style) {
     }
 }
 
+// https://github.com/gdamore/tcell/blob/main/_demos/unicode.go
 func (b *base) print(x, y int, s string, sty tcell.Style) {
-    // for _, r := range s {
-    //     r = text.AsUnicode(r)
+    d, i, w, z := make([]rune, 0), 0, 0, false
 
-    //     b.term.SetContent(x, y, r, nil, sty)
-
-    //     x += runewidth.RuneWidth(r)
-    // }
-
-    i := 0
-    var deferred []rune
-    dwidth := 0
-    zwj := false
-    
     for _, r := range s {
+        r = text.AsUnicode(r)
+
         if r == '\u200d' {
-            if len(deferred) == 0 {
-                deferred = append(deferred, ' ')
-                dwidth = 1
+            if len(d) == 0 {
+                d, w = append(d, ' '), 1
             }
-            deferred = append(deferred, r)
-            zwj = true
+
+            d, z = append(d, r), true
+
             continue
         }
-        if zwj {
-            deferred = append(deferred, r)
-            zwj = false
+
+        if z {
+            d, z = append(d, r), false
+
             continue
         }
+
         switch runewidth.RuneWidth(r) {
         case 0:
-            if len(deferred) == 0 {
-                deferred = append(deferred, ' ')
-                dwidth = 1
+            if len(d) == 0 {
+                d, w = append(d, ' '), 1
             }
+
         case 1:
-            if len(deferred) != 0 {
-                b.term.SetContent(x+i, y, deferred[0], deferred[1:], sty)
-                i += dwidth
+            if len(d) != 0 {
+                b.term.SetContent(x + i, y, d[0], d[1:], sty)
+                i += w
             }
-            deferred = nil
-            dwidth = 1
+
+            d, w = nil, 1
+
         case 2:
-            if len(deferred) != 0 {
-                b.term.SetContent(x+i, y, deferred[0], deferred[1:], sty)
-                i += dwidth
+            if len(d) != 0 {
+                b.term.SetContent(x + i, y, d[0], d[1:], sty)
+                i += w
             }
-            deferred = nil
-            dwidth = 2
+
+            d, w = nil, 2
         }
-        deferred = append(deferred, r)
+
+        d = append(d, r)
     }
 
-    if len(deferred) != 0 {
-        b.term.SetContent(x+i, y, deferred[0], deferred[1:], sty)
-        i += dwidth
+    if len(d) != 0 {
+        b.term.SetContent(x + i, y, d[0], d[1:], sty)
+        i += w
     }
 }
 

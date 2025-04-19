@@ -40,13 +40,13 @@ type UI struct {
 }
 
 func New(m mode.Mode) *UI {
-    encoding.Register()
-
     term, err := tcell.NewScreen()
 
     if err != nil {
         fx.Fatal(err)
     }
+
+    encoding.Register()
 
     err = term.Init()
 

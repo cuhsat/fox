@@ -6,7 +6,6 @@ import (
 
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types/smap"
-    "github.com/mattn/go-runewidth"
 )
 
 const (
@@ -104,7 +103,5 @@ func textNormal(ctx Context, tb *TextBlock, d int) {
 }
 
 func textFit(ctx Context, s string) string {
-    s = runewidth.TruncateLeft(s, min(ctx.X, text.Len(s)), "")
-
-    return runewidth.Truncate(s, ctx.W, "→")
+    return text.RTrim(text.LTrim(s, min(ctx.X, text.Len(s))), ctx.W)
 }

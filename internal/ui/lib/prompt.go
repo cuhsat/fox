@@ -60,7 +60,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     // render filters
     if !p.Lock {
-        p.print(x, y, text.Abr(f, x, w-text.Len(s)), themes.Surface1)
+        p.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
     }
 
     // render status
