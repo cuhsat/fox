@@ -8,7 +8,7 @@ import (
 )
 
 const (
-    Default = "monokai"
+    Default = "default"
 )
 
 var (
@@ -36,6 +36,24 @@ type palette []int32
 func New(name string) *Themes {
     t := Themes{
         palettes: map[string]palette{
+            "Default": palette {
+                0x7f8490, 0x222327,
+                0x595f6f, 0x2c2e34,
+                0xe2e2e3, 0x414550,
+                0xe2e2e3, 0x2c2e34,
+                0x222327, 0x0f88cd,
+                0x222327, 0xff6077,
+                0x222327, 0xa7df78,
+                0x595f6f, 0x222327,
+                0x2c2e34, 0x222327,
+                0xfc5d7c,
+                0xf39660,
+                0xe7c664,
+                0x9ed072,
+                0x76cce0,
+                0xb39df3,
+            },
+
             "Monokai": palette {
                 0x7f8490, 0x222327,
                 0x595f6f, 0x2c2e34,
@@ -181,6 +199,7 @@ func New(name string) *Themes {
             },
         },
         names: []string{
+            "Default",
             "Monokai",
             "Catppuccin-Latte",
             "Catppuccin-Frappe",

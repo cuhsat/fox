@@ -121,7 +121,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             ui.buffer.Reset()
 
         case *tcell.EventError:
-            hs.Raise()
+            hs.RaiseLog()
 
             ui.overlay.SendError("An error occurred")
 
