@@ -25,12 +25,12 @@ func main() {
 
     // flags
     m := mode.Default
-    r := flag.Bool("r", false, "Raw output")
+    p := flag.Bool("r", false, "Print raw")
     x := flag.Bool("x", false, "Hexdump mode")
     
     // limits
-    h := flag.Bool("h", false, "Head limit")
-    t := flag.Bool("t", false, "Tail limit")
+    h := flag.Bool("h", false, "Limit head")
+    t := flag.Bool("t", false, "Limit tail")
 
     // output
     o := flag.String("o", "", "Evidence file")
@@ -94,13 +94,13 @@ func main() {
     defer lf.Close()
 
     if fx.IsPiped(os.Stdout) {
-        *r = true
+        *p = true
     }
 
     hs := heapset.New(a)
     defer hs.ThrowAway()
 
-    if *r {
+    if *p {
         hs.Print(*x)
         os.Exit(0)
     }
@@ -118,7 +118,7 @@ func main() {
 }
 
 func usage() {
-    fmt.Println("usage: fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
+    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
     os.Exit(2)
 }
 

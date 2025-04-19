@@ -167,9 +167,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
-            case tcell.KeyF6:
-                fx.Error("test")
-
             case tcell.KeyF9:
                 hs.Word()
 

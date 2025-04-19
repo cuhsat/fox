@@ -15,6 +15,7 @@ var (
 func Init() *os.File {
     f := Stderr()
 
+    log.SetFlags(log.Ldate|log.Ltime|log.LUTC)
     log.SetOutput(f)
 
     Logfile = f.Name()
@@ -22,12 +23,12 @@ func Init() *os.File {
     return f
 }
 
-func Error(a ...any) {
-    log.Println(a...)
+func Error(v ...any) {
+    log.Println(v...)
 }
 
-func Fatal(a ...any) {
-    log.Fatal(a...)
+func Fatal(v ...any) {
+    log.Fatal(v...)
 }
 
 func Stdin() string {

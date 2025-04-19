@@ -30,7 +30,7 @@ func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     var i string
 
     if m > 1 {
-        i = fmt.Sprintf(" %d of %d ", n, m)
+        i = fmt.Sprintf(" %d · %d ", n, m) // TODO: •︎
     }
 
     // render blank line
