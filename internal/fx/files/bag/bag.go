@@ -17,6 +17,10 @@ const (
     filename = "EVIDENCE"
 )
 
+const (
+    header = "Forensic Examiner - Evidence Bag"
+)
+
 type Bag struct {
     Path string   // file path
     file *os.File // file handle
@@ -44,11 +48,13 @@ func (bag *Bag) Put(h *heap.Heap) {
 
     var blk []string
 
-    blk = append(blk, strings.Join(t, " > "))
-    blk = append(blk, fmt.Sprintf("%s @ %s", usr.Username, time.Now().UTC()))
+    blk = append(blk, strings.Join(t, " > "))    
+    blk = append(blk, fmt.Sprintf("%s (%s)", usr.Username, usr.Name))
+    blk = append(blk, fmt.Sprintf("%s", time.Now().UTC()))
+    blk = append(blk, fmt.Sprintf("%s", time.Now()))
     blk = append(blk, fmt.Sprintf("%x", h.Sha256()))
 
-    _, err = fmt.Fprintln(bag.file, text.Block(blk, -1))
+    _, err = fmt.Fprintln(bag.file, text.Block(blk, -1, header))
 
     if err != nil {
         fx.Error(err)
@@ -59,7 +65,7 @@ func (bag *Bag) Put(h *heap.Heap) {
     for _, s := range h.SMap {
         str := string(h.MMap[s.Start:s.End])
 
-        l := fmt.Sprintf("%0*d  %v", d, s.Nr, str)
+        l := fmt.Sprintf(" %0*d %v", d, s.Nr, str)
 
         _, err = fmt.Fprintln(bag.file, l)
 

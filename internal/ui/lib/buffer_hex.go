@@ -8,7 +8,7 @@ import (
 func (b *Buffer) hexRender(x, y, w, h int) {
     rule_w := block.HexSpace * 2
 
-    hb := block.Hex(block.Context{
+    hb := block.Hex(&block.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,

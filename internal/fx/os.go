@@ -2,6 +2,7 @@ package fx
 
 import (
     "bufio"
+    "errors"
     "fmt"
     "io"
     "log"
@@ -85,6 +86,12 @@ func IsPiped(f *os.File) bool {
     is := (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 
     return is
+}
+
+func Exists(path string) bool {
+    _, err := os.Stat(path)
+
+   return !errors.Is(err, os.ErrNotExist)
 }
 
 func Open(path string) *os.File {

@@ -11,7 +11,7 @@ import (
 )
 
 func (b *Buffer) textRender(x, y, w, h int) {
-    tb := block.Text(block.Context{
+    tb := block.Text(&block.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,

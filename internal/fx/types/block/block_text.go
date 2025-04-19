@@ -12,6 +12,10 @@ const (
     TextSpace = 1
 )
 
+const (
+    TabSpace = "    "
+)
+
 type TextBlock struct {
     Block
     Lines []TextLine
@@ -40,7 +44,7 @@ func (tl TextLine) String() string {
     return tl.Str
 }
 
-func Text(ctx Context) (tb TextBlock) {
+func Text(ctx *Context) (tb TextBlock) {
     d := text.Dec(ctx.Heap.Length())
 
     tb.SMap = ctx.Heap.SMap
@@ -62,7 +66,7 @@ func Text(ctx Context) (tb TextBlock) {
     return
 }
 
-func textFormat(ctx Context, tb *TextBlock, d int) {
+func textFormat(ctx *Context, tb *TextBlock, d int) {
     for _, s := range tb.SMap {
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
@@ -70,7 +74,7 @@ func textFormat(ctx Context, tb *TextBlock, d int) {
 
         for _, l := range ctx.Heap.Fmt(str) {
             tb.Lines = append(tb.Lines, TextLine{
-                Line: Line{Nr: nr, Str: textFit(ctx, l)},
+                Line: Line{Nr: nr, Str: textFit(l, ctx.X, ctx.W)},
             })
 
             tb.W, tb.H  = max(tb.W, text.Len(l)), len(tb.Lines)
@@ -80,12 +84,16 @@ func textFormat(ctx Context, tb *TextBlock, d int) {
     tb.Lines = tb.Lines[ctx.Y:]
 }
 
-func textNormal(ctx Context, tb *TextBlock, d int) {
+func textNormal(ctx *Context, tb *TextBlock, d int) {
     if ctx.Wrap {
         tb.SMap = tb.SMap.Wrap(ctx.W)
     }
 
     tb.W, tb.H = tb.SMap.Size()
+
+    if ctx.Line {
+        ctx.W -= (d + TextSpace)
+    }
 
     for i, s := range tb.SMap[ctx.Y:] {
         if i >= ctx.H {
@@ -95,13 +103,16 @@ func textNormal(ctx Context, tb *TextBlock, d int) {
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
         str := string(ctx.Heap.MMap[s.Start:s.End])
+        
+        // replace tabulators
+        str = strings.ReplaceAll(str, "\t", TabSpace)
 
         tb.Lines = append(tb.Lines, TextLine{
-            Line: Line{Nr: nr, Str: textFit(ctx, str)},
+            Line: Line{Nr: nr, Str: textFit(str, ctx.X, ctx.W)},
         })
     }
 }
 
-func textFit(ctx Context, s string) string {
-    return text.RTrim(text.LTrim(s, min(ctx.X, text.Len(s))), ctx.W)
+func textFit(s string, x, w int) string {
+    return text.Trim(s, min(x, text.Len(s)), w)
 }
