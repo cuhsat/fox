@@ -12,12 +12,20 @@ func Dec(n int) int {
     return int(math.Log10(float64(n)))+1
 }
 
-func Abr(s string, x, w int) string {
-    return runewidth.Truncate(s, w-x, "…")
-}
-
 func Len(s string) (l int) {
     return runewidth.StringWidth(s)
+}
+
+func Abr(s string, w int) string {
+    return runewidth.Truncate(s, w, "…")
+}
+
+func LTrim(s string, w int) string {
+    return runewidth.TruncateLeft(s, w, "")
+}
+
+func RTrim(s string, w int) string {
+    return runewidth.Truncate(s, w, "→")
 }
 
 func Title(s string, w int) string {
@@ -29,6 +37,7 @@ func Block(s []string, w int) (r string) {
         for _, ss := range s {
             w = max(w, len(ss))
         }
+        
         w += 4
     }
 
