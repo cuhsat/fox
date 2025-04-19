@@ -37,21 +37,21 @@ func New(name string) *Themes {
     t := Themes{
         palettes: map[string]palette{
             "Default": palette {
-                0x999999, 0x333333,
+                0xcccccc, 0x333333,
                 0x333333, 0x333333,
-                0xffffff, 0x333333,
-                0xffffff, 0x333333,
-                0xffffff, 0x0f88cd,
+                0x999999, 0x333333,
+                0x999999, 0x333333,
+                0xcccccc, 0x0f88cd,
                 0x333333, 0xf8340c,
                 0x333333, 0x88cd0f,
                 0x666666, 0x333333,
                 0x333333, 0x333333,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
+                0x0f88cd,
+                0x0f88cd,
+                0x0f88cd,
+                0x0f88cd,
+                0x0f88cd,
+                0x0f88cd,
             },
 
             "Monokai": palette {
