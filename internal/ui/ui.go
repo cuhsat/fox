@@ -8,6 +8,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/files/bag"
     "github.com/cuhsat/fx/internal/fx/files/history"
     "github.com/cuhsat/fx/internal/fx/heapset"
+    "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/ui/lib"
@@ -149,8 +150,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         case *tcell.EventKey:
             mods := ev.Modifiers()
 
-            page_w := w
+            page_w := w-1
             page_h := h-2
+
+            if ui.ctx.Line {
+                page_w -= text.Dec(heap.Length())+1
+            }
 
             switch ev.Key() {
             case tcell.KeyEscape:
