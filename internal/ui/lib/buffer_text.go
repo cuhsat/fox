@@ -4,6 +4,7 @@ import (
     "strconv"
     "strings"
 
+    "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/block"
     "github.com/cuhsat/fx/internal/ui/themes"
@@ -58,7 +59,7 @@ func (b *Buffer) textMark(x, y, c int, s, f string) {
         return
     }
 
-    len_i := len(s[:i])
+    len_i := text.Len(s[:i])
 
     b.print(x + len_i, y, f, themes.Colors[c % len(themes.Colors)])
     

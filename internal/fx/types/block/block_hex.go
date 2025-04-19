@@ -40,11 +40,7 @@ func (hl HexLine) String() string {
 }
 
 func Hex(ctx Context) (hb HexBlock) {
-    off_w := 0
-
-    if ctx.Line {
-        off_w = 8 + HexSpace
-    }
+    off_w := 8 + HexSpace
 
     cols := int(float64((ctx.W - off_w) + HexSpace) / 3.5)
     cols -= cols % 2

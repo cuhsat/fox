@@ -59,7 +59,7 @@ func (bag *Bag) Put(h *heap.Heap) {
     for _, s := range h.SMap {
         str := string(h.MMap[s.Start:s.End])
 
-        l := fmt.Sprintf(" %0*d  %v", d, s.Nr, str)
+        l := fmt.Sprintf("%0*d  %v", d, s.Nr, str)
 
         _, err = fmt.Fprintln(bag.file, l)
 

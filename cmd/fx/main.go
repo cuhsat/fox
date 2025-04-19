@@ -25,7 +25,7 @@ func main() {
 
     // flags
     m := mode.Default
-    p := flag.Bool("r", false, "Print raw")
+    p := flag.Bool("p", false, "Print raw")
     x := flag.Bool("x", false, "Hexdump mode")
     
     // limits

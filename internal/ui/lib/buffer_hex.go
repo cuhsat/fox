@@ -33,22 +33,20 @@ func (b *Buffer) hexRender(x, y, w, h int) {
 
         hex_x := line_x
 
-        if b.ctx.Line {
-            // offset number
-            b.print(hex_x, line_y, line.Nr, themes.Subtext0)
-            hex_x += len(line.Nr)
+        // offset number
+        b.print(hex_x, line_y, line.Nr, themes.Subtext0)
+        hex_x += len(line.Nr)
 
-            // offset separator
-            b.print(hex_x, line_y, "┃", themes.Subtext1)
-            hex_x += rule_w
-        }
+        // offset separator
+        b.print(hex_x, line_y, "│", themes.Subtext1)
+        hex_x += rule_w
 
         // hex values
         b.print(hex_x, line_y, line.Hex, themes.Base)
         text_x := hex_x + len(line.Hex)
 
         // hex separator
-        b.print(text_x, line_y, "┃", themes.Subtext1)
+        b.print(text_x, line_y, "│", themes.Subtext1)
         text_x += rule_w
 
         // text value

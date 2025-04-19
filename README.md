@@ -118,9 +118,9 @@ fx -t -c 8 -x foo > bar
 
 ```toml
 Theme = "Default"
-Follow = true
-Line = true
-Wrap = true
+Follow = false
+Line = false
+Wrap = false
 ```
 
 ## Environment

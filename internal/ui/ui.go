@@ -14,6 +14,7 @@ import (
     "github.com/cuhsat/fx/internal/ui/themes"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
+    "github.com/mattn/go-runewidth"
 )
 
 const (
@@ -40,13 +41,15 @@ type UI struct {
 }
 
 func New(m mode.Mode) *UI {
+    encoding.Register()
+
+    runewidth.CreateLUT()
+
     term, err := tcell.NewScreen()
 
     if err != nil {
         fx.Fatal(err)
     }
-
-    encoding.Register()
 
     err = term.Init()
 
