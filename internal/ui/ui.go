@@ -123,7 +123,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         case *tcell.EventError:
             hs.Raise()
 
-            ui.overlay.SendError("An error occured")
+            ui.overlay.SendError("An error occurred")
 
         case *tcell.EventMouse:
             switch ev.Buttons() {
