@@ -49,7 +49,7 @@ func (o *Overlay) SendError(err string) {
     o.ch <- message{
         value: err,
         style: themes.Overlay0,
-        delay: delayLong,
+        delay: delayShort,
     }
 }
 

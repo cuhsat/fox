@@ -81,8 +81,8 @@ func New(m mode.Mode) *UI {
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.Bind(func() {
         ui.term.PostEvent(tcell.NewEventInterrupt(ui.ctx.Follow))
-    }, func(err error) {
-        ui.term.PostEvent(tcell.NewEventError(err))
+    }, func() {
+        ui.term.PostEvent(tcell.NewEventError(nil))
     })
 
     go ui.overlay.Watch()
@@ -121,7 +121,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             ui.buffer.Reset()
 
         case *tcell.EventError:
-            ui.overlay.SendError(ev.Error())
+            hs.Raise()
+
+            ui.overlay.SendError("An error occured")
 
         case *tcell.EventMouse:
             switch ev.Buttons() {
@@ -164,6 +166,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
+
+            case tcell.KeyF6:
+                fx.Error("test")
 
             case tcell.KeyF9:
                 hs.Word()

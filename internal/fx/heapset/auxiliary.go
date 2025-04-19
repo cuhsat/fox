@@ -33,9 +33,6 @@ func (hs *HeapSet) Word() {
     hs.newBuffer("wc", func(h *heap.Heap) string {
         return fmt.Sprintf("%8dL %8dB  %s\n", h.Length(), len(h.MMap), h.String())
     })
-    
-    // TODO: test
-    //hs.Raise("An error occured")
 }
 
 func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
