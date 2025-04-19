@@ -117,7 +117,7 @@ $ fx -t -c 8 -x foo > bar
 > Located under `~/.fxrc`.
 
 ```toml
-Theme = "Monokai"
+Theme = "Default"
 Follow = true  # Follow file
 Line = true    # Line numbers
 Wrap = true    # Wrap text
@@ -125,10 +125,11 @@ Wrap = true    # Wrap text
 
 ## Environment
 ```bash
-FX_THEME=Monokai
+FX_THEME=Default
 ```
 
 ## Themes
+* `Default`
 * `Monokai`
 * `Catppuccin-Latte`
 * `Catppuccin-Frappe`
