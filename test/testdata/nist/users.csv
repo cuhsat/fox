@@ -1,0 +1,5 @@
+hostname,domain,sid,name,home,_source,_classification,_generated,_version
+N-1A9ODN6ZXK4LQ,,S-1-5-18,systemprofile,%systemroot%\system32\config\systemprofile,4Dell+Latitude+CPi.E01,,2025-04-19 01:35:45.030333+00:00,1
+N-1A9ODN6ZXK4LQ,,S-1-5-19,LocalService,%SystemDrive%\Documents and Settings\LocalService,4Dell+Latitude+CPi.E01,,2025-04-19 01:35:45.030464+00:00,1
+N-1A9ODN6ZXK4LQ,,S-1-5-20,NetworkService,%SystemDrive%\Documents and Settings\NetworkService,4Dell+Latitude+CPi.E01,,2025-04-19 01:35:45.030531+00:00,1
+N-1A9ODN6ZXK4LQ,,S-1-5-21-2000478354-688789844-1708537768-1003,Mr. Evil,%SystemDrive%\Documents and Settings\Mr. Evil,4Dell+Latitude+CPi.E01,,2025-04-19 01:35:45.030604+00:00,1
