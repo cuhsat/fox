@@ -12,36 +12,12 @@ func Dec(n int) int {
     return int(math.Log10(float64(n)))+1
 }
 
-func Pos(s string, x int) string {
-    if x < Len(s) {
-        return string([]rune(s)[x:])
-    }
-
-    return ""
-}
-
-func Cut(s string, w int) string {
-    if w < Len(s) {
-        return string([]rune(s)[:w-1])
-    }
-
-    return ""
-}
-
 func Abr(s string, x, w int) string {
-    if x + Len(s) > w+1 {
-        s = Cut(s, (w-x)) + "…"
-    }
-
-    return s
+    return runewidth.Truncate(s, w-x, "…")
 }
 
 func Len(s string) (l int) {
-    for _, r := range s {
-        l += runewidth.RuneWidth(r)
-    }
-
-    return
+    return runewidth.StringWidth(s)
 }
 
 func Title(s string, w int) string {

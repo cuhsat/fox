@@ -9,18 +9,18 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 
 # Install
 ```console
-$ make install
+make install
 ```
 
 # Usage
 ```
-$ fx [-r] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
+fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
 
 Special options:
-* `-r` Raw output
-* `-h` Head limit
-* `-t` Tail limit
+* `-p` Print raw
+* `-h` Limit head
+* `-t` Limit tail
 * `-n` Lines count
 * `-c` Bytes count
 * `-x` Hexdump mode
@@ -34,40 +34,40 @@ Default options:
 ## Examples
 Reading all files in the current directory:
 ```console
-$ fx
+fx
 ```
 
 Reading directly from stdin:
 ```console
-$ fx -
+fx -
 ```
 
 Reading `gzip` compressed files:
 ```console
-$ fx foo.gz bar.gz
+fx foo.gz bar.gz
 ```
 
 Reading all `.jsonl` files in all subdirectories:
 ```console
-$ fx ./*/*.jsonl
+fx ./*/*.jsonl
 ```
 
 Writing all lines with `John Doe` from all files to stdout:
 ```console
-$ fx -r -e "John Doe"
+fx -p -e "John Doe"
 ```
 
 Writing the first `3` lines of `foo` to `bar`:
 ```console
-$ fx -h -n 3 foo > bar
+fx -h -n 3 foo > bar
 ```
 
 Writing the last `8` bytes of `foo` to `bar` in hex:
 ```console
-$ fx -t -c 8 -x foo > bar
+fx -t -c 8 -x foo > bar
 ```
 
-# Keyboard
+# Keymap
 
 ## General
 | Shortcut                                             | Action                |
@@ -94,9 +94,9 @@ $ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>t</kbd>                       | Cycle themes          |
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                       | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
-| <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle wrap text      |
-| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save as evidence      |
+| <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
+| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save as evidence      |
 
 ## Less Mode
 | Shortcut                                             | Action                |
@@ -110,7 +110,7 @@ $ fx -t -c 8 -x foo > bar
 | <kbd>Backspace</kbd>                                 | Delete filter         |
 | <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
 | <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
-| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste as input        |
+| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
 # Config
@@ -118,9 +118,9 @@ $ fx -t -c 8 -x foo > bar
 
 ```toml
 Theme = "Default"
-Follow = true  # Follow file
-Line = true    # Line numbers
-Wrap = true    # Wrap text
+Follow = true
+Line = true
+Wrap = true
 ```
 
 ## Environment
