@@ -106,7 +106,7 @@ func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
 }
 
 func (p *Prompt) formatStatus(h *heap.Heap) string {
-    f, n, w := " ", " ", " "
+    f, n, w := "·", "·", "·"
 
     if p.ctx.Follow {
         f = follow
@@ -120,5 +120,5 @@ func (p *Prompt) formatStatus(h *heap.Heap) string {
         w = wrap
     }
 
-    return fmt.Sprintf(" %d ∣ %s ∣ %s ∣ %s ", len(h.SMap), f, n, w)
+    return fmt.Sprintf(" %d %s%s%s ", len(h.SMap), f, n, w)
 }

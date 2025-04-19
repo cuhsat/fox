@@ -89,7 +89,7 @@ func defaults() *Config {
     return &Config{
         Theme: themes.Default,
         Follow: false,
-        Line: true,
-        Wrap: false,        
+        Line: false,
+        Wrap: false,
     }
 }

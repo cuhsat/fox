@@ -22,22 +22,11 @@ func (b *base) blank(x, y, w int, sty tcell.Style) {
     }
 }
 
-// https://github.com/gdamore/tcell/blob/main/_demos/unicode.go
 func (b *base) print(x, y int, s string, sty tcell.Style) {
     d, i, w, z := make([]rune, 0), 0, 0, false
 
     for _, r := range s {
         r = text.AsUnicode(r)
-
-        if r == '•︎' {
-            if len(d) == 0 {
-                d, w = append(d, ' '), 1
-            }
-
-            d, z = append(d, r), true            
-
-            continue
-        }
 
         if r == '\u200d' {
             if len(d) == 0 {
@@ -45,13 +34,11 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
             }
 
             d, z = append(d, r), true
-
             continue
         }
 
         if z {
             d, z = append(d, r), false
-
             continue
         }
 
@@ -85,8 +72,4 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
         b.term.SetContent(x + i, y, d[0], d[1:], sty)
         i += w
     }
-}
-
-func (b *base) error(err error) {
-    b.term.PostEvent(tcell.NewEventError(err))
 }
