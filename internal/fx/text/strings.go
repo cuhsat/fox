@@ -20,19 +20,18 @@ func Abr(s string, w int) string {
     return runewidth.Truncate(s, w, "…")
 }
 
-func LTrim(s string, w int) string {
-    return runewidth.TruncateLeft(s, w, "")
-}
+func Trim(s string, l, r int) string {
+    s = runewidth.TruncateLeft(s, l, "")
+    s = runewidth.Truncate(s, r, "→")
 
-func RTrim(s string, w int) string {
-    return runewidth.Truncate(s, w, "→")
+    return s
 }
 
 func Title(s string, w int) string {
-    return Block([]string{s}, w)
+    return Block([]string{s}, w, "")
 }
 
-func Block(s []string, w int) (r string) {
+func Block(s []string, w int, t string) (r string) {
     if w < 0 {
         for _, ss := range s {
             w = max(w, len(ss))
@@ -41,10 +40,16 @@ func Block(s []string, w int) (r string) {
         w += 4
     }
 
-    l := strings.Repeat("─", w-2)
+    a := strings.Repeat("─", w-2)
+    b := a
+
+    // title
+    if len(t) > 0 {
+        a = fmt.Sprintf("─ %s %s", t, strings.Repeat("─", len(t)-1))
+    }
 
     // header
-    r += fmt.Sprintf("┌%s┐\n", l)
+    r += fmt.Sprintf("┌%s┐\n", a)
 
     // body
     for _, ss := range s {
@@ -52,7 +57,7 @@ func Block(s []string, w int) (r string) {
     }
 
     // footer
-    r += fmt.Sprintf("└%s┘", l)
+    r += fmt.Sprintf("└%s┘", b)
 
     return
 }

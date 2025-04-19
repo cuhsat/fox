@@ -39,7 +39,7 @@ func (hl HexLine) String() string {
     return fmt.Sprintf("%s %s %s", hl.Nr, hl.Hex, hl.Str)
 }
 
-func Hex(ctx Context) (hb HexBlock) {
+func Hex(ctx *Context) (hb HexBlock) {
     off_w := 8 + HexSpace
 
     cols := int(float64((ctx.W - off_w) + HexSpace) / 3.5)
