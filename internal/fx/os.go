@@ -9,7 +9,7 @@ import (
 )
 
 var (
-    Logfile *os.File
+    Logfile string
 )
 
 func Init() *os.File {
@@ -17,7 +17,7 @@ func Init() *os.File {
 
     log.SetOutput(f)
 
-    Logfile = f
+    Logfile = f.Name()
 
     return f
 }

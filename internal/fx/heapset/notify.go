@@ -8,8 +8,12 @@ import (
     "github.com/fsnotify/fsnotify"
 )
 
-func (hs *HeapSet) notifyHeap(h *heap.Heap) {
-    err := hs.watch.Add(filepath.Dir(h.Path))
+func (hs *HeapSet) watchHeap(h *heap.Heap) {
+    hs.watchPath(h.Path)
+}
+
+func (hs *HeapSet) watchPath(path string) {
+    err := hs.watch.Add(filepath.Dir(path))
 
     if err != nil {
         fx.Error(err)
@@ -31,6 +35,14 @@ func (hs *HeapSet) notify() {
                 continue
             }
 
+            if ev.Name == fx.Logfile {
+                if hs.error_fn != nil {
+                    hs.error_fn() // bound callback
+                }
+
+                continue
+            }
+
             for i, h := range hs.heaps {
                 if h.Path != ev.Name {
                     continue
@@ -39,7 +51,7 @@ func (hs *HeapSet) notify() {
                 h.Reload()
 
                 if hs.watch_fn != nil && hs.index == i {
-                    hs.watch_fn() // callback
+                    hs.watch_fn() // bound callback
                 }
 
                 break

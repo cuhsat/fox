@@ -13,15 +13,12 @@ import (
     "github.com/fsnotify/fsnotify"
 )
 
-type WatchFn func()
-
-type ErrorFn func(err error)
+type callback func()
 
 type HeapSet struct {
     watch *fsnotify.Watcher // file watcher
-    watch_fn WatchFn        // file watcher callback
-
-    error_fn ErrorFn        // error callback
+    watch_fn callback       // file watcher callback
+    error_fn callback       // error callback
 
     heaps []*heap.Heap      // set heaps
     index int               // set index
@@ -40,6 +37,8 @@ func New(paths []string) *HeapSet {
     }
 
     go hs.notify()
+
+    hs.watchPath(fx.Logfile)
 
     for _, path := range paths {
         if path == "-" {
@@ -67,9 +66,9 @@ func New(paths []string) *HeapSet {
     return &hs
 }
 
-func (hs *HeapSet) Bind(w_fn WatchFn, e_fn ErrorFn) {
-    hs.watch_fn = w_fn
-    hs.error_fn = e_fn
+func (hs *HeapSet) Bind(fn1, fn2 callback) {
+    hs.watch_fn = fn1
+    hs.error_fn = fn2
 }
 
 func (hs *HeapSet) Length() int {
@@ -103,7 +102,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 func (hs *HeapSet) CloseHeap() *heap.Heap {
     if len(hs.heaps) == 1 {
         return nil
-    }    
+    }
 
     hs.heaps = slices.Delete(hs.heaps, hs.index, hs.index+1)
     hs.index -= 1
@@ -191,7 +190,7 @@ func (hs *HeapSet) load() *heap.Heap {
     if !h.Loaded() {
         h.Reload()
 
-        hs.notifyHeap(h)
+        hs.watchHeap(h)
     }
 
     h.ApplyFilters()
