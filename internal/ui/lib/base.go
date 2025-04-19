@@ -29,6 +29,16 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
     for _, r := range s {
         r = text.AsUnicode(r)
 
+        if r == '•︎' {
+            if len(d) == 0 {
+                d, w = append(d, ' '), 1
+            }
+
+            d, z = append(d, r), true            
+
+            continue
+        }
+
         if r == '\u200d' {
             if len(d) == 0 {
                 d, w = append(d, ' '), 1
