@@ -20,7 +20,7 @@ func (hs *HeapSet) Raise() {
         i = len(hs.heaps)
 
         hs.heaps = append(hs.heaps, &heap.Heap{
-            Title: "error",
+            Title: "log",
             Path: fx.Logfile,
             Type: types.StdErr,
         })
