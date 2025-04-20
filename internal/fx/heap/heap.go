@@ -40,11 +40,11 @@ type Link struct {
 
 func (h *Heap) String() string {
     switch h.Type {
-    case types.StdIn:
+    case types.Stdin:
         return "-"
-    case types.StdOut:
+    case types.Stdout:
         return h.Title
-    case types.StdErr:
+    case types.Stderr:
         return h.Title
     case types.Deflate:
         return h.Base
@@ -56,9 +56,9 @@ func (h *Heap) String() string {
 func (h *Heap) Reload() {
     var err error
 
-    h.ThrowAway()
-    
-    h.file = fx.Open(h.Path)
+    if h.file == nil {
+        h.file = fx.Open(h.Path)
+    }
 
     fi, err := h.file.Stat()
 
@@ -69,7 +69,11 @@ func (h *Heap) Reload() {
 
     if fi.Size() == 0 {
         return
-    }    
+    }
+
+    if h.MMap != nil {
+        h.MMap.Unmap()
+    }
 
     h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
 
@@ -123,7 +127,7 @@ func (h *Heap) Bytes() []byte {
 func (h *Heap) ThrowAway() {
     if h.file != nil {
         h.MMap.Unmap()
-        
+
         h.file.Close()
         h.file = nil
     }

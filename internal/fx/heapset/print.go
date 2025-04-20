@@ -24,7 +24,7 @@ func (hs *HeapSet) Print(hex bool) {
     }
 
     for _, h := range hs.heaps {
-        if h.Type == types.StdIn {
+        if h.Type == types.Stdin {
             continue
         }
 

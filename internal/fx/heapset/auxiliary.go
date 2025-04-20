@@ -75,7 +75,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     hs.heaps = append(hs.heaps, &heap.Heap{
         Title: t,
         Path: f.Name(),
-        Type: types.StdOut,
+        Type: types.Stdout,
     })
 
     hs.index = len(hs.heaps)-1

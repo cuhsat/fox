@@ -10,7 +10,7 @@ func (hs *HeapSet) OpenLog() {
     i := -1
 
     for j, h := range hs.heaps {
-        if h.Type == types.StdErr {
+        if h.Type == types.Stderr {
             i = j
             break
         }
@@ -22,7 +22,7 @@ func (hs *HeapSet) OpenLog() {
         hs.heaps = append(hs.heaps, &heap.Heap{
             Title: "log",
             Path: fx.Logfile,
-            Type: types.StdErr,
+            Type: types.Stderr,
         })
     }
 

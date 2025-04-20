@@ -133,6 +133,7 @@ func (hs *HeapSet) ThrowAway() {
     hs.watch.Close()
 
     for _, h := range hs.heaps {
+        // cascading
         h.ThrowAway()
 
         if h.Type > types.Regular {
@@ -162,7 +163,7 @@ func (hs *HeapSet) loadPath(path string) {
 func (hs *HeapSet) loadPipe() {
     hs.heaps = append(hs.heaps, &heap.Heap{
         Path: fx.Stdin(),
-        Type: types.StdIn,
+        Type: types.Stdin,
     })  
 }
 

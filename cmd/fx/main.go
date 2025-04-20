@@ -119,6 +119,8 @@ func main() {
         if err := recover(); err != nil {
             fx.Dump(err, debug.Stack())
         }
+    
+        fx.Exit()
     }()
     
     ui.Run(hs, hi, bg)
