@@ -4,7 +4,6 @@ import (
     "fmt"
     "os"
     "os/user"
-    "path/filepath"
     "strings"
     "time"
 
@@ -26,12 +25,6 @@ type Bag struct {
 func New(path string) *Bag {
     if len(path) == 0 {
         path = filename
-    }
-
-    path, err := filepath.Abs(path)
-
-    if err != nil {
-        fx.Fatal(err)
     }
 
     return &Bag{

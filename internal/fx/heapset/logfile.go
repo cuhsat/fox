@@ -6,7 +6,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/types"
 )
 
-func (hs *HeapSet) RaiseLog() {
+func (hs *HeapSet) OpenLog() {
     i := -1
 
     for j, h := range hs.heaps {
