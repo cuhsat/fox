@@ -22,6 +22,7 @@ func (hs *HeapSet) OpenLog() {
         hs.heaps = append(hs.heaps, &heap.Heap{
             Title: "log",
             Path: fx.Log.Name,
+            Base: fx.Log.Name,
             Type: types.Stderr,
         })
     }
