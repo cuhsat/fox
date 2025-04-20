@@ -1,10 +1,10 @@
 ![](assets/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the most useful functionalities from **zcat**, **zless**, **head**, **tail**, **grep**, **hexdump**, **sha256sum**, **sha1sum**, **md5sum**, **wc** and **jq** into one performant standalone binary. As this is a forensic tool, <ins>no write actions</ins> will be performed.
+The Swiss Army Knife for examining text files. Combining the most useful functionalities from _zcat_, _zless_, _head_, _hexdump_, _tail_, _grep_, _jq_, _wc_ and various hashes into one performant standalone binary. As this is a forensic tool, <ins>no write actions</ins> are guaranteed to be performed.
 
 ![](assets/grep.png "Forensic Examiner")
 
-# Usage
+## Usage
 ```
 fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
 ```
@@ -23,50 +23,48 @@ Default options:
 * `--help` Usage information
 * `--version` Version number
 
-## Examples
-Reading all files in the current directory:
+### Examples
+Read all files in the current directory:
 ```console
 fx
 ```
 
-Reading directly from stdin:
+Read directly from stdin:
 ```console
 fx -
 ```
 
-Reading `gzip` compressed files:
+Read `gzip` compressed files:
 ```console
 fx foo.gz bar.gz
 ```
 
-Reading all `.jsonl` files in all subdirectories:
+Read all `.jsonl` files in all subdirectories:
 ```console
 fx ./*/*.jsonl
 ```
 
-Writing all lines with `John Doe` from all files to stdout:
+Write all lines with `John Doe` from all files to stdout:
 ```console
 fx -p -e "John Doe"
 ```
 
-Writing the first `3` lines of `foo` to `bar`:
+Write the first `3` lines of `foo` to `bar`:
 ```console
 fx -h -n 3 foo > bar
 ```
 
-Writing the last `8` bytes of `foo` to `bar` in hex:
+Write the last `8` bytes of `foo` to `bar` in hex:
 ```console
 fx -t -c 8 -x foo > bar
 ```
 
-# Install
+## Install
 ```console
 make install
 ```
 
-# Keymap
-
-## General
+## Keymap
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Esc</kbd>                                       | Exit                  |
@@ -97,12 +95,12 @@ make install
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
 | <kbd>Ctrl</kbd> + <kbd>d</kbd>                       | Open debug log        |
 
-## F1 - Less Mode
+### F1 - Less Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## F2 - Grep Mode
+### F2 - Grep Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Append filter         |
@@ -112,12 +110,12 @@ make install
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
-## F3 - Hex Mode
+### F3 - Hex Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## F4 - Goto Mode
+### F4 - Goto Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Goto line             |
@@ -126,7 +124,7 @@ make install
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Line number           |
 
-# Config
+## Config
 > Located under `~/.fxrc`.
 
 ```toml
@@ -136,12 +134,12 @@ Line = false
 Wrap = false
 ```
 
-## Environment
+### Environment
 ```bash
 FX_THEME=Default
 ```
 
-## Themes
+### Themes
 * `Default`
 * `Monokai`
 * `Catppuccin-Latte`
