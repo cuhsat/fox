@@ -36,7 +36,7 @@ func (hs *HeapSet) notify() {
                 continue
             }
 
-            if ev.Name == fx.Logfile {
+            if ev.Name == fx.Log.Name {
                 if hs.error_fn != nil {
                     hs.error_fn() // bound callback
                 }

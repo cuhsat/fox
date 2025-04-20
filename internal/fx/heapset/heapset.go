@@ -38,7 +38,7 @@ func New(paths []string) *HeapSet {
 
     go hs.notify()
 
-    hs.watchPath(fx.Logfile)
+    hs.watchPath(fx.Log.Name)
 
     for _, path := range paths {
         if path == "-" {

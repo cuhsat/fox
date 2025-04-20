@@ -5,46 +5,8 @@ import (
     "errors"
     "fmt"
     "io"
-    "log"
     "os"
 )
-
-var (
-    Logfile string
-)
-
-func Init() *os.File {
-    f := Stderr()
-
-    log.SetFlags(log.Ldate|log.Ltime|log.LUTC|log.Lshortfile)
-    log.SetOutput(f)
-
-    Logfile = f.Name()
-
-    return f
-}
-
-func Exit() {
-    if len(Logfile) > 0 {
-        os.Remove(Logfile)
-    }
-}
-
-func Debug(v ...any) {
-    log.Println(v...)
-}
-
-func Error(v ...any) {
-    log.Println(v...)
-}
-
-func Fatal(v ...any) {
-    log.Fatal(v...)
-}
-
-func Panic(v ...any) {
-    log.Panic(v...)
-}
 
 func Stdin() string {
     if !IsPiped(os.Stdin) {
