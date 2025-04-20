@@ -27,37 +27,16 @@ func Trim(s string, l, r int) string {
     return s
 }
 
-func Title(s string, w int) string {
-    return Block([]string{s}, w, "")
-}
-
-func Block(s []string, w int, t string) (r string) {
+func Title(s string, w int) (r string) {
     if w < 0 {
-        for _, ss := range s {
-            w = max(w, len(ss))
-        }
-        
-        w += 4
+        w = 4+len(s)
     }
 
-    a := strings.Repeat("─", w-2)
-    b := a
+    l := strings.Repeat("─", w-2)
 
-    // title
-    if len(t) > 0 {
-        a = fmt.Sprintf("─ %s %s", t, strings.Repeat("─", len(t)-1))
-    }
-
-    // header
-    r += fmt.Sprintf("┌%s┐\n", a)
-
-    // body
-    for _, ss := range s {
-        r += fmt.Sprintf("│ %-*s │\n", w-4, ss)
-    }
-
-    // footer
-    r += fmt.Sprintf("└%s┘", b)
+    r += fmt.Sprintf("┌%s┐\n", l)
+    r += fmt.Sprintf("│ %-*s │\n", w-4, s)
+    r += fmt.Sprintf("└%s┘", l)
 
     return
 }

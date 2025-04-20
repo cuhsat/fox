@@ -79,6 +79,17 @@ func (hs *HeapSet) Current() (int, *heap.Heap) {
     return hs.index+1, hs.heaps[hs.index]
 }
 
+func (hs *HeapSet) OpenHeap(path string) {
+    // TODO
+    // i := len(hs.heaps)
+
+    // hs.loadPath(path)
+
+    // hs.index = i-1
+
+    // hs.load()
+}
+
 func (hs *HeapSet) PrevHeap() *heap.Heap {
     hs.index -= 1
 

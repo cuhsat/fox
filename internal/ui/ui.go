@@ -175,6 +175,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
+            case tcell.KeyCtrlE:
+                hs.OpenHeap(bag.Path)
+
+            case tcell.KeyCtrlD:
+                hs.RaiseLog()
+
             case tcell.KeyF9:
                 hs.Word()
 
@@ -343,7 +349,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     continue
 
                 case 32: // space
-                    if ui.ctx.Mode == mode.Less {
+                    if ui.ctx.Mode == mode.Less || ui.ctx.Mode == mode.Hex {
                         ui.buffer.ScrollDown(page_h)
                     } else {
                         ui.prompt.AddRune(r)
