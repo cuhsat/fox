@@ -19,6 +19,16 @@ const (
     Version = "dev"
 )
 
+func usage() {
+    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
+    os.Exit(2)
+}
+
+func version() {
+    fmt.Println("fx", version)
+    os.Exit(0)
+}
+
 func main() {
     c := new(types.Counts)
     l := types.GetLimits()
@@ -91,8 +101,7 @@ func main() {
         m = mode.Grep
     }
 
-    lf := fx.Init()
-    defer lf.Close()
+    fx.SetupLogger()
 
     if fx.IsPiped(os.Stdout) {
         *p = true
@@ -120,18 +129,8 @@ func main() {
             fx.Dump(err, debug.Stack())
         }
     
-        fx.Exit()
+        fx.Log.Close()
     }()
-    
+
     ui.Run(hs, hi, bg)
-}
-
-func usage() {
-    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
-    os.Exit(2)
-}
-
-func version() {
-    fmt.Println("fx", version)
-    os.Exit(0)
 }
