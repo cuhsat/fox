@@ -4,6 +4,7 @@ import (
     "flag"
     "fmt"
     "os"
+    "runtime/debug"
 
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/files/bag"
@@ -116,7 +117,7 @@ func main() {
 
     defer func() {
         if err := recover(); err != nil {
-            fx.Dump(err)
+            fx.Dump(err, debug.Stack())
         }
     }()
     
