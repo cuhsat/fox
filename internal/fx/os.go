@@ -122,8 +122,10 @@ func Temp(name, ext string) *os.File {
     return f
 }
 
-func Dump(err any) {
-    err = os.WriteFile(".dump", []byte(fmt.Sprintf("%+v", err)), 0600)
+func Dump(err any, stack any) {
+    s := fmt.Sprintf("%+v\n\n%s", err, stack)
+
+    err = os.WriteFile(".dump", []byte(s), 0600)
 
     if err != nil {
         Fatal(err)
