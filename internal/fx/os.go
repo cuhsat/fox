@@ -36,9 +36,13 @@ func Fatal(v ...any) {
     log.Fatal(v...)
 }
 
+func Panic(v ...any) {
+    log.Panic(v...)
+}
+
 func Stdin() string {
     if !IsPiped(os.Stdin) {
-        Fatal("invalid mode")
+        Panic("invalid mode")
     }
 
     f := Temp("stdin", ".txt")
@@ -102,7 +106,7 @@ func Open(path string) *os.File {
     f, err := os.OpenFile(path, os.O_RDONLY, 0400)
 
     if err != nil {
-        Fatal(err)
+        Panic(err)
     }
 
     return f
@@ -112,8 +116,16 @@ func Temp(name, ext string) *os.File {
     f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", name, ext))
 
     if err != nil {
-        Fatal(err)
+        Panic(err)
     }
 
     return f
+}
+
+func Dump(err any) {
+    err = os.WriteFile(".dump", []byte(fmt.Sprintf("%+v", err)), 0600)
+
+    if err != nil {
+        Fatal(err)
+    }
 }

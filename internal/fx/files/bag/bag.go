@@ -93,7 +93,7 @@ func (bag *Bag) mustInit() {
     bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Panic(err)
     }
 
     if !is {

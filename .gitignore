@@ -24,5 +24,8 @@ go.work.sum
 # Mac crap
 .DS_Store
 
+# Error dump
+.dump
+
 # Evidence file
 EVIDENCE
