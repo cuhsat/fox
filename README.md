@@ -1,15 +1,8 @@
 ![](assets/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone tool.
+The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone binary. As this is a forensic tool, no write actions will be performed!
 
 ![](assets/grep.png "Forensic Examiner")
-
-> As this is a forensic tool, no write actions will be performed.
-
-# Install
-```console
-make install
-```
 
 # Usage
 ```
@@ -64,6 +57,11 @@ fx -h -n 3 foo > bar
 Writing the last `8` bytes of `foo` to `bar` in hex:
 ```console
 fx -t -c 8 -x foo > bar
+```
+
+# Install
+```console
+make install
 ```
 
 # Keymap
