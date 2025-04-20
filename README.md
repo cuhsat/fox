@@ -2,8 +2,7 @@
 
 The Swiss Army Knife for examining text files. Combining the most useful functionalities from `(z)cat`, `(z)less`, `head`, `tail`, `grep`, `hexdump`, `sha256sum`, `sha1sum`, `md5sum`, `wc` and `jq` into one performant standalone tool.
 
-![](assets/grep.png "Grep Mode")
-![](assets/hex.png "Hex Mode")
+![](assets/grep.png "Forensic Examiner")
 
 > As this is a forensic tool, no write actions will be performed.
 
