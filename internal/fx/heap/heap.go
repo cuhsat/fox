@@ -125,12 +125,18 @@ func (h *Heap) Bytes() []byte {
 }
 
 func (h *Heap) ThrowAway() {
-    if h.file != nil {
+    if h.MMap != nil {
         h.MMap.Unmap()
+        h.MMap = nil
+    }
 
+    if h.file != nil {
         h.file.Close()
         h.file = nil
     }
+
+    h.SMap = nil
+    h.rmap = nil
 
     runtime.GC()
 }
