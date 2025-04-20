@@ -39,8 +39,6 @@ func (bag *Bag) Put(h *heap.Heap) {
 
     f := *types.GetFilters()
 
-    d := text.Dec(h.Length())
-
     usr, err := user.Current()
 
     if err != nil {
@@ -71,7 +69,7 @@ func (bag *Bag) Put(h *heap.Heap) {
     for _, s := range h.SMap {
         str := string(h.MMap[s.Start:s.End])
 
-        bag.write(fmt.Sprintf("[%0*d] %v", d, s.Nr, str))
+        bag.write(fmt.Sprintf("%v", str))
     }
 
     bag.write("")
