@@ -99,12 +99,12 @@ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
 | <kbd>Ctrl</kbd> + <kbd>d</kbd>                       | Open debug log        |
 
-## Less Mode (F1)
+## F1 - Less Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## Grep Mode (F2)
+## F2 - Grep Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Append filter         |
@@ -114,12 +114,12 @@ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
-## Hex Mode (F3)
+## F3 - Hex Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## Goto Mode (F4)
+## F4 - Goto Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Goto line             |
