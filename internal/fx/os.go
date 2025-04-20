@@ -24,6 +24,12 @@ func Init() *os.File {
     return f
 }
 
+func Exit() {
+    if len(Logfile) > 0 {
+        os.Remove(Logfile)
+    }
+}
+
 func Debug(v ...any) {
     log.Println(v...)
 }

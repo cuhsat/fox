@@ -2,9 +2,9 @@ package types
 
 const (
     Regular Heap = iota
-    StdIn
-    StdOut
-    StdErr
+    Stdin
+    Stdout
+    Stderr
     Deflate
 )
 

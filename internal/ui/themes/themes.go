@@ -44,7 +44,7 @@ func New(name string) *Themes {
                 0xeeeeee, 0x0f88cd,
                 0xeeeeee, 0xf8340c,
                 0x111111, 0x88cd0f,
-                0x555555, 0x111111,
+                0x333333, 0x111111,
                 0x333333, 0x111111,
                 0xeeeeee,
                 0xeeeeee,

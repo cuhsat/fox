@@ -243,15 +243,20 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
 
             case tcell.KeyCtrlF:
-                ui.ctx.ToggleFollow()
+                if ui.ctx.Mode != mode.Hex {
+                    ui.ctx.ToggleFollow()
+                }
 
             case tcell.KeyCtrlN:
-                ui.ctx.ToggleNumbers()
+                if ui.ctx.Mode != mode.Hex {
+                    ui.ctx.ToggleNumbers()
+                }
 
             case tcell.KeyCtrlW:
-                ui.ctx.ToggleWrap()
-
-                ui.buffer.Reset()
+                if ui.ctx.Mode != mode.Hex {
+                    ui.ctx.ToggleWrap()
+                    ui.buffer.Reset()
+                }
 
             case tcell.KeyHome:
                 ui.buffer.ScrollStart()
@@ -397,6 +402,10 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     defer ui.term.Show()
 
     _, heap := hs.Current()
+
+    if heap.Type == types.Stdin {
+        ui.term.Sync() // prevent hickups
+    }
 
     ui.term.SetTitle(fmt.Sprintf("Forensic Examiner - %s", heap))
     ui.term.SetStyle(themes.Base)

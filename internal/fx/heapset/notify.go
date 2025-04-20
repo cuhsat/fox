@@ -2,6 +2,7 @@ package heapset
 
 import (
     "path/filepath"
+    "strings"
 
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
@@ -44,7 +45,7 @@ func (hs *HeapSet) notify() {
             }
 
             for i, h := range hs.heaps {
-                if h.Path != ev.Name {
+                if !strings.HasSuffix(h.Path, ev.Name) {
                     continue
                 }
 
