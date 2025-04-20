@@ -114,6 +114,12 @@ func main() {
     ui := ui.New(m)
     defer ui.Close()
 
+    defer func() {
+        if err := recover(); err != nil {
+            fx.Dump(err)
+        }
+    }()
+    
     ui.Run(hs, hi, bg)
 }
 

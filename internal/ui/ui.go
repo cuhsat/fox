@@ -49,13 +49,13 @@ func New(m mode.Mode) *UI {
     term, err := tcell.NewScreen()
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Panic(err)
     }
 
     err = term.Init()
 
     if err != nil {
-        fx.Fatal(err)
+        fx.Panic(err)
     }
 
     term.EnableMouse()
@@ -388,17 +388,9 @@ func (ui *UI) State(m mode.Mode) {
 }
 
 func (ui *UI) Close() {
-    err := recover()
-
     defer ui.ctx.Save()
-
     defer ui.term.Fini()
-
     defer ui.overlay.Close()
-    
-    if err != nil {
-        fx.Error(err)
-    }
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
