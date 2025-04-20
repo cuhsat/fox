@@ -113,6 +113,11 @@ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
+## Hex Mode
+| Shortcut                                             | Action                |
+| ---------------------------------------------------- | --------------------- |
+| <kbd>Space</kbd>                                     | Scroll page down      |
+
 # Config
 > Located under `~/.fxrc`.
 
