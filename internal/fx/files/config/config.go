@@ -29,6 +29,7 @@ func Load() *Config {
 
     if err != nil {
         fx.Error(err)
+        dir = "."
     }
 
     p := filepath.Join(dir, filename)
@@ -74,6 +75,7 @@ func (cfg *Config) Save() {
 
     if err != nil {
         fx.Error(err)
+        dir = "."
     }
 
     p := filepath.Join(dir, filename)

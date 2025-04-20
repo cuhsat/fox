@@ -16,12 +16,16 @@ var (
 func Init() *os.File {
     f := Stderr()
 
-    log.SetFlags(log.Ldate|log.Ltime|log.LUTC)
+    log.SetFlags(log.Ldate|log.Ltime|log.LUTC|log.Lshortfile)
     log.SetOutput(f)
 
     Logfile = f.Name()
 
     return f
+}
+
+func Debug(v ...any) {
+    log.Println(v...)
 }
 
 func Error(v ...any) {

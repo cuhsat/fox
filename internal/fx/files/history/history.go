@@ -30,6 +30,7 @@ func New() *History {
 
     if err != nil {
         fx.Error(err)
+        dir = "."
     }
 
     p := filepath.Join(dir, filename)
