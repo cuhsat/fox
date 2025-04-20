@@ -161,8 +161,11 @@ func (hs *HeapSet) loadPath(path string) {
 }
 
 func (hs *HeapSet) loadPipe() {
+    p := fx.Stdin()
+
     hs.heaps = append(hs.heaps, &heap.Heap{
-        Path: fx.Stdin(),
+        Path: p,
+        Base: p,
         Type: types.Stdin,
     })  
 }
