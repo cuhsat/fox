@@ -80,14 +80,22 @@ func (hs *HeapSet) Current() (int, *heap.Heap) {
 }
 
 func (hs *HeapSet) OpenHeap(path string) {
-    // TODO
-    // i := len(hs.heaps)
+    i := -1
 
-    // hs.loadPath(path)
+    for j, h := range hs.heaps {
+        if h.Base == path {
+            i = j
+            break
+        }
+    }
 
-    // hs.index = i-1
+    if i < 0 {
+        i = len(hs.heaps)
+        hs.loadPath(path)        
+    }
 
-    // hs.load()
+    hs.index = i
+    hs.load()
 }
 
 func (hs *HeapSet) PrevHeap() *heap.Heap {

@@ -96,14 +96,16 @@ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
-| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save as evidence      |
+| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save evidence         |
+| <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
+| <kbd>Ctrl</kbd> + <kbd>d</kbd>                       | Open debug log        |
 
-## Less Mode
+## Less Mode (F1)
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## Grep Mode
+## Grep Mode (F2)
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Append filter         |
@@ -113,10 +115,19 @@ fx -t -c 8 -x foo > bar
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
-## Hex Mode
+## Hex Mode (F3)
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
+
+## Goto Mode (F4)
+| Shortcut                                             | Action                |
+| ---------------------------------------------------- | --------------------- |
+| <kbd>Enter</kbd>                                     | Goto line             |
+| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
+| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
+| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
+| <kbd>Any Key</kbd>                                   | Line number           |
 
 # Config
 > Located under `~/.fxrc`.

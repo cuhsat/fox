@@ -175,12 +175,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
-            case tcell.KeyCtrlE:
-                hs.OpenHeap(bag.Path)
-
-            case tcell.KeyCtrlD:
-                hs.RaiseLog()
-
             case tcell.KeyF9:
                 hs.Word()
 
@@ -217,6 +211,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 bag.Put(heap)
 
                 ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
+
+            case tcell.KeyCtrlE:
+                if fx.Exists(bag.Path) {
+                    hs.OpenHeap(bag.Path)
+                }
+
+            case tcell.KeyCtrlD:
+                hs.RaiseLog()
 
             case tcell.KeyCtrlQ:
                 ui.buffer.Reset()
