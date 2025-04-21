@@ -21,10 +21,8 @@ func (b *Buffer) textRender(x, y, w, h int) {
 
     b.smap = tl.SMap
 
-    nr_w := text.Dec(b.heap.Length()) + layers.TextSpace
-
     if b.ctx.Line {
-        w -= nr_w
+        w -= text.Dec(b.heap.Length()) + layers.TextSpace
     }
 
     // set layer bounds
@@ -39,7 +37,7 @@ func (b *Buffer) textRender(x, y, w, h int) {
         // line number
         if b.ctx.Line {
             b.print(line_x, line_y, line.Nr, themes.Subtext0)
-            line_x += nr_w
+            line_x += len(line.Nr) + layers.TextSpace
         }
 
         // text value
@@ -54,7 +52,7 @@ func (b *Buffer) textRender(x, y, w, h int) {
         part_y := y + part.Y
 
         if b.ctx.Line {
-            part_x += nr_w
+            part_x += len(tl.Lines[0].Nr) + layers.TextSpace
         }
 
         // part value
