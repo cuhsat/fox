@@ -6,12 +6,12 @@ import (
 
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/layer"
+    "github.com/cuhsat/fx/internal/fx/types/layers"
     "github.com/cuhsat/fx/internal/ui/themes"
 )
 
 func (b *Buffer) textRender(x, y, w, h int) {
-    tl := layer.Text(&layer.Context{
+    tl := layers.Text(&layers.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,
@@ -24,7 +24,7 @@ func (b *Buffer) textRender(x, y, w, h int) {
     b.smap = tl.SMap
 
     if b.ctx.Line {
-        w -= text.Dec(b.heap.Length()) + layer.TextSpace
+        w -= text.Dec(b.heap.Length()) + layers.TextSpace
     }
 
     // set layer bounds
@@ -39,7 +39,7 @@ func (b *Buffer) textRender(x, y, w, h int) {
         // line number
         if b.ctx.Line {
             b.print(line_x, line_y, line.Nr, themes.Subtext0)
-            line_x += len(line.Nr) + layer.TextSpace
+            line_x += len(line.Nr) + layers.TextSpace
         }
 
         if len(line.Str) == 0 {

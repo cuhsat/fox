@@ -1,14 +1,14 @@
 package lib
 
 import (
-    "github.com/cuhsat/fx/internal/fx/types/layer"
+    "github.com/cuhsat/fx/internal/fx/types/layers"
     "github.com/cuhsat/fx/internal/ui/themes"
 )
 
 func (b *Buffer) hexRender(x, y, w, h int) {
-    rule_w := layer.HexSpace * 2
+    rule_w := layers.HexSpace * 2
 
-    hl := layer.Hex(&layer.Context{
+    hl := layers.Hex(&layers.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,
@@ -19,7 +19,7 @@ func (b *Buffer) hexRender(x, y, w, h int) {
     })[0]
 
     if len(hl.Lines) > 0 {
-        w -= len(hl.Lines[0].Nr) + layer.HexSpace
+        w -= len(hl.Lines[0].Nr) + layers.HexSpace
     }
 
     // set layer bounds
