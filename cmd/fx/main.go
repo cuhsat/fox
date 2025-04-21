@@ -50,6 +50,12 @@ func main() {
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
     flag.IntVar(&c.Bytes, "c", 0, "Bytes count")
 
+    // aliases
+    flag.IntVar(&l.Head.Lines, "hn", 0, "Head lines count")
+    flag.IntVar(&l.Head.Bytes, "hc", 0, "Head bytes count")
+    flag.IntVar(&l.Tail.Lines, "tn", 0, "Tail lines count")
+    flag.IntVar(&l.Tail.Bytes, "tc", 0, "Tail bytes count")
+
     // filters
     flag.Var(e, "e", "Pattern value")
 
