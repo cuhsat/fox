@@ -1,4 +1,4 @@
-package block
+package layer
 
 import (
     "fmt"
@@ -16,8 +16,8 @@ const (
     TabSpace = "    "
 )
 
-type TextBlock struct {
-    Block
+type TextLayer struct {
+    Layer
     Lines []TextLine
     SMap smap.SMap
 }
@@ -26,13 +26,13 @@ type TextLine struct {
     Line
 }
 
-func (tb TextBlock) String() string {
+func (tl TextLayer) String() string {
     var sb strings.Builder
 
-    for i, l := range tb.Lines {
+    for i, l := range tl.Lines {
         sb.WriteString(l.String())
         
-        if i < len(tb.Lines)-1 {
+        if i < len(tl.Lines)-1 {
             sb.WriteRune('\n')            
         }
     }
@@ -44,54 +44,56 @@ func (tl TextLine) String() string {
     return tl.Str
 }
 
-func Text(ctx *Context) (tb TextBlock) {
+func Text(ctx *Context) []TextLayer {
+    var tl TextLayer
+
     d := text.Dec(ctx.Heap.Length())
 
-    tb.SMap = ctx.Heap.SMap
+    tl.SMap = ctx.Heap.SMap
 
     if ctx.Line {
         ctx.W -= (d + TextSpace)
     }
 
     if ctx.Wrap && ctx.Heap.Fmt != nil {
-        textFormat(ctx, &tb, d)
+        textFormat(ctx, &tl, d)
     } else {
-        textNormal(ctx, &tb, d)
+        textNormal(ctx, &tl, d)
     }
 
-    if len(tb.Lines) >= ctx.H {
-        tb.Lines = tb.Lines[:ctx.H]
+    if len(tl.Lines) >= ctx.H {
+        tl.Lines = tl.Lines[:ctx.H]
     }
 
-    return
+    return []TextLayer{tl}
 }
 
-func textFormat(ctx *Context, tb *TextBlock, d int) {
-    for _, s := range tb.SMap {
+func textFormat(ctx *Context, tl *TextLayer, d int) {
+    for _, s := range tl.SMap {
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
         str := string(ctx.Heap.MMap[s.Start:s.End])
 
         for _, l := range ctx.Heap.Fmt(str) {
-            tb.Lines = append(tb.Lines, TextLine{
+            tl.Lines = append(tl.Lines, TextLine{
                 Line: Line{Nr: nr, Str: textFit(l, ctx.X, ctx.W)},
             })
 
-            tb.W, tb.H  = max(tb.W, text.Len(l)), len(tb.Lines)
+            tl.W, tl.H  = max(tl.W, text.Len(l)), len(tl.Lines)
         }
     }
 
-    tb.Lines = tb.Lines[ctx.Y:]
+    tl.Lines = tl.Lines[ctx.Y:]
 }
 
-func textNormal(ctx *Context, tb *TextBlock, d int) {
+func textNormal(ctx *Context, tl *TextLayer, d int) {
     if ctx.Wrap {
-        tb.SMap = tb.SMap.Wrap(ctx.W)
+        tl.SMap = tl.SMap.Wrap(ctx.W)
     }
 
-    tb.W, tb.H = tb.SMap.Size()
+    tl.W, tl.H = tl.SMap.Size()
 
-    for i, s := range tb.SMap[ctx.Y:] {
+    for i, s := range tl.SMap[ctx.Y:] {
         if i >= ctx.H {
             break
         }
@@ -103,7 +105,7 @@ func textNormal(ctx *Context, tb *TextBlock, d int) {
         // replace tabulators
         str = strings.ReplaceAll(str, "\t", TabSpace)
 
-        tb.Lines = append(tb.Lines, TextLine{
+        tl.Lines = append(tl.Lines, TextLine{
             Line: Line{Nr: nr, Str: textFit(str, ctx.X, ctx.W)},
         })
     }

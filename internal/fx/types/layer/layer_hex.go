@@ -1,4 +1,4 @@
-package block
+package layer
 
 import (
     "fmt"
@@ -11,8 +11,8 @@ const (
     HexSpace = 1
 )
 
-type HexBlock struct {
-    Block
+type HexLayer struct {
+    Layer
     Lines []HexLine
 }
 
@@ -21,13 +21,13 @@ type HexLine struct {
     Hex string
 }
 
-func (hb HexBlock) String() string {
+func (hl HexLayer) String() string {
     var sb strings.Builder
 
-    for i, l := range hb.Lines {
+    for i, l := range hl.Lines {
         sb.WriteString(l.String())
         
-        if i < len(hb.Lines)-1 {
+        if i < len(hl.Lines)-1 {
             sb.WriteRune('\n')            
         }
     }
@@ -39,7 +39,9 @@ func (hl HexLine) String() string {
     return fmt.Sprintf("%s %s %s", hl.Nr, hl.Hex, hl.Str)
 }
 
-func Hex(ctx *Context) (hb HexBlock) {
+func Hex(ctx *Context) []HexLayer {
+    var hl HexLayer
+
     off_w := 8 + HexSpace
 
     cols := int(float64((ctx.W - off_w) + HexSpace) / 3.5)
@@ -50,18 +52,18 @@ func Hex(ctx *Context) (hb HexBlock) {
 
     hex_w := int(float64(cols) * 2.5)
 
-    hb.W, hb.H = ctx.W, len(mmap) / cols
+    hl.W, hl.H = ctx.W, len(mmap) / cols
 
     if len(mmap) % cols > 0 {
-        hb.H++
+        hl.H++
     }
 
     mmap = mmap[ctx.Y * cols:]
 
     for i := 0; i < len(mmap); i += cols {
-        if len(hb.Lines) >= ctx.H {
-            hb.Lines = hb.Lines[:ctx.H]
-            return
+        if len(hl.Lines) >= ctx.H {
+            hl.Lines = hl.Lines[:ctx.H]
+            return []HexLayer{hl}
         }
 
         nr := fmt.Sprintf("%0*X ", 8, tail + ctx.Y + i)
@@ -90,8 +92,8 @@ func Hex(ctx *Context) (hb HexBlock) {
         l.Hex = fmt.Sprintf("%-*s", hex_w, l.Hex)
         l.Str = text.ToASCII(l.Str)
 
-        hb.Lines = append(hb.Lines, l)
+        hl.Lines = append(hl.Lines, l)
     }
 
-    return
+    return []HexLayer{hl}
 }

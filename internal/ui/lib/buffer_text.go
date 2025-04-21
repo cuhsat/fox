@@ -6,12 +6,12 @@ import (
 
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/block"
+    "github.com/cuhsat/fx/internal/fx/types/layer"
     "github.com/cuhsat/fx/internal/ui/themes"
 )
 
 func (b *Buffer) textRender(x, y, w, h int) {
-    tb := block.Text(&block.Context{
+    tl := layer.Text(&layer.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,
@@ -19,27 +19,27 @@ func (b *Buffer) textRender(x, y, w, h int) {
         Y: b.delta_y,
         W: w,
         H: h,
-    })
+    })[0]
 
-    b.smap = tb.SMap
+    b.smap = tl.SMap
 
     if b.ctx.Line {
-        w -= text.Dec(b.heap.Length()) + block.TextSpace
+        w -= text.Dec(b.heap.Length()) + layer.TextSpace
     }
 
-    // set block bounds
-    b.last_x = max(tb.W - w, 0)
-    b.last_y = max(tb.H - h, 0)
+    // set layer bounds
+    b.last_x = max(tl.W - w, 0)
+    b.last_y = max(tl.H - h, 0)
 
-    // render block
-    for i, line := range tb.Lines {
+    // render layer
+    for i, line := range tl.Lines {
         line_x := x
         line_y := y + i
 
         // line number
         if b.ctx.Line {
             b.print(line_x, line_y, line.Nr, themes.Subtext0)
-            line_x += len(line.Nr) + block.TextSpace
+            line_x += len(line.Nr) + layer.TextSpace
         }
 
         if len(line.Str) == 0 {
