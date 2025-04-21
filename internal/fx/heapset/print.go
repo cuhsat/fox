@@ -6,7 +6,7 @@ import (
 
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/layer"
+    "github.com/cuhsat/fx/internal/fx/types/layers"
 )
 
 type Printable interface {
@@ -14,7 +14,7 @@ type Printable interface {
 }
 
 func (hs *HeapSet) Print(hex bool) {
-    ctx := layer.Context{
+    ctx := layers.Context{
         Line: true,
         Wrap: false,
         X: 0,
@@ -39,9 +39,9 @@ func (hs *HeapSet) Print(hex bool) {
 
             fmt.Println(text.Title(h.String(), ctx.W))
 
-            fmt.Println(layer.Hex(&ctx)[0])
+            fmt.Println(layers.Hex(&ctx)[0])
         } else {
-            fmt.Println(layer.Text(&ctx)[0])
+            fmt.Println(layers.Text(&ctx)[0])
         }
     }
 }
