@@ -1,4 +1,4 @@
-package layer
+package layers
 
 import (
     "github.com/cuhsat/fx/internal/fx/heap"
