@@ -47,7 +47,7 @@ func (h *Heap) String() string {
     case types.Stderr:
         return h.Title
     case types.Deflate:
-        return h.Base
+        return h.Title
     default:
         return h.Path
     }

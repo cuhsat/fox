@@ -56,15 +56,15 @@ func Deflate(path string) string {
 
     b := strings.TrimSuffix(filepath.Base(path), ".gz")
 
-    f := fx.Temp("gzip", filepath.Ext(b))
-    defer f.Close()
+    t := fx.Temp("gzip", filepath.Ext(b))
+    defer t.Close()
 
-    _, err = io.Copy(f, r)
+    _, err = io.Copy(t, r)
 
     if err != nil {
         fx.Error(err)
         return path
     }
 
-    return f.Name()
+    return t.Name()
 }
