@@ -224,7 +224,7 @@ func (hs *HeapSet) loadZip(path string) {
         }
 
         hs.heaps = append(hs.heaps, &heap.Heap{
-            Title: ze.Name,
+            Title: filepath.Join(path, ze.Name),
             Path: ze.Path,
             Base: ze.Path,
             Type: types.Deflate,
