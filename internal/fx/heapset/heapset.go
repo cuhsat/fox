@@ -6,11 +6,11 @@ import (
     "slices"
 
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/file/deflate/gzip"
+    "github.com/cuhsat/fx/internal/fx/file/deflate/zip"
+    "github.com/cuhsat/fx/internal/fx/file/format/jsonl"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/deflate/gzip"
-    "github.com/cuhsat/fx/internal/fx/types/deflate/zip"
-    "github.com/cuhsat/fx/internal/fx/types/format/jsonl"
     "github.com/fsnotify/fsnotify"
 )
 

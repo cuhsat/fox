@@ -11,7 +11,7 @@ var filters *Filters = nil
 
 func GetFilters() *Filters {
     if filters == nil {
-        filters = new(Filters);
+        filters = new(Filters)
     }
 
     return filters;

@@ -1,8 +1,8 @@
 package lib
 
 import (
-    "github.com/cuhsat/fx/internal/fx/files/config"
     "github.com/cuhsat/fx/internal/fx/types/mode"
+    "github.com/cuhsat/fx/internal/fx/user/config"
 )
 
 type Context struct {
