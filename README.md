@@ -41,7 +41,7 @@ fx foo.zip bar.gz
 
 Read all `.jsonl` files in all subdirectories:
 ```console
-fx ./*/*.jsonl
+fx ./**/*.jsonl
 ```
 
 Write all lines with `John Doe` from all files to stdout:
