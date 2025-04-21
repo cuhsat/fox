@@ -5,6 +5,7 @@ import (
     "path/filepath"
     "slices"
 
+    "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/file/deflate/gzip"
     "github.com/cuhsat/fx/internal/fx/file/deflate/zip"
@@ -47,7 +48,7 @@ func New(paths []string) *HeapSet {
             break
         }
 
-        match, err := filepath.Glob(path)
+        match, err := doublestar.FilepathGlob(path)
 
         if err != nil {
             fx.Error(err)

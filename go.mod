@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.5.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.8.1 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
