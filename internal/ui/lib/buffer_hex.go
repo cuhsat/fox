@@ -1,14 +1,14 @@
 package lib
 
 import (
-    "github.com/cuhsat/fx/internal/fx/types/block"
+    "github.com/cuhsat/fx/internal/fx/types/layer"
     "github.com/cuhsat/fx/internal/ui/themes"
 )
 
 func (b *Buffer) hexRender(x, y, w, h int) {
-    rule_w := block.HexSpace * 2
+    rule_w := layer.HexSpace * 2
 
-    hb := block.Hex(&block.Context{
+    hl := layer.Hex(&layer.Context{
         Heap: b.heap,
         Line: b.ctx.Line,
         Wrap: b.ctx.Wrap,
@@ -16,18 +16,18 @@ func (b *Buffer) hexRender(x, y, w, h int) {
         Y: b.delta_y,
         W: w - (rule_w * 2),
         H: h,
-    })
+    })[0]
 
-    if len(hb.Lines) > 0 {
-        w -= len(hb.Lines[0].Nr) + block.HexSpace
+    if len(hl.Lines) > 0 {
+        w -= len(hl.Lines[0].Nr) + layer.HexSpace
     }
 
-    // set block bounds
-    b.last_x = max(hb.W, 0)
-    b.last_y = max(hb.H - h, 0)
+    // set layer bounds
+    b.last_x = max(hl.W, 0)
+    b.last_y = max(hl.H - h, 0)
 
-    // render block
-    for i, line := range hb.Lines {
+    // render layer
+    for i, line := range hl.Lines {
         line_x := x
         line_y := y + i
 

@@ -1,10 +1,10 @@
-package block
+package layer
 
 import (
     "github.com/cuhsat/fx/internal/fx/heap"
 )
 
-type Block struct {
+type Layer struct {
     W int
     H int
 }
