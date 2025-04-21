@@ -42,6 +42,10 @@ func (b *Buffer) textRender(x, y, w, h int) {
             line_x += len(line.Nr) + block.TextSpace
         }
 
+        if len(line.Str) == 0 {
+            continue
+        }
+
         // text value
         b.print(line_x, line_y, line.Str, themes.Base)
 
@@ -53,7 +57,17 @@ func (b *Buffer) textRender(x, y, w, h int) {
 }
 
 func (b *Buffer) textMark(x, y, c int, s, f string) {
-    i := strings.Index(s, f)
+    i, m := -1, ""
+
+    if ok, re := types.Regex(f); ok {
+        l := re.FindIndex([]byte(s))
+
+        if l != nil {
+            i, m = l[0], s[l[0]:l[1]]
+        }
+    } else {
+        i, m = strings.Index(s, f), f
+    }
 
     if i == -1 {
         return
@@ -61,7 +75,7 @@ func (b *Buffer) textMark(x, y, c int, s, f string) {
 
     len_i := text.Len(s[:i])
 
-    b.print(x + len_i, y, f, themes.Colors[c % len(themes.Colors)])
+    b.print(x + len_i, y, m, themes.Colors[c % len(themes.Colors)])
     
     b.textMark(x + len_i+1, y, c, s[i+1:], f)
 }

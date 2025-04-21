@@ -7,11 +7,11 @@ import (
     "runtime/debug"
 
     "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/fx/files/bag"
-    "github.com/cuhsat/fx/internal/fx/files/history"
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/mode"
+    "github.com/cuhsat/fx/internal/fx/user/bag"
+    "github.com/cuhsat/fx/internal/fx/user/history"
     "github.com/cuhsat/fx/internal/ui"
 )
 
