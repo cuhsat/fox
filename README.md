@@ -51,12 +51,12 @@ fx -p -e "John Doe"
 
 Write the first `3` lines of `foo` to `bar`:
 ```console
-fx -h -n 3 foo > bar
+fx -hn 3 foo > bar
 ```
 
 Write the last `8` bytes of `foo` to `bar` in hex:
 ```console
-fx -t -c 8 -x foo > bar
+fx -tc 8 -x foo > bar
 ```
 
 ## Install
