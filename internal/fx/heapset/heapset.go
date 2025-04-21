@@ -10,6 +10,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/gzip"
     "github.com/cuhsat/fx/internal/fx/types/jsonl"
+    "github.com/cuhsat/fx/internal/fx/types/zip"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -153,10 +154,12 @@ func (hs *HeapSet) loadPath(path string) {
         return
     }
 
-    if !fi.IsDir() {
-        hs.loadFile(path)
-    } else {
+    if zip.Detect(path) {
+        hs.loadZip(path)
+    } else if fi.IsDir() {
         hs.loadDir(path)
+    } else {
+        hs.loadFile(path)
     }
 }
 
@@ -185,6 +188,7 @@ func (hs *HeapSet) loadFile(path string) {
     }
 
     hs.heaps = append(hs.heaps, &heap.Heap{
+        Title: base,
         Path: path,
         Base: base,
         Type: tp,
@@ -204,6 +208,28 @@ func (hs *HeapSet) loadDir(path string) {
         if !f.IsDir() {
             hs.loadFile(filepath.Join(path, f.Name()))
         }
+    }
+}
+
+func (hs *HeapSet) loadZip(path string) {
+    for _, ze := range zip.Deflate(path) {
+        var fn types.Format
+
+        if gzip.Detect(ze.Path) {
+            ze.Path = gzip.Deflate(ze.Path)
+        }
+
+        if jsonl.Detect(ze.Path) {
+            fn = jsonl.Pretty
+        }
+
+        hs.heaps = append(hs.heaps, &heap.Heap{
+            Title: ze.Name,
+            Path: ze.Path,
+            Base: ze.Path,
+            Type: types.Deflate,
+            Fmt: fn,
+        })
     }
 }
 
