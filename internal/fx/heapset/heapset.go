@@ -8,9 +8,9 @@ import (
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/gzip"
-    "github.com/cuhsat/fx/internal/fx/types/jsonl"
-    "github.com/cuhsat/fx/internal/fx/types/zip"
+    "github.com/cuhsat/fx/internal/fx/types/deflate/gzip"
+    "github.com/cuhsat/fx/internal/fx/types/deflate/zip"
+    "github.com/cuhsat/fx/internal/fx/types/format/jsonl"
     "github.com/fsnotify/fsnotify"
 )
 
