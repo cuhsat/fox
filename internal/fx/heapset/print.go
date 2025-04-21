@@ -39,9 +39,9 @@ func (hs *HeapSet) Print(hex bool) {
 
             fmt.Println(text.Title(h.String(), ctx.W))
 
-            fmt.Println(layers.Hex(&ctx)[0])
+            fmt.Println(layers.Hex(&ctx))
         } else {
-            fmt.Println(layers.Text(&ctx)[0])
+            fmt.Println(layers.Text(&ctx))
         }
     }
 }

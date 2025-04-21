@@ -1,14 +1,12 @@
 package heap
 
 import (
-    "bytes"
     "cmp"
     "regexp"
     "runtime"
     "slices"
     "sync"
 
-    "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
 )
 
@@ -21,8 +19,6 @@ func (h *Heap) filter(b []byte) (s smap.SMap) {
     ch := make(chan *smap.String, len(h.SMap))
     defer close(ch)
 
-    ok, re := types.Regex(string(b))
-
     var wg sync.WaitGroup
 
     for _, c := range chunks(h) {
@@ -30,12 +26,7 @@ func (h *Heap) filter(b []byte) (s smap.SMap) {
         
         go func() {
             defer wg.Done()
-
-            if ok {
-                match(ch, h, c, re)
-            } else {
-                grep(ch, h, c, b)
-            }
+            grep(ch, h, c, b)
         }()
     }
 
@@ -58,17 +49,11 @@ func chunks(h *Heap) (c []*chunk) {
     return
 }
 
-func match(ch chan<- *smap.String, h *Heap, c *chunk, re *regexp.Regexp) {
+func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
+    re, _ := regexp.Compile(string(b))
+
     for _, s := range h.SMap[c.min:c.max] {
         if re.Match(h.MMap[s.Start:s.End]) {
-            ch <- s
-        }
-    }
-}
-
-func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
-    for _, s := range h.SMap[c.min:c.max] {
-        if bytes.Contains(h.MMap[s.Start:s.End], b) {
             ch <- s
         }
     }

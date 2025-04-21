@@ -16,7 +16,7 @@ func (b *Buffer) hexRender(x, y, w, h int) {
         Y: b.delta_y,
         W: w - (rule_w * 2),
         H: h,
-    })[0]
+    })
 
     if len(hl.Lines) > 0 {
         w -= len(hl.Lines[0].Nr) + layers.HexSpace

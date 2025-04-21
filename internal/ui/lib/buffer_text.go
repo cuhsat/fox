@@ -2,10 +2,8 @@ package lib
 
 import (
     "strconv"
-    "strings"
 
     "github.com/cuhsat/fx/internal/fx/text"
-    "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/layers"
     "github.com/cuhsat/fx/internal/ui/themes"
 )
@@ -19,19 +17,21 @@ func (b *Buffer) textRender(x, y, w, h int) {
         Y: b.delta_y,
         W: w,
         H: h,
-    })[0]
+    })
 
     b.smap = tl.SMap
 
+    nr_w := text.Dec(b.heap.Length()) + layers.TextSpace
+
     if b.ctx.Line {
-        w -= text.Dec(b.heap.Length()) + layers.TextSpace
+        w -= nr_w
     }
 
     // set layer bounds
     b.last_x = max(tl.W - w, 0)
     b.last_y = max(tl.H - h, 0)
 
-    // render layer
+    // render lines
     for i, line := range tl.Lines {
         line_x := x
         line_y := y + i
@@ -39,45 +39,27 @@ func (b *Buffer) textRender(x, y, w, h int) {
         // line number
         if b.ctx.Line {
             b.print(line_x, line_y, line.Nr, themes.Subtext0)
-            line_x += len(line.Nr) + layers.TextSpace
-        }
-
-        if len(line.Str) == 0 {
-            continue
+            line_x += nr_w
         }
 
         // text value
-        b.print(line_x, line_y, line.Str, themes.Base)
-
-        // mark found positions
-        for c, f := range *types.GetFilters() {
-            b.textMark(line_x, line_y, c, line.Str, f)
+        if len(line.Str) > 0 {
+            b.print(line_x, line_y, line.Str, themes.Base)
         }
     }
-}
 
-func (b *Buffer) textMark(x, y, c int, s, f string) {
-    i, m := -1, ""
+    // render parts on top
+    for _, part := range tl.Parts {
+        part_x := x + part.X
+        part_y := y + part.Y
 
-    if ok, re := types.Regex(f); ok {
-        l := re.FindIndex([]byte(s))
-
-        if l != nil {
-            i, m = l[0], s[l[0]:l[1]]
+        if b.ctx.Line {
+            part_x += nr_w
         }
-    } else {
-        i, m = strings.Index(s, f), f
+
+        // part value
+        b.print(part_x, part_y, part.Str, themes.Subtext2)
     }
-
-    if i == -1 {
-        return
-    }
-
-    len_i := text.Len(s[:i])
-
-    b.print(x + len_i, y, m, themes.Colors[c % len(themes.Colors)])
-    
-    b.textMark(x + len_i+1, y, c, s[i+1:], f)
 }
 
 func (b *Buffer) textGoto(s string) {

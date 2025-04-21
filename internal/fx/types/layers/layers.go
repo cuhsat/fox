@@ -14,6 +14,12 @@ type Line struct {
     Str string
 }
 
+type Part struct {
+    X int
+    Y int
+    Str string
+}
+
 type Context struct {
     Heap *heap.Heap
 

@@ -39,7 +39,7 @@ func (hl HexLine) String() string {
     return fmt.Sprintf("%s %s %s", hl.Nr, hl.Hex, hl.Str)
 }
 
-func Hex(ctx *Context) []HexLayer {
+func Hex(ctx *Context) HexLayer {
     var hl HexLayer
 
     off_w := 8 + HexSpace
@@ -63,7 +63,7 @@ func Hex(ctx *Context) []HexLayer {
     for i := 0; i < len(mmap); i += cols {
         if len(hl.Lines) >= ctx.H {
             hl.Lines = hl.Lines[:ctx.H]
-            return []HexLayer{hl}
+            return hl
         }
 
         nr := fmt.Sprintf("%0*X ", 8, tail + ctx.Y + i)
@@ -95,5 +95,5 @@ func Hex(ctx *Context) []HexLayer {
         hl.Lines = append(hl.Lines, l)
     }
 
-    return []HexLayer{hl}
+    return hl
 }

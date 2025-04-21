@@ -2,6 +2,7 @@ package layers
 
 import (
     "fmt"
+    "regexp"
     "strings"
 
     "github.com/cuhsat/fx/internal/fx/text"
@@ -20,11 +21,17 @@ const (
 type TextLayer struct {
     Layer
     Lines []TextLine
+    Parts []TextPart
+
     SMap smap.SMap
 }
 
 type TextLine struct {
     Line
+}
+
+type TextPart struct {
+    Part
 }
 
 func (tl TextLayer) String() string {
@@ -45,37 +52,32 @@ func (tl TextLine) String() string {
     return tl.Str
 }
 
-func Text(ctx *Context) []TextLayer {
-    var tls []TextLayer
-    var base TextLayer
+func Text(ctx *Context) TextLayer {
+    var tl TextLayer
 
     d := text.Dec(ctx.Heap.Length())
 
-    base.SMap = ctx.Heap.SMap
+    tl.SMap = ctx.Heap.SMap
 
     if ctx.Line {
         ctx.W -= (d + TextSpace)
     }
 
     if ctx.Wrap && ctx.Heap.Fmt != nil {
-        textFormat(ctx, &base, d)
+        textFormat(ctx, &tl, d)
     } else {
-        textNormal(ctx, &base, d)
+        textNormal(ctx, &tl, d)
     }
 
-    if len(base.Lines) >= ctx.H {
-        base.Lines = base.Lines[:ctx.H]
+    if len(tl.Lines) >= ctx.H {
+        tl.Lines = tl.Lines[:ctx.H]
     }
 
-    tls = append(tls, base)
-
-    if !ctx.Wrap && ctx.Heap.Fmt == nil {
-        for _, f := range *types.GetFilters() {
-            tls = append(tls, textFilter(ctx, f))
-        }
+    for _, f := range *types.GetFilters() {
+        textFilter(ctx, &tl, f)
     }
 
-    return tls
+    return tl
 }
 
 func textFormat(ctx *Context, tl *TextLayer, d int) {
@@ -118,38 +120,23 @@ func textNormal(ctx *Context, tl *TextLayer, d int) {
     }
 }
 
-func textFilter(ctx *Context, f string) TextLayer {
-    var tl TextLayer
+func textFilter(ctx *Context, tl *TextLayer, f string) {
+    re, _ := regexp.Compile(f)
 
-    for i, s := range ctx.Heap.SMap[ctx.Y:] {
-        if i >= ctx.H {
+    for y, s := range tl.Lines {
+        if y >= ctx.H {
             break
         }
 
-        str := unmap(ctx, s)
+        for _, i := range re.FindAllStringIndex(s.Str, -1) {
+            x := text.Len(s.Str[:i[0]])
+            t := s.Str[i[0]:i[1]]
 
-        // i, m := -1, ""
-
-        // if ok, re := types.Regex(f); ok {
-        //     l := re.FindIndex([]byte(s))
-
-        //     if l != nil {
-        //         i, m = l[0], s[l[0]:l[1]]
-        //     }
-        // } else {
-        //     i, m = strings.Index(s, f), f
-        // }
-
-        // if i == -1 {
-        //     return
-        // }
-
-        tl.Lines = append(tl.Lines, TextLine{
-            Line: Line{Str: textFit(str, ctx.X, ctx.W)},
-        })
+            tl.Parts = append(tl.Parts, TextPart{
+                Part: Part{X: x, Y: y, Str: t},
+            })
+        }
     }
-
-    return tl
 }
 
 func textFit(s string, x, w int) string {
