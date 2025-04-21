@@ -22,7 +22,7 @@ var (
     Overlay1 tcell.Style
     Subtext0 tcell.Style
     Subtext1 tcell.Style
-    Colors   []tcell.Style
+    Subtext2 tcell.Style
 )
 
 type Themes struct {
@@ -46,12 +46,7 @@ func New(name string) *Themes {
                 0x111111, 0x88cd0f,
                 0x333333, 0x111111,
                 0x333333, 0x111111,
-                0xeeeeee,
-                0xeeeeee,
-                0xeeeeee,
-                0xeeeeee,
-                0xeeeeee,
-                0xeeeeee,
+                0xeeeeee, 0x111111,
             },
 
             "Monokai": palette {
@@ -64,12 +59,7 @@ func New(name string) *Themes {
                 0x222327, 0xa7df78,
                 0x595f6f, 0x222327,
                 0x2c2e34, 0x222327,
-                0xfc5d7c,
-                0xf39660,
-                0xe7c664,
-                0x9ed072,
-                0x76cce0,
-                0xb39df3,
+                0xf39660, 0x222327,
             },
 
             "Catppuccin-Latte": palette {
@@ -82,12 +72,7 @@ func New(name string) *Themes {
                 0xeff1f5, 0x40a02b,
                 0xacb0be, 0xeff1f5,
                 0xccd0da, 0xeff1f5,
-                0xd20f39,
-                0xfe640b,
-                0xdf8e1d,
-                0x179299,
-                0x04a5e5,
-                0x209fb5,
+                0xd20f39, 0xeff1f5,
             },
 
             "Catppuccin-Frappe": palette {
@@ -100,12 +85,7 @@ func New(name string) *Themes {
                 0x303446, 0xa6d189,
                 0x626880, 0x303446,
                 0x414559, 0x303446,
-                0xe78284,
-                0xef9f76,
-                0xe5c890,
-                0x81c8be,
-                0x99d1db,
-                0x85c1dc,
+                0xe78284, 0x303446,
             },
 
             "Catppuccin-Macchiato": palette {
@@ -118,12 +98,7 @@ func New(name string) *Themes {
                 0x24273a, 0xa6da95,
                 0x5b6078, 0x24273a,
                 0x363a4f, 0x24273a,
-                0xed8796,
-                0xf5a97f,
-                0xeed49f,
-                0x8bd5ca,
-                0x91d7e3,
-                0x7dc4e4,
+                0xed8796, 0x24273a,
             },
 
             "Catppuccin-Mocha": palette {
@@ -136,12 +111,7 @@ func New(name string) *Themes {
                 0x1e1e2e, 0xa6e3a1,
                 0x585b70, 0x1e1e2e,
                 0x313244, 0x1e1e2e,
-                0xf38ba8,
-                0xfab387,
-                0xf9e2af,
-                0x94e2d5,
-                0x94e2d5,
-                0x74c7ec,
+                0xf38ba8, 0x1e1e2e,
             }, 
 
             "Ansi": palette {
@@ -154,12 +124,7 @@ func New(name string) *Themes {
                 0x000000, 0x008000,
                 0x808080, 0x000000,
                 0x808080, 0x000000,
-                0xff0000,
-                0xff00ff,
-                0xffff00,
-                0x00ffff,
-                0x0000ff,
-                0x00ff00,
+                0xff0000, 0x000000,
             },
 
             "Matrix": palette {
@@ -172,12 +137,7 @@ func New(name string) *Themes {
                 0x0d0208, 0x00ff41,
                 0x003b00, 0x0d0208,
                 0x0d0208, 0x0d0208,
-                0x00ff41,
-                0x00ff41,
-                0x00ff41,
-                0x00ff41,
-                0x00ff41,
-                0x00ff41,
+                0x00ff41, 0x0d0208,
             },
 
             "Monochrome": palette {
@@ -190,12 +150,7 @@ func New(name string) *Themes {
                 0x000000, 0xffffff,
                 0xffffff, 0x000000,
                 0x000000, 0x000000,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
-                0xffffff,
+                0x000000, 0xffffff,
             },
         },
         names: []string{
@@ -228,7 +183,7 @@ func (t *Themes) Cycle() string {
     return n
 }
 
-func (t *Themes) Load(name string) error {
+func (t *Themes) Load(name string) {
     t.index = -1
 
     for i, n := range t.names {
@@ -255,14 +210,7 @@ func (t *Themes) Load(name string) error {
     Overlay1 = newStyle(p[12], p[13])
     Subtext0 = newStyle(p[14], p[15])
     Subtext1 = newStyle(p[16], p[17])
-
-    Colors = Colors[:0] // reset
-
-    for i := 18; i < 24; i++ {
-        Colors = append(Colors, newStyle(p[i], p[1]))
-    }
-
-    return nil
+    Subtext2 = newStyle(p[18], p[19])
 }
 
 func newStyle(fg, bg int32) tcell.Style {
