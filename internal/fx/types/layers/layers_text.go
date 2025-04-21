@@ -5,6 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/internal/fx/text"
+    "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
 )
 
@@ -45,34 +46,43 @@ func (tl TextLine) String() string {
 }
 
 func Text(ctx *Context) []TextLayer {
-    var tl TextLayer
+    var tls []TextLayer
+    var base TextLayer
 
     d := text.Dec(ctx.Heap.Length())
 
-    tl.SMap = ctx.Heap.SMap
+    base.SMap = ctx.Heap.SMap
 
     if ctx.Line {
         ctx.W -= (d + TextSpace)
     }
 
     if ctx.Wrap && ctx.Heap.Fmt != nil {
-        textFormat(ctx, &tl, d)
+        textFormat(ctx, &base, d)
     } else {
-        textNormal(ctx, &tl, d)
+        textNormal(ctx, &base, d)
     }
 
-    if len(tl.Lines) >= ctx.H {
-        tl.Lines = tl.Lines[:ctx.H]
+    if len(base.Lines) >= ctx.H {
+        base.Lines = base.Lines[:ctx.H]
     }
 
-    return []TextLayer{tl}
+    tls = append(tls, base)
+
+    if !ctx.Wrap && ctx.Heap.Fmt == nil {
+        for _, f := range *types.GetFilters() {
+            tls = append(tls, textFilter(ctx, f))
+        }
+    }
+
+    return tls
 }
 
 func textFormat(ctx *Context, tl *TextLayer, d int) {
     for _, s := range tl.SMap {
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
-        str := string(ctx.Heap.MMap[s.Start:s.End])
+        str := unmap(ctx, s)
 
         for _, l := range ctx.Heap.Fmt(str) {
             tl.Lines = append(tl.Lines, TextLine{
@@ -100,10 +110,7 @@ func textNormal(ctx *Context, tl *TextLayer, d int) {
 
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
-        str := string(ctx.Heap.MMap[s.Start:s.End])
-        
-        // replace tabulators
-        str = strings.ReplaceAll(str, "\t", TabSpace)
+        str := unmap(ctx, s)
 
         tl.Lines = append(tl.Lines, TextLine{
             Line: Line{Nr: nr, Str: textFit(str, ctx.X, ctx.W)},
@@ -111,6 +118,49 @@ func textNormal(ctx *Context, tl *TextLayer, d int) {
     }
 }
 
+func textFilter(ctx *Context, f string) TextLayer {
+    var tl TextLayer
+
+    for i, s := range ctx.Heap.SMap[ctx.Y:] {
+        if i >= ctx.H {
+            break
+        }
+
+        str := unmap(ctx, s)
+
+        // i, m := -1, ""
+
+        // if ok, re := types.Regex(f); ok {
+        //     l := re.FindIndex([]byte(s))
+
+        //     if l != nil {
+        //         i, m = l[0], s[l[0]:l[1]]
+        //     }
+        // } else {
+        //     i, m = strings.Index(s, f), f
+        // }
+
+        // if i == -1 {
+        //     return
+        // }
+
+        tl.Lines = append(tl.Lines, TextLine{
+            Line: Line{Str: textFit(str, ctx.X, ctx.W)},
+        })
+    }
+
+    return tl
+}
+
 func textFit(s string, x, w int) string {
     return text.Trim(s, min(x, text.Len(s)), w)
+}
+
+func unmap(ctx *Context, s *smap.String) string {
+    str := string(ctx.Heap.MMap[s.Start:s.End])
+
+    // replace tabulators
+    str = strings.ReplaceAll(str, "\t", TabSpace)
+
+    return str
 }
