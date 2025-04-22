@@ -8,6 +8,7 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/types"
 )
 
 const (
@@ -17,10 +18,6 @@ const (
 var (
     magic = [...]byte{0x75, 0x73, 0x74, 0x61, 0x72}
 )
-
-type TarEntry struct {
-    Name, Path string
-}
 
 func Detect(path string) bool {
     var buf [offset+5]byte
@@ -49,51 +46,42 @@ func Detect(path string) bool {
     return bytes.Equal(buf[offset:], magic[:])
 }
 
-func Deflate(path string) (te []TarEntry) {
-    r, err := tar.OpenReader(path)
+func Deflate(path string) (fe []*types.FileEntry) {
+    a := fx.Open(path)
+    defer a.Close()
 
-    if err != nil {
-        fx.Error(err)
- 
-        te = append(te, TarEntry{
-            Name: path,
-            Path: path,
-        })
+    r := tar.NewReader(a)
 
-        return
-    }
+    for {
+        h, err := r.Next()
 
-    defer r.Close()
-
-    for _, f := range r.File {
-        // if strings.HasSuffix(f.Name, "/") {
-        //     continue
-        // }
-
-        a, err := f.Open()
+        if err == io.EOF {
+            break
+        }
 
         if err != nil {
             fx.Error(err)
+            break
+        }
+
+        if strings.HasSuffix(h.Name, "/") {
             continue
         }
 
-        b := filepath.Base(f.Name)
+        t := fx.Temp("tar", filepath.Ext(filepath.Base(h.Name)))
 
-        t := fx.Temp("tar", filepath.Ext(b))
-
-        _, err = io.Copy(t, a)
+        _, err = io.Copy(t, r)
 
         t.Close()
-        a.Close()
 
         if err != nil {
             fx.Error(err)
             continue
         }
 
-        te = append(te, TarEntry{
-            Name: f.Name,
+        fe = append(fe, &types.FileEntry{
             Path: t.Name(),
+            Name: h.Name,
         })
     }
 

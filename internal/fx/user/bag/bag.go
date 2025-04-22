@@ -15,6 +15,10 @@ const (
     filename = "EVIDENCE"
 )
 
+const (
+    header = "FORENSIC EXAMINER EVIDENCE BAG"
+)
+
 type Bag struct {
     Path string   // file path
     file *os.File // file handle
@@ -102,7 +106,7 @@ func (bag *Bag) init() bool {
         return false
     }
 
-    bag.exp.Init(bag.file, !is, "FORENSIC EXAMINER EVIDENCE BAG")
+    bag.exp.Init(bag.file, !is, header)
 
     return true
 }

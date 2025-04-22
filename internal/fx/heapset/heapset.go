@@ -8,6 +8,7 @@ import (
     "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/file/deflate/gzip"
+    "github.com/cuhsat/fx/internal/fx/file/deflate/tar"
     "github.com/cuhsat/fx/internal/fx/file/deflate/zip"
     "github.com/cuhsat/fx/internal/fx/file/format/jsonl"
     "github.com/cuhsat/fx/internal/fx/heap"
@@ -139,7 +140,7 @@ func (hs *HeapSet) ThrowAway() {
     hs.watch.Close()
 
     for _, h := range hs.heaps {
-        // cascading
+        // cascading call
         h.ThrowAway()
 
         if h.Type > types.Regular {
@@ -159,46 +160,38 @@ func (hs *HeapSet) loadPath(path string) {
         return
     }
 
-    if zip.Detect(path) {
-        hs.loadZip(path)
-    } else if fi.IsDir() {
+    if fi.IsDir() {
         hs.loadDir(path)
-    } else {
-        hs.loadFile(path)
+        return
     }
-}
 
-func (hs *HeapSet) loadPipe() {
-    p := fx.Stdin()
-
-    hs.heaps = append(hs.heaps, &heap.Heap{
-        Path: p,
-        Base: p,
-        Type: types.Stdin,
-    })  
-}
-
-func (hs *HeapSet) loadFile(path string) {
-    var fn types.Format
-
-    base, tp := path, types.Regular
+    base := path
 
     if gzip.Detect(path) {
         path = gzip.Deflate(path)
-        tp = types.Deflate
     }
 
-    if jsonl.Detect(path) {
-        fn = jsonl.Pretty
+    if tar.Detect(path) {
+        hs.loadTar(path, base)
+        return
     }
+
+    if zip.Detect(path) {
+        hs.loadZip(path, base)
+        return
+    }
+
+    hs.loadFile(path, base)
+}
+
+func (hs *HeapSet) loadPipe() {
+    pipe := fx.Stdin()
 
     hs.heaps = append(hs.heaps, &heap.Heap{
-        Title: base,
-        Path: path,
-        Base: base,
-        Type: tp,
-        Fmt: fn,
-    })
+        Path: pipe,
+        Base: pipe,
+        Type: types.Stdin,
+    })  
 }
 
 func (hs *HeapSet) loadDir(path string) {
@@ -211,31 +204,53 @@ func (hs *HeapSet) loadDir(path string) {
  
     for _, f := range dir {
         if !f.IsDir() {
-            hs.loadFile(filepath.Join(path, f.Name()))
+            hs.loadPath(filepath.Join(path, f.Name()))
         }
     }
 }
 
-func (hs *HeapSet) loadZip(path string) {
-    for _, ze := range zip.Deflate(path) {
-        var fn types.Format
-
-        if gzip.Detect(ze.Path) {
-            ze.Path = gzip.Deflate(ze.Path)
-        }
-
-        if jsonl.Detect(ze.Path) {
-            fn = jsonl.Pretty
-        }
-
-        hs.heaps = append(hs.heaps, &heap.Heap{
-            Title: filepath.Join(path, ze.Name),
-            Path: ze.Path,
-            Base: ze.Path,
-            Type: types.Deflate,
-            Fmt: fn,
-        })
+func (hs *HeapSet) loadTar(path, base string) {
+    for _, fe := range tar.Deflate(path) {
+        hs.loadEntry(fe, base)
     }
+}
+
+func (hs *HeapSet) loadZip(path, base string) {
+    for _, fe := range zip.Deflate(path) {
+        hs.loadEntry(fe, base)
+    }
+}
+
+func (hs *HeapSet) loadFile(path, base string) {
+    var fn types.Format
+
+    if jsonl.Detect(path) {
+        fn = jsonl.Pretty
+    }
+
+    hs.heaps = append(hs.heaps, &heap.Heap{
+        Title: base,
+        Path: path,
+        Base: base,
+        Type: types.Regular,
+        Fmt: fn,
+    })
+}
+
+func (hs *HeapSet) loadEntry(fe *types.FileEntry, base string) {
+    var fn types.Format
+
+    if jsonl.Detect(fe.Path) {
+        fn = jsonl.Pretty
+    }
+
+    hs.heaps = append(hs.heaps, &heap.Heap{
+        Title: filepath.Join(base, fe.Name),
+        Path: fe.Path,
+        Base: fe.Path,
+        Type: types.Deflate,
+        Fmt: fn,
+    })
 }
 
 func (hs *HeapSet) load() *heap.Heap {
