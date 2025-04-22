@@ -20,7 +20,7 @@ const (
 )
 
 func usage() {
-    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]")
+    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-m] [-o FILE] [PATH ... | -]")
     os.Exit(2)
 }
 
@@ -30,12 +30,13 @@ func version() {
 }
 
 func main() {
+    m := mode.Default
+
     c := new(types.Counts)
     l := types.GetLimits()
     e := types.GetFilters()
 
     // flags
-    m := mode.Default
     p := flag.Bool("p", false, "Print raw")
     x := flag.Bool("x", false, "Hexdump mode")
     
@@ -45,6 +46,7 @@ func main() {
 
     // output
     o := flag.String("o", "", "Evidence file")
+    om := flag.Bool("m", false, "Markdown output")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
@@ -72,19 +74,19 @@ func main() {
     }
 
     if *h && *t {
-        fx.Fatal("head or tail")
+        fx.Exit("head or tail")
     }
 
     if c.Lines > 0 && c.Bytes > 0 {
-        fx.Fatal("lines or bytes")
+        fx.Exit("lines or bytes")
     }
 
     if !*x && c.Bytes > 0 {
-        fx.Fatal("bytes needs hex")
+        fx.Exit("bytes needs hex")
     }
 
     if *x && len(*e) > 0 {
-        fx.Fatal("hex or pattern")
+        fx.Exit("hex or pattern")
     }
 
     if *v {
@@ -109,6 +111,14 @@ func main() {
 
     fx.SetupLogger()
 
+    defer func() {
+        if err := recover(); err != nil {
+            fx.Dump(err, debug.Stack())
+        }
+
+        fx.Log.Close()
+    }()
+
     if fx.IsPiped(os.Stdout) {
         *p = true
     }
@@ -118,25 +128,17 @@ func main() {
 
     if *p {
         hs.Print(*x)
-        os.Exit(0)
+        return
     }
 
     hi := history.New()
     defer hi.Close()
 
-    bg := bag.New(*o)
+    bg := bag.New(*o, *om)
     defer bg.Close()
 
     ui := ui.New(m)
     defer ui.Close()
-
-    defer func() {
-        if err := recover(); err != nil {
-            fx.Dump(err, debug.Stack())
-        }
-    
-        fx.Log.Close()
-    }()
 
     ui.Run(hs, hi, bg)
 }

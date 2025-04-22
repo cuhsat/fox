@@ -44,10 +44,6 @@ func Error(v ...any) {
     log.Println(v...)
 }
 
-func Fatal(v ...any) {
-    log.Fatal(v...)
-}
-
 func Panic(v ...any) {
     log.Panic(v...)
 }

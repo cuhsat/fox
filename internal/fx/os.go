@@ -96,6 +96,12 @@ func Dump(err any, stack any) {
     err = os.WriteFile(".dump", []byte(s), 0600)
 
     if err != nil {
-        Fatal(err)
+        Exit(err)
     }
+}
+
+func Exit(v ...any) {
+    fmt.Fprintln(os.Stderr, v...)
+
+    os.Exit(1)
 }

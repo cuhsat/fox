@@ -208,7 +208,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     continue
                 }
 
-                bag.Put(heap)
+                if !bag.Put(heap) {
+                    continue
+                }
 
                 ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
 
