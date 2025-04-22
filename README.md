@@ -36,9 +36,9 @@ Read directly from stdin:
 fx -
 ```
 
-Read `Zip` and `GZip` compressed files:
+Read `Zip` and `Tar` compressed files:
 ```console
-fx foo.zip bar.gz
+fx foo.zip bar.tar.gz
 ```
 
 Read all `.jsonl` files in all subdirectories:
