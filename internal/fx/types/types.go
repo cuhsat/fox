@@ -9,10 +9,3 @@ const (
 )
 
 type Heap int
-
-type Format func(string) []string
-
-type FileEntry struct {
-    Path string
-    Name string
-}

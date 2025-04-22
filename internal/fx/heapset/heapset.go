@@ -7,6 +7,7 @@ import (
 
     "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/file/deflate/gzip"
     "github.com/cuhsat/fx/internal/fx/file/deflate/tar"
     "github.com/cuhsat/fx/internal/fx/file/deflate/zip"
@@ -222,7 +223,7 @@ func (hs *HeapSet) loadZip(path, base string) {
 }
 
 func (hs *HeapSet) loadFile(path, base string) {
-    var fn types.Format
+    var fn file.Format
 
     if jsonl.Detect(path) {
         fn = jsonl.Pretty
@@ -237,17 +238,17 @@ func (hs *HeapSet) loadFile(path, base string) {
     })
 }
 
-func (hs *HeapSet) loadEntry(fe *types.FileEntry, base string) {
-    var fn types.Format
+func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
+    var fn file.Format
 
-    if jsonl.Detect(fe.Path) {
+    if jsonl.Detect(e.Path) {
         fn = jsonl.Pretty
     }
 
     hs.heaps = append(hs.heaps, &heap.Heap{
-        Title: filepath.Join(base, fe.Name),
-        Path: fe.Path,
-        Base: fe.Path,
+        Title: filepath.Join(base, e.Name),
+        Path: e.Path,
+        Base: e.Path,
         Type: types.Deflate,
         Fmt: fn,
     })
