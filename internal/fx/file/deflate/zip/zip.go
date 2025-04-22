@@ -2,53 +2,27 @@ package zip
 
 import (
     "archive/zip"
-    "bytes"
     "io"
     "path/filepath"
     "strings"
 
     "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/fx/types"
-)
-
-var (
-    magic = [...]byte{0x50, 0x4B, 0x03, 0x04}
+    "github.com/cuhsat/fx/internal/fx/file"
 )
 
 func Detect(path string) bool {
-    var buf [4]byte
-
-    a := fx.Open(path)
-    defer a.Close()
-
-    fi, err := a.Stat()
-
-    if err != nil {
-        fx.Error(err)
-        return false
-    }
-
-    if fi.Size() < 4 {
-        return false
-    }
-
-    _, err = io.ReadFull(a, buf[:])
-
-    if err != nil {
-        fx.Error(err)
-        return false
-    }
-
-    return bytes.Equal(buf[:], magic[:])
+    return file.HasMagic(path, 0, []byte{
+        0x50, 0x4B, 0x03, 0x04,
+    })
 }
 
-func Deflate(path string) (fe []*types.FileEntry) {
+func Deflate(path string) (e []*file.Entry) {
     r, err := zip.OpenReader(path)
 
     if err != nil {
         fx.Error(err)
  
-        fe = append(fe, &types.FileEntry{
+        e = append(e, &file.Entry{
             Path: path,
             Name: path,
         })
@@ -82,7 +56,7 @@ func Deflate(path string) (fe []*types.FileEntry) {
             continue
         }
 
-        fe = append(fe, &types.FileEntry{
+        e = append(e, &file.Entry{
             Path: t.Name(),
             Name: f.Name,
         })
