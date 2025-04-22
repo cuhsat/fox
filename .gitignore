@@ -27,5 +27,5 @@ go.work.sum
 # Error dump
 .dump
 
-# Evidence file
-EVIDENCE
+# Evidence files
+EVIDENCE*

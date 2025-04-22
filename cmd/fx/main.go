@@ -20,7 +20,7 @@ const (
 )
 
 func usage() {
-    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-m] [-o FILE] [PATH ... | -]")
+    fmt.Println("usage: fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-j | -J] [-o FILE] [PATH ... | -]")
     os.Exit(2)
 }
 
@@ -39,6 +39,8 @@ func main() {
     // flags
     p := flag.Bool("p", false, "Print raw")
     x := flag.Bool("x", false, "Hexdump mode")
+    j := flag.Bool("j", false, "JSON output")
+    J := flag.Bool("J", false, "JSONL output")
     
     // limits
     h := flag.Bool("h", false, "Limit head")
@@ -46,7 +48,6 @@ func main() {
 
     // output
     o := flag.String("o", "", "Evidence file")
-    om := flag.Bool("m", false, "Markdown output")
 
     // counts
     flag.IntVar(&c.Lines, "n", 0, "Lines count")
@@ -87,6 +88,10 @@ func main() {
 
     if *x && len(*e) > 0 {
         fx.Exit("hex or pattern")
+    }
+
+    if *j && *J {
+        fx.Exit("json or jsonl")
     }
 
     if *v {
@@ -134,7 +139,7 @@ func main() {
     hi := history.New()
     defer hi.Close()
 
-    bg := bag.New(*o, *om)
+    bg := bag.New(*o, *j, *J)
     defer bg.Close()
 
     ui := ui.New(m)

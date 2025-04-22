@@ -1,7 +1,7 @@
-package zip
+package tar
 
 import (
-    "archive/zip"
+    "archive/tar"
     "bytes"
     "io"
     "path/filepath"
@@ -10,48 +10,52 @@ import (
     "github.com/cuhsat/fx/internal/fx"
 )
 
-var (
-    magic = [...]byte{0x50, 0x4B, 0x03, 0x04}
+const (
+    offset = 257
 )
 
-type ZipEntry struct {
+var (
+    magic = [...]byte{0x75, 0x73, 0x74, 0x61, 0x72}
+)
+
+type TarEntry struct {
     Name, Path string
 }
 
 func Detect(path string) bool {
-    var buf [4]byte
+    var buf [offset+5]byte
 
-    a := fx.Open(path)
-    defer a.Close()
+    t := fx.Open(path)
+    defer t.Close()
 
-    fi, err := a.Stat()
-
-    if err != nil {
-        fx.Error(err)
-        return false
-    }
-
-    if fi.Size() < 4 {
-        return false
-    }
-
-    _, err = io.ReadFull(a, buf[:])
+    fi, err := t.Stat()
 
     if err != nil {
         fx.Error(err)
         return false
     }
 
-    return bytes.Equal(buf[:], magic[:])
+    if fi.Size() < offset+5 {
+        return false
+    }
+
+    _, err = io.ReadFull(t, buf[:])
+
+    if err != nil {
+        fx.Error(err)
+        return false
+    }
+
+    return bytes.Equal(buf[offset:], magic[:])
 }
 
-func Deflate(path string) (ze []ZipEntry) {
-    r, err := zip.OpenReader(path)
+func Deflate(path string) (te []TarEntry) {
+    r, err := tar.OpenReader(path)
 
     if err != nil {
         fx.Error(err)
  
-        ze = append(ze, ZipEntry{
+        te = append(te, TarEntry{
             Name: path,
             Path: path,
         })
@@ -62,9 +66,9 @@ func Deflate(path string) (ze []ZipEntry) {
     defer r.Close()
 
     for _, f := range r.File {
-        if strings.HasSuffix(f.Name, "/") {
-            continue
-        }
+        // if strings.HasSuffix(f.Name, "/") {
+        //     continue
+        // }
 
         a, err := f.Open()
 
@@ -75,7 +79,7 @@ func Deflate(path string) (ze []ZipEntry) {
 
         b := filepath.Base(f.Name)
 
-        t := fx.Temp("zip", filepath.Ext(b))
+        t := fx.Temp("tar", filepath.Ext(b))
 
         _, err = io.Copy(t, a)
 
@@ -87,7 +91,7 @@ func Deflate(path string) (ze []ZipEntry) {
             continue
         }
 
-        ze = append(ze, ZipEntry{
+        te = append(te, TarEntry{
             Name: f.Name,
             Path: t.Name(),
         })

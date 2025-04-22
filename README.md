@@ -6,7 +6,7 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 
 ## Usage
 ```
-fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-m] [-o FILE] [PATH ... | -]
+fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-j | -J] [-o FILE] [PATH ... | -]
 ```
 
 Special options:
@@ -17,8 +17,9 @@ Special options:
 * `-c` Bytes count
 * `-x` Hexdump mode
 * `-e` Pattern value
+* `-j` JSON output
+* `-J` JSONL output
 * `-o` Evidence file
-* `-m` Markdown output
 
 Default options:
 * `--help` Usage information
@@ -43,6 +44,11 @@ fx foo.zip bar.gz
 Read all `.jsonl` files in all subdirectories:
 ```console
 fx ./**/*.jsonl
+```
+
+Extract all users with [Dissect](https://docs.dissect.tools) from `foo.dd`:
+```console
+target-query -f users foo.dd | rdump -J | fx -
 ```
 
 Write all lines with `John Doe` from all files to stdout:
@@ -73,7 +79,11 @@ make install
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
 | <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto mode             |
-| <kbd>F9</kbd>                                        | Show file(s) counts   |
+| <kbd>F5</kbd> / <kbd>Ctrl</kbd> + <kbd>s</kbd>       | Save evidence         |
+| <kbd>F6</kbd> / <kbd>Ctrl</kbd> + <kbd>c</kbd>       | Copy to clipboard     |
+| <kbd>F7</kbd>                                        | Show counts           |
+| <kbd>F8</kbd> / <kbd>Ctrl</kbd> + <kbd>d</kbd>       | Open debug log        |
+| <kbd>F9</kbd> / <kbd>Ctrl</kbd> + <kbd>e</kbd>       | Open evidence         |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |
 | <kbd>F12</kbd>                                       | Show file(s) SHA256   |
@@ -91,10 +101,6 @@ make install
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                       | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
-| <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
-| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save evidence         |
-| <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
-| <kbd>Ctrl</kbd> + <kbd>d</kbd>                       | Open debug log        |
 
 ### F1 - Less Mode
 | Shortcut                                             | Action                |
@@ -125,6 +131,9 @@ make install
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Line number           |
 
+## Evidence
+> JSON specification under [spec.json](api/spec.json).
+
 ## Config
 > Located under `~/.fxrc`.
 
@@ -147,7 +156,11 @@ FX_THEME=Default
 * `Catppuccin-Frappe`
 * `Catppuccin-Macchiato`
 * `Catppuccin-Mocha`
-* `Ansi`
+* `VSCode-Light`
+* `VSCode-Dark`
+* `Darcula`
+* `Nord`
+* `Ansi16`
 * `Matrix`
 * `Monochrome`
 

@@ -4,40 +4,56 @@ import (
     "fmt"
     "os"
     "os/user"
-    "strings"
     "time"
 
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
-    "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/smap"
 )
 
 const (
     filename = "EVIDENCE"
 )
 
-type writer interface {
-    WriteTitle(s string)
-    WriteMetas(p, f, u string, t, l time.Time, b []byte)
-    WriteLines(smap smap.SMap)
-}
-
 type Bag struct {
     Path string   // file path
     file *os.File // file handle
-
-    w writer      // writer
+    exp exporter  // exporter
 }
 
-func New(path string, md bool) *Bag {
+type exporter interface {
+    Init(f *os.File, n bool, t string)
+    Start()
+    Finalize()
+    ExportFile(p string, f []string)
+    ExportUser(u *user.User)
+    ExportTime(t time.Time)
+    ExportHash(b []byte)
+    ExportLine(n int, s string)
+}
+
+func New(path string, json, jsonl bool) *Bag {
+    var exp exporter
+    var ext string
+
+    if jsonl {
+        exp = NewJsonExporter(false)
+        ext = ".jsonl"
+    } else if json {
+        exp = NewJsonExporter(true)
+        ext = ".json"
+    } else {
+        exp = NewTextExporter()
+    }
+
     if len(path) == 0 {
-        path = filename
+        path = filename + ext
     }
 
     return &Bag{
         Path: path,
+        file: nil,
+        exp: exp,
     }
 }
 
@@ -46,45 +62,24 @@ func (bag *Bag) Put(h *heap.Heap) bool {
         return false
     }
 
-    f := *types.GetFilters()
-
     usr, err := user.Current()
 
     if err != nil {
         fx.Error(err)
     }
 
-    for _, l := range [...]string{
-        // filters
-        fmt.Sprintf("%s > %s", h, strings.Join(f, " > ")),
-        
-        // username
-        fmt.Sprintf("%s (%s)", usr.Username, usr.Name),
-        
-        // global time
-        time.Now().UTC().String(),
-        
-        // local time
-        time.Now().String(),
-        
-        // file hashsum
-        fmt.Sprintf("%x", h.Sha256()),
-    } {
-        bag.write(fmt.Sprintf("%s", l))
-    }
+    bag.exp.Start()
 
-    bag.write("")
-
-    d := text.Dec(h.Length())
+    bag.exp.ExportFile(h.String(), *types.GetFilters())
+    bag.exp.ExportUser(usr)
+    bag.exp.ExportTime(time.Now())
+    bag.exp.ExportHash(h.Sha256())
 
     for _, s := range h.SMap {
-        str := string(h.MMap[s.Start:s.End])
-
-        // line
-        bag.write(fmt.Sprintf("%0*d  %v", d, s.Nr, str))
+        bag.exp.ExportLine(s.Nr, string(h.MMap[s.Start:s.End]))
     }
 
-    bag.write("")
+    bag.exp.Finalize()
 
     return true
 }
@@ -107,15 +102,13 @@ func (bag *Bag) init() bool {
         return false
     }
 
-    if !is {
-        bag.write("FORENSIC EXAMINER EVIDENCE BAG\n")
-    }
+    bag.exp.Init(bag.file, !is, "FORENSIC EXAMINER EVIDENCE BAG")
 
     return true
 }
 
-func (bag *Bag) write(s string) {
-    _, err := fmt.Fprintln(bag.file, s)
+func writeln(f *os.File, s string) {
+    _, err := fmt.Fprintln(f, s)
 
     if err != nil {
         fx.Error(err)

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-    delayShort = 2 // seconds
-    delayLong  = 5 // seconds
+    delayShort = 1 // seconds
+    delayLong  = 3 // seconds
 )
 
 type Overlay struct {
