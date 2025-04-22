@@ -175,8 +175,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
-            case tcell.KeyF9:
+            case tcell.KeyF7:
                 hs.Word()
+
+            case tcell.KeyCtrlD, tcell.KeyF8:
+                hs.OpenLog()
+
+            case tcell.KeyCtrlE, tcell.KeyF9:
+                hs.OpenHeap(bag.Path)
 
             case tcell.KeyF10:
                 hs.Md5()
@@ -194,7 +200,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 ui.term.GetClipboard()
 
-            case tcell.KeyCtrlC:
+            case tcell.KeyCtrlC, tcell.KeyF6:
                 if ui.ctx.Mode == mode.Hex {
                     continue
                 }
@@ -203,7 +209,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 ui.overlay.SendInfo("Copied to clipboard")
 
-            case tcell.KeyCtrlS:
+            case tcell.KeyCtrlS, tcell.KeyF5:
                 if ui.ctx.Mode == mode.Hex {
                     continue
                 }
@@ -213,14 +219,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 }
 
                 ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
-
-            case tcell.KeyCtrlE:
-                if fx.Exists(bag.Path) {
-                    hs.OpenHeap(bag.Path)
-                }
-
-            case tcell.KeyCtrlD:
-                hs.OpenLog()
 
             case tcell.KeyCtrlQ:
                 ui.buffer.Reset()

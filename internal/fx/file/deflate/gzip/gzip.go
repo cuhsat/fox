@@ -17,10 +17,10 @@ var (
 func Detect(path string) bool {
     var buf [3]byte
 
-    gz := fx.Open(path)
-    defer gz.Close()
+    a := fx.Open(path)
+    defer a.Close()
 
-    fi, err := gz.Stat()
+    fi, err := a.Stat()
 
     if err != nil {
         fx.Error(err)
@@ -31,7 +31,7 @@ func Detect(path string) bool {
         return false
     }
 
-    _, err = io.ReadFull(gz, buf[:])
+    _, err = io.ReadFull(a, buf[:])
 
     if err != nil {
         fx.Error(err)
@@ -42,10 +42,10 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-    gz := fx.Open(path)
-    defer gz.Close()
+    a := fx.Open(path)
+    defer a.Close()
 
-    r, err := gzip.NewReader(gz)
+    r, err := gzip.NewReader(a)
 
     if err != nil {
         fx.Error(err)

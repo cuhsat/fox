@@ -82,6 +82,10 @@ func (hs *HeapSet) Current() (int, *heap.Heap) {
 }
 
 func (hs *HeapSet) OpenHeap(path string) {
+    if !fx.Exists(path) {
+        return
+    }
+
     i := -1
 
     for j, h := range hs.heaps {

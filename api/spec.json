@@ -1,0 +1,42 @@
+{
+  // Static program information
+  "_comment": "FORENSIC EXAMINER EVIDENCE BAG",
+  // Evidence metadata
+  "meta": {
+    // Examined file details
+    "file": {
+      // File path and archive identifier
+      "path": "test.txt",
+      // Applied content filters
+      "filters": [
+        "Hello",
+        "World"
+      ]
+    },
+    // Logged in user details
+    "user": {
+      // User login
+      "login": "cuhsat",
+      // User fullname
+      "name": "Christian Uhsat"
+    },
+    // Evidence saving timestamp
+    "time": {
+      // ISO 3338 formated saving time in UTC
+      "utc": "2025-01-01T00:00:00.000000Z",
+      // ISO 3338 formated saving time in local time
+      "local": "2025-01-01T00:00:00.000000+02:00"
+    },
+    // SHA256 hash of the original (compressed) file
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  // Saved evidence data
+  "data": [
+    {
+      // Line number
+      "line": 1,
+      // Line content
+      "data": "Hello World"
+    }
+  ]
+}
