@@ -8,15 +8,12 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/types"
 )
 
 var (
     magic = [...]byte{0x50, 0x4B, 0x03, 0x04}
 )
-
-type ZipEntry struct {
-    Name, Path string
-}
 
 func Detect(path string) bool {
     var buf [4]byte
@@ -45,15 +42,15 @@ func Detect(path string) bool {
     return bytes.Equal(buf[:], magic[:])
 }
 
-func Deflate(path string) (ze []ZipEntry) {
+func Deflate(path string) (fe []*types.FileEntry) {
     r, err := zip.OpenReader(path)
 
     if err != nil {
         fx.Error(err)
  
-        ze = append(ze, ZipEntry{
-            Name: path,
+        fe = append(fe, &types.FileEntry{
             Path: path,
+            Name: path,
         })
 
         return
@@ -73,9 +70,7 @@ func Deflate(path string) (ze []ZipEntry) {
             continue
         }
 
-        b := filepath.Base(f.Name)
-
-        t := fx.Temp("zip", filepath.Ext(b))
+        t := fx.Temp("zip", filepath.Ext(filepath.Base(f.Name)))
 
         _, err = io.Copy(t, a)
 
@@ -87,9 +82,9 @@ func Deflate(path string) (ze []ZipEntry) {
             continue
         }
 
-        ze = append(ze, ZipEntry{
-            Name: f.Name,
+        fe = append(fe, &types.FileEntry{
             Path: t.Name(),
+            Name: f.Name,
         })
     }
 
