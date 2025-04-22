@@ -6,7 +6,7 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 
 ## Usage
 ```
-fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-o FILE] [PATH ... | -]
+fx [-p] [-h | -t] [-n # | -c #] [-x | -e PATTERN] [-m] [-o FILE] [PATH ... | -]
 ```
 
 Special options:
@@ -18,6 +18,7 @@ Special options:
 * `-x` Hexdump mode
 * `-e` Pattern value
 * `-o` Evidence file
+* `-m` Markdown output
 
 Default options:
 * `--help` Usage information
