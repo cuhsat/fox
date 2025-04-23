@@ -60,7 +60,9 @@ func New(m mode.Mode) *UI {
 
     term.EnableMouse()
     term.EnablePaste()
+
     term.HideCursor()
+    term.SetCursorStyle(tcell.CursorStyleBlinkingBar)
 
     ctx := lib.NewContext()
 

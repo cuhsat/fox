@@ -13,7 +13,6 @@ import (
 )
 
 const (
-    cursor = "_"
     filter = "❯"
     follow = "F"
     line = "N"
@@ -64,7 +63,11 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     // render status
     p.print(w-text.Len(s), y, s, themes.Surface1)
 
-    p.term.ShowCursor(10, y)
+    if p.Lock {
+        p.term.HideCursor()
+    } else {
+        p.term.ShowCursor(x + text.Len(f)-1, y)
+    }
 
     return 1
 }
@@ -98,13 +101,7 @@ func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
         s = fmt.Sprintf("%s %s %s", s, f, filter)
     }
 
-    c := cursor
-
-    if p.Lock {
-        c = " "
-    }
-
-    s = fmt.Sprintf("%s %s%s ", s, p.Value, c)
+    s = fmt.Sprintf("%s %s ", s, p.Value)
 
     return 
 }
