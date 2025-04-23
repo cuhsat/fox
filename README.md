@@ -1,67 +1,67 @@
 ![](assets/logo.png "Forensic Examiner")
 The Swiss Army Knife for examining text files. Combining the most useful functionalities from _zcat_, _zless_, _grep_, _hexdump_, _head_, _tail_, _jq_, _wc_ and various cryptographic hashes into one performant standalone binary. As is this a forensic tool and not an editor, it is guaranteed, that <ins>no write actions</ins> will be made.
-
-![](assets/grep.png "Screenshot")
-
-# Install
 ```console
-$ go install github.com/cuhsat/fx@latest
+go install github.com/cuhsat/fx@latest
 ```
+![](assets/grep.png "Screenshot")
 
 # Usage
 ```
 fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN] [-j] [-J] [-o FILE] [PATH ...]
+
+The Swiss Army Knife for examining text files
+
+positional arguments:
+  PATH to open (default: current dir)
+
+mode:
+  -x start in Hex mode
+
+print:
+  -p print to console (no UI)
+
+limits:
+  -h limit head of file by ...
+  -t limit tail of file by ...
+  -n # number of lines
+  -c # number of bytes
+
+filters:
+  -e PATTERN to filter
+
+evidence:
+  -o FILE for evidence bag (default: EVIDENCE)
+  -j output in JSON format
+  -J output in JSON lines format
+
+options:
+  --help    show help message
+  --version show version info
 ```
-Positional arguments:
-* `PATH` to open (default: current dir)
-
-Mode:
-* `-x` start in Hex mode
-
-Print:
-* `-p` print to console (no UI)
-
-Limits:
-* `-h` limit head of file by ...
-* `-t` limit tail of file by ...
-* `-n #` number of lines
-* `-c #` number of bytes
-
-Filters:
-* `-e PATTERN` to filter
-
-Evidence:
-* `-o FILE` for evidence bag (default: EVIDENCE)
-* `-j` output in JSON format
-* `-J` output in JSON lines format
-
-Options:
-* `--help`    show help message
-* `--version` show version info
 
 ## Examples
-Examine the current dir:
+Examine the current dir
 ```console
 fx
 ```
-Examine directly from stdin:
+Examine directly from stdin
 ```console
 fx -
 ```
-Examine all `.jsonl` files in all sub dirs:
+Examine all `.jsonl` files in all sub dirs
 ```console
 fx ./**/*.jsonl
 ```
-Print all lines with `John Doe` of all files:
+Print all lines with `John Doe` from all files
 ```console
 fx -p -e "John Doe"
 ```
-Print the first `512` bytes to `mbr` in hex:
+Print the first `512` bytes to `mbr` in hex
 ```console
-fx -x -hc 512 nist.dd > mbr
+fx -x -h -c 512 nist.dd > mbr
 ```
 
-# Basic Keymap
+## Basic Keymap
 | Shortcut                           | Action        |
 | ---------------------------------- | ------------- |
 | <kbd>Esc</kbd>                     | Exit          |
