@@ -12,6 +12,9 @@ const (
 )
 
 var (
+    // global colors
+    Cursor   tcell.Color
+
     // global styles
     Base     tcell.Style
     Surface0 tcell.Style
@@ -256,6 +259,8 @@ func (t *Themes) Load(name string) {
     }
 
     p := t.palettes[t.names[t.index]]
+
+    Cursor = tcell.NewHexColor(p[4])
 
     Base = newStyle(p[0], p[1])
     Surface0 = newStyle(p[2], p[3])
