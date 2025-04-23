@@ -64,6 +64,8 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     // render status
     p.print(w-text.Len(s), y, s, themes.Surface1)
 
+    p.term.ShowCursor(10, y)
+
     return 1
 }
 
