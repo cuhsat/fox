@@ -225,6 +225,12 @@ func (hs *HeapSet) loadZip(path, base string) {
 func (hs *HeapSet) loadFile(path, base string) {
     var fn file.Format
 
+    tp := types.Regular
+
+    if path != base {
+        tp = types.Deflate
+    }
+
     if jsonl.Detect(path) {
         fn = jsonl.Pretty
     }
@@ -233,7 +239,7 @@ func (hs *HeapSet) loadFile(path, base string) {
         Title: base,
         Path: path,
         Base: base,
-        Type: types.Regular,
+        Type: tp,
         Fmt: fn,
     })
 }
