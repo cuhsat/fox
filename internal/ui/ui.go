@@ -28,7 +28,7 @@ const (
 )
 
 const (
-    cursor = tcell.CursorStyleSteadyBlock // cursor style
+    cursor = tcell.CursorStyleSteadyBar // cursor style
 )
 
 type UI struct {
@@ -332,8 +332,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     ui.buffer.Reset()
                 
                     heap.AddFilter(v)
-
-                    ui.State(mode.Less)
                 }
 
             case tcell.KeyTab:
