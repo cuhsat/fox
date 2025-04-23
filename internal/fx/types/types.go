@@ -1,5 +1,7 @@
 package types
 
+type Heap int
+
 const (
     Regular Heap = iota
     Stdin
@@ -8,4 +10,10 @@ const (
     Deflate
 )
 
-type Heap int
+type Export int
+
+const (
+    Text Export = iota
+    Json
+    Jsonl
+)

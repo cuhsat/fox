@@ -1,0 +1,14 @@
+# Themes
+* `Default`
+* `Monokai`
+* `Catppuccin-Latte`
+* `Catppuccin-Frappe`
+* `Catppuccin-Macchiato`
+* `Catppuccin-Mocha`
+* `VSCode-Light`
+* `VSCode-Dark`
+* `Darcula`
+* `Nord`
+* `Ansi16`
+* `Matrix`
+* `Monochrome`
