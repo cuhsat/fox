@@ -27,6 +27,10 @@ const (
     bracketR = "ESC[201~" // bracketed paste end
 )
 
+const (
+    cursor = tcell.CursorStyleSteadyBlock // cursor style
+)
+
 type UI struct {
     ctx *lib.Context
 
@@ -62,7 +66,6 @@ func New(m mode.Mode) *UI {
     term.EnablePaste()
 
     term.HideCursor()
-    term.SetCursorStyle(tcell.CursorStyleBlinkingBar)
 
     ctx := lib.NewContext()
 
@@ -78,6 +81,8 @@ func New(m mode.Mode) *UI {
         prompt:  lib.NewPrompt(ctx, term),
         overlay: lib.NewOverlay(ctx, term),
     }
+
+    term.SetCursorStyle(cursor, themes.Cursor)
 
     ui.State(m)
 
@@ -240,6 +245,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 ui.term.Fill(' ', themes.Base)
                 ui.term.Show()
 
+                ui.term.SetCursorStyle(cursor, themes.Cursor)
+
                 ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
 
             case tcell.KeyCtrlF:
@@ -325,6 +332,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     ui.buffer.Reset()
                 
                     heap.AddFilter(v)
+
+                    ui.State(mode.Less)
                 }
 
             case tcell.KeyTab:
