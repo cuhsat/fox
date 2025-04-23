@@ -6,6 +6,7 @@ go install github.com/cuhsat/fx@latest
 ```
 ![](assets/grep.png)
 
+### Examples
 Examine the current dir
 ```console
 fx
@@ -27,7 +28,7 @@ Print the first `512` bytes to `mbr` in hex
 fx -x -h -c 512 nist.dd > mbr
 ```
 
-# Usage
+### Usage
 ```
 fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN] [-j] [-J] [-o FILE] [PATH ...]
 
