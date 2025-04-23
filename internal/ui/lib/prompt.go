@@ -59,9 +59,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     s := p.formatStatus(heap)
 
     // render filters
-    if !p.Lock {
-        p.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
-    }
+    p.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
 
     // render status
     p.print(w-text.Len(s), y, s, themes.Surface1)
@@ -94,13 +92,17 @@ func (p *Prompt) formatMode() string {
 }
 
 func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
-    if p.ctx.Mode == mode.Grep {
-        for _, f := range *types.GetFilters() {
-            s = fmt.Sprintf("%s %s %s", s, f, filter)
-        }        
+    for _, f := range *types.GetFilters() {
+        s = fmt.Sprintf("%s %s %s", s, f, filter)
     }
 
-    s = fmt.Sprintf("%s %s%s ", s, p.Value, cursor)
+    c := cursor
+
+    if p.Lock {
+        c = " "
+    }
+
+    s = fmt.Sprintf("%s %s%s ", s, p.Value, c)
 
     return 
 }
