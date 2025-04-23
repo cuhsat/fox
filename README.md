@@ -132,7 +132,7 @@ make install
 | <kbd>Any Key</kbd>                                   | Line number           |
 
 ## Evidence
-> JSON specification under [spec.json](api/spec.json).
+> JSON specification under [spec.txt](api/spec.txt).
 
 ## Config
 > Located under `~/.fxrc`.
