@@ -162,8 +162,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 return
 
             case tcell.KeyCtrlL, tcell.KeyF1:
-                heap.ClearFilters()
-
                 ui.State(mode.Less)
 
             case tcell.KeyCtrlG, tcell.KeyF2:
@@ -175,7 +173,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case tcell.KeyCtrlSpace, tcell.KeyF4:
                 ui.State(mode.Goto)
 
-            case tcell.Key9:
+            case tcell.KeyF9:
                 hs.Word()
 
             case tcell.KeyF10:
@@ -203,7 +201,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 ui.overlay.SendInfo("Copied to clipboard")
 
-            case tcell.KeyCtrlS, KeyPrint:
+            case tcell.KeyCtrlS, tcell.KeyPrint:
                 if ui.ctx.Mode == mode.Hex {
                     continue
                 }
