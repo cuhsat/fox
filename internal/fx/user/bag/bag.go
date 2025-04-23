@@ -36,17 +36,18 @@ type exporter interface {
     ExportLine(n int, s string)
 }
 
-func New(path string, json, jsonl bool) *Bag {
+func New(path string, e types.Export) *Bag {
     var exp exporter
     var ext string
 
-    if jsonl {
+    switch e {
+    case types.Jsonl:
         exp = NewJsonExporter(false)
         ext = ".jsonl"
-    } else if json {
+    case types.Json:
         exp = NewJsonExporter(true)
         ext = ".json"
-    } else {
+    default:
         exp = NewTextExporter()
     }
 
