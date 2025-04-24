@@ -4,6 +4,7 @@ import (
     "os"
     "path/filepath"
     "slices"
+    "sync"
 
     "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
@@ -19,6 +20,8 @@ import (
 type callback func()
 
 type HeapSet struct {
+    sync.RWMutex
+
     watch *fsnotify.Watcher // file watcher
     watch_fn callback       // file watcher callback
     error_fn callback       // error callback
@@ -130,7 +133,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
         return nil
     }
 
-    hs.heaps = slices.Delete(hs.heaps, hs.index, hs.index+1)
+    hs.del()
     hs.index -= 1
 
     return hs.NextHeap()
@@ -187,11 +190,11 @@ func (hs *HeapSet) loadPath(path string) {
 func (hs *HeapSet) loadPipe() {
     pipe := fx.Stdin()
 
-    hs.heaps = append(hs.heaps, &heap.Heap{
+    hs.add(&heap.Heap{
         Path: pipe,
         Base: pipe,
         Type: types.Stdin,
-    })  
+    })
 }
 
 func (hs *HeapSet) loadDir(path string) {
@@ -222,7 +225,7 @@ func (hs *HeapSet) loadZip(path, base string) {
 }
 
 func (hs *HeapSet) loadFile(path, base string) {
-    h := heap.Heap{
+    h := &heap.Heap{
         Title: base,
         Path: path,
         Base: base,
@@ -233,11 +236,11 @@ func (hs *HeapSet) loadFile(path, base string) {
         h.Type = types.Deflate
     }
 
-    hs.heaps = append(hs.heaps, &h)
+    hs.add(h)
 }
 
 func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
-    hs.heaps = append(hs.heaps, &heap.Heap{
+    hs.add(&heap.Heap{
         Title: filepath.Join(base, e.Name),
         Path: e.Path,
         Base: e.Path,
@@ -257,4 +260,20 @@ func (hs *HeapSet) load() *heap.Heap {
     h.ApplyFilters()
 
     return h
+}
+
+func (hs *HeapSet) add(h *heap.Heap) {
+    hs.Lock()
+
+    hs.heaps = append(hs.heaps, h)
+
+    hs.Unlock()
+}
+
+func (hs *HeapSet) del() {
+    hs.Lock()
+
+    hs.heaps = slices.Delete(hs.heaps, hs.index, hs.index+1)
+
+    hs.Unlock()
 }

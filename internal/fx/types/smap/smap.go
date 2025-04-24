@@ -4,6 +4,10 @@ import (
     "github.com/edsrzf/mmap-go"
 )
 
+const (
+    Space = 2
+)
+
 type SMap []*String
 
 type String struct {
@@ -44,15 +48,15 @@ func Map(m mmap.MMap) (s SMap) {
 
 func (s SMap) Indent(m mmap.MMap) (r SMap) {
     for _, str := range s {
-        i, spc, brk := str.Start, 0, true
+        i, off, brk := str.Start, 0, true
 
         for j := str.Start; j < str.End; j++ {
             switch m[j] {
             case '{', '[':
-                spc += 2
+                off += Space
                 brk = true
             case '}', ']':
-                spc -= 2
+                off -= Space
                 brk = true
             }
 
@@ -61,20 +65,22 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 
                 r = append(r, &String{
                     Nr: str.Nr,
-                    Start: i,
-                    End: j,
-                    Len: j - i,
-                    Off: spc,
+                    Start: j,
+                    End: j+1,
+                    Len: 1,
+                    Off: off - Space,
                 })
             }
         }
+
+        off = 0
 
         r = append(r, &String{
             Nr: str.Nr,
             Start: str.Start,
             End: i,
             Len: i - str.Start,
-            Off: spc,
+            Off: off,
         })
     }
 

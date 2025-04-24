@@ -72,7 +72,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
         }
     }
 
-    hs.heaps = append(hs.heaps, &heap.Heap{
+    hs.add(&heap.Heap{
         Title: t,
         Path: f.Name(),
         Base: f.Name(),
