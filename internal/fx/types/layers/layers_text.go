@@ -16,8 +16,8 @@ const (
 )
 
 const (
-    TabSpace = "    "
-    OffSpace = "."
+    TabBlank = "    "
+    OffBlank = " "
 )
 
 type TextLayer struct {
@@ -127,11 +127,11 @@ func unmap(ctx *Context, s *smap.String) string {
     str := string(ctx.Heap.MMap[s.Start:s.End])
 
     // replace tabulators
-    str = strings.ReplaceAll(str, "\t", TabSpace)
+    str = strings.ReplaceAll(str, "\t", TabBlank)
 
     // prepend blank for offset
     if s.Off > 0 {
-        str = strings.Repeat(OffSpace, s.Off) + str
+        str = strings.Repeat(OffBlank, s.Off) + str
     }
 
     return str
