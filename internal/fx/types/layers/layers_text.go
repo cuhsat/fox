@@ -17,7 +17,7 @@ const (
 
 const (
     TabSpace = "    "
-    OffSpace = " "
+    OffSpace = "."
 )
 
 type TextLayer struct {
