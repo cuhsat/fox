@@ -226,7 +226,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 hs.OpenLog()
 
             case tcell.KeyCtrlR:
-                continue // TODO
+                hs.CloseHeaps() // Ctrl Shift Q
 
             case tcell.KeyCtrlQ:
                 ui.buffer.Reset()

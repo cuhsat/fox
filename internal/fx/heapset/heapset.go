@@ -134,9 +134,31 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
         return nil
     }
 
+    h := hs.get(atomic.LoadInt32(hs.index))
+
+    hs.unload(h)
+
     hs.del()
 
     atomic.AddInt32(hs.index, -1)
+
+    return hs.NextHeap()
+}
+
+func (hs *HeapSet) CloseHeaps() *heap.Heap {
+    // hs.Lock()
+
+    // for _, h := range hs.heaps {
+    //     if len(h.SMap) == 0 {
+    //         hs.CloseHeap()
+    //     }
+    // }
+
+    // hs.Unlock()
+
+    // if hs.Length() == 1 {
+    //     return nil
+    // }
 
     return hs.NextHeap()
 }
@@ -147,12 +169,7 @@ func (hs *HeapSet) ThrowAway() {
     hs.Lock()
 
     for _, h := range hs.heaps {
-        // cascading call
-        h.ThrowAway()
-
-        if h.Type > types.Regular {
-            os.Remove(h.Path)
-        }
+        hs.unload(h)
     }
 
     hs.heaps = hs.heaps[:0]
@@ -282,11 +299,7 @@ func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
 }
 
 func (hs *HeapSet) load() *heap.Heap {
-    hs.RLock()
-
     h := hs.get(atomic.LoadInt32(hs.index))
-
-    hs.RUnlock()
 
     if !h.Loaded() {
         h.Reload()
@@ -297,6 +310,14 @@ func (hs *HeapSet) load() *heap.Heap {
     h.ApplyFilters()
 
     return h
+}
+
+func (hs *HeapSet) unload(h *heap.Heap) {
+    h.ThrowAway()
+
+    if h.Type > types.Regular {
+        os.Remove(h.Path)
+    }
 }
 
 func (hs *HeapSet) get(idx int32) *heap.Heap {
