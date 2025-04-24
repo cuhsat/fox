@@ -3,15 +3,18 @@ package file
 import (
     "bytes"
     "io"
+    "strings"
 
     "github.com/cuhsat/fx/internal/fx"
 )
 
-type Format func(string) []string
-
 type Entry struct {
     Path string
     Name string
+}
+
+func CanIndent(p string) bool {
+    return strings.HasSuffix(strings.ToLower(p), ".jsonl")
 }
 
 func HasMagic(p string, o int, m []byte) bool {

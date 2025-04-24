@@ -5,6 +5,7 @@ import (
     "regexp"
     "strings"
 
+    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
@@ -63,48 +64,30 @@ func Text(ctx *Context) TextLayer {
         ctx.W -= (d + TextSpace)
     }
 
-    if ctx.Wrap && ctx.Heap.Fmt != nil {
-        textFormat(ctx, &tl, d)
-    } else {
-        textNormal(ctx, &tl, d)
+    if ctx.Wrap {
+        if file.CanIndent(ctx.Heap.Path) {
+            tl.SMap = tl.SMap.Indent(ctx.Heap.MMap)
+        } else {
+            tl.SMap = tl.SMap.Wrap(ctx.W)
+        }
     }
+
+    tl.W, tl.H = tl.SMap.Size()
+
+    addLines(ctx, &tl, d)
 
     if len(tl.Lines) >= ctx.H {
         tl.Lines = tl.Lines[:ctx.H]
     }
 
     for _, f := range *types.GetFilters() {
-        textFilter(ctx, &tl, f)
+        addParts(ctx, &tl, f)
     }
 
     return tl
 }
 
-func textFormat(ctx *Context, tl *TextLayer, d int) {
-    for _, s := range tl.SMap {
-        nr := fmt.Sprintf("%0*d", d, s.Nr)
-
-        str := unmap(ctx, s)
-
-        for _, l := range ctx.Heap.Fmt(str) {
-            tl.Lines = append(tl.Lines, TextLine{
-                Line: Line{Nr: nr, Str: textFit(l, ctx.X, ctx.W)},
-            })
-
-            tl.W, tl.H  = max(tl.W, text.Len(l)), len(tl.Lines)
-        }
-    }
-
-    tl.Lines = tl.Lines[ctx.Y:]
-}
-
-func textNormal(ctx *Context, tl *TextLayer, d int) {
-    if ctx.Wrap {
-        tl.SMap = tl.SMap.Wrap(ctx.W)
-    }
-
-    tl.W, tl.H = tl.SMap.Size()
-
+func addLines(ctx *Context, tl *TextLayer, d int) {
     for i, s := range tl.SMap[ctx.Y:] {
         if i >= ctx.H {
             break
@@ -115,12 +98,12 @@ func textNormal(ctx *Context, tl *TextLayer, d int) {
         str := unmap(ctx, s)
 
         tl.Lines = append(tl.Lines, TextLine{
-            Line: Line{Nr: nr, Str: textFit(str, ctx.X, ctx.W)},
+            Line: Line{Nr: nr, Str: trim(str, ctx.X, ctx.W)},
         })
     }
 }
 
-func textFilter(ctx *Context, tl *TextLayer, f string) {
+func addParts(ctx *Context, tl *TextLayer, f string) {
     re, _ := regexp.Compile(f)
 
     for y, s := range tl.Lines {
@@ -139,15 +122,18 @@ func textFilter(ctx *Context, tl *TextLayer, f string) {
     }
 }
 
-func textFit(s string, x, w int) string {
-    return text.Trim(s, min(x, text.Len(s)), w)
-}
-
 func unmap(ctx *Context, s *smap.String) string {
     str := string(ctx.Heap.MMap[s.Start:s.End])
+
+    // prepend blank for offset
+    str = strings.Repeat(" ", s.Off) + str
 
     // replace tabulators
     str = strings.ReplaceAll(str, "\t", TabSpace)
 
     return str
+}
+
+func trim(s string, x, w int) string {
+    return text.Trim(s, min(x, text.Len(s)), w)
 }

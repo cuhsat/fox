@@ -1,10 +1,12 @@
-![](assets/logo.png "Forensic Examiner")
+![](docs/img/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the most useful functionalities from _zcat_, _zless_, _grep_, _hexdump_, _head_, _tail_, _jq_, _wc_ and various cryptographic hashes into one performant standalone binary. As is this a forensic tool and not an editor, it is guaranteed, that <ins>no write actions</ins> will be made.
+The Swiss Army Knife for examining text files. Combining the most useful functionalities from _zcat_, _zless_, _grep_, _hexdump_, _head_, _tail_, _wc_ and various cryptographic hash functions into one performant standalone binary.
+
+![](docs/img/grep.png)
+
 ```console
 go install github.com/cuhsat/fx@latest
 ```
-![](assets/grep.png)
 
 ## Examples
 Examine the current dir

@@ -54,6 +54,7 @@ func (h *Heap) HashSum(algo string) []byte {
     }
 
     f := fx.Open(h.Base)
+
     defer f.Close()
 
     _, err := io.Copy(imp, f)

@@ -6,7 +6,6 @@ import (
     "runtime"
  
     "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
     "github.com/edsrzf/mmap-go"
@@ -18,8 +17,6 @@ type Heap struct {
     Base  string      // base path
 
     Type types.Heap   // heap type
-
-    Fmt file.Format   // format callback
 
     Head int          // head offset
     Tail int          // tail offset
@@ -98,12 +95,12 @@ func (h *Heap) Reload() {
     h.ApplyFilters()
 }
 
-func (h *Heap) Length() int {
-    return len(h.rmap)
-}
-
 func (h *Heap) Loaded() bool {
     return h.file != nil
+}
+
+func (h *Heap) Length() int {
+    return len(h.rmap)
 }
 
 func (h *Heap) Bytes() []byte {
