@@ -40,7 +40,7 @@ func Map(m mmap.MMap) (s SMap) {
         Nr: len(s)+1,
         Start: j,
         End: len(m),
-        Len: len(m) - i,
+        Len: len(m) - j,
     })
 
     return
@@ -48,32 +48,51 @@ func Map(m mmap.MMap) (s SMap) {
 
 func (s SMap) Indent(m mmap.MMap) (r SMap) {
     for _, str := range s {
+        l := len(r)
+
+        // blank line
+        if str.Len == 0 {
+            r = append(r, str)
+        }
+
+        pos := make(stack, 0)
         off := 0
 
         for i := str.Start; i < str.End; i++ {
             switch m[i] {
             case '{', '[':
-                r = append(r, &String{
-                    Nr: str.Nr,
-                    Start: i,
-                    End: i+1,
-                    Len: 1,
-                    Off: off,
-                })
+                j := pos.Pop()
+
+                if j >= 0 && j < i {
+                    add(&r, str.Nr, j, i, off)
+                }
+
+                pos.Push(i+1)
+
+                // bracket line
+                add(&r, str.Nr, i, i+1, off)
 
                 off += Space
 
             case '}', ']':
+                j := pos.Pop()
+
+                if j >= 0 && j < i {
+                    add(&r, str.Nr, j, i, off)
+                }
+
                 off -= Space
 
-                r = append(r, &String{
-                    Nr: str.Nr,
-                    Start: i,
-                    End: i+1,
-                    Len: 1,
-                    Off: off,
-                })
+                // bracket line
+                add(&r, str.Nr, i, i+1, off)
+
+                pos.Push(i+1)
             }
+        }
+
+        // normal line
+        if len(r) == l {
+            r = append(r, str)
         }
     }
 
@@ -126,4 +145,10 @@ func (s SMap) Size() (w, h int) {
     h = len(s)
 
     return
+}
+
+func add(s *SMap, n, i, j, o int) {
+    *s = append(*s, &String{
+        Nr: n, Start: i, End: j, Len: j-i, Off: o,
+    })
 }
