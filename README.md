@@ -10,4 +10,4 @@ go install github.com/cuhsat/fx@latest
 
 ![](docs/img/grep.png)
 
-Made with ❤ in Go
+Made with ❤ in 🐹
