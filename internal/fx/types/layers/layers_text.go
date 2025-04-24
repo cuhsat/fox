@@ -17,6 +17,7 @@ const (
 
 const (
     TabSpace = "    "
+    OffSpace = " "
 )
 
 type TextLayer struct {
@@ -125,11 +126,13 @@ func addParts(ctx *Context, tl *TextLayer, f string) {
 func unmap(ctx *Context, s *smap.String) string {
     str := string(ctx.Heap.MMap[s.Start:s.End])
 
-    // prepend blank for offset
-    str = strings.Repeat(" ", s.Off) + str
-
     // replace tabulators
     str = strings.ReplaceAll(str, "\t", TabSpace)
+
+    // prepend blank for offset
+    if s.Off > 0 {
+        str = strings.Repeat(OffSpace, s.Off) + str
+    }
 
     return str
 }

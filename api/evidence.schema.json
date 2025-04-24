@@ -1,0 +1,114 @@
+{
+  "$id": "https://github.com/cuhsat/fx/api/evidence.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence Bag",
+  "description": "Forensic Examiner Evidence Bag",
+  "type": "object",
+  "properties": {
+    "_comment": {
+      "description": "Static program information",
+      "type": "string"
+    },
+    "meta": {
+      "description": "Evidence metadata",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "Examined file details",
+          "type": "object",
+          "properties": {
+            "path": {
+              "description": "File path and archive identifier",
+              "type": "string"
+            },
+            "filters": {
+              "description": "Applied content filters",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "path",
+            "filters"
+          ]
+        },
+        "user": {
+          "description": "Logged in user details",
+          "type": "object",
+          "properties": {
+            "login": {
+              "description": "User login",
+              "type": "string"
+            },
+            "name": {
+              "description": "User fullname",
+              "type": "string"
+            }
+          },
+          "required": [
+            "login",
+            "name"
+          ]
+        },
+        "time": {
+          "description": "Evidence saving timestamp",
+          "type": "object",
+          "properties": {
+            "utc": {
+              "description": "ISO 3338 formated saving time in UTC",
+              "type": "string"
+            },
+            "local": {
+              "description": "ISO 3338 formated saving time in local time",
+              "type": "string"
+            }
+          },
+          "required": [
+            "utc",
+            "local"
+          ]
+        },
+        "hash": {
+          "description": "SHA256 hash of the original (compressed) file",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "user",
+        "time",
+        "hash"
+      ]
+    },
+    "data": {
+      "description": "Saved evidence data",
+      "type": "array",
+      "properties": {
+        "items": {
+          "type": "object",
+          "properties": {
+            "line": {
+              "description": "Line number",
+              "type": "number"
+            },
+            "data": {
+              "description": "Line content",
+              "type": "string"
+            }
+          },
+          "required": [
+            "line",
+            "data"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "_comment",
+    "meta",
+    "data"
+  ]
+}

@@ -18,7 +18,7 @@
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                  | Scroll page right     |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Up</kbd>   | Scroll to start       |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Down</kbd> | Scroll to end         |
-| <kbd>Ctrl</kbd> + <kbd>r</kbd>                       | Reload file           |
+| <kbd>Ctrl</kbd> + <kbd>r</kbd>                       | TODO                  |
 | <kbd>Ctrl</kbd> + <kbd>q</kbd>                       | Close file            |
 | <kbd>Ctrl</kbd> + <kbd>t</kbd>                       | Cycle themes          |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |

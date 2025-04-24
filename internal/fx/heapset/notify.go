@@ -44,6 +44,8 @@ func (hs *HeapSet) notify() {
                 continue
             }
 
+            hs.Lock()
+
             for i, h := range hs.heaps {
                 if !strings.HasSuffix(h.Path, ev.Name) {
                     continue
@@ -57,6 +59,8 @@ func (hs *HeapSet) notify() {
 
                 break
             }
+
+            hs.Unlock()
         }
     }
 }

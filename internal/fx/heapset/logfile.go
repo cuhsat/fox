@@ -19,7 +19,7 @@ func (hs *HeapSet) OpenLog() {
     if i < 0 {
         i = len(hs.heaps)
 
-        hs.heaps = append(hs.heaps, &heap.Heap{
+        hs.add(&heap.Heap{
             Title: "log",
             Path: fx.Log.Name,
             Base: fx.Log.Name,
