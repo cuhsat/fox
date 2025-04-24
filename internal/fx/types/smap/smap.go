@@ -11,6 +11,7 @@ type String struct {
     Start int
     End   int
     Len   int
+    Off   int
 }
 
 func Map(m mmap.MMap) (s SMap) {
@@ -37,6 +38,45 @@ func Map(m mmap.MMap) (s SMap) {
         End: len(m),
         Len: len(m) - i,
     })
+
+    return
+}
+
+func (s SMap) Indent(m mmap.MMap) (r SMap) {
+    for _, str := range s {
+        i, spc, brk := str.Start, 0, true
+
+        for j := str.Start; j < str.End; j++ {
+            switch m[j] {
+            case '{', '[':
+                spc += 2
+                brk = true
+            case '}', ']':
+                spc -= 2
+                brk = true
+            }
+
+            if brk {
+                brk = false
+
+                r = append(r, &String{
+                    Nr: str.Nr,
+                    Start: i,
+                    End: j,
+                    Len: j - i,
+                    Off: spc,
+                })
+            }
+        }
+
+        r = append(r, &String{
+            Nr: str.Nr,
+            Start: str.Start,
+            End: i,
+            Len: i - str.Start,
+            Off: spc,
+        })
+    }
 
     return
 }

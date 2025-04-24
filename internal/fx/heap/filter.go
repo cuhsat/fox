@@ -17,6 +17,7 @@ type chunk struct {
 
 func (h *Heap) filter(b []byte) (s smap.SMap) {
     ch := make(chan *smap.String, len(h.SMap))
+
     defer close(ch)
 
     var wg sync.WaitGroup

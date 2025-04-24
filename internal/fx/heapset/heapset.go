@@ -8,10 +8,9 @@ import (
     "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/file"
-    "github.com/cuhsat/fx/internal/fx/file/deflate/gzip"
-    "github.com/cuhsat/fx/internal/fx/file/deflate/tar"
-    "github.com/cuhsat/fx/internal/fx/file/deflate/zip"
-    "github.com/cuhsat/fx/internal/fx/file/format/jsonl"
+    "github.com/cuhsat/fx/internal/fx/file/gzip"
+    "github.com/cuhsat/fx/internal/fx/file/tar"
+    "github.com/cuhsat/fx/internal/fx/file/zip"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/fsnotify/fsnotify"
@@ -223,40 +222,26 @@ func (hs *HeapSet) loadZip(path, base string) {
 }
 
 func (hs *HeapSet) loadFile(path, base string) {
-    var fn file.Format
-
-    tp := types.Regular
-
-    if path != base {
-        tp = types.Deflate
-    }
-
-    if jsonl.Detect(path) {
-        fn = jsonl.Pretty
-    }
-
-    hs.heaps = append(hs.heaps, &heap.Heap{
+    h := heap.Heap{
         Title: base,
         Path: path,
         Base: base,
-        Type: tp,
-        Fmt: fn,
-    })
+        Type: types.Regular,
+    }
+
+    if path != base {
+        h.Type = types.Deflate
+    }
+
+    hs.heaps = append(hs.heaps, &h)
 }
 
 func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
-    var fn file.Format
-
-    if jsonl.Detect(e.Path) {
-        fn = jsonl.Pretty
-    }
-
     hs.heaps = append(hs.heaps, &heap.Heap{
         Title: filepath.Join(base, e.Name),
         Path: e.Path,
         Base: e.Path,
         Type: types.Deflate,
-        Fmt: fn,
     })
 }
 

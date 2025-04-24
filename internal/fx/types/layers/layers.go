@@ -23,8 +23,8 @@ type Part struct {
 type Context struct {
     Heap *heap.Heap
 
-    Line bool
     Wrap bool
+    Line bool
 
     X int
     Y int
