@@ -3,6 +3,7 @@ package heapset
 import (
     "path/filepath"
     "strings"
+    "sync/atomic"
 
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
@@ -44,7 +45,7 @@ func (hs *HeapSet) notify() {
                 continue
             }
 
-            hs.Lock()
+            hs.RLock()
 
             for i, h := range hs.heaps {
                 if !strings.HasSuffix(h.Path, ev.Name) {
@@ -53,14 +54,16 @@ func (hs *HeapSet) notify() {
 
                 h.Reload()
 
-                if hs.watch_fn != nil && hs.index == i {
+                idx := int(atomic.LoadInt32(hs.index))
+
+                if hs.watch_fn != nil && idx == i {
                     hs.watch_fn() // bound callback
                 }
 
                 break
             }
 
-            hs.Unlock()
+            hs.RUnlock()
         }
     }
 }

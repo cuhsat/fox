@@ -3,6 +3,7 @@ package heapset
 import (
     "fmt"
     "io"
+    "sync/atomic"
 
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
@@ -38,6 +39,8 @@ func (hs *HeapSet) Word() {
 func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     f := fx.Stdout()
 
+    hs.RLock()
+
     for _, h := range hs.heaps {
         if h.Type != types.Regular && h.Type != types.Deflate {
             continue
@@ -54,32 +57,30 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
         }
     }
 
+    hs.RUnlock()
+
     f.Close()
 
-    for i, h := range hs.heaps {
-        if h.Type == types.Regular {
-            continue
-        }
+    idx := hs.findByName(t)
 
-        if h.Title == t {
-            h.Path = f.Name()
+    if idx != -1 {
+        h := hs.get(idx)
 
-            h.Reload()
+        h.Path = f.Name()
 
-            hs.index = i
+        h.Reload()
 
-            return
-        }
+        atomic.StoreInt32(hs.index, idx)
+    } else {
+        hs.add(&heap.Heap{
+            Title: t,
+            Path: f.Name(),
+            Base: f.Name(),
+            Type: types.Stdout,
+        })
+
+        atomic.StoreInt32(hs.index, hs.Length()-1)
+
+        hs.load()
     }
-
-    hs.add(&heap.Heap{
-        Title: t,
-        Path: f.Name(),
-        Base: f.Name(),
-        Type: types.Stdout,
-    })
-
-    hs.index = len(hs.heaps)-1
-
-    hs.load()
 }

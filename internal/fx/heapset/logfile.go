@@ -1,23 +1,29 @@
 package heapset
 
 import (
+    "sync/atomic"
+
     "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
 )
 
 func (hs *HeapSet) OpenLog() {
-    i := -1
+    var idx int32 = -1
 
-    for j, h := range hs.heaps {
+    hs.RLock()
+
+    for i, h := range hs.heaps {
         if h.Type == types.Stderr {
-            i = j
+            idx = int32(i)
             break
         }
     }
 
-    if i < 0 {
-        i = len(hs.heaps)
+    hs.RUnlock()
+
+    if idx < 0 {
+        idx = hs.Length()
 
         hs.add(&heap.Heap{
             Title: "log",
@@ -27,6 +33,7 @@ func (hs *HeapSet) OpenLog() {
         })
     }
 
-    hs.index = i
-    hs.heaps[i].Reload()
+    atomic.StoreInt32(hs.index, idx)
+
+    hs.get(idx).Reload()
 }
