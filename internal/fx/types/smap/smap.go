@@ -48,40 +48,33 @@ func Map(m mmap.MMap) (s SMap) {
 
 func (s SMap) Indent(m mmap.MMap) (r SMap) {
     for _, str := range s {
-        i, off, brk := str.Start, 0, true
+        off := 0
 
-        for j := str.Start; j < str.End; j++ {
-            switch m[j] {
+        for i := str.Start; i < str.End; i++ {
+            switch m[i] {
             case '{', '[':
+                r = append(r, &String{
+                    Nr: str.Nr,
+                    Start: i,
+                    End: i+1,
+                    Len: 1,
+                    Off: off,
+                })
+
                 off += Space
-                brk = true
+
             case '}', ']':
                 off -= Space
-                brk = true
-            }
-
-            if brk {
-                brk = false
 
                 r = append(r, &String{
                     Nr: str.Nr,
-                    Start: j,
-                    End: j+1,
+                    Start: i,
+                    End: i+1,
                     Len: 1,
-                    Off: off - Space,
+                    Off: off,
                 })
             }
         }
-
-        off = 0
-
-        r = append(r, &String{
-            Nr: str.Nr,
-            Start: str.Start,
-            End: i,
-            Len: i - str.Start,
-            Off: off,
-        })
     }
 
     return
