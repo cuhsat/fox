@@ -1,8 +1,8 @@
 ![](docs/img/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the most useful functionalities from _zcat_, _zless_, _grep_, _hexdump_, _head_, _tail_, _wc_ and various cryptographic hash functions into one performant standalone binary.
+The Swiss Army Knife for examining text files. Combining the most useful functionalities from **zcat**, **zless**, **grep**, **hexdump**, **head**, **tail**, **wc** and various cryptographic hash functions into one performant standalone binary.
 
-> For more information see [docs](docs) or type `fx --help`
+> For more information see the [docs](docs) or type `fx --help`
 
 ![](docs/img/grep.png)
 
