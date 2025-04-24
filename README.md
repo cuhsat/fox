@@ -8,34 +8,35 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 go install github.com/cuhsat/fx@latest
 ```
 
-**Usage Examples**
+# Usage Examples
+
 > For more information type `fx --help`.
 
-Examine the current dir
+**Examine the current dir**
 
 ```console
 fx
 ```
 
-Examine directly from stdin
+**Examine directly from stdin**
 
 ```console
 fx -
 ```
 
-Examine all `.jsonl` files in all sub dirs
+**Examine all `.jsonl` files in all sub dirs**
 
 ```console
 fx ./**/*.jsonl
 ```
 
-Print all lines with `John Doe` from all files
+**Print all lines with `John Doe` from all files**
 
 ```console
 fx -p -e "John Doe"
 ```
 
-Print the first `512` bytes to `mbr` in hex
+**Print the first `512` bytes to `mbr` in hex**
 
 ```console
 fx -x -h -c 512 nist.dd > mbr
