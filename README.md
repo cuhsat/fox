@@ -8,7 +8,9 @@ The Swiss Army Knife for examining text files. Combining the most useful functio
 go install github.com/cuhsat/fx@latest
 ```
 
-# Usage Examples
+**Usage Examples**
+> For more information type `fx --help`.
+
 Examine the current dir
 
 ```console
@@ -39,7 +41,4 @@ Print the first `512` bytes to `mbr` in hex
 fx -x -h -c 512 nist.dd > mbr
 ```
 
-> For more information type `fx --help`.
-
----
 Made with ❤ in Go
