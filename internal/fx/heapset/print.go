@@ -23,6 +23,8 @@ func (hs *HeapSet) Print(hex bool) {
         H: math.MaxInt,
     }
 
+    hs.RLock()
+
     for _, h := range hs.heaps {
         if h.Type == types.Stdin {
             continue
@@ -44,4 +46,6 @@ func (hs *HeapSet) Print(hex bool) {
             fmt.Println(layers.Text(&ctx))
         }
     }
+
+    hs.RUnlock()
 }

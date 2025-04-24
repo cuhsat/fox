@@ -5,6 +5,7 @@ import (
     "path/filepath"
     "slices"
     "sync"
+    "sync/atomic"
 
     "github.com/bmatcuk/doublestar/v4"
     "github.com/cuhsat/fx/internal/fx"
@@ -27,7 +28,7 @@ type HeapSet struct {
     error_fn callback       // error callback
 
     heaps []*heap.Heap      // set heaps
-    index int               // set index
+    index *int32            // set index
 }
 
 func New(paths []string) *HeapSet {
@@ -39,7 +40,7 @@ func New(paths []string) *HeapSet {
 
     hs := HeapSet{
         watch: w,
-        index: 0,
+        index: new(int32),
     }
 
     go hs.notify()
@@ -63,7 +64,7 @@ func New(paths []string) *HeapSet {
         }
     }
 
-    if len(hs.heaps) == 0 {
+    if hs.Length() == 0 {
         fx.Exit("no files found")
     }
 
@@ -77,12 +78,17 @@ func (hs *HeapSet) Bind(fn1, fn2 callback) {
     hs.error_fn = fn2
 }
 
-func (hs *HeapSet) Length() int {
-    return len(hs.heaps)
+func (hs *HeapSet) Length() int32 {
+    hs.RLock()
+    defer hs.RUnlock()
+
+    return int32(len(hs.heaps))
 }
 
-func (hs *HeapSet) Current() (int, *heap.Heap) {
-    return hs.index+1, hs.heaps[hs.index]
+func (hs *HeapSet) Current() (int32, *heap.Heap) {
+    idx := atomic.LoadInt32(hs.index)
+
+    return idx+1, hs.get(idx)
 }
 
 func (hs *HeapSet) OpenHeap(path string) {
@@ -90,57 +96,55 @@ func (hs *HeapSet) OpenHeap(path string) {
         return
     }
 
-    i := -1
+    idx := hs.findByPath(path)
 
-    for j, h := range hs.heaps {
-        if h.Base == path {
-            i = j
-            break
-        }
+    if idx < 0 {
+        idx = hs.Length()
+
+        hs.loadPath(path)
     }
 
-    if i < 0 {
-        i = len(hs.heaps)
-        hs.loadPath(path)        
-    }
+    atomic.StoreInt32(hs.index, idx)
 
-    hs.index = i
     hs.load()
 }
 
 func (hs *HeapSet) PrevHeap() *heap.Heap {
-    hs.index -= 1
+    idx := atomic.AddInt32(hs.index, -1)
 
-    if hs.index < 0 {
-        hs.index = len(hs.heaps)-1
+    if idx < 0 {
+        atomic.StoreInt32(hs.index, hs.Length()-1)
     }
 
     return hs.load()
 }
 
 func (hs *HeapSet) NextHeap() *heap.Heap {
-    hs.index += 1
+    idx := atomic.AddInt32(hs.index, 1)
 
-    if hs.index >= len(hs.heaps) {
-        hs.index = 0
+    if idx >= hs.Length() {
+        atomic.StoreInt32(hs.index, 0)
     }
 
     return hs.load()
 }
 
 func (hs *HeapSet) CloseHeap() *heap.Heap {
-    if len(hs.heaps) == 1 {
+    if hs.Length() == 1 {
         return nil
     }
 
     hs.del()
-    hs.index -= 1
+
+    atomic.AddInt32(hs.index, -1)
 
     return hs.NextHeap()
 }
 
 func (hs *HeapSet) ThrowAway() {
     hs.watch.Close()
+
+    hs.Lock()
 
     for _, h := range hs.heaps {
         // cascading call
@@ -152,7 +156,36 @@ func (hs *HeapSet) ThrowAway() {
     }
 
     hs.heaps = hs.heaps[:0]
-    hs.index = -1
+
+    hs.Unlock()
+
+    atomic.AddInt32(hs.index, -1)
+}
+
+func (hs *HeapSet) findByPath(path string) int32 {
+    hs.RLock()
+    defer hs.RUnlock()
+
+    for i, h := range hs.heaps {
+        if h.Base == path {
+            return int32(i)
+        }
+    }
+
+    return -1
+}
+
+func (hs *HeapSet) findByName(name string) int32 {
+    hs.RLock()
+    defer hs.RUnlock()
+
+    for i, h := range hs.heaps {
+        if h.Title == name {
+            return int32(i)
+        }
+    }
+
+    return -1
 }
 
 func (hs *HeapSet) loadPath(path string) {
@@ -249,7 +282,11 @@ func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
 }
 
 func (hs *HeapSet) load() *heap.Heap {
-    h := hs.heaps[hs.index]
+    hs.RLock()
+
+    h := hs.get(atomic.LoadInt32(hs.index))
+
+    hs.RUnlock()
 
     if !h.Loaded() {
         h.Reload()
@@ -260,6 +297,13 @@ func (hs *HeapSet) load() *heap.Heap {
     h.ApplyFilters()
 
     return h
+}
+
+func (hs *HeapSet) get(idx int32) *heap.Heap {
+    hs.RLock()
+    defer hs.RUnlock()
+
+    return hs.heaps[idx]
 }
 
 func (hs *HeapSet) add(h *heap.Heap) {
@@ -273,7 +317,9 @@ func (hs *HeapSet) add(h *heap.Heap) {
 func (hs *HeapSet) del() {
     hs.Lock()
 
-    hs.heaps = slices.Delete(hs.heaps, hs.index, hs.index+1)
+    idx := int(atomic.LoadInt32(hs.index))
+
+    hs.heaps = slices.Delete(hs.heaps, idx, idx+1)
 
     hs.Unlock()
 }
