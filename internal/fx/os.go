@@ -8,6 +8,10 @@ import (
     "os"
 )
 
+const (
+    FileDump = ".dump"
+)
+
 func Stdin() string {
     if !IsPiped(os.Stdin) {
         Panic("invalid mode")
@@ -93,7 +97,7 @@ func Temp(name, ext string) *os.File {
 func Dump(err any, stack any) {
     s := fmt.Sprintf("%+v\n\n%s", err, stack)
 
-    err = os.WriteFile(".dump", []byte(s), 0600)
+    err = os.WriteFile(FileDump, []byte(s), 0600)
 
     if err != nil {
         Exit(err)

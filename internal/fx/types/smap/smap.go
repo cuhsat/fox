@@ -86,14 +86,15 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 
                 d := 1
 
-                if i < str.Len && m[i+1] == ',' {
-                    str.Nr = 0
-                    // off = 12
+                // append existing comma
+                if i < str.End-1 && m[i+1] == ',' {
                     d += 1
                 }
 
                 // bracket line
                 add(&r, str.Nr, i, i+d, off)
+
+                i += (d-1)
 
                 pos.Push(i+d)
 
