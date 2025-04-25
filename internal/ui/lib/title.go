@@ -23,24 +23,24 @@ func NewTitle(ctx *Context, term tcell.Screen) *Title {
 }
 
 func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-    n, heap := hs.Current()
-    m := hs.Length()
+    i, heap := hs.Current()
+    n := hs.Length()
     p := heap.String()
 
-    var i string
+    var s string
 
-    if m > 1 {
-        i = fmt.Sprintf(" %d / %d ", n, m)
+    if n > 1 {
+        s = fmt.Sprintf(" %d / %d ", i, n)
     }
 
     // render blank line
     t.blank(x, y, w, themes.Surface0)
 
     // render heap file path
-    t.print(x, y, text.Abr(p, w - (x + text.Len(i))), themes.Surface2)
+    t.print(x, y, text.Abr(p, w - (x + text.Len(s))), themes.Surface2)
 
     // render heapset index
-    t.print(x + w-text.Len(i), y, i, themes.Surface1)
+    t.print(x + w-text.Len(s), y, s, themes.Surface1)
 
     return 1
 }

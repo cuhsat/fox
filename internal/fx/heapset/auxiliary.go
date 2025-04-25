@@ -64,7 +64,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
     idx := hs.findByName(t)
 
     if idx != -1 {
-        h := hs.get(idx)
+        h := hs.atomicGet(idx)
 
         h.Path = f.Name()
 
@@ -72,7 +72,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
 
         atomic.StoreInt32(hs.index, idx)
     } else {
-        hs.add(&heap.Heap{
+        hs.atomicAdd(&heap.Heap{
             Title: t,
             Path: f.Name(),
             Base: f.Name(),

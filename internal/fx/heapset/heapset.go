@@ -88,7 +88,7 @@ func (hs *HeapSet) Length() int32 {
 func (hs *HeapSet) Current() (int32, *heap.Heap) {
     idx := atomic.LoadInt32(hs.index)
 
-    return idx+1, hs.get(idx)
+    return idx+1, hs.atomicGet(idx)
 }
 
 func (hs *HeapSet) OpenHeap(path string) {
@@ -134,31 +134,15 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
         return nil
     }
 
-    h := hs.get(atomic.LoadInt32(hs.index))
+    idx := atomic.LoadInt32(hs.index)
+
+    h := hs.atomicGet(idx)
+
+    hs.atomicDel(idx)
 
     hs.unload(h)
 
-    hs.del()
-
     atomic.AddInt32(hs.index, -1)
-
-    return hs.NextHeap()
-}
-
-func (hs *HeapSet) CloseHeaps() *heap.Heap {
-    // hs.Lock()
-
-    // for _, h := range hs.heaps {
-    //     if len(h.SMap) == 0 {
-    //         hs.CloseHeap()
-    //     }
-    // }
-
-    // hs.Unlock()
-
-    // if hs.Length() == 1 {
-    //     return nil
-    // }
 
     return hs.NextHeap()
 }
@@ -240,7 +224,7 @@ func (hs *HeapSet) loadPath(path string) {
 func (hs *HeapSet) loadPipe() {
     pipe := fx.Stdin()
 
-    hs.add(&heap.Heap{
+    hs.atomicAdd(&heap.Heap{
         Path: pipe,
         Base: pipe,
         Type: types.Stdin,
@@ -286,11 +270,11 @@ func (hs *HeapSet) loadFile(path, base string) {
         h.Type = types.Deflate
     }
 
-    hs.add(h)
+    hs.atomicAdd(h)
 }
 
 func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
-    hs.add(&heap.Heap{
+    hs.atomicAdd(&heap.Heap{
         Title: filepath.Join(base, e.Name),
         Path: e.Path,
         Base: e.Path,
@@ -299,7 +283,7 @@ func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
 }
 
 func (hs *HeapSet) load() *heap.Heap {
-    h := hs.get(atomic.LoadInt32(hs.index))
+    h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
     if !h.Loaded() {
         h.Reload()
@@ -315,19 +299,13 @@ func (hs *HeapSet) load() *heap.Heap {
 func (hs *HeapSet) unload(h *heap.Heap) {
     h.ThrowAway()
 
+    // clean up temporary files
     if h.Type > types.Regular {
         os.Remove(h.Path)
     }
 }
 
-func (hs *HeapSet) get(idx int32) *heap.Heap {
-    hs.RLock()
-    defer hs.RUnlock()
-
-    return hs.heaps[idx]
-}
-
-func (hs *HeapSet) add(h *heap.Heap) {
+func (hs *HeapSet) atomicAdd(h *heap.Heap) {
     hs.Lock()
 
     hs.heaps = append(hs.heaps, h)
@@ -335,12 +313,17 @@ func (hs *HeapSet) add(h *heap.Heap) {
     hs.Unlock()
 }
 
-func (hs *HeapSet) del() {
+func (hs *HeapSet) atomicGet(idx int32) *heap.Heap {
+    hs.RLock()
+    defer hs.RUnlock()
+
+    return hs.heaps[idx]
+}
+
+func (hs *HeapSet) atomicDel(idx int32) {
     hs.Lock()
 
-    idx := int(atomic.LoadInt32(hs.index))
-
-    hs.heaps = slices.Delete(hs.heaps, idx, idx+1)
+    hs.heaps = slices.Delete(hs.heaps, int(idx), int(idx)+1)
 
     hs.Unlock()
 }
