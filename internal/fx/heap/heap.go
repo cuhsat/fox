@@ -6,7 +6,6 @@ import (
     "runtime"
  
     "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
     "github.com/edsrzf/mmap-go"
@@ -124,22 +123,6 @@ func (h *Heap) Bytes() []byte {
     }
 
     return buf.Bytes()
-}
-
-func (h *Heap) Reset() {
-    h.RMap = nil
-}
-
-func (h *Heap) Wrap(w int) {
-    if h.RMap != nil {
-        return
-    }
-
-    if file.CanIndent(h.Path) {
-        h.RMap = h.SMap.Indent(h.MMap)
-    } else {
-        h.RMap = h.SMap.Wrap(w)
-    }
 }
 
 func (h *Heap) ThrowAway() {
