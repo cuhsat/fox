@@ -8,7 +8,7 @@ import (
 )
 
 const (
-    Default = "default"
+    Default = "Examiner-Dark"
 )
 
 var (
@@ -39,7 +39,7 @@ type palette []int32
 func New(name string) *Themes {
     t := Themes{
         palettes: map[string]palette{
-            "Default": palette {
+            "Examiner-Dark": palette {
                 0x777777, 0x111111, // Base
                 0x333333, 0x333333, // Surface0 (line)
                 0xeeeeee, 0x333333, // Surface1 (pane)
@@ -52,17 +52,17 @@ func New(name string) *Themes {
                 0xeeeeee, 0x111111, // Subtext2 (highlight)
             }, 
 
-            "Monokai": palette {
-                0x7f8490, 0x222327, // Base
-                0x595f6f, 0x2c2e34, // Surface0 (line)
-                0xe2e2e3, 0x414550, // Surface1 (pane)
-                0xe2e2e3, 0x2c2e34, // Surface2 (title)
-                0x222327, 0xa7df78, // Surface3 (mode)
-                0x222327, 0xff6077, // Overlay0 (error)
-                0x222327, 0x85d3f2, // Overlay1 (success)
-                0x595f6f, 0x222327, // Subtext0 (numbers)
-                0x2c2e34, 0x222327, // Subtext1 (vrule)
-                0xf39660, 0x222327, // Subtext2 (highlight)
+            "Examiner-Light": palette {
+                0x888888, 0xeeeeee, // Base
+                0xcccccc, 0xcccccc, // Surface0 (line)
+                0x111111, 0xcccccc, // Surface1 (pane)
+                0x111111, 0xcccccc, // Surface2 (title)
+                0xeeeeee, 0x0f88cd, // Surface3 (mode)
+                0xeeeeee, 0xf8340c, // Overlay0 (error)
+                0x111111, 0x88cd0f, // Overlay1 (success)
+                0xcccccc, 0xeeeeee, // Subtext0 (numbers)
+                0xcccccc, 0xeeeeee, // Subtext1 (vrule)
+                0x111111, 0xeeeeee, // Subtext2 (highlight)
             },
 
             "Catppuccin-Latte": palette {
@@ -117,19 +117,6 @@ func New(name string) *Themes {
                 0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
             },
 
-            "Nord": palette {
-                0xd8dee9, 0x2e3440, // Base
-                0xeceff4, 0x3b4252, // Surface0 (line)
-                0xeceff4, 0x4c566a, // Surface1 (pane)
-                0xeceff4, 0x3b4252, // Surface2 (title)
-                0xeceff4, 0x5e81ac, // Surface3 (mode)
-                0x2e3440, 0xbf616a, // Overlay0 (error)
-                0x2e3440, 0xa3be8c, // Overlay1 (success)
-                0x4c566a, 0x2e3440, // Subtext0 (numbers)
-                0x3b4252, 0x2e3440, // Subtext1 (vrule)
-                0x5e81ac, 0x2e3440, // Subtext2 (highlight)
-            },
-
             "VSCode-Light": palette {
                 0x343434, 0xe7e7e7, // Base
                 0x343434, 0xdfdfdf, // Surface0 (line)
@@ -156,6 +143,19 @@ func New(name string) *Themes {
                 0xd3967d, 0x282828, // Subtext2 (highlight)
             },
 
+            "Monokai": palette {
+                0x7f8490, 0x222327, // Base
+                0x595f6f, 0x2c2e34, // Surface0 (line)
+                0xe2e2e3, 0x414550, // Surface1 (pane)
+                0xe2e2e3, 0x2c2e34, // Surface2 (title)
+                0x222327, 0xa7df78, // Surface3 (mode)
+                0x222327, 0xff6077, // Overlay0 (error)
+                0x222327, 0x85d3f2, // Overlay1 (success)
+                0x595f6f, 0x222327, // Subtext0 (numbers)
+                0x2c2e34, 0x222327, // Subtext1 (vrule)
+                0xf39660, 0x222327, // Subtext2 (highlight)
+            },
+
             "Darcula": palette {
                 0x727272, 0x2b2b2b, // Base
                 0x393939, 0x393939, // Surface0 (line)
@@ -167,6 +167,19 @@ func New(name string) *Themes {
                 0x555555, 0x2b2b2b, // Subtext0 (numbers)
                 0x555555, 0x2b2b2b, // Subtext1 (vrule)
                 0xf43753, 0x2b2b2b, // Subtext2 (highlight)
+            },
+
+            "Nord": palette {
+                0xd8dee9, 0x2e3440, // Base
+                0xeceff4, 0x3b4252, // Surface0 (line)
+                0xeceff4, 0x4c566a, // Surface1 (pane)
+                0xeceff4, 0x3b4252, // Surface2 (title)
+                0xeceff4, 0x5e81ac, // Surface3 (mode)
+                0x2e3440, 0xbf616a, // Overlay0 (error)
+                0x2e3440, 0xa3be8c, // Overlay1 (success)
+                0x4c566a, 0x2e3440, // Subtext0 (numbers)
+                0x3b4252, 0x2e3440, // Subtext1 (vrule)
+                0x5e81ac, 0x2e3440, // Subtext2 (highlight)
             },
 
             "Ansi16": palette {
@@ -209,14 +222,15 @@ func New(name string) *Themes {
             },
         },
         names: []string{
-            "Default",
-            "Monokai",
+            "Examiner-Dark",
+            "Examiner-Light",
             "Catppuccin-Latte",
             "Catppuccin-Frappe",
             "Catppuccin-Macchiato",
             "Catppuccin-Mocha",
             "VSCode-Light",
             "VSCode-Dark",
+            "Monokai",
             "Darcula",
             "Nord",
             "Ansi16",
@@ -244,6 +258,10 @@ func (t *Themes) Cycle() string {
 
 func (t *Themes) Load(name string) {
     t.index = -1
+
+    if strings.ToLower(name) == "default" {
+        name = Default
+    }
 
     for i, n := range t.names {
         if strings.ToLower(n) == strings.ToLower(name) {

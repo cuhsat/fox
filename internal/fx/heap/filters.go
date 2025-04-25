@@ -9,7 +9,8 @@ var (
 )
 
 func (h* Heap) ApplyFilters() {
-    h.SMap = h.rmap
+    h.SMap = h.omap
+    h.RMap = nil
 
     h.chain = h.chain[:0]
 
@@ -19,7 +20,7 @@ func (h* Heap) ApplyFilters() {
 }
 
 func (h* Heap) ClearFilters() {
-    for len(*filters) > 0{
+    for len(*filters) > 0 {
         h.DelFilter()
     }
 }
@@ -38,6 +39,7 @@ func (h *Heap) DelFilter() {
 
 func (h *Heap) addLink(name string) {
     h.SMap = h.filter([]byte(name))
+    h.RMap = nil
 
     h.chain = append(h.chain, &Link{
         Name: name,
@@ -54,9 +56,11 @@ func (h *Heap) delLink() {
 
     l -= 1
 
+    h.RMap = nil
+
     if l > 0 {
         h.SMap = h.chain[l-1].smap
     } else {
-        h.SMap = h.rmap
+        h.SMap = h.omap
     }
 }
