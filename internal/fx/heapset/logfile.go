@@ -25,7 +25,7 @@ func (hs *HeapSet) OpenLog() {
     if idx < 0 {
         idx = hs.Length()
 
-        hs.add(&heap.Heap{
+        hs.atomicAdd(&heap.Heap{
             Title: "log",
             Path: fx.Log.Name,
             Base: fx.Log.Name,
@@ -35,5 +35,5 @@ func (hs *HeapSet) OpenLog() {
 
     atomic.StoreInt32(hs.index, idx)
 
-    hs.get(idx).Reload()
+    hs.atomicGet(idx).Reload()
 }
