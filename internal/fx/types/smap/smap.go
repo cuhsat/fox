@@ -84,17 +84,20 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 
                 off -= Space
 
-                // bracket line
-                add(&r, str.Nr, i, i+1, off)
+                d := 1
 
-                pos.Push(i+1)
+                if i < str.Len && m[i+1] == ',' {
+                    // off = 12
+                    d += 1
+                }
+
+                // bracket line
+                add(&r, str.Nr, i, i+d, off)
+
+                pos.Push(i+d)
 
             case ',':
                 if dqt % 2 != 0 {
-                    continue
-                }
-
-                if m[i-1] == '}' || m[i-1] == ']' {
                     continue
                 }
 
