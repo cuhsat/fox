@@ -2,6 +2,7 @@ package lib
 
 import (
     "fmt"
+    "sync"
     "time"
 
     "github.com/cuhsat/fx/internal/ui/themes"
@@ -9,65 +10,60 @@ import (
 )
 
 const (
-    delayShort = 1 // seconds
-    delayLong  = 3 // seconds
+    short = 1 // seconds
+    long  = 3 // seconds
 )
 
 type Overlay struct {
     base
+    m sync.RWMutex
     ch chan message
     buffer *message
 }
 
 type message struct {
-    value string
-    style tcell.Style
-    delay time.Duration
+    v string
+    s tcell.Style
+    t time.Duration
 } 
 
 func NewOverlay(ctx *Context, term tcell.Screen) *Overlay {
     return &Overlay{
-        base: base{
-            ctx: ctx,
-            term: term,
-        },
-        
+        base: base{ctx, term},
+
         ch: make(chan message, 64),
-        buffer: nil,
     }
 }
 
 func (o *Overlay) Render(x, y, w, h int) {
-    if o.buffer != nil {
-        s := fmt.Sprintf("%-*s", w, o.buffer.value)
+    o.m.RLock()
+    msg := o.buffer
+    o.m.RUnlock()
 
-        o.print(x, y, s, o.buffer.style)
+    if msg != nil {
+        o.print(x, y, fmt.Sprintf("%-*s", w, msg.v), msg.s)
     }
 }
 
 func (o *Overlay) SendError(err string) {
-    o.ch <- message{
-        value: err,
-        style: themes.Overlay0,
-        delay: delayShort,
-    }
+    o.ch <- message{err, themes.Overlay0, short}
 }
 
 func (o *Overlay) SendInfo(msg string) {
-    o.ch <- message{
-        value: msg,
-        style: themes.Overlay1,
-        delay: delayShort,
-    }
+    o.ch <- message{msg, themes.Overlay1, short}
 }
 
 func (o *Overlay) Watch() {
-    for m := range o.ch {
-        o.buffer = &m
+    for msg := range o.ch {
+        o.m.Lock()
+        o.buffer = &msg
+        o.m.Unlock()
 
-        time.Sleep(m.delay * time.Second)
+        time.Sleep(msg.t * time.Second)
 
+        o.m.Lock()
         o.buffer = nil
+        o.m.Unlock()
 
         o.term.PostEvent(tcell.NewEventInterrupt(nil))
     }

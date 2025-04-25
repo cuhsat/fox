@@ -317,14 +317,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 switch ui.ctx.Mode {
                 case mode.Goto:
                     ui.buffer.Goto(v)
-
                     ui.State(ui.ctx.Last)
 
                 default:
                     ui.buffer.Reset()
-                
                     heap.AddFilter(v)
-
                     ui.State(mode.Less)
                 }
 

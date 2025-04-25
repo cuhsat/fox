@@ -139,6 +139,8 @@ func main() {
 
     fx.SetupLogger()
 
+    os.Remove(fx.FileDump)
+
     defer func() {
         if err := recover(); err != nil {
             fmt.Fprintln(os.Stderr, err)
