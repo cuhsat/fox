@@ -5,7 +5,6 @@ import (
     "regexp"
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
@@ -59,18 +58,21 @@ func Text(ctx *Context) TextLayer {
 
     d := text.Dec(ctx.Heap.Length())
 
-    tl.SMap = ctx.Heap.SMap
-
     if ctx.Line {
         ctx.W -= (d + TextSpace)
     }
 
     if ctx.Wrap {
-        if file.CanIndent(ctx.Heap.Path) {
-            tl.SMap = tl.SMap.Indent(ctx.Heap.MMap)
-        } else {
-            tl.SMap = tl.SMap.Wrap(ctx.W)
-        }
+        ctx.Heap.Wrap(ctx.W)
+    } else {
+        ctx.Heap.Reset()
+    }
+
+    // prioritize render map
+    if ctx.Heap.RMap != nil {
+        tl.SMap = ctx.Heap.RMap
+    } else {
+        tl.SMap = ctx.Heap.SMap
     }
 
     tl.W, tl.H = tl.SMap.Size()

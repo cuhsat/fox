@@ -6,6 +6,7 @@ import (
     "runtime"
  
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
     "github.com/edsrzf/mmap-go"
@@ -22,8 +23,9 @@ type Heap struct {
     Tail int          // tail offset
 
     MMap mmap.MMap    // memory map
+    RMap smap.SMap    // render map
     SMap smap.SMap    // string map current
-    rmap smap.SMap    // string map reserve
+    omap smap.SMap    // string map original
 
     chain []*Link     // filter chain
 
@@ -89,7 +91,8 @@ func (h *Heap) Reload() {
     // reduce smap
     h.SMap = l.SMapReduce(smap.Map(h.MMap))
 
-    h.rmap = h.SMap
+    h.RMap = nil
+    h.omap = h.SMap
     h.hash = make(Hash)
 
     h.ApplyFilters()
@@ -100,7 +103,7 @@ func (h *Heap) Loaded() bool {
 }
 
 func (h *Heap) Length() int {
-    return len(h.rmap)
+    return len(h.omap)
 }
 
 func (h *Heap) Bytes() []byte {
@@ -123,6 +126,22 @@ func (h *Heap) Bytes() []byte {
     return buf.Bytes()
 }
 
+func (h *Heap) Reset() {
+    h.RMap = nil
+}
+
+func (h *Heap) Wrap(w int) {
+    if h.RMap != nil {
+        return
+    }
+
+    if file.CanIndent(h.Path) {
+        h.RMap = h.SMap.Indent(h.MMap)
+    } else {
+        h.RMap = h.SMap.Wrap(w)
+    }
+}
+
 func (h *Heap) ThrowAway() {
     if h.MMap != nil {
         h.MMap.Unmap()
@@ -134,8 +153,9 @@ func (h *Heap) ThrowAway() {
         h.file = nil
     }
 
+    h.RMap = nil
     h.SMap = nil
-    h.rmap = nil
+    h.omap = nil
 
     runtime.GC()
 }

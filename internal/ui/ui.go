@@ -137,20 +137,17 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             ui.overlay.SendError("An error occurred")
 
         case *tcell.EventMouse:
-            switch ev.Buttons() {
-            case tcell.WheelUp:
+            btns := ev.Buttons()
+
+            if btns & tcell.ButtonMiddle != 0 {
+                ui.term.GetClipboard()
+            } else if btns & tcell.WheelUp != 0 {
                 ui.buffer.ScrollUp(delta)
-
-            case tcell.WheelDown:
+            } else if btns & tcell.WheelDown != 0 {
                 ui.buffer.ScrollDown(delta)
-
-            case tcell.WheelLeft:
+            } else if btns & tcell.WheelLeft != 0 {
                 ui.buffer.ScrollLeft(delta)
-
-            case tcell.WheelRight:
-                ui.buffer.ScrollRight(delta)
-
-            case tcell.ButtonMiddle:
+            } else if btns & tcell.WheelRight != 0 {
                 ui.term.GetClipboard()
             }
 

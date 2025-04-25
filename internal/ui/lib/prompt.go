@@ -58,7 +58,9 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     s := p.formatStatus(heap)
 
     // render filters
-    p.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
+    if p.ctx.Mode == mode.Grep || len(f) > 2 {
+        p.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
+    }
 
     // render status
     p.print(w-text.Len(s), y, s, themes.Surface1)
