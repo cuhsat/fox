@@ -56,6 +56,7 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
         }
 
         pos := make(stack, 0)
+        dqt := 0
         off := 0
 
         for i := str.Start; i < str.End; i++ {
@@ -87,6 +88,25 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
                 add(&r, str.Nr, i, i+1, off)
 
                 pos.Push(i+1)
+
+            case ',':
+                if dqt % 2 != 0 {
+                    continue
+                }
+
+                j := pos.Pop()
+
+                if j >= 0 {
+                    add(&r, str.Nr, j, i+1, off)
+                }
+
+                pos.Push(i+1)
+
+            case '"':
+                // parser look back
+                if  m[max(i-1, 0)] != '\\' {
+                    dqt += 1
+                }
             }
         }
 

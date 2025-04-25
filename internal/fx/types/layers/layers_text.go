@@ -133,7 +133,7 @@ func unmap(ctx *Context, s *smap.String) string {
 
     // prepend blank for offset
     if s.Off > 0 {
-        str = strings.Repeat(OffBlank, s.Off) + str
+        str = strings.Repeat(OffBlank, s.Off) + strings.TrimSpace(str)
     }
 
     return str
