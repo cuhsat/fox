@@ -300,7 +300,7 @@ func (hs *HeapSet) unload(h *heap.Heap) {
     h.ThrowAway()
 
     // clean up temporary files
-    if h.Type > types.Regular {
+    if h.Type == types.Stdin || h.Type == types.Deflate {
         os.Remove(h.Path)
     }
 }

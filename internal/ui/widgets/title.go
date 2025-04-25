@@ -1,4 +1,4 @@
-package lib
+package widgets
 
 import (
     "fmt"
@@ -15,10 +15,7 @@ type Title struct {
 
 func NewTitle(ctx *Context, term tcell.Screen) *Title {
     return &Title{
-        base: base{
-            ctx: ctx,
-            term: term,
-        },
+        base: base{ctx, term},
     }
 }
 
