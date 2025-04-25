@@ -11,8 +11,8 @@ import (
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/user/bag"
     "github.com/cuhsat/fx/internal/fx/user/history"
-    "github.com/cuhsat/fx/internal/ui/lib"
     "github.com/cuhsat/fx/internal/ui/themes"
+    "github.com/cuhsat/fx/internal/ui/widgets"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
     "github.com/mattn/go-runewidth"
@@ -32,17 +32,17 @@ const (
 )
 
 type UI struct {
-    ctx *lib.Context
+    ctx *widgets.Context
 
     term tcell.Screen
 
     themes *themes.Themes
 
-    title  *lib.Title
-    buffer *lib.Buffer
-    prompt *lib.Prompt
+    title  *widgets.Title
+    buffer *widgets.Buffer
+    prompt *widgets.Prompt
     
-    overlay *lib.Overlay
+    overlay *widgets.Overlay
 }
 
 func New(m mode.Mode) *UI {
@@ -67,7 +67,7 @@ func New(m mode.Mode) *UI {
 
     term.HideCursor()
 
-    ctx := lib.NewContext()
+    ctx := widgets.NewContext()
 
     ui := UI{
         ctx: ctx,
@@ -76,13 +76,15 @@ func New(m mode.Mode) *UI {
 
         themes: themes.New(ctx.Theme),
 
-        title:   lib.NewTitle(ctx, term),
-        buffer:  lib.NewBuffer(ctx, term),
-        prompt:  lib.NewPrompt(ctx, term),
-        overlay: lib.NewOverlay(ctx, term),
+        title:   widgets.NewTitle(ctx, term),
+        buffer:  widgets.NewBuffer(ctx, term),
+        prompt:  widgets.NewPrompt(ctx, term),
+        overlay: widgets.NewOverlay(ctx, term),
     }
 
     term.SetCursorStyle(cursor, themes.Cursor)
+    term.SetStyle(themes.Base)
+    term.Sync()
 
     ui.State(m)
 
@@ -98,277 +100,296 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
     go ui.overlay.Watch()
 
+    event := make(chan tcell.Event, 16)
+    quit  := make(chan struct{})
+
+    go ui.term.ChannelEvents(event, quit)
+
     for {
-        _, heap := hs.Current()
+        select {
+        case _ = <-quit:
+            return
 
-        w, h := ui.render(hs)
-
-        ev := ui.term.PollEvent()
-
-        switch ev := ev.(type) {
-        case *tcell.EventInterrupt:
-            v, ok := ev.Data().(bool)
-
-            if ok && v {
-                ui.buffer.ScrollEnd()
-            }
-
-            continue
-
-        case *tcell.EventClipboard:
-            if ui.ctx.Mode == mode.Hex {
-                continue
-            }
-
-            v := string(ev.Data())
-
-            v = strings.TrimPrefix(v, bracketL)
-            v = strings.TrimSuffix(v, bracketR)
-
-            ui.prompt.Value = v
-
-        case *tcell.EventResize:
-            ui.term.Sync()
-            ui.buffer.Reset()
-
-        case *tcell.EventError:
-            hs.OpenLog()
-
-            ui.overlay.SendError("An error occurred")
-
-        case *tcell.EventMouse:
-            btns := ev.Buttons()
-
-            if btns & tcell.ButtonMiddle != 0 {
-                ui.term.GetClipboard()
-            } else if btns & tcell.WheelUp != 0 {
-                ui.buffer.ScrollUp(delta)
-            } else if btns & tcell.WheelDown != 0 {
-                ui.buffer.ScrollDown(delta)
-            } else if btns & tcell.WheelLeft != 0 {
-                ui.buffer.ScrollLeft(delta)
-            } else if btns & tcell.WheelRight != 0 {
-                ui.term.GetClipboard()
-            }
-
-        case *tcell.EventKey:
-            mods := ev.Modifiers()
-
-            page_w := w-1
-            page_h := h-2
-
-            if ui.ctx.Line {
-                page_w -= text.Dec(heap.Length())+1
-            }
-
-            switch ev.Key() {
-            case tcell.KeyEscape:
+        case ev := <-event:
+            if ev == nil {
                 return
+            }
 
-            case tcell.KeyCtrlL, tcell.KeyF1:
-                ui.State(mode.Less)
+            _, heap := hs.Current()
 
-            case tcell.KeyCtrlG, tcell.KeyF2:
-                ui.State(mode.Grep)
+            w, h := ui.term.Size()
 
-            case tcell.KeyCtrlX, tcell.KeyF3:
-                ui.State(mode.Hex)
+            switch ev := ev.(type) {
+            case *tcell.EventInterrupt:
+                v, ok := ev.Data().(bool)
 
-            case tcell.KeyCtrlSpace, tcell.KeyF4:
-                ui.State(mode.Goto)
+                if ok && v {
+                    ui.buffer.ScrollEnd()
+                }
 
-            case tcell.KeyF9:
-                hs.Word()
+                continue
 
-            case tcell.KeyF10:
-                hs.Md5()
-
-            case tcell.KeyF11:
-                hs.Sha1()
-
-            case tcell.KeyF12:
-                hs.Sha256()
-
-            case tcell.KeyCtrlV:
+            case *tcell.EventClipboard:
                 if ui.ctx.Mode == mode.Hex {
                     continue
                 }
 
-                ui.term.GetClipboard()
+                v := string(ev.Data())
 
-            case tcell.KeyCtrlC:
-                if ui.ctx.Mode == mode.Hex {
-                    continue
-                }
+                v = strings.TrimPrefix(v, bracketL)
+                v = strings.TrimSuffix(v, bracketR)
 
-                ui.term.SetClipboard(heap.Bytes())
+                ui.prompt.Value = v
 
-                ui.overlay.SendInfo("Copied to clipboard")
+            case *tcell.EventResize:
+                ui.term.Sync()
+                ui.buffer.Reset()
 
-            case tcell.KeyCtrlS, tcell.KeyPrint:
-                if ui.ctx.Mode == mode.Hex {
-                    continue
-                }
-
-                if !bag.Put(heap) {
-                    continue
-                }
-
-                ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
-
-            case tcell.KeyCtrlE:
-                hs.OpenHeap(bag.Path)
-
-            case tcell.KeyCtrlD:
+            case *tcell.EventError:
                 hs.OpenLog()
 
-            case tcell.KeyCtrlQ:
-                ui.buffer.Reset()
+                ui.overlay.SendError("An error occurred")
 
-                heap = hs.CloseHeap()
+            case *tcell.EventMouse:
+                btns := ev.Buttons()
 
-                if heap == nil {
-                    return // exit
-                }
-
-            case tcell.KeyCtrlT:
-                ui.ctx.Theme = ui.themes.Cycle()
-
-                ui.term.Fill(' ', themes.Base)
-                ui.term.Show()
-
-                ui.term.SetCursorStyle(cursor, themes.Cursor)
-
-                ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
-
-            case tcell.KeyCtrlF:
-                if ui.ctx.Mode != mode.Hex {
-                    ui.ctx.ToggleFollow()
-                }
-
-            case tcell.KeyCtrlN:
-                if ui.ctx.Mode != mode.Hex {
-                    ui.ctx.ToggleNumbers()
-                }
-
-            case tcell.KeyCtrlW:
-                if ui.ctx.Mode != mode.Hex {
-                    ui.ctx.ToggleWrap()
-                    ui.buffer.Reset()
-                }
-
-            case tcell.KeyHome:
-                ui.buffer.ScrollStart()
-
-            case tcell.KeyEnd:
-                ui.buffer.ScrollEnd()
-
-            case tcell.KeyUp:
-                if mods & tcell.ModAlt != 0 {
-                    ui.prompt.Value = hi.PrevCommand()
-                } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollStart()
-                } else if mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollUp(page_h)
-                } else {
+                if btns & tcell.ButtonMiddle != 0 {
+                    ui.term.GetClipboard()
+                } else if btns & tcell.WheelUp != 0 {
                     ui.buffer.ScrollUp(delta)
-                }
-
-            case tcell.KeyDown:
-                if mods & tcell.ModAlt != 0 {
-                    ui.prompt.Value = hi.NextCommand()
-                } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollEnd()
-                } else if mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollDown(page_h)
-                } else {
+                } else if btns & tcell.WheelDown != 0 {
                     ui.buffer.ScrollDown(delta)
-                }
-
-            case tcell.KeyLeft:
-                if mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollLeft(page_w)
-                } else {
+                } else if btns & tcell.WheelLeft != 0 {
                     ui.buffer.ScrollLeft(delta)
+                } else if btns & tcell.WheelRight != 0 {
+                    ui.term.GetClipboard()
                 }
 
-            case tcell.KeyRight:
-                if mods & tcell.ModShift != 0 {
-                    ui.buffer.ScrollRight(page_w)
-                } else {
-                    ui.buffer.ScrollRight(delta)
+            case *tcell.EventKey:
+                mods := ev.Modifiers()
+
+                page_w := w-1
+                page_h := h-2
+
+                if ui.ctx.Line {
+                    page_w -= text.Dec(heap.Length())+1
                 }
 
-            case tcell.KeyPgUp:
-                ui.buffer.ScrollUp(page_h)
+                switch ev.Key() {
+                case tcell.KeyEscape:
+                    return
 
-            case tcell.KeyPgDn:
-                ui.buffer.ScrollDown(page_h)
-
-            case tcell.KeyEnter:
-                v := ui.prompt.Accept()
-
-                if len(v) == 0 {
-                    continue
-                }
-
-                hi.AddCommand(v)
-
-                switch ui.ctx.Mode {
-                case mode.Goto:
-                    ui.buffer.Goto(v)
-                    ui.State(ui.ctx.Last)
-
-                default:
-                    ui.buffer.Reset()
-                    heap.AddFilter(v)
+                case tcell.KeyCtrlL, tcell.KeyF1:
                     ui.State(mode.Less)
-                }
 
-            case tcell.KeyTab:
-                ui.buffer.Reset()
+                case tcell.KeyCtrlG, tcell.KeyF2:
+                    ui.State(mode.Grep)
 
-                if mods & tcell.ModShift != 0 {
-                    heap = hs.PrevHeap()
-                } else {
-                    heap = hs.NextHeap()
-                }
+                case tcell.KeyCtrlX, tcell.KeyF3:
+                    ui.State(mode.Hex)
 
-            case tcell.KeyBackspace2:
-                if len(ui.prompt.Value) > 0 {
-                    ui.prompt.DelRune()
-                } else if ui.ctx.Mode == mode.Goto {
-                    ui.State(ui.ctx.Last)
-                } else if len(*types.GetFilters()) > 0 {
+                case tcell.KeyCtrlSpace, tcell.KeyF4:
+                    ui.State(mode.Goto)
+
+                case tcell.KeyF9:
+                    hs.Word()
+
+                case tcell.KeyF10:
+                    hs.Md5()
+
+                case tcell.KeyF11:
+                    hs.Sha1()
+
+                case tcell.KeyF12:
+                    hs.Sha256()
+
+                case tcell.KeyCtrlV:
+                    if ui.ctx.Mode == mode.Hex {
+                        continue
+                    }
+
+                    ui.term.GetClipboard()
+
+                case tcell.KeyCtrlC:
+                    if ui.ctx.Mode == mode.Hex {
+                        continue
+                    }
+
+                    ui.term.SetClipboard(heap.Bytes())
+
+                    ui.overlay.SendInfo("Copied to clipboard")
+
+                case tcell.KeyCtrlS, tcell.KeyPrint:
+                    if ui.ctx.Mode == mode.Hex {
+                        continue
+                    }
+
+                    if !bag.Put(heap) {
+                        continue
+                    }
+
+                    ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
+
+                case tcell.KeyCtrlE:
+                    hs.OpenHeap(bag.Path)
+
+                case tcell.KeyCtrlQ:
                     ui.buffer.Reset()
-                    heap.DelFilter()
-                } else if ui.ctx.Mode == mode.Grep {
-                    ui.State(mode.Less)
-                }
 
-            default:
-                r := ev.Rune()
+                    heap = hs.CloseHeap()
 
-                switch r {
-                case 0: // error
-                    continue
+                    if heap == nil {
+                        return // exit
+                    }
 
-                case 32: // space
-                    if ui.ctx.Mode == mode.Less || ui.ctx.Mode == mode.Hex {
+                case tcell.KeyCtrlT:
+                    ui.ctx.Theme = ui.themes.Cycle()
+
+                    ui.term.Fill(' ', themes.Base)
+                    ui.term.Show()
+
+                    ui.term.SetCursorStyle(cursor, themes.Cursor)
+
+                    ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
+
+                case tcell.KeyCtrlF:
+                    if ui.ctx.Mode != mode.Hex {
+                        ui.ctx.ToggleFollow()
+                    }
+
+                case tcell.KeyCtrlN:
+                    if ui.ctx.Mode != mode.Hex {
+                        ui.ctx.ToggleNumbers()
+                    }
+
+                case tcell.KeyCtrlW:
+                    if ui.ctx.Mode != mode.Hex {
+                        ui.ctx.ToggleWrap()
+                        ui.buffer.Reset()
+                    }
+
+                case tcell.KeyHome:
+                    ui.buffer.ScrollStart()
+
+                case tcell.KeyEnd:
+                    ui.buffer.ScrollEnd()
+
+                case tcell.KeyUp:
+                    if mods & tcell.ModAlt != 0 {
+                        ui.prompt.Value = hi.PrevCommand()
+                    } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
+                        ui.buffer.ScrollStart()
+                    } else if mods & tcell.ModShift != 0 {
+                        ui.buffer.ScrollUp(page_h)
+                    } else {
+                        ui.buffer.ScrollUp(delta)
+                    }
+
+                case tcell.KeyDown:
+                    if mods & tcell.ModAlt != 0 {
+                        ui.prompt.Value = hi.NextCommand()
+                    } else if mods & tcell.ModCtrl != 0 && mods & tcell.ModShift != 0 {
+                        ui.buffer.ScrollEnd()
+                    } else if mods & tcell.ModShift != 0 {
                         ui.buffer.ScrollDown(page_h)
                     } else {
+                        ui.buffer.ScrollDown(delta)
+                    }
+
+                case tcell.KeyLeft:
+                    if mods & tcell.ModShift != 0 {
+                        ui.buffer.ScrollLeft(page_w)
+                    } else {
+                        ui.buffer.ScrollLeft(delta)
+                    }
+
+                case tcell.KeyRight:
+                    if mods & tcell.ModShift != 0 {
+                        ui.buffer.ScrollRight(page_w)
+                    } else {
+                        ui.buffer.ScrollRight(delta)
+                    }
+
+                case tcell.KeyPgUp:
+                    ui.buffer.ScrollUp(page_h)
+
+                case tcell.KeyPgDn:
+                    ui.buffer.ScrollDown(page_h)
+
+                case tcell.KeyEnter:
+                    v := ui.prompt.Accept()
+
+                    if len(v) == 0 {
+                        continue
+                    }
+
+                    hi.AddCommand(v)
+
+                    switch ui.ctx.Mode {
+                    case mode.Goto:
+                        ui.buffer.Goto(v)
+                        ui.State(ui.ctx.Last)
+
+                    default:
+                        ui.buffer.Reset()
+                        heap.AddFilter(v)
+                        ui.State(mode.Less)
+                    }
+
+                case tcell.KeyTab:
+                    ui.buffer.Reset()
+
+                    if mods & tcell.ModShift != 0 {
+                        heap = hs.PrevHeap()
+                    } else {
+                        heap = hs.NextHeap()
+                    }
+
+                case tcell.KeyBackspace2:
+                    if len(ui.prompt.Value) > 0 {
+                        ui.prompt.DelRune()
+                    } else if ui.ctx.Mode == mode.Goto {
+                        ui.State(ui.ctx.Last)
+                    } else if len(*types.GetFilters()) > 0 {
+                        ui.buffer.Reset()
+                        heap.DelFilter()
+                    } else if ui.ctx.Mode == mode.Grep {
+                        ui.State(mode.Less)
+                    }
+
+                default:
+                    r := ev.Rune()
+
+                    switch r {
+                    case 0: // error
+                        continue
+
+                    case 32: // space
+                        if ui.ctx.Mode == mode.Less || ui.ctx.Mode == mode.Hex {
+                            ui.buffer.ScrollDown(page_h)
+                        } else {
+                            ui.prompt.AddRune(r)
+                        }
+
+                    default: // all other keys
+                        if ui.ctx.Mode == mode.Less {
+                            ui.State(mode.Grep)
+                        }
+
                         ui.prompt.AddRune(r)
                     }
-
-                default: // all other keys
-                    if ui.ctx.Mode == mode.Less {
-                        ui.State(mode.Grep)
-                    }
-
-                    ui.prompt.AddRune(r)
                 }
             }
+
+            ui.render(hs)
         }
+
+        // switch nev := ev.(type) {
+        // case *eventAppFunc:
+        //     nev.fn()
+        // default:
+        //     widget.HandleEvent(ev)
+        // }
     }
 }
 
@@ -396,7 +417,7 @@ func (ui *UI) Close() {
     defer ui.overlay.Close()
 }
 
-func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
+func (ui *UI) render(hs *heapset.HeapSet) {
     defer ui.term.Show()
 
     _, heap := hs.Current()
@@ -410,9 +431,9 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     ui.term.Clear()
 
     x, y := 0, 0
-    w, h = ui.term.Size()
+    w, h := ui.term.Size()
 
-    for _, base := range [...]lib.Queueable{
+    for _, base := range [...]widgets.Queueable{
         ui.title,
         ui.buffer,
         ui.prompt,
@@ -421,6 +442,4 @@ func (ui *UI) render(hs *heapset.HeapSet) (w int, h int) {
     }
 
     ui.overlay.Render(0, 0, w, h)
-
-    return
 }

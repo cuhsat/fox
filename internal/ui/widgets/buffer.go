@@ -1,4 +1,4 @@
-package lib
+package widgets
 
 import (
     "github.com/cuhsat/fx/internal/fx/heap"
@@ -22,10 +22,7 @@ type Buffer struct {
 
 func NewBuffer(ctx *Context, term tcell.Screen) *Buffer {
     return &Buffer{
-        base: base{
-            ctx: ctx,
-            term: term,
-        },
+        base: base{ctx, term},
 
         last_x: 0,
         last_y: 0,

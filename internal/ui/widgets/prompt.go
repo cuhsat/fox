@@ -1,4 +1,4 @@
-package lib
+package widgets
 
 import (
     "fmt"
@@ -27,10 +27,7 @@ type Prompt struct {
 
 func NewPrompt(ctx *Context, term tcell.Screen) *Prompt {
     return &Prompt{
-        base: base{
-            ctx: ctx,
-            term: term,
-        },
+        base: base{ctx, term},
 
         Lock: true,
         Value: "",

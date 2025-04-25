@@ -24,7 +24,6 @@
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                       | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
-| <kbd>Ctrl</kbd> + <kbd>d</kbd>                       | Open debug log        |
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd> / <kbd>Print</kbd>    | Save evidence         |
 
