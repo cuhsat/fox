@@ -141,6 +141,7 @@ func main() {
 
     defer func() {
         if err := recover(); err != nil {
+            fmt.Fprintln(os.Stderr, err)
             fx.Dump(err, debug.Stack())
         }
 

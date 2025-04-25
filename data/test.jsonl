@@ -5,4 +5,4 @@
 {"Values": ["Foo", "Bar"]}
 {"Values": {"Indirect": [["123", "456"], ["Foo", "Bar"]]}, "Fields": {"Nr": 1}}
 {",\",,"}
-{0}
+{"0"}
