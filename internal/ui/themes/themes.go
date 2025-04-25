@@ -39,19 +39,6 @@ type palette []int32
 func New(name string) *Themes {
     t := Themes{
         palettes: map[string]palette{
-            "Examiner-Dark": palette {
-                0x777777, 0x111111, // Base
-                0x333333, 0x333333, // Surface0 (line)
-                0xeeeeee, 0x333333, // Surface1 (pane)
-                0xeeeeee, 0x333333, // Surface2 (title)
-                0xeeeeee, 0x0f88cd, // Surface3 (mode)
-                0xeeeeee, 0xf8340c, // Overlay0 (error)
-                0x111111, 0x88cd0f, // Overlay1 (success)
-                0x333333, 0x111111, // Subtext0 (numbers)
-                0x333333, 0x111111, // Subtext1 (vrule)
-                0xeeeeee, 0x111111, // Subtext2 (highlight)
-            }, 
-
             "Examiner-Light": palette {
                 0x888888, 0xeeeeee, // Base
                 0xcccccc, 0xcccccc, // Surface0 (line)
@@ -64,6 +51,19 @@ func New(name string) *Themes {
                 0xcccccc, 0xeeeeee, // Subtext1 (vrule)
                 0x111111, 0xeeeeee, // Subtext2 (highlight)
             },
+
+            "Examiner-Dark": palette {
+                0x777777, 0x111111, // Base
+                0x333333, 0x333333, // Surface0 (line)
+                0xeeeeee, 0x333333, // Surface1 (pane)
+                0xeeeeee, 0x333333, // Surface2 (title)
+                0xeeeeee, 0x0f88cd, // Surface3 (mode)
+                0xeeeeee, 0xf8340c, // Overlay0 (error)
+                0x111111, 0x88cd0f, // Overlay1 (success)
+                0x333333, 0x111111, // Subtext0 (numbers)
+                0x333333, 0x111111, // Subtext1 (vrule)
+                0xeeeeee, 0x111111, // Subtext2 (highlight)
+            }, 
 
             "Catppuccin-Latte": palette {
                 0x4c4f69, 0xeff1f5, // Base
@@ -222,8 +222,8 @@ func New(name string) *Themes {
             },
         },
         names: []string{
-            "Examiner-Dark",
             "Examiner-Light",
+            "Examiner-Dark",
             "Catppuccin-Latte",
             "Catppuccin-Frappe",
             "Catppuccin-Macchiato",
