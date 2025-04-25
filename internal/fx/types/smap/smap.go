@@ -94,6 +94,10 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
                     continue
                 }
 
+                if m[i-1] == '}' || m[i-1] == ']' {
+                    continue
+                }
+
                 j := pos.Pop()
 
                 if j >= 0 {
