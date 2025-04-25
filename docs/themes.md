@@ -1,6 +1,6 @@
 # Themes
-* `Examiner-Dark` (default)
 * `Examiner-Light`
+* `Examiner-Dark`
 * `Catppuccin-Latte`
 * `Catppuccin-Frappe`
 * `Catppuccin-Macchiato`
