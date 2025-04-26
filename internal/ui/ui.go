@@ -8,6 +8,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
+    "github.com/cuhsat/fx/internal/fx/types/layers"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/user/bag"
     "github.com/cuhsat/fx/internal/fx/user/history"
@@ -86,7 +87,7 @@ func New(m mode.Mode) *UI {
     term.SetStyle(themes.Base)
     term.Sync()
 
-    ui.State(m)
+    ui.state(m)
 
     return &ui
 }
@@ -98,26 +99,24 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         ui.term.PostEvent(tcell.NewEventError(nil))
     })
 
+    events, quit := make(chan tcell.Event, 16), make(chan struct{})
+
+    go ui.term.ChannelEvents(events, quit)
     go ui.overlay.Watch()
-
-    event := make(chan tcell.Event, 16)
-    quit  := make(chan struct{})
-
-    go ui.term.ChannelEvents(event, quit)
 
     for {
         select {
         case _ = <-quit:
-            return
+            return // channels closed
 
-        case ev := <-event:
+        case ev := <-events:
             if ev == nil {
-                return
+                return // term closed
             }
 
-            _, heap := hs.Current()
-
             w, h := ui.term.Size()
+
+            _, heap := hs.Current()
 
             switch ev := ev.(type) {
             case *tcell.EventInterrupt:
@@ -168,11 +167,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
             case *tcell.EventKey:
                 mods := ev.Modifiers()
 
-                page_w := w-1
-                page_h := h-2
+                page_w := w-1 // minus text abbreviation
+                page_h := h-2 // minus title and prompt
 
                 if ui.ctx.Line {
-                    page_w -= text.Dec(heap.Length())+1
+                    page_w -= text.Dec(heap.Length()) + layers.TextSpace
                 }
 
                 switch ev.Key() {
@@ -180,19 +179,19 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     return
 
                 case tcell.KeyCtrlL, tcell.KeyF1:
-                    ui.State(mode.Less)
+                    ui.state(mode.Less)
 
                 case tcell.KeyCtrlG, tcell.KeyF2:
-                    ui.State(mode.Grep)
+                    ui.state(mode.Grep)
 
                 case tcell.KeyCtrlX, tcell.KeyF3:
-                    ui.State(mode.Hex)
+                    ui.state(mode.Hex)
 
                 case tcell.KeyCtrlSpace, tcell.KeyF4:
-                    ui.State(mode.Goto)
+                    ui.state(mode.Goto)
 
                 case tcell.KeyF9:
-                    hs.Word()
+                    hs.Stats()
 
                 case tcell.KeyF10:
                     hs.Md5()
@@ -328,12 +327,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     switch ui.ctx.Mode {
                     case mode.Goto:
                         ui.buffer.Goto(v)
-                        ui.State(ui.ctx.Last)
+                        ui.state(ui.ctx.Last)
 
                     default:
                         ui.buffer.Reset()
                         heap.AddFilter(v)
-                        ui.State(mode.Less)
+                        ui.state(mode.Less)
                     }
 
                 case tcell.KeyTab:
@@ -349,12 +348,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     if len(ui.prompt.Value) > 0 {
                         ui.prompt.DelRune()
                     } else if ui.ctx.Mode == mode.Goto {
-                        ui.State(ui.ctx.Last)
+                        ui.state(ui.ctx.Last)
                     } else if len(*types.GetFilters()) > 0 {
                         ui.buffer.Reset()
                         heap.DelFilter()
                     } else if ui.ctx.Mode == mode.Grep {
-                        ui.State(mode.Less)
+                        ui.state(mode.Less)
                     }
 
                 default:
@@ -365,7 +364,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         continue
 
                     case 32: // space
-                        if ui.ctx.Mode == mode.Less || ui.ctx.Mode == mode.Hex {
+                        if ui.prompt.Lock {
                             ui.buffer.ScrollDown(page_h)
                         } else {
                             ui.prompt.AddRune(r)
@@ -373,7 +372,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                     default: // all other keys
                         if ui.ctx.Mode == mode.Less {
-                            ui.State(mode.Grep)
+                            ui.state(mode.Grep)
                         }
 
                         ui.prompt.AddRune(r)
@@ -383,17 +382,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
             ui.render(hs)
         }
-
-        // switch nev := ev.(type) {
-        // case *eventAppFunc:
-        //     nev.fn()
-        // default:
-        //     widget.HandleEvent(ev)
-        // }
     }
 }
 
-func (ui *UI) State(m mode.Mode) {
+func (ui *UI) Close() {
+    ui.overlay.Close()
+    ui.term.Fini()
+    ui.ctx.Save()
+}
+
+func (ui *UI) state(m mode.Mode) {
     if !ui.ctx.SwitchMode(m) {
         return
     }
@@ -402,19 +400,13 @@ func (ui *UI) State(m mode.Mode) {
     case mode.Less, mode.Hex: // static modes
         ui.prompt.Lock = true
 
-    case mode.Grep, mode.Goto: // interactive modes
+    case mode.Grep, mode.Goto: // input modes
         ui.prompt.Lock = false
     }
 
     if ui.ctx.Last == mode.Hex || m == mode.Hex {
         ui.buffer.Reset()
     }
-}
-
-func (ui *UI) Close() {
-    defer ui.ctx.Save()
-    defer ui.term.Fini()
-    defer ui.overlay.Close()
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) {
