@@ -35,7 +35,11 @@ func (te *TextExporter) Finalize() {
 }
 
 func (te *TextExporter) ExportFile(p string, f []string) {
-    writeln(te.file, fmt.Sprintf("%s > %s", p, strings.Join(f, " > ")))
+    if len(f) > 0 {
+        writeln(te.file, fmt.Sprintf("%s > %s", p, strings.Join(f, " > ")))
+    } else {
+        writeln(te.file, p)
+    }
 }
 
 func (te *TextExporter) ExportUser(u *user.User) {
