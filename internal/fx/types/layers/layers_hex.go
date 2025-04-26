@@ -80,8 +80,8 @@ func Hex(ctx *Context) HexLayer {
 
             b := mmap[i + j]
 
+            l.Hex = fmt.Sprintf("%s%02X", l.Hex, b)
             l.Str = fmt.Sprintf("%s%c", l.Str, b)
-            l.Hex = fmt.Sprintf("%s%02x", l.Hex, b)
 
             // make hex gap
             if (j+1) % 2 == 0 {
