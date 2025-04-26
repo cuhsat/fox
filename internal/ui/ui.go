@@ -236,6 +236,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyCtrlE:
                     hs.OpenHeap(bag.Path)
 
+                case tcell.KeyCtrlD:
+                    hs.OpenLog()
+
                 case tcell.KeyCtrlQ:
                     ui.buffer.Reset()
 
