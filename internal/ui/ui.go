@@ -245,6 +245,22 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         return // exit
                     }
 
+                case tcell.KeyCtrlZ:
+                    err := ui.term.Suspend()
+
+                    if err != nil {
+                        fx.Error(err)
+                        continue
+                    }
+
+                    fx.Shell()
+
+                    err = ui.term.Resume()
+
+                    if err != nil {
+                        fx.Panic(err)
+                    }
+
                 case tcell.KeyCtrlT:
                     ui.ctx.Theme = ui.themes.Cycle()
 
