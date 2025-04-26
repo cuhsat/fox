@@ -8,7 +8,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/layers"
+    "github.com/cuhsat/fx/internal/fx/types/layer"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/user/bag"
     "github.com/cuhsat/fx/internal/fx/user/history"
@@ -175,7 +175,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 page_h := h-2 // minus title and prompt
 
                 if ui.ctx.Line {
-                    page_w -= text.Dec(heap.Length()) + layers.TextSpace
+                    page_w -= text.Dec(heap.Length()) + layer.TextSpace
                 }
 
                 switch ev.Key() {

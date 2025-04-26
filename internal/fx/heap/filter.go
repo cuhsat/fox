@@ -15,7 +15,7 @@ type chunk struct {
     max int
 }
 
-func (h *Heap) filter(b []byte) (s smap.SMap) {
+func (h *Heap) filter(b []byte) smap.SMap {
     ch := make(chan *smap.String, len(h.SMap))
 
     defer close(ch)

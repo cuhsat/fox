@@ -1,4 +1,4 @@
-package layers
+package layer
 
 import (
     "fmt"
@@ -62,14 +62,11 @@ func Text(ctx *Context) TextLayer {
         ctx.W -= (d + TextSpace)
     }
 
-    if ctx.Wrap {
+    if ctx.Wrap && ctx.Heap.RMap == nil {
         ctx.Heap.Wrap(ctx.W)
-    } else {
-        ctx.Heap.Reset()
     }
 
-    // prioritize render map
-    if ctx.Heap.RMap != nil {
+    if ctx.Wrap {
         tl.SMap = ctx.Heap.RMap
     } else {
         tl.SMap = ctx.Heap.SMap

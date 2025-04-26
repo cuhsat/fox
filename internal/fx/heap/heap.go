@@ -6,6 +6,7 @@ import (
     "runtime"
  
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
     "github.com/edsrzf/mmap-go"
@@ -23,8 +24,8 @@ type Heap struct {
 
     MMap mmap.MMap    // memory map
     RMap smap.SMap    // render map
-    SMap smap.SMap    // string map current
-    omap smap.SMap    // string map original
+    SMap smap.SMap    // string map (current)
+    omap smap.SMap    // string map (original)
 
     chain []*Link     // filter chain
 
@@ -123,6 +124,18 @@ func (h *Heap) Bytes() []byte {
     }
 
     return buf.Bytes()
+}
+
+func (h *Heap) Wrap(w int) {
+    if h.RMap != nil {
+        return // use cache
+    }
+
+    if file.CanIndent(h.Path) {
+        h.RMap = h.SMap.Indent(h.MMap)
+    } else {
+        h.RMap = h.SMap.Wrap(w)
+    }
 }
 
 func (h *Heap) ThrowAway() {
