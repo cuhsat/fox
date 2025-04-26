@@ -16,7 +16,7 @@ import (
 )
 
 const (
-    Usage = `fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN] [-j] [-J] [-o FILE] [PATH ...]
+    Usage = `fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN] [-j|J] [-k KEY] [-o FILE] [PATH ...]
 
 The Swiss Army Knife for examining text files
 
@@ -40,6 +40,7 @@ filters:
 
 evidence:
   -o FILE for evidence bag (default: EVIDENCE)
+  -k KEY signing key phrase
   -j output in JSON format
   -J output in JSON lines format
 
@@ -73,6 +74,7 @@ func main() {
 
     // output
     o := flag.String("o", "", "")
+    k := flag.String("k", "", "")
 
     // counts
     flag.IntVar(&c.Lines, "n", 10, "")
@@ -165,7 +167,7 @@ func main() {
     hi := history.New()
     defer hi.Close()
 
-    bg := bag.New(*o, e)
+    bg := bag.New(*o, *k, e)
     defer bg.Close()
 
     ui := ui.New(m)

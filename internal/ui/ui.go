@@ -20,6 +20,10 @@ import (
 )
 
 const (
+    title = "Forensic Examiner"
+)
+
+const (
     delta = 1 // lines
 )
 
@@ -418,7 +422,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
         ui.term.Sync() // prevent hickups
     }
 
-    ui.term.SetTitle(fmt.Sprintf("Forensic Examiner - %s", heap))
+    ui.term.SetTitle(fmt.Sprintf("%s - %s", title, heap))
     ui.term.SetStyle(themes.Base)
     ui.term.Clear()
 

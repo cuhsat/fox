@@ -1,7 +1,10 @@
 package bag
 
 import (
+    "crypto/hmac"
+    "crypto/sha256"
     "fmt"
+    "hash"
     "os"
     "os/user"
     "time"
@@ -22,6 +25,7 @@ const (
 type Bag struct {
     Path string   // file path
     file *os.File // file handle
+    key string    // key phrase
     exp exporter  // exporter
 }
 
@@ -36,7 +40,7 @@ type exporter interface {
     ExportLine(n int, s string)
 }
 
-func New(path string, e types.Export) *Bag {
+func New(path, key string, e types.Export) *Bag {
     var exp exporter
     var ext string
 
@@ -58,6 +62,7 @@ func New(path string, e types.Export) *Bag {
     return &Bag{
         Path: path,
         file: nil,
+        key: key,
         exp: exp,
     }
 }
@@ -86,6 +91,8 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
     bag.exp.Finalize()
 
+    bag.sign()
+
     return true
 }
 
@@ -110,6 +117,35 @@ func (bag *Bag) init() bool {
     bag.exp.Init(bag.file, !is, header)
 
     return true
+}
+
+func (bag *Bag) sign() {
+    var imp hash.Hash
+
+    if len(bag.key) > 0 {
+        imp = hmac.New(sha256.New, []byte(bag.key))
+    } else {
+        imp = sha256.New()
+    }
+
+    buf, err := os.ReadFile(bag.Path)
+
+    if err != nil {
+        fx.Error(err)
+        return
+    }
+
+    imp.Write(buf)
+
+    sum := []byte(fmt.Sprintf("%x", imp.Sum(nil)))
+
+    err = os.WriteFile(bag.Path + ".sha256", sum, 0600)
+
+    if err != nil {
+        fx.Error(err)
+    }
+
+    return
 }
 
 func writeln(f *os.File, s string) {
