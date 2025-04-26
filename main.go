@@ -50,10 +50,6 @@ options:
 `
 )
 
-const (
-    Version = "dev"
-)
-
 func main() {
     e := types.Text
     m := mode.Default
@@ -182,6 +178,6 @@ func usage() {
 }
 
 func version() {
-    fmt.Println("fx", Version)
+    fmt.Println("fx", fx.Version)
     os.Exit(0)
 }

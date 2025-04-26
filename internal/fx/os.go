@@ -6,11 +6,36 @@ import (
     "fmt"
     "io"
     "os"
+    "os/exec"
+    "runtime"
 )
 
 const (
     FileDump = ".dump"
 )
+
+func Shell() {
+    shl := os.Getenv("SHELL")
+
+    if len(shl) == 0 {
+        if runtime.GOOS == "windows" {
+            shl = "CMD.EXE"
+        } else {
+            shl = "/bin/sh"
+        }
+    }
+
+    fmt.Println("Forensic Examiner", Version)
+    fmt.Println("Type 'exit' to return.")
+
+    cmd := exec.Command(shl, "-l") // login shell
+
+    cmd.Stdin  = os.Stdin
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    cmd.Run()
+}
 
 func Stdin() string {
     if !IsPiped(os.Stdin) {
