@@ -30,8 +30,8 @@ func (hs *HeapSet) Sha256() {
     })
 }
 
-func (hs *HeapSet) Word() {    
-    hs.newBuffer("wc", func(h *heap.Heap) string {
+func (hs *HeapSet) Stats() {
+    hs.newBuffer("stats", func(h *heap.Heap) string {
         return fmt.Sprintf("%8dL %8dB  %s\n", h.Length(), len(h.MMap), h.String())
     })
 }
