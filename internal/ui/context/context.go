@@ -7,8 +7,11 @@ import (
 
 type Context struct {
     config.Config
+
     Mode mode.Mode
     Last mode.Mode
+
+    Busy bool
 }
 
 func New() *Context {
@@ -16,6 +19,7 @@ func New() *Context {
         Config: *config.New(),
         Mode: mode.Default,
         Last: mode.Default,
+        Busy: false,
     }
 }
 
