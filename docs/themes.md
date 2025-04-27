@@ -43,6 +43,8 @@ Subtext2.Bg = 0x000000
 * `Catppuccin-Frappe`
 * `Catppuccin-Macchiato`
 * `Catppuccin-Mocha`
+* `Solarized-Light`
+* `Solarized-Dark`
 * `VSCode-Light`
 * `VSCode-Dark`
 * `Monokai`

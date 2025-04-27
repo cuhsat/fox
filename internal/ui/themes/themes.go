@@ -118,6 +118,32 @@ func New(name string) *Themes {
                 0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
             },
 
+            "Solarized-Light": palette{
+                0x586e75, 0xfdf6e3, // Base
+                0xeee8d5, 0xeee8d5, // Surface0 (line)
+                0x002b36, 0xeee8d5, // Surface1 (pane)
+                0x002b36, 0xeee8d5, // Surface2 (title)
+                0xfdf6e3, 0x268bd2, // Surface3 (mode)
+                0xfdf6e3, 0xdc322f, // Overlay0 (error)
+                0xfdf6e3, 0x859900, // Overlay1 (success)
+                0x93a1a1, 0xfdf6e3, // Subtext0 (numbers)
+                0xeee8d5, 0xfdf6e3, // Subtext1 (vrule)
+                0xcb4b16, 0xfdf6e3, // Subtext2 (highlight)
+            },
+
+            "Solarized-Dark": palette{
+                0x93a1a1, 0x002b36, // Base
+                0x073642, 0x073642, // Surface0 (line)
+                0xfdf6e3, 0x073642, // Surface1 (pane)
+                0xfdf6e3, 0x073642, // Surface2 (title)
+                0xfdf6e3, 0x268bd2, // Surface3 (mode)
+                0xfdf6e3, 0xdc322f, // Overlay0 (error)
+                0xfdf6e3, 0x859900, // Overlay1 (success)
+                0x586e75, 0x002b36, // Subtext0 (numbers)
+                0x073642, 0x002b36, // Subtext1 (vrule)
+                0xcb4b16, 0x002b36, // Subtext2 (highlight)
+            },
+
             "VSCode-Light": palette{
                 0x343434, 0xe7e7e7, // Base
                 0x343434, 0xdfdfdf, // Surface0 (line)
@@ -229,6 +255,8 @@ func New(name string) *Themes {
             "Catppuccin-Frappe",
             "Catppuccin-Macchiato",
             "Catppuccin-Mocha",
+            "Solarized-Light",
+            "Solarized-Dark",
             "VSCode-Light",
             "VSCode-Dark",
             "Monokai",
