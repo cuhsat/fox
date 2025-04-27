@@ -36,7 +36,7 @@ func NewPrompt(ctx *context.Context, term tcell.Screen) *Prompt {
 }
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-    m := p.formatMode()
+    m := p.fmtMode()
 
     // render blank line
     p.blank(x, y, w, themes.Surface0)
@@ -52,8 +52,8 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     _, heap := hs.Current()
 
-    f := p.formatFilters(heap)
-    s := p.formatStatus(heap)
+    f := p.fmtFilters(heap)
+    s := p.fmtStatus(heap)
 
     // render filters
     if p.ctx.Mode == mode.Grep || len(f) > 2 {
@@ -61,7 +61,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     }
 
     // render status
-    p.print(w-text.Len(s), y, s, themes.Surface1)
+    p.print((w-text.Len(s)), y, s, themes.Surface1)
 
     if p.Lock {
         p.term.HideCursor()
@@ -92,11 +92,11 @@ func (p *Prompt) Accept() (s string) {
     return
 }
 
-func (p *Prompt) formatMode() string {
+func (p *Prompt) fmtMode() string {
     return fmt.Sprintf(" %s ", p.ctx.Mode)
 }
 
-func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
+func (p *Prompt) fmtFilters(h *heap.Heap) (s string) {
     for _, f := range *args.GetFilters() {
         s = fmt.Sprintf("%s %s %s", s, f, filter)
     }
@@ -106,7 +106,7 @@ func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
     return 
 }
 
-func (p *Prompt) formatStatus(h *heap.Heap) string {
+func (p *Prompt) fmtStatus(h *heap.Heap) string {
     f, n, w := "·", "·", "·"
 
     if p.ctx.Follow {
