@@ -5,8 +5,8 @@ import (
     "regexp"
     "strings"
 
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/text"
-    "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
 )
 
@@ -80,7 +80,7 @@ func Text(ctx *Context) TextLayer {
         tl.Lines = tl.Lines[:ctx.H]
     }
 
-    for _, f := range *types.GetFilters() {
+    for _, f := range *args.GetFilters() {
         addParts(ctx, &tl, f)
     }
 

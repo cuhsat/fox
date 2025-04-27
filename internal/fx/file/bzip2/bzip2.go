@@ -1,7 +1,7 @@
-package gzip
+package bzip2
 
 import (
-    "compress/gzip"
+    "compress/bzip2"
     "io"
     "path/filepath"
     "strings"
@@ -12,7 +12,7 @@ import (
 
 func Detect(path string) bool {
     return file.HasMagic(path, 0, []byte{
-        0x1F, 0x8B, 0x08,
+        0x42, 0x5A, 0x68,
     })
 }
 
@@ -20,21 +20,14 @@ func Deflate(path string) string {
     a := sys.Open(path)
     defer a.Close()
 
-    r, err := gzip.NewReader(a)
+    r := bzip2.NewReader(a)
 
-    if err != nil {
-        sys.Error(err)
-        return path
-    }
+    b := strings.TrimSuffix(filepath.Base(path), ".bz2")
 
-    defer r.Close()
-
-    b := strings.TrimSuffix(filepath.Base(path), ".gz")
-
-    t := sys.Temp("gzip", filepath.Ext(b))
+    t := sys.Temp("bzip2", filepath.Ext(b))
     defer t.Close()
 
-    _, err = io.Copy(t, r)
+    _, err := io.Copy(t, r)
 
     if err != nil {
         sys.Error(err)

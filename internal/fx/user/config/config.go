@@ -6,8 +6,7 @@ import (
     "os"
     "path/filepath"
 
-    "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/ui/themes"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/BurntSushi/toml"
 )
 
@@ -22,13 +21,13 @@ type Config struct {
     Wrap   bool   `toml:"Wrap"`
 }
 
-func Load() *Config {
-    cfg := defaults()
+func New() *Config {
+    cfg := new(Config)
 
     dir, err := os.UserHomeDir()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         dir = "."
     }
 
@@ -39,13 +38,13 @@ func Load() *Config {
     if errors.Is(err, os.ErrNotExist) {
         return cfg
     } else if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     _, err = toml.DecodeFile(p, &cfg)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     // higher ranking variables
@@ -67,14 +66,14 @@ func (cfg *Config) Save() {
     err := enc.Encode(cfg)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
     dir, err := os.UserHomeDir()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         dir = "."
     }
 
@@ -83,15 +82,6 @@ func (cfg *Config) Save() {
     err = os.WriteFile(p, buf.Bytes(), 0600)
 
     if err != nil {
-        fx.Error(err)
-    }
-}
-
-func defaults() *Config {
-    return &Config{
-        Theme: themes.Default,
-        Follow: false,
-        Line: false,
-        Wrap: false,
+        sys.Error(err)
     }
 }

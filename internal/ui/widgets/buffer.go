@@ -5,6 +5,7 @@ import (
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/types/smap"
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -20,7 +21,7 @@ type Buffer struct {
     delta_y int
 }
 
-func NewBuffer(ctx *Context, term tcell.Screen) *Buffer {
+func NewBuffer(ctx *context.Context, term tcell.Screen) *Buffer {
     return &Buffer{
         base: base{ctx, term},
 

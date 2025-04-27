@@ -3,11 +3,12 @@ package widgets
 import (
     "fmt"
 
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/text"
-    "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/mode"
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/cuhsat/fx/internal/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
@@ -25,7 +26,7 @@ type Prompt struct {
     Value string
 }
 
-func NewPrompt(ctx *Context, term tcell.Screen) *Prompt {
+func NewPrompt(ctx *context.Context, term tcell.Screen) *Prompt {
     return &Prompt{
         base: base{ctx, term},
 
@@ -96,7 +97,7 @@ func (p *Prompt) formatMode() string {
 }
 
 func (p *Prompt) formatFilters(h *heap.Heap) (s string) {
-    for _, f := range *types.GetFilters() {
+    for _, f := range *args.GetFilters() {
         s = fmt.Sprintf("%s %s %s", s, f, filter)
     }
 

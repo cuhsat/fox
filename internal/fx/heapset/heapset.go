@@ -8,13 +8,14 @@ import (
     "sync/atomic"
 
     "github.com/bmatcuk/doublestar/v4"
-    "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/file"
+    "github.com/cuhsat/fx/internal/fx/file/bzip2"
     "github.com/cuhsat/fx/internal/fx/file/gzip"
     "github.com/cuhsat/fx/internal/fx/file/tar"
     "github.com/cuhsat/fx/internal/fx/file/zip"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -35,7 +36,7 @@ func New(paths []string) *HeapSet {
     w, err := fsnotify.NewWatcher()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     hs := HeapSet{
@@ -45,7 +46,7 @@ func New(paths []string) *HeapSet {
 
     go hs.notify()
 
-    hs.watchPath(fx.Log.Name)
+    hs.watchPath(sys.Log.Name)
 
     for _, path := range paths {
         if path == "-" {
@@ -53,19 +54,11 @@ func New(paths []string) *HeapSet {
             break
         }
 
-        match, err := doublestar.FilepathGlob(path)
-
-        if err != nil {
-            fx.Error(err)
-        }
-
-        for _, m := range match {
-            hs.loadPath(m)
-        }
+        hs.Open(path)
     }
 
     if hs.Length() == 0 {
-        fx.Exit("no files found")
+        sys.Exit("no files found")
     }
 
     hs.load()
@@ -91,8 +84,39 @@ func (hs *HeapSet) Current() (int32, *heap.Heap) {
     return idx+1, hs.atomicGet(idx)
 }
 
+func (hs *HeapSet) Open(path string) {
+    match, err := doublestar.FilepathGlob(path)
+
+    if err != nil {
+        sys.Error(err)
+    }
+
+    for _, m := range match {
+        hs.loadPath(m)
+    }
+}
+
+func (hs *HeapSet) OpenLog() {
+    idx := hs.findByPath(sys.Log.Name)
+
+    if idx < 0 {
+        idx = hs.Length()
+
+        hs.atomicAdd(&heap.Heap{
+            Title: "log",
+            Path: sys.Log.Name,
+            Base: sys.Log.Name,
+            Type: types.Stderr,
+        })
+    }
+
+    atomic.StoreInt32(hs.index, idx)
+
+    hs.atomicGet(idx).Reload()
+}
+
 func (hs *HeapSet) OpenHeap(path string) {
-    if !fx.Exists(path) {
+    if !sys.Exists(path) {
         return
     }
 
@@ -139,7 +163,6 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
     h := hs.atomicGet(idx)
 
     hs.atomicDel(idx)
-
     hs.unload(h)
 
     atomic.AddInt32(hs.index, -1)
@@ -157,7 +180,6 @@ func (hs *HeapSet) ThrowAway() {
     }
 
     hs.heaps = hs.heaps[:0]
-
     hs.Unlock()
 
     atomic.AddInt32(hs.index, -1)
@@ -193,7 +215,7 @@ func (hs *HeapSet) loadPath(path string) {
     fi, err := os.Stat(path)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
@@ -203,6 +225,10 @@ func (hs *HeapSet) loadPath(path string) {
     }
 
     base := path
+
+    if bzip2.Detect(path) {
+        path = bzip2.Deflate(path)
+    }
 
     if gzip.Detect(path) {
         path = gzip.Deflate(path)
@@ -222,7 +248,7 @@ func (hs *HeapSet) loadPath(path string) {
 }
 
 func (hs *HeapSet) loadPipe() {
-    pipe := fx.Stdin()
+    pipe := sys.Stdin()
 
     hs.atomicAdd(&heap.Heap{
         Path: pipe,
@@ -235,7 +261,7 @@ func (hs *HeapSet) loadDir(path string) {
     dir, err := os.ReadDir(path)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
  
@@ -289,9 +315,9 @@ func (hs *HeapSet) load() *heap.Heap {
         h.Reload()
 
         hs.watchHeap(h)
+    } else {
+        h.Filter()
     }
-
-    h.ApplyFilters()
 
     return h
 }

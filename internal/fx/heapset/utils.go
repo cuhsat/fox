@@ -5,12 +5,12 @@ import (
     "io"
     "sync/atomic"
 
-    "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
-type auxiliary func(h *heap.Heap) string
+type util func(h *heap.Heap) string
 
 func (hs *HeapSet) Md5() {
     hs.newBuffer("md5sum", func(h *heap.Heap) string {
@@ -36,8 +36,8 @@ func (hs *HeapSet) Stats() {
     })
 }
 
-func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
-    f := fx.Stdout()
+func (hs *HeapSet) newBuffer(t string, fn util) {
+    f := sys.Stdout()
 
     hs.RLock()
 
@@ -53,7 +53,7 @@ func (hs *HeapSet) newBuffer(t string, fn auxiliary) {
         _, err := io.WriteString(f, fn(h))
 
         if err != nil {
-            fx.Error(err)
+            sys.Error(err)
         }
     }
 

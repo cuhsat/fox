@@ -5,10 +5,11 @@ import (
     "os"
     "runtime"
  
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/file"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/smap"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/edsrzf/mmap-go"
 )
 
@@ -58,13 +59,13 @@ func (h *Heap) Reload() {
     var err error
 
     if h.file == nil {
-        h.file = fx.Open(h.Path)
+        h.file = sys.Open(h.Path)
     }
 
     fi, err := h.file.Stat()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
@@ -79,11 +80,11 @@ func (h *Heap) Reload() {
     h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
-    l := types.GetLimits()
+    l := args.GetLimits()
 
     // reduce mmap
     h.MMap, h.Head, h.Tail = l.MMapReduce(h.MMap)
@@ -95,7 +96,7 @@ func (h *Heap) Reload() {
     h.omap = h.SMap
     h.hash = make(Hash)
 
-    h.ApplyFilters()
+    h.Filter()
 }
 
 func (h *Heap) Loaded() bool {
@@ -119,7 +120,7 @@ func (h *Heap) Bytes() []byte {
         _, err := buf.Write(h.MMap[s.Start:end])
 
         if err != nil {
-            fx.Error(err)
+            sys.Error(err)
         }
     }
 

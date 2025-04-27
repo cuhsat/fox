@@ -1,0 +1,6 @@
+# Forensic Examiner Example Config
+Theme = "Default"
+
+Follow = false
+Line = false
+Wrap = false

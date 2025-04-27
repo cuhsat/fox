@@ -1,4 +1,4 @@
-package widgets
+package context
 
 import (
     "github.com/cuhsat/fx/internal/fx/types/mode"
@@ -11,9 +11,9 @@ type Context struct {
     Last mode.Mode
 }
 
-func NewContext() *Context {
+func New() *Context {
     return &Context{
-        Config: *config.Load(),
+        Config: *config.New(),
         Mode: mode.Default,
         Last: mode.Default,
     }

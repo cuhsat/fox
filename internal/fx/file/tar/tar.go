@@ -6,8 +6,8 @@ import (
     "path/filepath"
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/file"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 func Detect(path string) bool {
@@ -17,7 +17,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) (e []*file.Entry) {
-    a := fx.Open(path)
+    a := sys.Open(path)
     defer a.Close()
 
     r := tar.NewReader(a)
@@ -30,7 +30,7 @@ func Deflate(path string) (e []*file.Entry) {
         }
 
         if err != nil {
-            fx.Error(err)
+            sys.Error(err)
             break
         }
 
@@ -38,14 +38,14 @@ func Deflate(path string) (e []*file.Entry) {
             continue
         }
 
-        t := fx.Temp("tar", filepath.Ext(filepath.Base(h.Name)))
+        t := sys.Temp("tar", filepath.Ext(filepath.Base(h.Name)))
 
         _, err = io.Copy(t, r)
 
         t.Close()
 
         if err != nil {
-            fx.Error(err)
+            sys.Error(err)
             continue
         }
 

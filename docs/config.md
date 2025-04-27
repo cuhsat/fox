@@ -1,7 +1,9 @@
 # Config
 > Located under `~/.fxrc`.
+
 ```toml
 Theme = "Default"
+
 Follow = false
 Line = false
 Wrap = false

@@ -1,4 +1,4 @@
-package fx
+package sys
 
 import (
     "bufio"
@@ -8,10 +8,17 @@ import (
     "os"
     "os/exec"
     "runtime"
+
+    "github.com/cuhsat/fx/internal/fx"
 )
 
 const (
     FileDump = ".dump"
+)
+
+const (
+    cmdShell = "CMD.EXE"
+    pshShell = "/bin/sh"
 )
 
 func Shell() {
@@ -19,13 +26,13 @@ func Shell() {
 
     if len(shl) == 0 {
         if runtime.GOOS == "windows" {
-            shl = "CMD.EXE"
+            shl = cmdShell
         } else {
-            shl = "/bin/sh"
+            shl = pshShell
         }
     }
 
-    fmt.Println("Forensic Examiner", Version)
+    fmt.Println(fx.Product, fx.Version)
     fmt.Println("Type 'exit' to return.")
 
     cmd := exec.Command(shl, "-l") // login shell

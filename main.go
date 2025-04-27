@@ -7,7 +7,9 @@ import (
     "runtime/debug"
 
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/heapset"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/user/bag"
@@ -16,9 +18,21 @@ import (
 )
 
 const (
-    Usage = `fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN] [-j|J] [-k KEY] [-o FILE] [PATH ...]
+    Usage = ` _____                        _
+|  ___|__  _ __ ___ _ __  ___(_) ___
+| |_ / _ \| '__/ _ \ '_ \/ __| |/ __|
+|  _| (_) | | |  __/ | | \__ \ | (__
+|_|__\___/|_|  \___|_| |_|___/_|\___|
+| ____|_  ____ _ _ __ ___ (_)_ __   ___ _ __
+|  _| \ \/ / _' | '_ ' _ \| | '_ \ / _ \ '__|
+| |___ >  < (_| | | | | | | | | | |  __/ |
+|_____/_/\_\__,_|_| |_| |_|_|_| |_|\___|_| %s
 
 The Swiss Army Knife for examining text files
+
+usage: fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN]
+          [-j|J] [-k KEY] [-o FILE]
+          [-|PATH ...]
 
 positional arguments:
   PATH to open (default: current dir)
@@ -47,6 +61,7 @@ evidence:
 options:
   --help    show help message
   --version show version info
+
 `
 )
 
@@ -54,9 +69,9 @@ func main() {
     e := types.Text
     m := mode.Default
 
-    c := new(types.Counts)
-    l := types.GetLimits()
-    f := types.GetFilters()
+    c := new(args.Counts)
+    l := args.GetLimits()
+    f := args.GetFilters()
 
     // flags
     p := flag.Bool("p", false, "")
@@ -96,15 +111,15 @@ func main() {
     }
 
     if *h && *t {
-        fx.Exit("head or tail")
+        sys.Exit("head or tail")
     }
 
     if *x && len(*f) > 0 {
-        fx.Exit("hex or pattern")
+        sys.Exit("hex or pattern")
     }
 
     if *x && c.Lines > 0 {
-        fx.Exit("hex needs bytes")
+        sys.Exit("hex needs bytes")
     }
 
     if *v {
@@ -135,20 +150,20 @@ func main() {
         m = mode.Grep
     }
 
-    fx.SetupLogger()
+    sys.SetupLogger()
 
-    os.Remove(fx.FileDump)
+    os.Remove(sys.FileDump)
 
     defer func() {
         if err := recover(); err != nil {
             fmt.Fprintln(os.Stderr, err)
-            fx.Dump(err, debug.Stack())
+            sys.Dump(err, debug.Stack())
         }
 
-        fx.Log.Close()
+        sys.Log.Close()
     }()
 
-    if fx.IsPiped(os.Stdout) {
+    if sys.IsPiped(os.Stdout) {
         *p = true
     }
 
@@ -173,11 +188,11 @@ func main() {
 }
 
 func usage() {
-    fmt.Println("usage:", Usage)
+    fmt.Printf(Usage, fx.Version)
     os.Exit(2)
 }
 
 func version() {
-    fmt.Println("fx", fx.Version)
+    fmt.Println(fx.Product, fx.Version)
     os.Exit(0)
 }

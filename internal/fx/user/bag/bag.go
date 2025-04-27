@@ -9,9 +9,10 @@ import (
     "os/user"
     "time"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/heap"
     "github.com/cuhsat/fx/internal/fx/types"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 const (
@@ -26,44 +27,44 @@ type Bag struct {
     Path string   // file path
     file *os.File // file handle
     key string    // key phrase
-    exp exporter  // exporter
+    w writer      // writer
 }
 
-type exporter interface {
+type writer interface {
     Init(f *os.File, n bool, t string)
     Start()
     Finalize()
-    ExportFile(p string, f []string)
-    ExportUser(u *user.User)
-    ExportTime(t time.Time)
-    ExportHash(b []byte)
-    ExportLine(n int, s string)
+    WriteFile(p string, f []string)
+    WriteUser(u *user.User)
+    WriteTime(t time.Time)
+    WriteHash(b []byte)
+    WriteLine(n int, s string)
 }
 
-func New(path, key string, e types.Export) *Bag {
-    var exp exporter
-    var ext string
+func New(path, key string, ex types.Export) *Bag {
+    var w writer
+    var e string
 
-    switch e {
+    switch ex {
     case types.Jsonl:
-        exp = NewJsonExporter(false)
-        ext = ".jsonl"
+        w = NewJsonWriter(false)
+        e = ".jsonl"
     case types.Json:
-        exp = NewJsonExporter(true)
-        ext = ".json"
+        w = NewJsonWriter(true)
+        e = ".json"
     default:
-        exp = NewTextExporter()
+        w = NewTextWriter()
     }
 
     if len(path) == 0 {
-        path = filename + ext
+        path = filename + e
     }
 
     return &Bag{
         Path: path,
         file: nil,
         key: key,
-        exp: exp,
+        w:   w,
     }
 }
 
@@ -75,21 +76,21 @@ func (bag *Bag) Put(h *heap.Heap) bool {
     usr, err := user.Current()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
-    bag.exp.Start()
+    bag.w.Start()
 
-    bag.exp.ExportFile(h.String(), *types.GetFilters())
-    bag.exp.ExportUser(usr)
-    bag.exp.ExportTime(time.Now())
-    bag.exp.ExportHash(h.Sha256())
+    bag.w.WriteFile(h.String(), *args.GetFilters())
+    bag.w.WriteUser(usr)
+    bag.w.WriteTime(time.Now())
+    bag.w.WriteHash(h.Sha256())
 
     for _, s := range h.SMap {
-        bag.exp.ExportLine(s.Nr, string(h.MMap[s.Start:s.End]))
+        bag.w.WriteLine(s.Nr, string(h.MMap[s.Start:s.End]))
     }
 
-    bag.exp.Finalize()
+    bag.w.Finalize()
 
     bag.sign()
 
@@ -105,16 +106,16 @@ func (bag *Bag) Close() {
 func (bag *Bag) init() bool {
     var err error
 
-    is := fx.Exists(bag.Path)
+    is := sys.Exists(bag.Path)
 
     bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return false
     }
 
-    bag.exp.Init(bag.file, !is, header)
+    bag.w.Init(bag.file, !is, header)
 
     return true
 }
@@ -131,7 +132,7 @@ func (bag *Bag) sign() {
     buf, err := os.ReadFile(bag.Path)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
@@ -142,7 +143,7 @@ func (bag *Bag) sign() {
     err = os.WriteFile(bag.Path + ".sha256", sum, 0600)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     return
@@ -152,6 +153,6 @@ func writeln(f *os.File, s string) {
     _, err := fmt.Fprintln(f, s)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 }

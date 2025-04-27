@@ -5,13 +5,14 @@ import (
     "sync"
     "time"
 
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/cuhsat/fx/internal/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
 
 const (
     short = 1 // seconds
-    long  = 3 // seconds
+    long  = 2 // seconds
 )
 
 type Overlay struct {
@@ -27,7 +28,7 @@ type message struct {
     t time.Duration
 } 
 
-func NewOverlay(ctx *Context, term tcell.Screen) *Overlay {
+func NewOverlay(ctx *context.Context, term tcell.Screen) *Overlay {
     return &Overlay{
         base: base{ctx, term},
 
@@ -46,7 +47,7 @@ func (o *Overlay) Render(x, y, w, h int) {
 }
 
 func (o *Overlay) SendError(err string) {
-    o.ch <- message{err, themes.Overlay0, short}
+    o.ch <- message{err, themes.Overlay0, long}
 }
 
 func (o *Overlay) SendInfo(msg string) {

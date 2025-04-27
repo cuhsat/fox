@@ -3,6 +3,7 @@ package widgets
 import (
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/text"
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/gdamore/tcell/v2"
     "github.com/mattn/go-runewidth"
 )
@@ -12,7 +13,7 @@ type Queueable interface {
 }
 
 type base struct {
-    ctx *Context
+    ctx *context.Context
     term tcell.Screen
 }
 
