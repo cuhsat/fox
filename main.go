@@ -6,15 +6,14 @@ import (
     "os"
     "runtime/debug"
 
-    "github.com/cuhsat/fx/internal/fx"
-    "github.com/cuhsat/fx/internal/fx/args"
-    "github.com/cuhsat/fx/internal/fx/heapset"
-    "github.com/cuhsat/fx/internal/fx/sys"
-    "github.com/cuhsat/fx/internal/fx/types"
-    "github.com/cuhsat/fx/internal/fx/types/mode"
-    "github.com/cuhsat/fx/internal/fx/user/bag"
-    "github.com/cuhsat/fx/internal/fx/user/history"
-    "github.com/cuhsat/fx/internal/ui"
+    "github.com/cuhsat/fx/pkg/fx"
+    "github.com/cuhsat/fx/pkg/fx/sys"
+    "github.com/cuhsat/fx/pkg/fx/types"
+    "github.com/cuhsat/fx/pkg/fx/types/heapset"
+    "github.com/cuhsat/fx/pkg/fx/types/mode"
+    "github.com/cuhsat/fx/pkg/fx/user/bag"
+    "github.com/cuhsat/fx/pkg/fx/user/history"
+    "github.com/cuhsat/fx/pkg/ui"
 )
 
 const (
@@ -69,9 +68,9 @@ func main() {
     e := types.Text
     m := mode.Default
 
-    c := new(args.Counts)
-    l := args.GetLimits()
-    f := args.GetFilters()
+    c := new(types.Counts)
+    l := types.Limits()
+    f := types.Filters()
 
     // flags
     p := flag.Bool("p", false, "")
