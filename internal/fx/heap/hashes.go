@@ -8,7 +8,7 @@ import (
     "io"
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 const (
@@ -48,19 +48,19 @@ func (h *Heap) HashSum(algo string) []byte {
     case Sha256:
         imp = sha256.New()
     default:
-        fx.Error("hash not supported")
+        sys.Error("hash not supported")
 
         return sum
     }
 
-    f := fx.Open(h.Base)
+    f := sys.Open(h.Base)
 
     defer f.Close()
 
     _, err := io.Copy(imp, f)
     
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     sum = imp.Sum(nil)

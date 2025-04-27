@@ -5,8 +5,8 @@ import (
     "strings"
     "sync/atomic"
 
-    "github.com/cuhsat/fx/internal/fx"
     "github.com/cuhsat/fx/internal/fx/heap"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/fsnotify/fsnotify"
 )
 
@@ -18,7 +18,7 @@ func (hs *HeapSet) watchPath(path string) {
     err := hs.watch.Add(filepath.Dir(path))
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 }
 
@@ -30,14 +30,14 @@ func (hs *HeapSet) notify() {
                 continue
             }
             
-            fx.Error(err)
+            sys.Error(err)
 
         case ev, ok := <-hs.watch.Events:
             if !ok || !ev.Has(fsnotify.Write) {
                 continue
             }
 
-            if ev.Name == fx.Log.Name {
+            if ev.Name == sys.Log.Name {
                 if hs.error_fn != nil {
                     hs.error_fn() // bound callback
                 }

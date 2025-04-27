@@ -5,7 +5,8 @@
 | <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>l</kbd>       | Less mode             |
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
-| <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto mode             |
+| <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto line             |
+| <kbd>F5</kbd> / <kbd>Ctrl</kbd> + <kbd>o</kbd>       | Open file(s)          |
 | <kbd>F9</kbd>                                        | Show file(s) counts   |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |

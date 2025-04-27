@@ -13,6 +13,7 @@ const (
     Grep
     Hex
     Goto
+    Open
 )
 
 type Mode int
@@ -23,6 +24,7 @@ func (m Mode) String() string {
         "Grep", 
         "Hex", 
         "Goto",
+        "Open",
     }
 
     if int(m) < 0 || int(m) > len(modes) {

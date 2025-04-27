@@ -5,22 +5,21 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/args"
     "github.com/cuhsat/fx/internal/fx/heapset"
+    "github.com/cuhsat/fx/internal/fx/sys"
     "github.com/cuhsat/fx/internal/fx/text"
     "github.com/cuhsat/fx/internal/fx/types"
     "github.com/cuhsat/fx/internal/fx/types/layer"
     "github.com/cuhsat/fx/internal/fx/types/mode"
     "github.com/cuhsat/fx/internal/fx/user/bag"
     "github.com/cuhsat/fx/internal/fx/user/history"
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/cuhsat/fx/internal/ui/themes"
     "github.com/cuhsat/fx/internal/ui/widgets"
     "github.com/gdamore/tcell/v2"
     "github.com/gdamore/tcell/v2/encoding"
     "github.com/mattn/go-runewidth"
-)
-
-const (
-    title = "Forensic Examiner"
 )
 
 const (
@@ -37,7 +36,7 @@ const (
 )
 
 type UI struct {
-    ctx *widgets.Context
+    ctx *context.Context
 
     term tcell.Screen
 
@@ -58,13 +57,13 @@ func New(m mode.Mode) *UI {
     term, err := tcell.NewScreen()
 
     if err != nil {
-        fx.Panic(err)
+        sys.Panic(err)
     }
 
     err = term.Init()
 
     if err != nil {
-        fx.Panic(err)
+        sys.Panic(err)
     }
 
     term.EnableMouse()
@@ -72,7 +71,7 @@ func New(m mode.Mode) *UI {
 
     term.HideCursor()
 
-    ctx := widgets.NewContext()
+    ctx := context.New()
 
     ui := UI{
         ctx: ctx,
@@ -129,8 +128,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 if ok && v {
                     ui.buffer.ScrollEnd()
                 }
-
-                continue
 
             case *tcell.EventClipboard:
                 if ui.ctx.Mode == mode.Hex {
@@ -194,6 +191,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyCtrlSpace, tcell.KeyF4:
                     ui.state(mode.Goto)
 
+                case tcell.KeyCtrlO, tcell.KeyF5:
+                    ui.state(mode.Open)
+
                 case tcell.KeyF9:
                     hs.Stats()
 
@@ -234,7 +234,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
 
                 case tcell.KeyCtrlE:
-                    hs.OpenHeap(bag.Path)
+                    if sys.Exists(bag.Path) {
+                        hs.OpenHeap(bag.Path)
+                    } else {
+                        ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
+                    }
 
                 case tcell.KeyCtrlD:
                     hs.OpenLog()
@@ -252,16 +256,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     err := ui.term.Suspend()
 
                     if err != nil {
-                        fx.Error(err)
+                        sys.Error(err)
                         continue
                     }
 
-                    fx.Shell()
+                    sys.Shell()
 
                     err = ui.term.Resume()
 
                     if err != nil {
-                        fx.Panic(err)
+                        sys.Panic(err)
                     }
 
                 case tcell.KeyCtrlT:
@@ -352,6 +356,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         ui.buffer.Goto(v)
                         ui.state(ui.ctx.Last)
 
+                    case mode.Open:
+                        hs.Open(v)
+                        ui.state(ui.ctx.Last)
+
                     default:
                         ui.buffer.Reset()
                         heap.AddFilter(v)
@@ -372,7 +380,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         ui.prompt.DelRune()
                     } else if ui.ctx.Mode == mode.Goto {
                         ui.state(ui.ctx.Last)
-                    } else if len(*types.GetFilters()) > 0 {
+                    } else if ui.ctx.Mode == mode.Open {
+                        ui.state(ui.ctx.Last)
+                    } else if len(*args.GetFilters()) > 0 {
                         ui.buffer.Reset()
                         heap.DelFilter()
                     } else if ui.ctx.Mode == mode.Grep {
@@ -420,10 +430,12 @@ func (ui *UI) state(m mode.Mode) {
     }
 
     switch m {
-    case mode.Less, mode.Hex: // static modes
+    // static modes
+    case mode.Less, mode.Hex:
         ui.prompt.Lock = true
 
-    case mode.Grep, mode.Goto: // input modes
+    // input modes
+    case mode.Grep, mode.Goto, mode.Open:
         ui.prompt.Lock = false
     }
 
@@ -441,7 +453,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
         ui.term.Sync() // prevent hickups
     }
 
-    ui.term.SetTitle(fmt.Sprintf("%s - %s", title, heap))
+    ui.term.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
     ui.term.SetStyle(themes.Base)
     ui.term.Clear()
 

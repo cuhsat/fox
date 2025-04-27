@@ -8,7 +8,7 @@ import (
     "time"
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 const (
@@ -29,7 +29,7 @@ func New() *History {
     dir, err := os.UserHomeDir()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         dir = "."
     }
 
@@ -38,7 +38,7 @@ func New() *History {
     h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return &h
     }
 
@@ -55,7 +55,7 @@ func New() *History {
     err = s.Err()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 
     h.index = len(h.lines)
@@ -77,7 +77,7 @@ func (h *History) AddCommand(cmd string) {
     _, err := fmt.Fprintln(h.file, l)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
     }
 }
 

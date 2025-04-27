@@ -7,14 +7,14 @@ import (
     "os/user"
     "time"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 const (
     indent = "  "
 )
 
-type JsonExporter struct {
+type JsonWriter struct {
     file *os.File    // file handle
     pretty bool      // export pretty
     title string     // export title
@@ -54,65 +54,65 @@ type jsonLine struct {
     Data string `json:"data"`
 }
 
-func NewJsonExporter(pretty bool) *JsonExporter {
-    return &JsonExporter{
+func NewJsonWriter(pretty bool) *JsonWriter {
+    return &JsonWriter{
         pretty: pretty,
     }
 }
 
-func (je *JsonExporter) Init(f *os.File, _ bool, t string) {
-    je.file = f
-    je.title = t
+func (w *JsonWriter) Init(f *os.File, _ bool, t string) {
+    w.file = f
+    w.title = t
 }
 
-func (je *JsonExporter) Start() {
-    je.entry = &jsonEntry{
-        Title: je.title,
+func (w *JsonWriter) Start() {
+    w.entry = &jsonEntry{
+        Title: w.title,
     }
 }
 
-func (je *JsonExporter) Finalize() {
+func (w *JsonWriter) Finalize() {
     var buf []byte
     var err error
 
-    if je.pretty {
-        buf, err = json.MarshalIndent(je.entry, "", indent)
+    if w.pretty {
+        buf, err = json.MarshalIndent(w.entry, "", indent)
     } else {
-        buf, err = json.Marshal(je.entry)
+        buf, err = json.Marshal(w.entry)
     }
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return
     }
 
-    writeln(je.file, string(buf))
+    writeln(w.file, string(buf))
 }
 
-func (je *JsonExporter) ExportFile(p string, f []string) {
-    je.entry.Meta.File = jsonFile{
+func (w *JsonWriter) WriteFile(p string, f []string) {
+    w.entry.Meta.File = jsonFile{
         Path: p, Filters: f,
     }
 }
 
-func (je *JsonExporter) ExportUser(u *user.User) {
-    je.entry.Meta.User = jsonUser{
+func (w *JsonWriter) WriteUser(u *user.User) {
+    w.entry.Meta.User = jsonUser{
         Login: u.Username, Name: u.Name,
     }
 }
 
-func (je *JsonExporter) ExportTime(t time.Time) {
-    je.entry.Meta.Time = jsonTime{
+func (w *JsonWriter) WriteTime(t time.Time) {
+    w.entry.Meta.Time = jsonTime{
         UTC: t.UTC(), Local: t,
     }
 }
 
-func (je *JsonExporter) ExportHash(b []byte) {
-    je.entry.Meta.Hash = fmt.Sprintf("%x", b)
+func (w *JsonWriter) WriteHash(b []byte) {
+    w.entry.Meta.Hash = fmt.Sprintf("%x", b)
 }
 
-func (je *JsonExporter) ExportLine(n int, s string) {
-    je.entry.Data = append(je.entry.Data, jsonLine{
+func (w *JsonWriter) WriteLine(n int, s string) {
+    w.entry.Data = append(w.entry.Data, jsonLine{
         Line: n, Data: s,
     })
 }

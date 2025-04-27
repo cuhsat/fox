@@ -5,7 +5,7 @@ import (
     "io"
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/sys"
 )
 
 type Entry struct {
@@ -20,13 +20,13 @@ func CanIndent(p string) bool {
 func HasMagic(p string, o int, m []byte) bool {
     buf := make([]byte, o + len(m))
 
-    f := fx.Open(p)
+    f := sys.Open(p)
     defer f.Close()
 
     fi, err := f.Stat()
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return false
     }
 
@@ -37,7 +37,7 @@ func HasMagic(p string, o int, m []byte) bool {
     _, err = io.ReadFull(f, buf)
 
     if err != nil {
-        fx.Error(err)
+        sys.Error(err)
         return false
     }
 

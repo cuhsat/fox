@@ -5,6 +5,7 @@ import (
 
     "github.com/cuhsat/fx/internal/fx/heapset"
     "github.com/cuhsat/fx/internal/fx/text"
+    "github.com/cuhsat/fx/internal/ui/context"
     "github.com/cuhsat/fx/internal/ui/themes"
     "github.com/gdamore/tcell/v2"
 )
@@ -13,7 +14,7 @@ type Title struct {
     base
 }
 
-func NewTitle(ctx *Context, term tcell.Screen) *Title {
+func NewTitle(ctx *context.Context, term tcell.Screen) *Title {
     return &Title{
         base: base{ctx, term},
     }

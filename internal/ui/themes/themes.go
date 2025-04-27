@@ -3,7 +3,8 @@ package themes
 import (
     "strings"
 
-    "github.com/cuhsat/fx/internal/fx"
+    "github.com/cuhsat/fx/internal/fx/sys"
+    "github.com/cuhsat/fx/internal/fx/user/themes"
     "github.com/gdamore/tcell/v2"
 )
 
@@ -39,7 +40,7 @@ type palette []int32
 func New(name string) *Themes {
     t := Themes{
         palettes: map[string]palette{
-            "Examiner-Light": palette {
+            "Examiner-Light": palette{
                 0x888888, 0xeeeeee, // Base
                 0xcccccc, 0xcccccc, // Surface0 (line)
                 0x111111, 0xcccccc, // Surface1 (pane)
@@ -52,7 +53,7 @@ func New(name string) *Themes {
                 0x111111, 0xeeeeee, // Subtext2 (highlight)
             },
 
-            "Examiner-Dark": palette {
+            "Examiner-Dark": palette{
                 0x777777, 0x111111, // Base
                 0x333333, 0x333333, // Surface0 (line)
                 0xeeeeee, 0x333333, // Surface1 (pane)
@@ -65,7 +66,7 @@ func New(name string) *Themes {
                 0xeeeeee, 0x111111, // Subtext2 (highlight)
             }, 
 
-            "Catppuccin-Latte": palette {
+            "Catppuccin-Latte": palette{
                 0x4c4f69, 0xeff1f5, // Base
                 0xacb0be, 0xccd0da, // Surface0 (line)
                 0x4c4f69, 0xbcc0cc, // Surface1 (pane)
@@ -78,7 +79,7 @@ func New(name string) *Themes {
                 0xd20f39, 0xeff1f5, // Subtext2 (highlight)
             },
 
-            "Catppuccin-Frappe": palette {
+            "Catppuccin-Frappe": palette{
                 0xa5adce, 0x303446, // Base
                 0x626880, 0x414559, // Surface0 (line)
                 0xc6d0f5, 0x51576d, // Surface1 (pane)
@@ -91,7 +92,7 @@ func New(name string) *Themes {
                 0xe78284, 0x303446, // Subtext2 (highlight)
             },
 
-            "Catppuccin-Macchiato": palette {
+            "Catppuccin-Macchiato": palette{
                 0xa5adcb, 0x24273a, // Base
                 0x5b6078, 0x363a4f, // Surface0 (line)
                 0xcad3f5, 0x494d64, // Surface1 (pane)
@@ -104,7 +105,7 @@ func New(name string) *Themes {
                 0xed8796, 0x24273a, // Subtext2 (highlight)
             },
 
-            "Catppuccin-Mocha": palette {
+            "Catppuccin-Mocha": palette{
                 0xa6adc8, 0x1e1e2e, // Base
                 0x585b70, 0x313244, // Surface0 (line)
                 0xcdd6f4, 0x45475a, // Surface1 (pane)
@@ -117,7 +118,7 @@ func New(name string) *Themes {
                 0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
             },
 
-            "VSCode-Light": palette {
+            "VSCode-Light": palette{
                 0x343434, 0xe7e7e7, // Base
                 0x343434, 0xdfdfdf, // Surface0 (line)
                 0x343434, 0xcfcfcf, // Surface1 (pane)
@@ -130,7 +131,7 @@ func New(name string) *Themes {
                 0xc72e0f, 0xe7e7e7, // Subtext2 (highlight)
             },
 
-            "VSCode-Dark": palette {
+            "VSCode-Dark": palette{
                 0xdee1e6, 0x282828, // Base
                 0xdee1e6, 0x313131, // Surface0 (line)
                 0xdee1e6, 0x444444, // Surface1 (pane)
@@ -143,7 +144,7 @@ func New(name string) *Themes {
                 0xd3967d, 0x282828, // Subtext2 (highlight)
             },
 
-            "Monokai": palette {
+            "Monokai": palette{
                 0x7f8490, 0x222327, // Base
                 0x595f6f, 0x2c2e34, // Surface0 (line)
                 0xe2e2e3, 0x414550, // Surface1 (pane)
@@ -156,7 +157,7 @@ func New(name string) *Themes {
                 0xf39660, 0x222327, // Subtext2 (highlight)
             },
 
-            "Darcula": palette {
+            "Darcula": palette{
                 0x727272, 0x2b2b2b, // Base
                 0x393939, 0x393939, // Surface0 (line)
                 0x727272, 0x393939, // Surface1 (pane)
@@ -169,7 +170,7 @@ func New(name string) *Themes {
                 0xf43753, 0x2b2b2b, // Subtext2 (highlight)
             },
 
-            "Nord": palette {
+            "Nord": palette{
                 0xd8dee9, 0x2e3440, // Base
                 0xeceff4, 0x3b4252, // Surface0 (line)
                 0xeceff4, 0x4c566a, // Surface1 (pane)
@@ -182,7 +183,7 @@ func New(name string) *Themes {
                 0x5e81ac, 0x2e3440, // Subtext2 (highlight)
             },
 
-            "Ansi16": palette {
+            "Ansi16": palette{
                 0xc0c0c0, 0x000000, // Base
                 0x000000, 0x000000, // Surface0 (line)
                 0xffffff, 0x000000, // Surface1 (pane)
@@ -195,7 +196,7 @@ func New(name string) *Themes {
                 0x00ff00, 0x000000, // Subtext2 (highlight)
             },
 
-            "Matrix": palette {
+            "Matrix": palette{
                 0x008f11, 0x0d0208, // Base
                 0x003b00, 0x0d0208, // Surface0 (line)
                 0x00ff41, 0x0d0208, // Surface1 (pane)
@@ -208,7 +209,7 @@ func New(name string) *Themes {
                 0x00ff41, 0x0d0208, // Subtext2 (highlight)
             },
 
-            "Monochrome": palette {
+            "Monochrome": palette{
                 0xffffff, 0x000000, // Base
                 0xffffff, 0x000000, // Surface0 (line)
                 0xffffff, 0x000000, // Surface1 (pane)
@@ -240,6 +241,27 @@ func New(name string) *Themes {
         index: 0,
     }
 
+    ts := themes.New()
+
+    if ts != nil {
+        for _, tt := range ts.Themes {
+            t.names = append(t.names, tt.Name)
+
+            t.palettes[tt.Name] = palette{
+                tt.Base.Fg,     tt.Base.Bg,
+                tt.Surface0.Fg, tt.Surface0.Bg,
+                tt.Surface1.Fg, tt.Surface1.Bg,
+                tt.Surface2.Fg, tt.Surface2.Bg,
+                tt.Surface3.Fg, tt.Surface3.Bg,
+                tt.Overlay0.Fg, tt.Overlay0.Bg,
+                tt.Overlay1.Fg, tt.Overlay1.Bg,
+                tt.Subtext0.Fg, tt.Subtext0.Bg,
+                tt.Subtext1.Fg, tt.Subtext1.Bg,
+                tt.Subtext2.Fg, tt.Subtext2.Bg,
+            }
+        }
+    }
+
     t.Load(name)
 
     return &t
@@ -259,7 +281,7 @@ func (t *Themes) Cycle() string {
 func (t *Themes) Load(name string) {
     t.index = -1
 
-    if strings.ToLower(name) == "default" {
+    if len(name) == 0 || strings.ToLower(name) == "default" {
         name = Default
     }
 
@@ -271,7 +293,7 @@ func (t *Themes) Load(name string) {
     }
 
     if t.index == -1 {
-        fx.Error("theme not found")
+        sys.Error("theme not found")
 
         t.index = 0
     }

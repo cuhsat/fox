@@ -1,7 +1,4 @@
-# Themes
-> Must be located under `~/fx_themes`.
-
-```toml
+# Forensic Examiner Example Theme
 [Theme.Custom]
 Name = "Custom"
 
@@ -34,20 +31,3 @@ Subtext1.Bg = 0x000000
 
 Subtext2.Fg = 0x000000
 Subtext2.Bg = 0x000000
-```
-
-## List
-* `Examiner-Light`
-* `Examiner-Dark`
-* `Catppuccin-Latte`
-* `Catppuccin-Frappe`
-* `Catppuccin-Macchiato`
-* `Catppuccin-Mocha`
-* `VSCode-Light`
-* `VSCode-Dark`
-* `Monokai`
-* `Darcula`
-* `Nord`
-* `Ansi16`
-* `Matrix`
-* `Monochrome`
