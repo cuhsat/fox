@@ -50,6 +50,6 @@ Subtext2.Bg = 0x000000
 * `Monokai`
 * `Darcula`
 * `Nord`
-* `Ansi16`
 * `Matrix`
+* `Ansi16`
 * `Monochrome`

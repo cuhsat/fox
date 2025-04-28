@@ -29,12 +29,12 @@
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd> / <kbd>Print</kbd>    | Save evidence         |
 
-## F1 - Less Mode
+## F1 - LESS Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## F2 - Grep Mode
+## F2 - GREP Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Append filter         |
@@ -44,12 +44,12 @@
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Filter content        |
 
-## F3 - Hex Mode
+## F3 - HEX Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Space</kbd>                                     | Scroll page down      |
 
-## F4 - Goto Mode
+## F4 - GOTO Mode
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Enter</kbd>                                     | Goto line             |
@@ -57,3 +57,12 @@
 | <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
 | <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
 | <kbd>Any Key</kbd>                                   | Line number           |
+
+## F5 - OPEN Mode
+| Shortcut                                             | Action                |
+| ---------------------------------------------------- | --------------------- |
+| <kbd>Enter</kbd>                                     | Open file             |
+| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
+| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
+| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
+| <kbd>Any Key</kbd>                                   | File name or pattern  |

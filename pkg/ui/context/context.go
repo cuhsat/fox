@@ -3,10 +3,13 @@ package context
 import (
     "github.com/cuhsat/fx/pkg/fx/types/mode"
     "github.com/cuhsat/fx/pkg/fx/user/config"
+    "github.com/gdamore/tcell/v2"
 )
 
 type Context struct {
     config.Config
+
+    Root tcell.Screen
 
     Mode mode.Mode
     Last mode.Mode
@@ -14,9 +17,10 @@ type Context struct {
     Busy bool
 }
 
-func New() *Context {
+func New(root tcell.Screen) *Context {
     return &Context{
         Config: *config.New(),
+        Root: root,
         Mode: mode.Default,
         Last: mode.Default,
         Busy: false,

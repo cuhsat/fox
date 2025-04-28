@@ -28,9 +28,9 @@ type message struct {
     t time.Duration
 } 
 
-func NewOverlay(ctx *context.Context, term tcell.Screen) *Overlay {
+func NewOverlay(ctx *context.Context) *Overlay {
     return &Overlay{
-        base: base{ctx, term},
+        base: base{ctx},
 
         ch: make(chan message, 64),
     }
@@ -58,7 +58,7 @@ func (o *Overlay) Listen() {
         o.buffer = nil
         o.m.Unlock()
 
-        o.term.PostEvent(tcell.NewEventInterrupt(nil))
+        o.ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
     }
 }
 

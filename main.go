@@ -30,66 +30,58 @@ const (
 
 The Swiss Army Knife for examining text files
 
-usage: fx [-x] [-p] [-h|t] [-n|c #] [-e PATTERN]
-          [-j|J] [-k KEY] [-o FILE]
+usage: fx [--print] [--hex] [--head|tail] [--lines|bytes=NUM]
+          [--json|jsonl] [--file=FILE] [--key=KEY]
+          [--regexp=PATTERN ...]
           [-|PATH ...]
 
 positional arguments:
-  PATH to open (default: current dir)
+  PATH(s) to open or '-' for STDIN (default: current directory)
 
-mode:
-  --hex, -x        start in Hex mode
+general:
+  -p, --print              print to console (no UI)
+  -x, --hex                print or start in HEX mode
 
-print:
-  --print, -p      print to console (no UI)
+file limits:
+  -h, --head               limit head of file by ...
+  -t, --tail               limit tail of file by ...
+  -n, --lines=NUM          number of lines (default: 10)
+  -c, --bytes=NUM          number of bytes (default: 16)
 
-limits:
-  --head,  -h      limit head of file by ...
-  --tail,  -t      limit tail of file by ...
-  --lines, -n #    number of lines (default: 10)
-  --bytes, -c #    number of bytes (default: 16)
+line filter:
+  -e, --regexp=PATTERN     filter for lines that matches pattern
 
-filters:
-  --regexp, -e     PATTERN to filter
+evidence bag:
+  -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
+  -k, --key=KEY            key phrase for signing with HMAC
+  -j, --json               export in JSON format
+  -J, --jsonl              export in JSON Lines format
 
-evidence:
-  --file,  -o      FILE for evidence bag (default: EVIDENCE)
-  --key,   -k      KEY signing key phrase
-  --json,  -j      output in JSON format
-  --jsonl, -J      output in JSON lines format
+standard options:
+      --help               shows this message
+      --version            shows version
 
-options:
-  --help           show help message
-  --version        show version info
-
+Full documentation: <https://github.com/cuhsat/fx>
 `
 )
 
 func main() {
-    e := types.Text
+    // general
     m := mode.Default
 
-    c := new(types.Counts)
+    p := flag.BoolP("print", "p", false, "print to console (no UI)")
+    x := flag.BoolP("hex", "x", false, "print or start in HEX mode")
+
+    // file limits
     l := types.Limits()
-    f := types.Filters()
 
-    // flags
-    p := flag.BoolP("print", "p", false, "")
-    x := flag.BoolP("hex", "x", false, "")
-    j := flag.BoolP("json", "j", false, "")
-    J := flag.BoolP("jsonl", "J", false, "")
-    
-    // limits
-    h := flag.BoolP("head", "h", false, "")
-    t := flag.BoolP("tail", "t", false, "")
+    h := flag.BoolP("head", "h", false, "limit head of file by ...")
+    t := flag.BoolP("tail", "t", false, "limit tail of file by ...")
 
-    // output
-    o := flag.StringP("file", "o", "", "")
-    k := flag.StringP("key", "k", "", "")
+    c := new(types.Counts)
 
-    // counts
-    flag.IntVarP(&c.Lines, "lines", "n", 0, "")
-    flag.IntVarP(&c.Bytes, "bytes", "c", 0, "")
+    flag.IntVarP(&c.Lines, "lines", "n", 0, "number of lines")
+    flag.IntVarP(&c.Bytes, "bytes", "c", 0, "number of bytes")
 
     if c.Lines == 0 {
         flag.Lookup("lines").NoOptDefVal = "10"
@@ -99,13 +91,27 @@ func main() {
         flag.Lookup("bytes").NoOptDefVal = "16"
     }
 
-    // filters
-    flag.VarP(f, "regexp", "e", "Pattern value")
+    // line filter
+    e := types.Filters()
 
-    // standards
-    v := flag.BoolP("version", "v", false, "Version")
+    flag.VarP(e, "regexp", "e", "filter for lines that matches pattern")
 
-    flag.Usage = usage
+    // evidence bag
+    fm := types.Text
+
+    f := flag.StringP("file", "f", "EVIDENCE", "file name of evidence bag")
+    k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
+    j := flag.BoolP("json", "j", false, "export in JSON format")
+    J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
+
+    // standard options
+    v := flag.BoolP("version", "v", false, "shows version")
+
+    flag.Usage = func() {
+        fmt.Printf(Usage, fx.Version)
+        os.Exit(2)
+    }
+
     flag.Parse()
 
     a := flag.Args()
@@ -118,7 +124,7 @@ func main() {
         sys.Exit("head or tail")
     }
 
-    if *x && len(*f) > 0 {
+    if *x && len(*e) > 0 {
         sys.Exit("hex or pattern")
     }
 
@@ -127,7 +133,8 @@ func main() {
     }
 
     if *v {
-        version()
+        fmt.Println(fx.Product, fx.Version)
+        os.Exit(0)
     }
 
     if *h {
@@ -139,18 +146,18 @@ func main() {
     }
 
     if *j {
-        e = types.Json
+        fm = types.Json
     }
 
     if *J {
-        e = types.Jsonl
+        fm = types.Jsonl
     }
 
     if *x {
         m = mode.Hex
     }
 
-    if len(*f) > 0 {
+    if len(*e) > 0 {
         m = mode.Grep
     }
 
@@ -182,21 +189,11 @@ func main() {
     hi := history.New()
     defer hi.Close()
 
-    bg := bag.New(*o, *k, e)
+    bg := bag.New(*f, *k, fm)
     defer bg.Close()
 
     ui := ui.New(m)
     defer ui.Close()
 
     ui.Run(hs, hi, bg)
-}
-
-func usage() {
-    fmt.Printf(Usage, fx.Version)
-    os.Exit(2)
-}
-
-func version() {
-    fmt.Println(fx.Product, fx.Version)
-    os.Exit(0)
 }

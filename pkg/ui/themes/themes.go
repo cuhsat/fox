@@ -123,12 +123,12 @@ func New(name string) *Themes {
                 0xeee8d5, 0xeee8d5, // Surface0 (line)
                 0x002b36, 0xeee8d5, // Surface1 (pane)
                 0x002b36, 0xeee8d5, // Surface2 (title)
-                0xfdf6e3, 0x268bd2, // Surface3 (mode)
+                0xfdf6e3, 0x93a1a1, // Surface3 (mode)
                 0xfdf6e3, 0xdc322f, // Overlay0 (error)
                 0xfdf6e3, 0x859900, // Overlay1 (success)
                 0x93a1a1, 0xfdf6e3, // Subtext0 (numbers)
                 0xeee8d5, 0xfdf6e3, // Subtext1 (vrule)
-                0xcb4b16, 0xfdf6e3, // Subtext2 (highlight)
+                0xb58900, 0xfdf6e3, // Subtext2 (highlight)
             },
 
             "Solarized-Dark": palette{
@@ -136,7 +136,7 @@ func New(name string) *Themes {
                 0x073642, 0x073642, // Surface0 (line)
                 0xfdf6e3, 0x073642, // Surface1 (pane)
                 0xfdf6e3, 0x073642, // Surface2 (title)
-                0xfdf6e3, 0x268bd2, // Surface3 (mode)
+                0xfdf6e3, 0x586e75, // Surface3 (mode)
                 0xfdf6e3, 0xdc322f, // Overlay0 (error)
                 0xfdf6e3, 0x859900, // Overlay1 (success)
                 0x586e75, 0x002b36, // Subtext0 (numbers)
@@ -209,19 +209,6 @@ func New(name string) *Themes {
                 0x5e81ac, 0x2e3440, // Subtext2 (highlight)
             },
 
-            "Ansi16": palette{
-                0xc0c0c0, 0x000000, // Base
-                0x000000, 0x000000, // Surface0 (line)
-                0xffffff, 0x000000, // Surface1 (pane)
-                0xffffff, 0x000000, // Surface2 (title)
-                0xffffff, 0x000080, // Surface3 (mode)
-                0xffffff, 0x800000, // Overlay0 (error)
-                0xffffff, 0x008000, // Overlay1 (success)
-                0x808080, 0x000000, // Subtext0 (numbers)
-                0x808080, 0x000000, // Subtext1 (vrule)
-                0x00ff00, 0x000000, // Subtext2 (highlight)
-            },
-
             "Matrix": palette{
                 0x008f11, 0x0d0208, // Base
                 0x003b00, 0x0d0208, // Surface0 (line)
@@ -233,6 +220,19 @@ func New(name string) *Themes {
                 0x003b00, 0x0d0208, // Subtext0 (numbers)
                 0x0d0208, 0x0d0208, // Subtext1 (vrule)
                 0x00ff41, 0x0d0208, // Subtext2 (highlight)
+            },
+
+            "Ansi16": palette{
+                0xc0c0c0, 0x000000, // Base
+                0x000000, 0x000000, // Surface0 (line)
+                0xffffff, 0x000000, // Surface1 (pane)
+                0xffffff, 0x000000, // Surface2 (title)
+                0xffffff, 0x000080, // Surface3 (mode)
+                0xffffff, 0x800000, // Overlay0 (error)
+                0xffffff, 0x008000, // Overlay1 (success)
+                0x808080, 0x000000, // Subtext0 (numbers)
+                0x808080, 0x000000, // Subtext1 (vrule)
+                0x00ff00, 0x000000, // Subtext2 (highlight)
             },
 
             "Monochrome": palette{
@@ -262,8 +262,8 @@ func New(name string) *Themes {
             "Monokai",
             "Darcula",
             "Nord",
-            "Ansi16",
             "Matrix",
+            "Ansi16",
             "Monochrome",
         },
         index: 0,

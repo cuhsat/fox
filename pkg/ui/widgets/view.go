@@ -6,7 +6,6 @@ import (
     "github.com/cuhsat/fx/pkg/fx/types/mode"
     "github.com/cuhsat/fx/pkg/fx/types/smap"
     "github.com/cuhsat/fx/pkg/ui/context"
-    "github.com/gdamore/tcell/v2"
 )
 
 type View struct {
@@ -21,9 +20,9 @@ type View struct {
     delta_y int
 }
 
-func NewView(ctx *context.Context, term tcell.Screen) *View {
+func NewView(ctx *context.Context) *View {
     return &View{
-        base: base{ctx, term},
+        base: base{ctx},
 
         last_x: 0,
         last_y: 0,

@@ -32,9 +32,12 @@ func (h* Heap) Filter() {
     }
 }
 
-func (h *Heap) AddFilter(value string) {
+func (h *Heap) AddFilter(ch types.Signal, value string) {
     types.Filters().Set(value)
+    
+    ch <- types.Busy
     h.addLink(value)
+    ch <- types.Idle
 }
 
 func (h *Heap) DelFilter() {

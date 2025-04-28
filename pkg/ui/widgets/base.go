@@ -14,12 +14,11 @@ type Queueable interface {
 
 type base struct {
     ctx *context.Context
-    term tcell.Screen
 }
 
 func (b *base) blank(x, y, w int, sty tcell.Style) {
     for i := 0; i < w; i++ {
-        b.term.SetContent(x + i, y, ' ', nil, sty)
+        b.ctx.Root.SetContent(x + i, y, ' ', nil, sty)
     }
 }
 
@@ -51,7 +50,7 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
 
         case 1:
             if len(d) != 0 {
-                b.term.SetContent(x + i, y, d[0], d[1:], sty)
+                b.ctx.Root.SetContent(x + i, y, d[0], d[1:], sty)
                 i += w
             }
 
@@ -59,7 +58,7 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
 
         case 2:
             if len(d) != 0 {
-                b.term.SetContent(x + i, y, d[0], d[1:], sty)
+                b.ctx.Root.SetContent(x + i, y, d[0], d[1:], sty)
                 i += w
             }
 
@@ -70,7 +69,7 @@ func (b *base) print(x, y int, s string, sty tcell.Style) {
     }
 
     if len(d) != 0 {
-        b.term.SetContent(x + i, y, d[0], d[1:], sty)
+        b.ctx.Root.SetContent(x + i, y, d[0], d[1:], sty)
         i += w
     }
 }
