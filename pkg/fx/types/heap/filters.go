@@ -42,6 +42,7 @@ func (h *Heap) DelFilter() {
     h.delLink()
 }
 
+// TODO: Must be a thread-safe goroutine
 func (h *Heap) addLink(name string) {
     h.SMap = h.find([]byte(name))
     h.RMap = nil
@@ -51,6 +52,7 @@ func (h *Heap) addLink(name string) {
     })
 }
 
+// TODO: Must be a thread-safe goroutine
 func (h *Heap) delLink() {
     l := len(h.chain)
 
