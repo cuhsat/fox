@@ -1,10 +1,11 @@
 package main
 
 import (
-    "flag"
     "fmt"
     "os"
     "runtime/debug"
+
+    flag "github.com/spf13/pflag"
 
     "github.com/cuhsat/fx/pkg/fx"
     "github.com/cuhsat/fx/pkg/fx/sys"
@@ -37,29 +38,29 @@ positional arguments:
   PATH to open (default: current dir)
 
 mode:
-  -x start in Hex mode
+  --hex, -x        start in Hex mode
 
 print:
-  -p print to console (no UI)
+  --print, -p      print to console (no UI)
 
 limits:
-  -h limit head of file by ...
-  -t limit tail of file by ...
-  -n # number of lines
-  -c # number of bytes
+  --head,  -h      limit head of file by ...
+  --tail,  -t      limit tail of file by ...
+  --lines, -n #    number of lines (default: 10)
+  --bytes, -c #    number of bytes (default: 16)
 
 filters:
-  -e PATTERN to filter
+  --regexp, -e     PATTERN to filter
 
 evidence:
-  -o FILE for evidence bag (default: EVIDENCE)
-  -k KEY signing key phrase
-  -j output in JSON format
-  -J output in JSON lines format
+  --file,  -o      FILE for evidence bag (default: EVIDENCE)
+  --key,   -k      KEY signing key phrase
+  --json,  -j      output in JSON format
+  --jsonl, -J      output in JSON lines format
 
 options:
-  --help    show help message
-  --version show version info
+  --help           show help message
+  --version        show version info
 
 `
 )
@@ -73,28 +74,36 @@ func main() {
     f := types.Filters()
 
     // flags
-    p := flag.Bool("p", false, "")
-    x := flag.Bool("x", false, "")
-    j := flag.Bool("j", false, "")
-    J := flag.Bool("J", false, "")
+    p := flag.BoolP("print", "p", false, "")
+    x := flag.BoolP("hex", "x", false, "")
+    j := flag.BoolP("json", "j", false, "")
+    J := flag.BoolP("jsonl", "J", false, "")
     
     // limits
-    h := flag.Bool("h", false, "")
-    t := flag.Bool("t", false, "")
+    h := flag.BoolP("head", "h", false, "")
+    t := flag.BoolP("tail", "t", false, "")
 
     // output
-    o := flag.String("o", "", "")
-    k := flag.String("k", "", "")
+    o := flag.StringP("file", "o", "", "")
+    k := flag.StringP("key", "k", "", "")
 
     // counts
-    flag.IntVar(&c.Lines, "n", 10, "")
-    flag.IntVar(&c.Bytes, "c", 0, "")
+    flag.IntVarP(&c.Lines, "lines", "n", 0, "")
+    flag.IntVarP(&c.Bytes, "bytes", "c", 0, "")
+
+    if c.Lines == 0 {
+        flag.Lookup("lines").NoOptDefVal = "10"
+    }
+
+    if c.Bytes == 0 {
+        flag.Lookup("bytes").NoOptDefVal = "16"
+    }
 
     // filters
-    flag.Var(f, "e", "Pattern value")
+    flag.VarP(f, "regexp", "e", "Pattern value")
 
     // standards
-    v := flag.Bool("version", false, "Version")
+    v := flag.BoolP("version", "v", false, "Version")
 
     flag.Usage = usage
     flag.Parse()
@@ -103,10 +112,6 @@ func main() {
 
     if len(a) == 0 {
         a = append(a, ".")
-    }
-
-    if c.Bytes > 0 {
-        c.Lines = 0
     }
 
     if *h && *t {
