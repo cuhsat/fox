@@ -16,7 +16,7 @@ func Detect(path string) bool {
     })
 }
 
-func Deflate(path string) (e []*file.Entry) {
+func Deflate(path string) (i []*file.Item) {
     a := sys.Open(path)
     defer a.Close()
 
@@ -49,7 +49,7 @@ func Deflate(path string) (e []*file.Entry) {
             continue
         }
 
-        e = append(e, &file.Entry{
+        i = append(i, &file.Item{
             Path: t.Name(),
             Name: h.Name,
         })

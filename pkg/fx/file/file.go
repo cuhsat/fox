@@ -8,7 +8,7 @@ import (
     "github.com/cuhsat/fx/pkg/fx/sys"
 )
 
-type Entry struct {
+type Item struct {
     Path string
     Name string
 }
