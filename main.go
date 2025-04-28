@@ -5,8 +5,6 @@ import (
     "os"
     "runtime/debug"
 
-    flag "github.com/spf13/pflag"
-
     "github.com/cuhsat/fx/pkg/fx"
     "github.com/cuhsat/fx/pkg/fx/sys"
     "github.com/cuhsat/fx/pkg/fx/types"
@@ -15,6 +13,8 @@ import (
     "github.com/cuhsat/fx/pkg/fx/user/bag"
     "github.com/cuhsat/fx/pkg/fx/user/history"
     "github.com/cuhsat/fx/pkg/ui"
+
+    flag "github.com/spf13/pflag"
 )
 
 const (
@@ -61,7 +61,7 @@ standard options:
       --help               shows this message
       --version            shows version
 
-Full documentation: <https://github.com/cuhsat/fx>
+Full documentation: <https://github.com/cuhsat/fx/docs>
 `
 )
 

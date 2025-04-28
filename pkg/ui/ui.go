@@ -26,8 +26,8 @@ const (
 )
 
 const (
-    bracketPrefix = "ESC[200~" // bracketed paste start
-    bracketSuffix = "ESC[201~" // bracketed paste end
+    brPrefix = "ESC[200~" // bracketed paste start
+    brSuffix = "ESC[201~" // bracketed paste end
 )
 
 const (
@@ -100,28 +100,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         ui.root.PostEvent(tcell.NewEventError(nil))
     })
 
-    events := make(chan tcell.Event, 16)
-    signal := make(types.Signal, 16)
-    quit := make(chan struct{})
+    events := make(chan tcell.Event, 128)
+    closed := make(chan struct{})
 
-    go ui.root.ChannelEvents(events, quit)
+    go ui.root.ChannelEvents(events, closed)
     go ui.overlay.Listen()
 
     for {
         select {
-        case _ = <-quit:
+        case _ = <-closed:
             return // channels closed
-
-        case si := <-signal:
-            switch si {
-            case types.Idle:
-                ui.ctx.Busy = false
-
-            case types.Busy:
-                ui.ctx.Busy = true
-            }
-
-            ui.root.PostEvent(tcell.NewEventInterrupt(nil))
 
         case ev := <-events:
             if ev == nil {
@@ -147,8 +135,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                 v := string(ev.Data())
 
-                v = strings.TrimPrefix(v, bracketPrefix)
-                v = strings.TrimSuffix(v, bracketSuffix)
+                v = strings.TrimPrefix(v, brPrefix)
+                v = strings.TrimSuffix(v, brSuffix)
 
                 ui.status.Value = v
 
@@ -373,7 +361,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                     default:
                         ui.view.Reset()
-                        heap.AddFilter(signal, v)
+                        heap.AddFilter(v)
                         ui.state(mode.Less)
                     }
 

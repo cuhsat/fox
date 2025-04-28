@@ -17,10 +17,3 @@ const (
     Json
     Jsonl
 )
-
-type Signal chan int
-
-const (
-    Idle = iota
-    Busy
-)

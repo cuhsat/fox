@@ -273,14 +273,14 @@ func (hs *HeapSet) loadDir(path string) {
 }
 
 func (hs *HeapSet) loadTar(path, base string) {
-    for _, fe := range tar.Deflate(path) {
-        hs.loadEntry(fe, base)
+    for _, i := range tar.Deflate(path) {
+        hs.loadItem(i, base)
     }
 }
 
 func (hs *HeapSet) loadZip(path, base string) {
-    for _, fe := range zip.Deflate(path) {
-        hs.loadEntry(fe, base)
+    for _, i := range zip.Deflate(path) {
+        hs.loadItem(i, base)
     }
 }
 
@@ -299,11 +299,11 @@ func (hs *HeapSet) loadFile(path, base string) {
     hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadEntry(e *file.Entry, base string) {
+func (hs *HeapSet) loadItem(i *file.Item, base string) {
     hs.atomicAdd(&heap.Heap{
-        Title: filepath.Join(base, e.Name),
-        Path: e.Path,
-        Base: e.Path,
+        Title: filepath.Join(base, i.Name),
+        Path: i.Path,
+        Base: i.Path,
         Type: types.Deflate,
     })
 }

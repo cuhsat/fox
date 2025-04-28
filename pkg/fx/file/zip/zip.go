@@ -16,13 +16,13 @@ func Detect(path string) bool {
     })
 }
 
-func Deflate(path string) (e []*file.Entry) {
+func Deflate(path string) (i []*file.Item) {
     r, err := zip.OpenReader(path)
 
     if err != nil {
         sys.Error(err)
  
-        e = append(e, &file.Entry{
+        i = append(i, &file.Item{
             Path: path,
             Name: path,
         })
@@ -56,7 +56,7 @@ func Deflate(path string) (e []*file.Entry) {
             continue
         }
 
-        e = append(e, &file.Entry{
+        i = append(i, &file.Item{
             Path: t.Name(),
             Name: f.Name,
         })
