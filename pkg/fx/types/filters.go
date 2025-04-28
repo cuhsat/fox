@@ -21,6 +21,10 @@ func (f *filters) String() string {
     return fmt.Sprintf("%v", *f)
 }
 
+func (f *filters) Type() string {
+    return "strings"
+}
+
 func (f *filters) Set(s string) error {
     *f = append(*f, s)
 
