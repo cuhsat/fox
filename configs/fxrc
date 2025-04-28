@@ -1,6 +1,13 @@
 # Forensic Examiner Example Config
+
+# UI theme
 Theme = "Default"
 
+# Scroll to end on reload
 Follow = false
+
+# Show line numbers
 Line = false
+
+# Wrap text
 Wrap = false

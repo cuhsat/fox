@@ -24,7 +24,7 @@ Print all lines with `John Doe` from all files
 fx -pe "John Doe"
 ```
 
-Print the first `512` bytes to `mbr` in hex
+Print the first `512` bytes from `nist.dd` to `mbr` in hex
 
 ```console
 fx -xhc 512 nist.dd > mbr

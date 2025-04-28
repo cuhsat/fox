@@ -37,14 +37,13 @@ const (
 type UI struct {
     ctx *context.Context
 
-    term tcell.Screen
+    root tcell.Screen
 
     themes *themes.Themes
 
-    title  *widgets.Title
-    view   *widgets.View
-    status *widgets.Status
-    
+    title   *widgets.Title
+    view    *widgets.View
+    status  *widgets.Status
     overlay *widgets.Overlay
 }
 
@@ -53,41 +52,41 @@ func New(m mode.Mode) *UI {
 
     runewidth.CreateLUT()
 
-    term, err := tcell.NewScreen()
+    root, err := tcell.NewScreen()
 
     if err != nil {
         sys.Panic(err)
     }
 
-    err = term.Init()
+    err = root.Init()
 
     if err != nil {
         sys.Panic(err)
     }
 
-    term.EnableMouse()
-    term.EnablePaste()
+    root.EnableMouse()
+    root.EnablePaste()
 
-    term.HideCursor()
+    root.HideCursor()
 
-    ctx := context.New()
+    ctx := context.New(root)
 
     ui := UI{
         ctx: ctx,
 
-        term: term,
+        root: root,
 
         themes: themes.New(ctx.Theme),
 
-        title:   widgets.NewTitle(ctx, term),
-        view:    widgets.NewView(ctx, term),
-        status:  widgets.NewStatus(ctx, term),
-        overlay: widgets.NewOverlay(ctx, term),
+        title:   widgets.NewTitle(ctx),
+        view:    widgets.NewView(ctx),
+        status:  widgets.NewStatus(ctx),
+        overlay: widgets.NewOverlay(ctx),
     }
 
-    term.SetCursorStyle(cursor, themes.Cursor)
-    term.SetStyle(themes.Base)
-    term.Sync()
+    root.SetCursorStyle(cursor, themes.Cursor)
+    root.SetStyle(themes.Base)
+    root.Sync()
 
     ui.state(m)
 
@@ -96,15 +95,16 @@ func New(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.Bind(func() {
-        ui.term.PostEvent(tcell.NewEventInterrupt(ui.ctx.Follow))
+        ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.Follow))
     }, func() {
-        ui.term.PostEvent(tcell.NewEventError(nil))
+        ui.root.PostEvent(tcell.NewEventError(nil))
     })
 
-    events, quit := make(chan tcell.Event, 16), make(chan struct{})
+    events := make(chan tcell.Event, 16)
+    signal := make(types.Signal, 16)
+    quit := make(chan struct{})
 
-    go ui.term.ChannelEvents(events, quit)
-
+    go ui.root.ChannelEvents(events, quit)
     go ui.overlay.Listen()
 
     for {
@@ -112,12 +112,23 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
         case _ = <-quit:
             return // channels closed
 
+        case si := <-signal:
+            switch si {
+            case types.Idle:
+                ui.ctx.Busy = false
+
+            case types.Busy:
+                ui.ctx.Busy = true
+            }
+
+            ui.root.PostEvent(tcell.NewEventInterrupt(nil))
+
         case ev := <-events:
             if ev == nil {
                 return // term closed
             }
 
-            w, h := ui.term.Size()
+            w, h := ui.root.Size()
 
             _, heap := hs.Current()
 
@@ -142,7 +153,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 ui.status.Value = v
 
             case *tcell.EventResize:
-                ui.term.Sync()
+                ui.root.Sync()
                 ui.view.Reset()
 
             case *tcell.EventError:
@@ -154,7 +165,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 btns := ev.Buttons()
 
                 if btns & tcell.ButtonMiddle != 0 {
-                    ui.term.GetClipboard()
+                    ui.root.GetClipboard()
                 } else if btns & tcell.WheelUp != 0 {
                     ui.view.ScrollUp(delta)
                 } else if btns & tcell.WheelDown != 0 {
@@ -162,7 +173,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 } else if btns & tcell.WheelLeft != 0 {
                     ui.view.ScrollLeft(delta)
                 } else if btns & tcell.WheelRight != 0 {
-                    ui.term.GetClipboard()
+                    ui.root.GetClipboard()
                 }
 
             case *tcell.EventKey:
@@ -211,14 +222,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         continue
                     }
 
-                    ui.term.GetClipboard()
+                    ui.root.GetClipboard()
 
                 case tcell.KeyCtrlC:
                     if ui.ctx.Mode == mode.Hex {
                         continue
                     }
 
-                    ui.term.SetClipboard(heap.Bytes())
+                    ui.root.SetClipboard(heap.Bytes())
 
                     ui.overlay.SendInfo("Copied to clipboard")
 
@@ -253,7 +264,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     }
 
                 case tcell.KeyCtrlZ:
-                    err := ui.term.Suspend()
+                    err := ui.root.Suspend()
 
                     if err != nil {
                         sys.Error(err)
@@ -262,7 +273,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                     sys.Shell()
 
-                    err = ui.term.Resume()
+                    err = ui.root.Resume()
 
                     if err != nil {
                         sys.Panic(err)
@@ -271,10 +282,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyCtrlT:
                     ui.ctx.Theme = ui.themes.Cycle()
 
-                    ui.term.Fill(' ', themes.Base)
-                    ui.term.Show()
+                    ui.root.Fill(' ', themes.Base)
+                    ui.root.Show()
 
-                    ui.term.SetCursorStyle(cursor, themes.Cursor)
+                    ui.root.SetCursorStyle(cursor, themes.Cursor)
 
                     ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
 
@@ -362,7 +373,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                     default:
                         ui.view.Reset()
-                        heap.AddFilter(v)
+                        heap.AddFilter(signal, v)
                         ui.state(mode.Less)
                     }
 
@@ -420,7 +431,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 func (ui *UI) Close() {
     ui.overlay.Close()
-    ui.term.Fini()
+    ui.root.Fini()
     ui.ctx.Save()
 }
 
@@ -445,20 +456,20 @@ func (ui *UI) state(m mode.Mode) {
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) {
-    defer ui.term.Show()
+    defer ui.root.Show()
 
     _, heap := hs.Current()
 
     if heap.Type == types.Stdin {
-        ui.term.Sync() // prevent hickups
+        ui.root.Sync() // prevent hickups
     }
 
-    ui.term.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
-    ui.term.SetStyle(themes.Base)
-    ui.term.Clear()
+    ui.root.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
+    ui.root.SetStyle(themes.Base)
+    ui.root.Clear()
 
     x, y := 0, 0
-    w, h := ui.term.Size()
+    w, h := ui.root.Size()
 
     for _, base := range [...]widgets.Queueable{
         ui.title,

@@ -10,7 +10,6 @@ import (
     "github.com/cuhsat/fx/pkg/fx/types/mode"
     "github.com/cuhsat/fx/pkg/ui/context"
     "github.com/cuhsat/fx/pkg/ui/themes"
-    "github.com/gdamore/tcell/v2"
 )
 
 const (
@@ -26,9 +25,9 @@ type Status struct {
     Value string
 }
 
-func NewStatus(ctx *context.Context, term tcell.Screen) *Status {
+func NewStatus(ctx *context.Context) *Status {
     return &Status{
-        base: base{ctx, term},
+        base: base{ctx},
 
         Lock: true,
         Value: "",
@@ -64,9 +63,9 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     st.print((w-text.Len(s)), y, s, themes.Surface1)
 
     if st.Lock {
-        st.term.HideCursor()
+        st.ctx.Root.HideCursor()
     } else {
-        st.term.ShowCursor(x + text.Len(f)-1, y)
+        st.ctx.Root.ShowCursor(x + text.Len(f)-1, y)
     }
 
     return 1
