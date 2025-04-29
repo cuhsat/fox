@@ -4,11 +4,11 @@ import (
     "bufio"
     "fmt"
     "os"
-    "path/filepath"
     "time"
     "strings"
 
     "github.com/cuhsat/fx/pkg/fx/sys"
+    "github.com/cuhsat/fx/pkg/fx/user"
 )
 
 const (
@@ -22,18 +22,13 @@ type History struct {
 }
 
 func New() *History {
+    var err error
+
     h := History{
         lines: make([]string, 0),
     }
 
-    dir, err := os.UserHomeDir()
-
-    if err != nil {
-        sys.Error(err)
-        dir = "."
-    }
-
-    p := filepath.Join(dir, filename)
+    _, p := user.Config(filename)
 
     h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 

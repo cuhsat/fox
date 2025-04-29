@@ -8,6 +8,7 @@ import (
     "github.com/cuhsat/fx/pkg/fx/text"
     "github.com/cuhsat/fx/pkg/fx/types"
     "github.com/cuhsat/fx/pkg/fx/types/smap"
+    "github.com/edsrzf/mmap-go"
 )
 
 const (
@@ -62,14 +63,14 @@ func Text(ctx *Context) TextBuffer {
         ctx.W -= (d + SpaceText)
     }
 
-    if ctx.Wrap && ctx.Heap.RMap == nil {
+    if ctx.Wrap && *ctx.Heap.RMap() == nil {
         ctx.Heap.Wrap(ctx.W)
     }
 
     if ctx.Wrap {
-        tb.SMap = ctx.Heap.RMap
+        tb.SMap = *ctx.Heap.RMap()
     } else {
-        tb.SMap = ctx.Heap.SMap
+        tb.SMap = *ctx.Heap.SMap()
     }
 
     tb.W, tb.H = tb.SMap.Size()
@@ -88,6 +89,8 @@ func Text(ctx *Context) TextBuffer {
 }
 
 func addLines(ctx *Context, tb *TextBuffer, d int) {
+    m := ctx.Heap.MMap()
+
     for i, s := range tb.SMap[ctx.Y:] {
         if i >= ctx.H {
             break
@@ -95,7 +98,7 @@ func addLines(ctx *Context, tb *TextBuffer, d int) {
 
         nr := fmt.Sprintf("%0*d", d, s.Nr)
 
-        str := unmap(ctx, s)
+        str := unmap(ctx, m, s)
 
         tb.Lines = append(tb.Lines, TextLine{
             Line: Line{Nr: nr, Str: trim(str, ctx.X, ctx.W)},
@@ -122,8 +125,8 @@ func addParts(ctx *Context, tb *TextBuffer, f string) {
     }
 }
 
-func unmap(ctx *Context, s *smap.String) string {
-    str := string(ctx.Heap.MMap[s.Start:s.End])
+func unmap(ctx *Context, m *mmap.MMap, s *smap.String) string {
+    str := string((*m)[s.Start:s.End])
 
     // replace tabulators
     str = strings.ReplaceAll(str, "\t", BlankTab)

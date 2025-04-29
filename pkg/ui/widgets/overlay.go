@@ -58,7 +58,7 @@ func (o *Overlay) Listen() {
         o.buffer = nil
         o.m.Unlock()
 
-        o.ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
+        o.ctx.Interrupt()
     }
 }
 

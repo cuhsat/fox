@@ -10,8 +10,8 @@ import (
 )
 
 const (
-    busy = " \u25CB "
-    idle = " \u25CF "
+    busy = " \u25cb " // ○︎
+    idle = " \u25cf " // ●︎
 )
 
 type Title struct {
@@ -31,7 +31,7 @@ func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     var b string
 
-    if t.ctx.Busy {
+    if t.ctx.IsBusy() {
         b = busy
     } else {
         b = idle

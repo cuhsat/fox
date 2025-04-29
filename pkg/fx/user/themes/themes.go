@@ -1,11 +1,8 @@
 package themes
 
 import (
-    "errors"
-    "os"
-    "path/filepath"
-
     "github.com/cuhsat/fx/pkg/fx/sys"
+    "github.com/cuhsat/fx/pkg/fx/user"
     "github.com/BurntSushi/toml"
 )
 
@@ -39,25 +36,13 @@ type Style struct {
 func New() *Themes {
     ts := new(Themes)
 
-    dir, err := os.UserHomeDir()
+    is, p := user.Config(filename)
 
-    if err != nil {
-        sys.Error(err)
-        dir = "."
-    }
-
-    p := filepath.Join(dir, filename)
-
-    _, err = os.Stat(p)
-
-    if errors.Is(err, os.ErrNotExist) {
-        return nil
-    } else if err != nil {
-        sys.Error(err)
+    if !is {
         return nil
     }
 
-    _, err = toml.DecodeFile(p, &ts)
+    _, err := toml.DecodeFile(p, &ts)
 
     if err != nil {
         sys.Error(err)

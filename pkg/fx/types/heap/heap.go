@@ -4,6 +4,7 @@ import (
     "bytes"
     "os"
     "runtime"
+    "sync"
  
     "github.com/cuhsat/fx/pkg/fx/file"
     "github.com/cuhsat/fx/pkg/fx/types"
@@ -13,18 +14,17 @@ import (
 )
 
 type Heap struct {
+    sync.RWMutex
+
     Title string      // heap title
     Path  string      // file path
     Base  string      // base path
 
     Type types.Heap   // heap type
 
-    Head int          // head offset
-    Tail int          // tail offset
-
-    MMap mmap.MMap    // memory map
-    RMap smap.SMap    // render map
-    SMap smap.SMap    // string map (current)
+    mmap mmap.MMap    // memory map
+    rmap smap.SMap    // render map
+    smap smap.SMap    // string map (current)
     omap smap.SMap    // string map (original)
 
     chain []*Link     // filter chain
@@ -37,6 +37,24 @@ type Heap struct {
 type Link struct {
     Name string    // filter name
     smap smap.SMap // filter string map
+}
+
+func (h *Heap) MMap() *mmap.MMap {
+    h.RLock()
+    defer h.RUnlock()
+    return &h.mmap
+}
+
+func (h *Heap) SMap() *smap.SMap {
+    h.RLock()
+    defer h.RUnlock()
+    return &h.smap
+}
+
+func (h *Heap) RMap() *smap.SMap {
+    h.RLock()
+    defer h.RUnlock()
+    return &h.rmap
 }
 
 func (h *Heap) String() string {
@@ -57,11 +75,15 @@ func (h *Heap) String() string {
 func (h *Heap) Reload() {
     var err error
 
+    h.Lock()
+
     if h.file == nil {
         h.file = sys.Open(h.Path)
     }
 
     fi, err := h.file.Stat()
+
+    h.Unlock()
 
     if err != nil {
         sys.Error(err)
@@ -72,11 +94,15 @@ func (h *Heap) Reload() {
         return
     }
 
-    if h.MMap != nil {
-        h.MMap.Unmap()
+    h.Lock()
+
+    if h.mmap != nil {
+        h.mmap.Unmap()
     }
 
-    h.MMap, err = mmap.Map(h.file, mmap.RDONLY, 0)
+    h.mmap, err = mmap.Map(h.file, mmap.RDONLY, 0)
+
+    h.Unlock()
 
     if err != nil {
         sys.Error(err)
@@ -85,63 +111,91 @@ func (h *Heap) Reload() {
 
     l := types.Limits()
 
+    h.Lock()
+
     // reduce mmap
-    h.MMap, h.Head, h.Tail = l.ReduceMMap(h.MMap)
+    h.mmap = l.ReduceMMap(h.mmap)
 
     // reduce smap
-    h.SMap = l.ReduceSMap(smap.Map(h.MMap))
+    h.smap = l.ReduceSMap(smap.Map(h.mmap))
 
-    h.RMap = nil
-    h.omap = h.SMap
+    h.rmap = nil
+    h.omap = h.smap
     h.hash = make(Hash)
+
+    h.Unlock()
 
     h.Filter()
 }
 
 func (h *Heap) Loaded() bool {
+    h.RLock()
+    defer h.RUnlock()
     return h.file != nil
 }
 
 func (h *Heap) Length() int {
+    h.RLock()
+    defer h.RUnlock()
     return len(h.omap)
+}
+
+func (h *Heap) Lines() int {
+    h.RLock()
+    defer h.RUnlock()
+    return len(h.smap)
 }
 
 func (h *Heap) Bytes() []byte {
     var buf bytes.Buffer
 
-    for i, s := range h.SMap {
+    h.RLock()
+
+    for i, s := range h.smap {
         end := s.End
 
-        if i < len(h.SMap)-1 {
+        if i < len(h.smap)-1 {
             end += 1 // include breaks between strings
         }
 
-        _, err := buf.Write(h.MMap[s.Start:end])
+        _, err := buf.Write(h.mmap[s.Start:end])
 
         if err != nil {
             sys.Error(err)
         }
     }
 
+    h.RUnlock()
+
     return buf.Bytes()
 }
 
 func (h *Heap) Wrap(w int) {
-    if h.RMap != nil {
+    h.RLock()
+    cached := h.rmap != nil
+    h.RUnlock()
+
+    if cached {
         return // use cache
     }
 
+    h.Lock()
+
     if file.CanIndent(h.Path) {
-        h.RMap = h.SMap.Indent(h.MMap)
+        h.rmap = h.smap.Indent(h.mmap)
     } else {
-        h.RMap = h.SMap.Wrap(w)
+        h.rmap = h.smap.Wrap(w)
     }
+
+    h.Unlock()
 }
 
 func (h *Heap) ThrowAway() {
-    if h.MMap != nil {
-        h.MMap.Unmap()
-        h.MMap = nil
+    h.Lock()
+
+    if h.mmap != nil {
+        h.mmap.Unmap()
+        h.mmap = nil
     }
 
     if h.file != nil {
@@ -149,9 +203,11 @@ func (h *Heap) ThrowAway() {
         h.file = nil
     }
 
-    h.RMap = nil
-    h.SMap = nil
+    h.rmap = nil
+    h.smap = nil
     h.omap = nil
+
+    h.Unlock()
 
     runtime.GC()
 }

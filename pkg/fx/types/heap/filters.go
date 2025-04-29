@@ -17,12 +17,16 @@ type chunk struct {
 }
 
 func (h* Heap) Filter() {
+    h.Lock()
+
     // reset maps
-    h.SMap = h.omap
-    h.RMap = nil
+    h.smap = h.omap
+    h.rmap = nil
 
     // reset chain
     h.chain = h.chain[:0]
+
+    h.Unlock()
 
     // apply global filters
     fs := *types.Filters()
@@ -42,18 +46,24 @@ func (h *Heap) DelFilter() {
     h.delLink()
 }
 
-// TODO: Must be a thread-safe goroutine
 func (h *Heap) addLink(name string) {
-    h.SMap = h.find([]byte(name))
-    h.RMap = nil
+    s := h.find([]byte(name), h.Lines())
+
+    h.Lock()
+
+    h.smap = s
+    h.rmap = nil
 
     h.chain = append(h.chain, &Link{
-        name, h.SMap,
+        name, h.smap,
     })
+
+    h.Unlock()
 }
 
-// TODO: Must be a thread-safe goroutine
 func (h *Heap) delLink() {
+    h.Lock()
+
     l := len(h.chain)
 
     if l > 0 {
@@ -62,23 +72,25 @@ func (h *Heap) delLink() {
 
     l -= 1
 
-    h.RMap = nil
+    h.rmap = nil
 
     if l > 0 {
-        h.SMap = h.chain[l-1].smap
+        h.smap = h.chain[l-1].smap
     } else {
-        h.SMap = h.omap
+        h.smap = h.omap
     }
+
+    h.Unlock()
 }
 
-func (h *Heap) find(b []byte) smap.SMap {
-    ch := make(chan *smap.String, len(h.SMap))
+func (h *Heap) find(b []byte, bs int) smap.SMap {
+    ch := make(chan *smap.String, bs)
 
     defer close(ch)
 
     var wg sync.WaitGroup
 
-    for _, c := range chunks(h) {
+    for _, c := range chunks(bs) {
         wg.Add(1)
 
         go func() {
@@ -92,8 +104,7 @@ func (h *Heap) find(b []byte) smap.SMap {
     return sort(ch)
 }
 
-func chunks(h *Heap) (c []*chunk) {
-    n := len(h.SMap)
+func chunks(n int) (c []*chunk) {
     m := min(runtime.GOMAXPROCS(0), n)
 
     for i := 0; i < m; i++ {
@@ -109,11 +120,15 @@ func chunks(h *Heap) (c []*chunk) {
 func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
     re, _ := regexp.Compile(string(b))
 
-    for _, s := range h.SMap[c.min:c.max] {
-        if re.Match(h.MMap[s.Start:s.End]) {
+    h.RLock()
+
+    for _, s := range h.smap[c.min:c.max] {
+        if re.Match(h.mmap[s.Start:s.End]) {
             ch <- s
         }
     }
+
+    h.RUnlock()
 }
 
 func sort(ch <-chan *smap.String) (s smap.SMap) {
