@@ -5,6 +5,7 @@ import (
     "strings"
 
     "github.com/cuhsat/fx/pkg/fx/text"
+    "github.com/cuhsat/fx/pkg/fx/types"
 )
 
 const (
@@ -47,8 +48,9 @@ func Hex(ctx *Context) HexBuffer {
     cols := int(float64((ctx.W - off_w) + SpaceHex) / 3.5)
     cols -= cols % 2
 
-    mmap := ctx.Heap.MMap
-    tail := ctx.Heap.Tail
+    mmap := *ctx.Heap.MMap()
+
+    tail := types.Limits().Tail.Bytes
 
     hex_w := int(float64(cols) * 2.5)
 

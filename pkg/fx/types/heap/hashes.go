@@ -32,7 +32,9 @@ func (h *Heap) Sha256() []byte {
 }
 
 func (h *Heap) HashSum(algo string) []byte {
+    h.RLock()
     sum, ok := h.hash[algo]
+    h.RUnlock()
 
     if ok {
         return sum
@@ -49,7 +51,6 @@ func (h *Heap) HashSum(algo string) []byte {
         imp = sha256.New()
     default:
         sys.Error("hash not supported")
-
         return sum
     }
 
@@ -65,7 +66,9 @@ func (h *Heap) HashSum(algo string) []byte {
 
     sum = imp.Sum(nil)
 
+    h.Lock()
     h.hash[algo] = sum
+    h.Unlock()
 
     return sum
 }

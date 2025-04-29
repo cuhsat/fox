@@ -76,7 +76,7 @@ func New(m mode.Mode) *UI {
 
         root: root,
 
-        themes: themes.New(ctx.Theme),
+        themes: themes.New(ctx.Theme()),
 
         title:   widgets.NewTitle(ctx),
         view:    widgets.NewView(ctx),
@@ -95,7 +95,7 @@ func New(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
     hs.Bind(func() {
-        ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.Follow))
+        ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
     }, func() {
         ui.root.PostEvent(tcell.NewEventError(nil))
     })
@@ -129,7 +129,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 }
 
             case *tcell.EventClipboard:
-                if ui.ctx.Mode == mode.Hex {
+                if ui.ctx.Mode() == mode.Hex {
                     continue
                 }
 
@@ -170,7 +170,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 page_w := w-1 // minus text abbreviation
                 page_h := h-2 // minus title and status
 
-                if ui.ctx.Line {
+                if ui.ctx.IsLine() {
                     page_w -= text.Dec(heap.Length()) + buffer.SpaceText
                 }
 
@@ -206,14 +206,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     hs.Sha256()
 
                 case tcell.KeyCtrlV:
-                    if ui.ctx.Mode == mode.Hex {
+                    if ui.ctx.Mode() == mode.Hex {
                         continue
                     }
 
                     ui.root.GetClipboard()
 
                 case tcell.KeyCtrlC:
-                    if ui.ctx.Mode == mode.Hex {
+                    if ui.ctx.Mode() == mode.Hex {
                         continue
                     }
 
@@ -222,7 +222,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     ui.overlay.SendInfo("Copied to clipboard")
 
                 case tcell.KeyCtrlS, tcell.KeyPrint:
-                    if ui.ctx.Mode == mode.Hex {
+                    if ui.ctx.Mode() == mode.Hex {
                         continue
                     }
 
@@ -245,9 +245,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyCtrlQ:
                     ui.view.Reset()
 
-                    heap = hs.CloseHeap()
-
-                    if heap == nil {
+                    if hs.CloseHeap() == nil {
                         return // exit
                     }
 
@@ -268,27 +266,27 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                     }
 
                 case tcell.KeyCtrlT:
-                    ui.ctx.Theme = ui.themes.Cycle()
+                    ui.ctx.ChangeTheme(ui.themes.Cycle())
 
                     ui.root.Fill(' ', themes.Base)
                     ui.root.Show()
 
                     ui.root.SetCursorStyle(cursor, themes.Cursor)
 
-                    ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme))
+                    ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
 
                 case tcell.KeyCtrlF:
-                    if ui.ctx.Mode != mode.Hex {
+                    if ui.ctx.Mode() != mode.Hex {
                         ui.ctx.ToggleFollow()
                     }
 
                 case tcell.KeyCtrlN:
-                    if ui.ctx.Mode != mode.Hex {
+                    if ui.ctx.Mode() != mode.Hex {
                         ui.ctx.ToggleNumbers()
                     }
 
                 case tcell.KeyCtrlW:
-                    if ui.ctx.Mode != mode.Hex {
+                    if ui.ctx.Mode() != mode.Hex {
                         ui.ctx.ToggleWrap()
                         ui.view.Reset()
                     }
@@ -350,18 +348,22 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
                     hi.AddCommand(v)
 
-                    switch ui.ctx.Mode {
+                    switch ui.ctx.Mode() {
                     case mode.Goto:
                         ui.view.Goto(v)
-                        ui.state(ui.ctx.Last)
+                        ui.state(ui.ctx.Last())
 
                     case mode.Open:
-                        hs.Open(v)
-                        ui.state(ui.ctx.Last)
+                        ui.async(func() {
+                            hs.Open(v)
+                        })
+                        ui.state(ui.ctx.Last())
 
                     default:
                         ui.view.Reset()
-                        heap.AddFilter(v)
+                        ui.async(func() {
+                            heap.AddFilter(v)
+                        })
                         ui.state(mode.Less)
                     }
 
@@ -377,14 +379,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyBackspace2:
                     if len(ui.status.Value) > 0 {
                         ui.status.DelRune()
-                    } else if ui.ctx.Mode == mode.Goto {
-                        ui.state(ui.ctx.Last)
-                    } else if ui.ctx.Mode == mode.Open {
-                        ui.state(ui.ctx.Last)
+                    } else if ui.ctx.Mode() == mode.Goto {
+                        ui.state(ui.ctx.Last())
+                    } else if ui.ctx.Mode() == mode.Open {
+                        ui.state(ui.ctx.Last())
                     } else if len(*types.Filters()) > 0 {
                         ui.view.Reset()
-                        heap.DelFilter()
-                    } else if ui.ctx.Mode == mode.Grep {
+                        ui.async(heap.DelFilter)
+                    } else if ui.ctx.Mode() == mode.Grep {
                         ui.state(mode.Less)
                     }
 
@@ -403,7 +405,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                         }
 
                     default: // all other keys
-                        if ui.ctx.Mode == mode.Less {
+                        if ui.ctx.Mode() == mode.Less {
                             ui.state(mode.Grep)
                         }
 
@@ -423,6 +425,14 @@ func (ui *UI) Close() {
     ui.ctx.Save()
 }
 
+func (ui *UI) async(fn func()) {
+    go func() {
+        ui.ctx.Busy()
+        fn()
+        ui.ctx.Idle()
+    }()
+}
+
 func (ui *UI) state(m mode.Mode) {
     if !ui.ctx.SwitchMode(m) {
         return
@@ -438,7 +448,7 @@ func (ui *UI) state(m mode.Mode) {
         ui.status.Lock = false
     }
 
-    if ui.ctx.Last == mode.Hex || m == mode.Hex {
+    if ui.ctx.Last() == mode.Hex || m == mode.Hex {
         ui.view.Reset()
     }
 }

@@ -85,8 +85,11 @@ func (bag *Bag) Put(h *heap.Heap) bool {
     bag.w.WriteTime(time.Now())
     bag.w.WriteHash(h.Sha256())
 
-    for _, s := range h.SMap {
-        bag.w.WriteLine(s.Nr, string(h.MMap[s.Start:s.End]))
+    smap := *h.SMap()
+    mmap := *h.MMap()
+
+    for _, s := range smap {
+        bag.w.WriteLine(s.Nr, string(mmap[s.Start:s.End]))
     }
 
     bag.w.Finalize()

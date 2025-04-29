@@ -10,8 +10,8 @@ func (v *View) hexRender(x, y, w, h int) {
 
     buf := buffer.Hex(&buffer.Context{
         Heap: v.heap,
-        Line: v.ctx.Line,
-        Wrap: v.ctx.Wrap,
+        Line: v.ctx.IsLine(),
+        Wrap: v.ctx.IsWrap(),
         X: v.delta_x,
         Y: v.delta_y,
         W: w - (rule_w * 2),

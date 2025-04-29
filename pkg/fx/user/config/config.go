@@ -2,11 +2,10 @@ package config
 
 import (
     "bytes"
-    "errors"
     "os"
-    "path/filepath"
 
     "github.com/cuhsat/fx/pkg/fx/sys"
+    "github.com/cuhsat/fx/pkg/fx/user"
     "github.com/BurntSushi/toml"
 )
 
@@ -24,24 +23,13 @@ type Config struct {
 func New() *Config {
     cfg := new(Config)
 
-    dir, err := os.UserHomeDir()
+    is, p := user.Config(filename)
 
-    if err != nil {
-        sys.Error(err)
-        dir = "."
-    }
-
-    p := filepath.Join(dir, filename)
-
-    _, err = os.Stat(p)
-
-    if errors.Is(err, os.ErrNotExist) {
+    if !is {
         return cfg
-    } else if err != nil {
-        sys.Error(err)
     }
 
-    _, err = toml.DecodeFile(p, &cfg)
+    _, err := toml.DecodeFile(p, &cfg)
 
     if err != nil {
         sys.Error(err)
@@ -70,14 +58,7 @@ func (cfg *Config) Save() {
         return
     }
 
-    dir, err := os.UserHomeDir()
-
-    if err != nil {
-        sys.Error(err)
-        dir = "."
-    }
-
-    p := filepath.Join(dir, filename)
+    _, p := user.Config(filename)
 
     err = os.WriteFile(p, buf.Bytes(), 0600)
 

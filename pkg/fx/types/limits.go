@@ -26,20 +26,16 @@ func Limits() *limits {
     return _limits;
 }
 
-func (l *limits) ReduceMMap(m mmap.MMap) (mmap.MMap, int, int) {
-    h, t := 0, 0
-
+func (l *limits) ReduceMMap(m mmap.MMap) mmap.MMap {
     if l.Head.Bytes > 0 {
-        h = min(l.Head.Bytes, len(m))
-        m = m[:h]
+        m = m[:min(l.Head.Bytes, len(m))]
     }
 
     if l.Tail.Bytes > 0 {
-        t = max(len(m) - l.Tail.Bytes, 0)
-        m = m[t:]
+        m = m[max(len(m) - l.Tail.Bytes, 0):]
     }
 
-    return m, h, t
+    return m
 }
 
 func (l *limits) ReduceSMap(s smap.SMap) smap.SMap {

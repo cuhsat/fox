@@ -37,7 +37,7 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
     h -= 1 // fill all but least line
 
-    if v.ctx.Mode == mode.Hex {
+    if v.ctx.Mode() == mode.Hex {
         v.hexRender(x, y, w, h)
     } else {
         v.textRender(x, y, w, h)
@@ -52,7 +52,7 @@ func (v *View) Reset() {
 }
 
 func (v *View) Goto(s string) {
-    if v.ctx.Mode != mode.Hex {
+    if v.ctx.Mode() != mode.Hex {
         v.textGoto(s)
     }
 }

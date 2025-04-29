@@ -43,7 +43,7 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     // render mode
     st.print(x, y, m, themes.Surface3)
 
-    if st.ctx.Mode == mode.Hex {
+    if st.ctx.Mode() == mode.Hex {
         return 1
     }
 
@@ -55,7 +55,7 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
     s := st.fmtStatus(heap)
 
     // render filters
-    if st.ctx.Mode == mode.Grep || len(f) > 2 {
+    if st.ctx.Mode() == mode.Grep || len(f) > 2 {
         st.print(x, y, text.Abr(f, w - (x + text.Len(s))), themes.Surface1)
     }
 
@@ -92,7 +92,7 @@ func (st *Status) Accept() (s string) {
 }
 
 func (st *Status) fmtMode() string {
-    return fmt.Sprintf(" %s ", st.ctx.Mode)
+    return fmt.Sprintf(" %s ", st.ctx.Mode())
 }
 
 func (st *Status) fmtFilters(h *heap.Heap) (s string) {
@@ -108,17 +108,17 @@ func (st *Status) fmtFilters(h *heap.Heap) (s string) {
 func (st *Status) fmtStatus(h *heap.Heap) string {
     f, n, w := "·", "·", "·"
 
-    if st.ctx.Follow {
+    if st.ctx.IsFollow() {
         f = follow
     }
 
-    if st.ctx.Line {
+    if st.ctx.IsLine() {
         n = line
     }
 
-    if st.ctx.Wrap {
+    if st.ctx.IsWrap() {
         w = wrap
     }
 
-    return fmt.Sprintf(" %d %s%s%s ", len(h.SMap), f, n, w)
+    return fmt.Sprintf(" %d %s%s%s ", h.Lines(), f, n, w)
 }

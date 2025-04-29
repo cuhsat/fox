@@ -11,8 +11,8 @@ import (
 func (v *View) textRender(x, y, w, h int) {
     buf := buffer.Text(&buffer.Context{
         Heap: v.heap,
-        Line: v.ctx.Line,
-        Wrap: v.ctx.Wrap,
+        Line: v.ctx.IsLine(),
+        Wrap: v.ctx.IsWrap(),
         X: v.delta_x,
         Y: v.delta_y,
         W: w,
@@ -21,7 +21,7 @@ func (v *View) textRender(x, y, w, h int) {
 
     v.smap = buf.SMap
 
-    if v.ctx.Line {
+    if v.ctx.IsLine() {
         w -= text.Dec(v.heap.Length()) + buffer.SpaceText
     }
 
@@ -35,7 +35,7 @@ func (v *View) textRender(x, y, w, h int) {
         line_y := y + i
 
         // line number
-        if v.ctx.Line {
+        if v.ctx.IsLine() {
             v.print(line_x, line_y, line.Nr, themes.Subtext0)
             line_x += len(line.Nr) + buffer.SpaceText
         }
@@ -51,7 +51,7 @@ func (v *View) textRender(x, y, w, h int) {
         part_x := x + part.X
         part_y := y + part.Y
 
-        if v.ctx.Line {
+        if v.ctx.IsLine() {
             part_x += len(buf.Lines[0].Nr) + buffer.SpaceText
         }
 
