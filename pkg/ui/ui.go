@@ -288,6 +288,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
                 case tcell.KeyCtrlW:
                     if ui.ctx.Mode() != mode.Hex {
                         ui.ctx.ToggleWrap()
+
+                        ui.async(func() {
+                            heap.Wrap(page_w)
+                        })                            
+
                         ui.view.Reset()
                     }
 
