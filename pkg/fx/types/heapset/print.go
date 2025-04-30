@@ -1,51 +1,51 @@
 package heapset
 
 import (
-    "fmt"
-    "math"
+	"fmt"
+	"math"
 
-    "github.com/cuhsat/fx/pkg/fx/text"
-    "github.com/cuhsat/fx/pkg/fx/types"
-    "github.com/cuhsat/fx/pkg/fx/types/buffer"
+	"github.com/cuhsat/fx/pkg/fx/text"
+	"github.com/cuhsat/fx/pkg/fx/types"
+	"github.com/cuhsat/fx/pkg/fx/types/buffer"
 )
 
 type Printable interface {
-    String() string
+	String() string
 }
 
 func (hs *HeapSet) Print(hex bool) {
-    ctx := buffer.Context{
-        Line: true,
-        Wrap: false,
-        X: 0,
-        Y: 0,
-        W: math.MaxInt,
-        H: math.MaxInt,
-    }
+	ctx := buffer.Context{
+		Line: true,
+		Wrap: false,
+		X:    0,
+		Y:    0,
+		W:    math.MaxInt,
+		H:    math.MaxInt,
+	}
 
-    hs.RLock()
+	hs.RLock()
 
-    for _, h := range hs.heaps {
-        if h.Type == types.Stdin {
-            continue
-        }
+	for _, h := range hs.heaps {
+		if h.Type == types.Stdin {
+			continue
+		}
 
-        if !h.Loaded() {
-            h.Reload()
-        }
+		if !h.Loaded() {
+			h.Reload()
+		}
 
-        ctx.Heap = h
+		ctx.Heap = h
 
-        if hex {
-            ctx.W = 67 // use default width
+		if hex {
+			ctx.W = 67 // use default width
 
-            fmt.Println(text.Title(h.String(), ctx.W))
+			fmt.Println(text.Title(h.String(), ctx.W))
 
-            fmt.Println(buffer.Hex(&ctx))
-        } else {
-            fmt.Println(buffer.Text(&ctx))
-        }
-    }
+			fmt.Println(buffer.Hex(&ctx))
+		} else {
+			fmt.Println(buffer.Text(&ctx))
+		}
+	}
 
-    hs.RUnlock()
+	hs.RUnlock()
 }

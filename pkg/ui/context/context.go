@@ -1,147 +1,148 @@
 package context
 
 import (
-    "sync"
-    "sync/atomic"
+	"sync"
+	"sync/atomic"
 
-    "github.com/cuhsat/fx/pkg/fx/types/mode"
-    "github.com/cuhsat/fx/pkg/fx/user/config"
-    "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
+
+	"github.com/cuhsat/fx/pkg/fx/types/mode"
+	"github.com/cuhsat/fx/pkg/fx/user/config"
 )
 
 type Context struct {
-    sync.RWMutex
+	sync.RWMutex
 
-    Root tcell.Screen
+	Root tcell.Screen
 
-    cfg config.Config
+	cfg config.Config
 
-    mode mode.Mode
-    last mode.Mode
+	mode mode.Mode
+	last mode.Mode
 
-    theme string
+	theme string
 
-    follow atomic.Bool
-    line   atomic.Bool
-    wrap   atomic.Bool
-    busy   atomic.Bool
+	follow atomic.Bool
+	line   atomic.Bool
+	wrap   atomic.Bool
+	busy   atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
-    cfg := *config.New()
-    ctx := &Context{
-        // screen
-        Root: root,
+	cfg := *config.New()
+	ctx := &Context{
+		// screen
+		Root: root,
 
-        // config
-        cfg: cfg,
+		// config
+		cfg: cfg,
 
-        // modes
-        mode: mode.Default,
-        last: mode.Default,
+		// modes
+		mode: mode.Default,
+		last: mode.Default,
 
-        // theme
-        theme: cfg.Theme,
-    }
+		// theme
+		theme: cfg.Theme,
+	}
 
-    // flags
-    ctx.follow.Store(cfg.Follow)
-    ctx.line.Store(cfg.Line)
-    ctx.wrap.Store(cfg.Wrap)
-    ctx.busy.Store(false)
+	// flags
+	ctx.follow.Store(cfg.Follow)
+	ctx.line.Store(cfg.Line)
+	ctx.wrap.Store(cfg.Wrap)
+	ctx.busy.Store(false)
 
-    return ctx
+	return ctx
 }
 
 func (ctx *Context) Mode() mode.Mode {
-    ctx.RLock()
-    defer ctx.RUnlock()
-    return ctx.mode
+	ctx.RLock()
+	defer ctx.RUnlock()
+	return ctx.mode
 }
 
 func (ctx *Context) Last() mode.Mode {
-    ctx.RLock()
-    defer ctx.RUnlock()
-    return ctx.last
+	ctx.RLock()
+	defer ctx.RUnlock()
+	return ctx.last
 }
 
 func (ctx *Context) Theme() string {
-    ctx.RLock()
-    defer ctx.RUnlock()
-    return ctx.theme
+	ctx.RLock()
+	defer ctx.RUnlock()
+	return ctx.theme
 }
 
 func (ctx *Context) IsFollow() bool {
-    return ctx.follow.Load()
+	return ctx.follow.Load()
 }
 
 func (ctx *Context) IsLine() bool {
-    return ctx.line.Load()
+	return ctx.line.Load()
 }
 
 func (ctx *Context) IsWrap() bool {
-    return ctx.wrap.Load()
+	return ctx.wrap.Load()
 }
 
 func (ctx *Context) IsBusy() bool {
-    return ctx.busy.Load()
+	return ctx.busy.Load()
 }
 
 func (ctx *Context) Interrupt() {
-    ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
+	ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
 }
 
 func (ctx *Context) SwitchMode(m mode.Mode) bool {
-    // deny goto in hex mode
-    if m == mode.Goto && ctx.Mode() == mode.Hex {
-        return false
-    }
+	// deny goto in hex mode
+	if m == mode.Goto && ctx.Mode() == mode.Hex {
+		return false
+	}
 
-    // react only to mode changes
-    if m == ctx.Mode() {
-        return false
-    }
+	// react only to mode changes
+	if m == ctx.Mode() {
+		return false
+	}
 
-    ctx.Lock()
-    ctx.last = ctx.mode
-    ctx.mode = m
-    ctx.Unlock()
+	ctx.Lock()
+	ctx.last = ctx.mode
+	ctx.mode = m
+	ctx.Unlock()
 
-    return true
+	return true
 }
 
 func (ctx *Context) ChangeTheme(t string) {
-    ctx.Lock()
-    ctx.theme = t
-    ctx.Unlock()
+	ctx.Lock()
+	ctx.theme = t
+	ctx.Unlock()
 }
 
 func (ctx *Context) ToggleFollow() {
-    ctx.follow.Store(!ctx.follow.Load())
+	ctx.follow.Store(!ctx.follow.Load())
 }
 
 func (ctx *Context) ToggleNumbers() {
-    ctx.line.Store(!ctx.line.Load())
+	ctx.line.Store(!ctx.line.Load())
 }
 
 func (ctx *Context) ToggleWrap() {
-    ctx.wrap.Store(!ctx.wrap.Load())
+	ctx.wrap.Store(!ctx.wrap.Load())
 }
 
 func (ctx *Context) Busy() {
-    ctx.busy.Store(true)
-    ctx.Interrupt()
+	ctx.busy.Store(true)
+	ctx.Interrupt()
 }
 
 func (ctx *Context) Idle() {
-    ctx.busy.Store(false)
-    ctx.Interrupt()
+	ctx.busy.Store(false)
+	ctx.Interrupt()
 }
 
 func (ctx *Context) Save() {
-    ctx.cfg.Theme = ctx.Theme()
-    ctx.cfg.Follow = ctx.IsFollow()
-    ctx.cfg.Line = ctx.IsLine()
-    ctx.cfg.Wrap = ctx.IsWrap()
-    ctx.cfg.Save()
+	ctx.cfg.Theme = ctx.Theme()
+	ctx.cfg.Follow = ctx.IsFollow()
+	ctx.cfg.Line = ctx.IsLine()
+	ctx.cfg.Wrap = ctx.IsWrap()
+	ctx.cfg.Save()
 }

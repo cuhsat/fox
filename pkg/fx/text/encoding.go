@@ -1,42 +1,42 @@
 package text
 
 import (
-    "strings"
-    "unicode"
+	"strings"
+	"unicode"
 )
 
 const (
-    minASCII = 0x20
-    maxASCII = 0x7f
+	minASCII = 0x20
+	maxASCII = 0x7f
 )
 
 const (
-    notASCII   = '.'
-    notUnicode = '·'
+	notASCII   = '.'
+	notUnicode = '·'
 )
 
 func ToASCII(s string) string {
-    var sb strings.Builder
+	var sb strings.Builder
 
-    for _, r := range s {
-        sb.WriteRune(AsASCII(r))
-    }
+	for _, r := range s {
+		sb.WriteRune(AsASCII(r))
+	}
 
-    return sb.String()
+	return sb.String()
 }
 
 func AsASCII(r rune) rune {
-    if r < minASCII || r > maxASCII {
-        return notASCII
-    }
+	if r < minASCII || r > maxASCII {
+		return notASCII
+	}
 
-    return r
+	return r
 }
 
 func AsUnicode(r rune) rune {
-    if !unicode.IsPrint(r) {
-        return notUnicode
-    }
+	if !unicode.IsPrint(r) {
+		return notUnicode
+	}
 
-    return r
+	return r
 }

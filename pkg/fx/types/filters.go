@@ -1,7 +1,7 @@
 package types
 
 import (
-    "fmt"
+	"fmt"
 )
 
 type filters []string
@@ -10,27 +10,27 @@ type filters []string
 var _filters *filters = nil
 
 func Filters() *filters {
-    if _filters == nil {
-        _filters = new(filters)
-    }
+	if _filters == nil {
+		_filters = new(filters)
+	}
 
-    return _filters;
+	return _filters
 }
 
 func (f *filters) String() string {
-    return fmt.Sprintf("%v", *f)
+	return fmt.Sprintf("%v", *f)
 }
 
 func (f *filters) Type() string {
-    return "strings"
+	return "strings"
 }
 
 func (f *filters) Set(s string) error {
-    *f = append(*f, s)
+	*f = append(*f, s)
 
-    return nil
+	return nil
 }
 
 func (f *filters) Pop() {
-    *f = (*f)[:len(*f)-1]
+	*f = (*f)[:len(*f)-1]
 }

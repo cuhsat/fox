@@ -3,17 +3,17 @@ package types
 type Heap int
 
 const (
-    Regular Heap = iota
-    Stdin
-    Stdout
-    Stderr
-    Deflate
+	Regular Heap = iota
+	Stdin
+	Stdout
+	Stderr
+	Deflate
 )
 
 type Export int
 
 const (
-    Text Export = iota
-    Json
-    Jsonl
+	Text Export = iota
+	Json
+	Jsonl
 )
