@@ -343,7 +343,6 @@ func (hs *HeapSet) atomicAdd(h *heap.Heap) {
 func (hs *HeapSet) atomicGet(idx int32) *heap.Heap {
 	hs.RLock()
 	defer hs.RUnlock()
-
 	return hs.heaps[idx]
 }
 
