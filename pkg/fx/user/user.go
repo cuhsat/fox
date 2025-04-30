@@ -9,23 +9,23 @@ import (
 )
 
 func Config(name string) (bool, string) {
-    dir, err := os.UserHomeDir()
+	dir, err := os.UserHomeDir()
 
-    if err != nil {
-        sys.Error(err)
-        dir = "."
-    }
+	if err != nil {
+		sys.Error(err)
+		dir = "."
+	}
 
-    path := filepath.Join(dir, name)
+	path := filepath.Join(dir, name)
 
-    _, err = os.Stat(path)
+	_, err = os.Stat(path)
 
-    if errors.Is(err, os.ErrNotExist) {
-        return false, path
-    } else if err != nil {
-        sys.Error(err)
-        return false, ""
-    }
+	if errors.Is(err, os.ErrNotExist) {
+		return false, path
+	} else if err != nil {
+		sys.Error(err)
+		return false, ""
+	}
 
-    return true, path
+	return true, path
 }

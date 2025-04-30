@@ -1,183 +1,183 @@
 package smap
 
 import (
-    "github.com/edsrzf/mmap-go"
+	"github.com/edsrzf/mmap-go"
 )
 
 const (
-    Space = 2
+	Space = 2
 )
 
 type SMap []*String
 
 type String struct {
-    Nr    int
-    Start int
-    End   int
-    Len   int
-    Off   int
+	Nr    int
+	Start int
+	End   int
+	Len   int
+	Off   int
 }
 
 func Map(m mmap.MMap) (s SMap) {
-    i, j := 0, 0
+	i, j := 0, 0
 
-    for ; i < len(m); i++ {
-        if m[i] != '\n' {
-            continue
-        }
+	for ; i < len(m); i++ {
+		if m[i] != '\n' {
+			continue
+		}
 
-        s = append(s, &String{
-            Nr: len(s)+1,
-            Start: j,
-            End: i,
-            Len: i - j,
-        })
+		s = append(s, &String{
+			Nr:    len(s) + 1,
+			Start: j,
+			End:   i,
+			Len:   i - j,
+		})
 
-        j = i+1
-    }
+		j = i + 1
+	}
 
-    s = append(s, &String{
-        Nr: len(s)+1,
-        Start: j,
-        End: len(m),
-        Len: len(m) - j,
-    })
+	s = append(s, &String{
+		Nr:    len(s) + 1,
+		Start: j,
+		End:   len(m),
+		Len:   len(m) - j,
+	})
 
-    return
+	return
 }
 
 func (s SMap) Indent(m mmap.MMap) (r SMap) {
-    for _, str := range s {
-        l := len(r)
+	for _, str := range s {
+		l := len(r)
 
-        // blank line
-        if str.Len == 0 {
-            r = append(r, str)
-        }
+		// blank line
+		if str.Len == 0 {
+			r = append(r, str)
+		}
 
-        pos := make(stack, 0)
-        dqt := 0
-        off := 0
+		pos := make(stack, 0)
+		dqt := 0
+		off := 0
 
-        for i := str.Start; i < str.End; i++ {
-            switch m[i] {
-            case '{', '[':
-                j := pos.Pop()
+		for i := str.Start; i < str.End; i++ {
+			switch m[i] {
+			case '{', '[':
+				j := pos.Pop()
 
-                if j >= 0 && j < i {
-                    add(&r, str.Nr, j, i, off)
-                }
+				if j >= 0 && j < i {
+					add(&r, str.Nr, j, i, off)
+				}
 
-                pos.Push(i+1)
+				pos.Push(i + 1)
 
-                // bracket line
-                add(&r, str.Nr, i, i+1, off)
+				// bracket line
+				add(&r, str.Nr, i, i+1, off)
 
-                off += Space
+				off += Space
 
-            case '}', ']':
-                j := pos.Pop()
+			case '}', ']':
+				j := pos.Pop()
 
-                if j >= 0 && j < i {
-                    add(&r, str.Nr, j, i, off)
-                }
+				if j >= 0 && j < i {
+					add(&r, str.Nr, j, i, off)
+				}
 
-                off -= Space
+				off -= Space
 
-                d := 1
+				d := 1
 
-                // append existing comma
-                if i < str.End-1 && m[i+1] == ',' {
-                    d += 1
-                }
+				// append existing comma
+				if i < str.End-1 && m[i+1] == ',' {
+					d += 1
+				}
 
-                // bracket line
-                add(&r, str.Nr, i, i+d, off)
+				// bracket line
+				add(&r, str.Nr, i, i+d, off)
 
-                i += (d-1)
+				i += (d - 1)
 
-                pos.Push(i+d)
+				pos.Push(i + d)
 
-            case ',':
-                if dqt % 2 != 0 {
-                    continue
-                }
+			case ',':
+				if dqt%2 != 0 {
+					continue
+				}
 
-                j := pos.Pop()
+				j := pos.Pop()
 
-                if j >= 0 {
-                    add(&r, str.Nr, j, i+1, off)
-                }
+				if j >= 0 {
+					add(&r, str.Nr, j, i+1, off)
+				}
 
-                pos.Push(i+1)
+				pos.Push(i + 1)
 
-            case '"':
-                // parser look back
-                if  m[max(i-1, 0)] != '\\' {
-                    dqt += 1
-                }
-            }
-        }
+			case '"':
+				// parser look back
+				if m[max(i-1, 0)] != '\\' {
+					dqt += 1
+				}
+			}
+		}
 
-        // normal line
-        if len(r) == l {
-            r = append(r, str)
-        }
-    }
+		// normal line
+		if len(r) == l {
+			r = append(r, str)
+		}
+	}
 
-    return
+	return
 }
 
 func (s SMap) Wrap(w int) (r SMap) {
-    for _, str := range s {
-        s := str.Start
-        l := str.Len
+	for _, str := range s {
+		s := str.Start
+		l := str.Len
 
-        for l > w {
-            r = append(r, &String{
-                Nr: str.Nr,
-                Start: s,
-                End: s + w,
-                Len: w,
-            })
+		for l > w {
+			r = append(r, &String{
+				Nr:    str.Nr,
+				Start: s,
+				End:   s + w,
+				Len:   w,
+			})
 
-            s += w
-            l -= w
-        }
+			s += w
+			l -= w
+		}
 
-        r = append(r, &String{
-            Nr: str.Nr,
-            Start: s,
-            End: str.End,
-            Len: l,
-        })
-    }
+		r = append(r, &String{
+			Nr:    str.Nr,
+			Start: s,
+			End:   str.End,
+			Len:   l,
+		})
+	}
 
-    return
+	return
 }
 
 func (s SMap) Find(nr int) int {
-    for i, str := range s {
-        if str.Nr == nr {
-            return i
-        }
-    }
+	for i, str := range s {
+		if str.Nr == nr {
+			return i
+		}
+	}
 
-    return -1
+	return -1
 }
 
 func (s SMap) Size() (w, h int) {
-    for _, str := range s {
-        w = max(w, str.Len)
-    }
+	for _, str := range s {
+		w = max(w, str.Len)
+	}
 
-    h = len(s)
+	h = len(s)
 
-    return
+	return
 }
 
 func add(s *SMap, n, i, j, o int) {
-    *s = append(*s, &String{
-        Nr: n, Start: i, End: j, Len: j-i, Off: o,
-    })
+	*s = append(*s, &String{
+		Nr: n, Start: i, End: j, Len: j - i, Off: o,
+	})
 }

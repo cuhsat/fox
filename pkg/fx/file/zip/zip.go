@@ -1,66 +1,66 @@
 package zip
 
 import (
-    "archive/zip"
-    "io"
-    "path/filepath"
-    "strings"
+	"archive/zip"
+	"io"
+	"path/filepath"
+	"strings"
 
-    "github.com/cuhsat/fx/pkg/fx/file"
-    "github.com/cuhsat/fx/pkg/fx/sys"
+	"github.com/cuhsat/fx/pkg/fx/file"
+	"github.com/cuhsat/fx/pkg/fx/sys"
 )
 
 func Detect(path string) bool {
-    return file.HasMagic(path, 0, []byte{
-        0x50, 0x4B, 0x03, 0x04,
-    })
+	return file.HasMagic(path, 0, []byte{
+		0x50, 0x4B, 0x03, 0x04,
+	})
 }
 
 func Deflate(path string) (i []*file.Item) {
-    r, err := zip.OpenReader(path)
+	r, err := zip.OpenReader(path)
 
-    if err != nil {
-        sys.Error(err)
- 
-        i = append(i, &file.Item{
-            Path: path,
-            Name: path,
-        })
+	if err != nil {
+		sys.Error(err)
 
-        return
-    }
+		i = append(i, &file.Item{
+			Path: path,
+			Name: path,
+		})
 
-    defer r.Close()
+		return
+	}
 
-    for _, f := range r.File {
-        if strings.HasSuffix(f.Name, "/") {
-            continue
-        }
+	defer r.Close()
 
-        a, err := f.Open()
+	for _, f := range r.File {
+		if strings.HasSuffix(f.Name, "/") {
+			continue
+		}
 
-        if err != nil {
-            sys.Error(err)
-            continue
-        }
+		a, err := f.Open()
 
-        t := sys.Temp("zip", filepath.Ext(filepath.Base(f.Name)))
+		if err != nil {
+			sys.Error(err)
+			continue
+		}
 
-        _, err = io.Copy(t, a)
+		t := sys.Temp("zip", filepath.Ext(filepath.Base(f.Name)))
 
-        t.Close()
-        a.Close()
+		_, err = io.Copy(t, a)
 
-        if err != nil {
-            sys.Error(err)
-            continue
-        }
+		t.Close()
+		a.Close()
 
-        i = append(i, &file.Item{
-            Path: t.Name(),
-            Name: f.Name,
-        })
-    }
+		if err != nil {
+			sys.Error(err)
+			continue
+		}
 
-    return
+		i = append(i, &file.Item{
+			Path: t.Name(),
+			Name: f.Name,
+		})
+	}
+
+	return
 }

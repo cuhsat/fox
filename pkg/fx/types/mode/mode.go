@@ -1,35 +1,35 @@
 package mode
 
 import (
-    "strings"
+	"strings"
 )
 
 const (
-    Default = Less
+	Default = Less
 )
 
 const (
-    Less Mode = iota
-    Grep
-    Hex
-    Goto
-    Open
+	Less Mode = iota
+	Grep
+	Hex
+	Goto
+	Open
 )
 
 type Mode int
 
 func (m Mode) String() string {
-    modes := [...]string{
-        "Less",
-        "Grep", 
-        "Hex", 
-        "Goto",
-        "Open",
-    }
+	modes := [...]string{
+		"Less",
+		"Grep",
+		"Hex",
+		"Goto",
+		"Open",
+	}
 
-    if int(m) < 0 || int(m) > len(modes) {
-        return "..."
-    }
+	if int(m) < 0 || int(m) > len(modes) {
+		return "..."
+	}
 
-    return strings.ToUpper(modes[m])
+	return strings.ToUpper(modes[m])
 }

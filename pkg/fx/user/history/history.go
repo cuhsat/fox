@@ -1,105 +1,105 @@
 package history
 
 import (
-    "bufio"
-    "fmt"
-    "os"
-    "time"
-    "strings"
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+	"time"
 
-    "github.com/cuhsat/fx/pkg/fx/sys"
-    "github.com/cuhsat/fx/pkg/fx/user"
+	"github.com/cuhsat/fx/pkg/fx/sys"
+	"github.com/cuhsat/fx/pkg/fx/user"
 )
 
 const (
-    filename = ".fx_history"
+	filename = ".fx_history"
 )
 
 type History struct {
-    file *os.File  // file handle
-    lines []string // buffer lines
-    index int      // buffer index
+	file  *os.File // file handle
+	lines []string // buffer lines
+	index int      // buffer index
 }
 
 func New() *History {
-    var err error
+	var err error
 
-    h := History{
-        lines: make([]string, 0),
-    }
+	h := History{
+		lines: make([]string, 0),
+	}
 
-    _, p := user.Config(filename)
+	_, p := user.Config(filename)
 
-    h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
-    if err != nil {
-        sys.Error(err)
-        return &h
-    }
+	if err != nil {
+		sys.Error(err)
+		return &h
+	}
 
-    s := bufio.NewScanner(h.file)
-    
-    for s.Scan() {
-        t := strings.SplitN(s.Text(), ";", 1)
-        
-        if len(t) > 1 {
-            h.lines = append(h.lines, t[1])
-        }
-    }
-    
-    err = s.Err()
+	s := bufio.NewScanner(h.file)
 
-    if err != nil {
-        sys.Error(err)
-    }
+	for s.Scan() {
+		t := strings.SplitN(s.Text(), ";", 1)
 
-    h.index = len(h.lines)
+		if len(t) > 1 {
+			h.lines = append(h.lines, t[1])
+		}
+	}
 
-    return &h
+	err = s.Err()
+
+	if err != nil {
+		sys.Error(err)
+	}
+
+	h.index = len(h.lines)
+
+	return &h
 }
 
 func (h *History) AddCommand(cmd string) {
-    defer h.Reset()
+	defer h.Reset()
 
-    h.lines = append(h.lines, cmd)
+	h.lines = append(h.lines, cmd)
 
-    if h.file == nil {
-        return
-    }
+	if h.file == nil {
+		return
+	}
 
-    l := fmt.Sprintf("%10d;%s", time.Now().Unix(), cmd)
+	l := fmt.Sprintf("%10d;%s", time.Now().Unix(), cmd)
 
-    _, err := fmt.Fprintln(h.file, l)
+	_, err := fmt.Fprintln(h.file, l)
 
-    if err != nil {
-        sys.Error(err)
-    }
+	if err != nil {
+		sys.Error(err)
+	}
 }
 
 func (h *History) PrevCommand() string {
-    if h.index > 0 {
-        h.index--
-    }
+	if h.index > 0 {
+		h.index--
+	}
 
-    return h.lines[h.index]
+	return h.lines[h.index]
 }
 
 func (h *History) NextCommand() string {
-    if h.index < len(h.lines)-1 {
-        h.index++
-    } else {
-        return ""
-    }
+	if h.index < len(h.lines)-1 {
+		h.index++
+	} else {
+		return ""
+	}
 
-    return h.lines[h.index]
+	return h.lines[h.index]
 }
 
 func (h *History) Reset() {
-    h.index = len(h.lines)
+	h.index = len(h.lines)
 }
 
 func (h *History) Close() {
-    if h.file != nil {
-        h.file.Close()        
-    }
+	if h.file != nil {
+		h.file.Close()
+	}
 }

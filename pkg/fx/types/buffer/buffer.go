@@ -1,33 +1,33 @@
 package buffer
 
 import (
-    "github.com/cuhsat/fx/pkg/fx/types/heap"
+	"github.com/cuhsat/fx/pkg/fx/types/heap"
 )
 
 type Buffer struct {
-    W int
-    H int
+	W int
+	H int
 }
 
 type Line struct {
-    Nr  string
-    Str string
+	Nr  string
+	Str string
 }
 
 type Part struct {
-    X int
-    Y int
-    Str string
+	X   int
+	Y   int
+	Str string
 }
 
 type Context struct {
-    Heap *heap.Heap
+	Heap *heap.Heap
 
-    Wrap bool
-    Line bool
+	Wrap bool
+	Line bool
 
-    X int
-    Y int
-    W int
-    H int
+	X int
+	Y int
+	W int
+	H int
 }

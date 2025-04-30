@@ -1,68 +1,69 @@
 package config
 
 import (
-    "bytes"
-    "os"
+	"bytes"
+	"os"
 
-    "github.com/cuhsat/fx/pkg/fx/sys"
-    "github.com/cuhsat/fx/pkg/fx/user"
-    "github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
+
+	"github.com/cuhsat/fx/pkg/fx/sys"
+	"github.com/cuhsat/fx/pkg/fx/user"
 )
 
 const (
-    filename = ".fxrc"
+	filename = ".fxrc"
 )
 
 type Config struct {
-    Theme  string `toml:"Theme"`
-    Follow bool   `toml:"Follow"`
-    Line   bool   `toml:"Line"`
-    Wrap   bool   `toml:"Wrap"`
+	Theme  string `toml:"Theme"`
+	Follow bool   `toml:"Follow"`
+	Line   bool   `toml:"Line"`
+	Wrap   bool   `toml:"Wrap"`
 }
 
 func New() *Config {
-    cfg := new(Config)
+	cfg := new(Config)
 
-    is, p := user.Config(filename)
+	is, p := user.Config(filename)
 
-    if !is {
-        return cfg
-    }
+	if !is {
+		return cfg
+	}
 
-    _, err := toml.DecodeFile(p, &cfg)
+	_, err := toml.DecodeFile(p, &cfg)
 
-    if err != nil {
-        sys.Error(err)
-    }
+	if err != nil {
+		sys.Error(err)
+	}
 
-    // higher ranking variables
-    env := os.Getenv("FX_THEME")
+	// higher ranking variables
+	env := os.Getenv("FX_THEME")
 
-    if len(env) > 0 {
-        cfg.Theme = env
-    }
+	if len(env) > 0 {
+		cfg.Theme = env
+	}
 
-    return cfg
+	return cfg
 }
 
 func (cfg *Config) Save() {
-    buf := new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
-    enc := toml.NewEncoder(buf)
-    enc.Indent = "" // no indent
+	enc := toml.NewEncoder(buf)
+	enc.Indent = "" // no indent
 
-    err := enc.Encode(cfg)
+	err := enc.Encode(cfg)
 
-    if err != nil {
-        sys.Error(err)
-        return
-    }
+	if err != nil {
+		sys.Error(err)
+		return
+	}
 
-    _, p := user.Config(filename)
+	_, p := user.Config(filename)
 
-    err = os.WriteFile(p, buf.Bytes(), 0600)
+	err = os.WriteFile(p, buf.Bytes(), 0600)
 
-    if err != nil {
-        sys.Error(err)
-    }
+	if err != nil {
+		sys.Error(err)
+	}
 }
