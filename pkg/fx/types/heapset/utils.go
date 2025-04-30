@@ -46,11 +46,7 @@ func (hs *HeapSet) newBuffer(t string, fn util) {
 			continue
 		}
 
-		if !h.Loaded() {
-			h.Reload()
-		}
-
-		_, err := io.WriteString(f, fn(h))
+		_, err := io.WriteString(f, fn(h.Ensure()))
 
 		if err != nil {
 			sys.Error(err)

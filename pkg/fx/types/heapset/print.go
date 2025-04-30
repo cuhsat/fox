@@ -30,11 +30,7 @@ func (hs *HeapSet) Print(hex bool) {
 			continue
 		}
 
-		if !h.Loaded() {
-			h.Reload()
-		}
-
-		ctx.Heap = h
+		ctx.Heap = h.Ensure()
 
 		if hex {
 			ctx.W = 67 // use default width

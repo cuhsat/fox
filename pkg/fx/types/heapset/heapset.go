@@ -181,6 +181,7 @@ func (hs *HeapSet) ThrowAway() {
 	}
 
 	hs.heaps = hs.heaps[:0]
+
 	hs.Unlock()
 
 	atomic.AddInt32(hs.index, -1)
@@ -334,9 +335,7 @@ func (hs *HeapSet) unload(h *heap.Heap) {
 
 func (hs *HeapSet) atomicAdd(h *heap.Heap) {
 	hs.Lock()
-
 	hs.heaps = append(hs.heaps, h)
-
 	hs.Unlock()
 }
 
@@ -348,8 +347,6 @@ func (hs *HeapSet) atomicGet(idx int32) *heap.Heap {
 
 func (hs *HeapSet) atomicDel(idx int32) {
 	hs.Lock()
-
 	hs.heaps = slices.Delete(hs.heaps, int(idx), int(idx)+1)
-
 	hs.Unlock()
 }
