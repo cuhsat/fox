@@ -140,7 +140,7 @@ func (bag *Bag) sign() {
 
 	imp.Write(buf)
 
-	sum := []byte(fmt.Sprintf("%x", imp.Sum(nil)))
+	sum := fmt.Appendf(nil, "%x", imp.Sum(nil))
 
 	err = os.WriteFile(bag.Path+".sha256", sum, 0600)
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/cuhsat/fx/pkg/fx/text"
 	"github.com/cuhsat/fx/pkg/fx/types"
-	"github.com/cuhsat/fx/pkg/fx/types/heap"
 	"github.com/cuhsat/fx/pkg/fx/types/heapset"
 	"github.com/cuhsat/fx/pkg/fx/types/mode"
 	"github.com/cuhsat/fx/pkg/ui/context"
@@ -51,8 +50,8 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
 	_, heap := hs.Current()
 
-	f := st.fmtFilters(heap)
-	s := st.fmtStatus(heap)
+	f := st.fmtFilters()
+	s := st.fmtStatus(heap.Lines())
 
 	// render filters
 	if st.ctx.Mode() == mode.Grep || len(f) > 2 {
@@ -95,7 +94,7 @@ func (st *Status) fmtMode() string {
 	return fmt.Sprintf(" %s ", st.ctx.Mode())
 }
 
-func (st *Status) fmtFilters(h *heap.Heap) (s string) {
+func (st *Status) fmtFilters() (s string) {
 	for _, f := range *types.Filters() {
 		s = fmt.Sprintf("%s %s %s", s, f, filter)
 	}
@@ -105,7 +104,7 @@ func (st *Status) fmtFilters(h *heap.Heap) (s string) {
 	return
 }
 
-func (st *Status) fmtStatus(h *heap.Heap) string {
+func (st *Status) fmtStatus(l int) string {
 	f, n, w := "·", "·", "·"
 
 	if st.ctx.IsFollow() {
@@ -120,5 +119,5 @@ func (st *Status) fmtStatus(h *heap.Heap) string {
 		w = wrap
 	}
 
-	return fmt.Sprintf(" %d %s%s%s ", h.Lines(), f, n, w)
+	return fmt.Sprintf(" %d %s%s%s ", l, f, n, w)
 }

@@ -99,7 +99,7 @@ func addLines(ctx *Context, tb *TextBuffer, d int) {
 
 		nr := fmt.Sprintf("%0*d", d, s.Nr)
 
-		str := unmap(ctx, m, s)
+		str := unmap(m, s)
 
 		tb.Lines = append(tb.Lines, TextLine{
 			Line: Line{Nr: nr, Str: trim(str, ctx.X, ctx.W)},
@@ -126,7 +126,7 @@ func addParts(ctx *Context, tb *TextBuffer, f string) {
 	}
 }
 
-func unmap(ctx *Context, m *mmap.MMap, s *smap.String) string {
+func unmap(m *mmap.MMap, s *smap.String) string {
 	str := string((*m)[s.Start:s.End])
 
 	// replace tabulators

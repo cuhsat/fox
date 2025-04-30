@@ -75,7 +75,7 @@ func Hex(ctx *Context) HexBuffer {
 			Hex:  "",
 		}
 
-		for j := 0; j < cols; j++ {
+		for j := range cols {
 			if i+j >= len(mmap) {
 				break
 			}

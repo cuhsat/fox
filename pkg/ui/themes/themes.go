@@ -41,7 +41,7 @@ type palette []int32
 func New(name string) *Themes {
 	t := Themes{
 		palettes: map[string]palette{
-			"Examiner-Light": palette{
+			"Examiner-Light": {
 				0x888888, 0xeeeeee, // Base
 				0xcccccc, 0xcccccc, // Surface0 (line)
 				0x111111, 0xcccccc, // Surface1 (pane)
@@ -54,7 +54,7 @@ func New(name string) *Themes {
 				0x111111, 0xeeeeee, // Subtext2 (highlight)
 			},
 
-			"Examiner-Dark": palette{
+			"Examiner-Dark": {
 				0x777777, 0x111111, // Base
 				0x333333, 0x333333, // Surface0 (line)
 				0xeeeeee, 0x333333, // Surface1 (pane)
@@ -67,7 +67,7 @@ func New(name string) *Themes {
 				0xeeeeee, 0x111111, // Subtext2 (highlight)
 			},
 
-			"Catppuccin-Latte": palette{
+			"Catppuccin-Latte": {
 				0x4c4f69, 0xeff1f5, // Base
 				0xacb0be, 0xccd0da, // Surface0 (line)
 				0x4c4f69, 0xbcc0cc, // Surface1 (pane)
@@ -80,7 +80,7 @@ func New(name string) *Themes {
 				0xd20f39, 0xeff1f5, // Subtext2 (highlight)
 			},
 
-			"Catppuccin-Frappe": palette{
+			"Catppuccin-Frappe": {
 				0xa5adce, 0x303446, // Base
 				0x626880, 0x414559, // Surface0 (line)
 				0xc6d0f5, 0x51576d, // Surface1 (pane)
@@ -93,7 +93,7 @@ func New(name string) *Themes {
 				0xe78284, 0x303446, // Subtext2 (highlight)
 			},
 
-			"Catppuccin-Macchiato": palette{
+			"Catppuccin-Macchiato": {
 				0xa5adcb, 0x24273a, // Base
 				0x5b6078, 0x363a4f, // Surface0 (line)
 				0xcad3f5, 0x494d64, // Surface1 (pane)
@@ -106,7 +106,7 @@ func New(name string) *Themes {
 				0xed8796, 0x24273a, // Subtext2 (highlight)
 			},
 
-			"Catppuccin-Mocha": palette{
+			"Catppuccin-Mocha": {
 				0xa6adc8, 0x1e1e2e, // Base
 				0x585b70, 0x313244, // Surface0 (line)
 				0xcdd6f4, 0x45475a, // Surface1 (pane)
@@ -119,7 +119,7 @@ func New(name string) *Themes {
 				0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
 			},
 
-			"Solarized-Light": palette{
+			"Solarized-Light": {
 				0x586e75, 0xfdf6e3, // Base
 				0xeee8d5, 0xeee8d5, // Surface0 (line)
 				0x002b36, 0xeee8d5, // Surface1 (pane)
@@ -132,7 +132,7 @@ func New(name string) *Themes {
 				0xb58900, 0xfdf6e3, // Subtext2 (highlight)
 			},
 
-			"Solarized-Dark": palette{
+			"Solarized-Dark": {
 				0x93a1a1, 0x002b36, // Base
 				0x073642, 0x073642, // Surface0 (line)
 				0xfdf6e3, 0x073642, // Surface1 (pane)
@@ -145,7 +145,7 @@ func New(name string) *Themes {
 				0xcb4b16, 0x002b36, // Subtext2 (highlight)
 			},
 
-			"VSCode-Light": palette{
+			"VSCode-Light": {
 				0x343434, 0xe7e7e7, // Base
 				0x343434, 0xdfdfdf, // Surface0 (line)
 				0x343434, 0xcfcfcf, // Surface1 (pane)
@@ -158,7 +158,7 @@ func New(name string) *Themes {
 				0xc72e0f, 0xe7e7e7, // Subtext2 (highlight)
 			},
 
-			"VSCode-Dark": palette{
+			"VSCode-Dark": {
 				0xdee1e6, 0x282828, // Base
 				0xdee1e6, 0x313131, // Surface0 (line)
 				0xdee1e6, 0x444444, // Surface1 (pane)
@@ -171,7 +171,7 @@ func New(name string) *Themes {
 				0xd3967d, 0x282828, // Subtext2 (highlight)
 			},
 
-			"Monokai": palette{
+			"Monokai": {
 				0x7f8490, 0x222327, // Base
 				0x595f6f, 0x2c2e34, // Surface0 (line)
 				0xe2e2e3, 0x414550, // Surface1 (pane)
@@ -184,7 +184,7 @@ func New(name string) *Themes {
 				0xf39660, 0x222327, // Subtext2 (highlight)
 			},
 
-			"Darcula": palette{
+			"Darcula": {
 				0x727272, 0x2b2b2b, // Base
 				0x393939, 0x393939, // Surface0 (line)
 				0x727272, 0x393939, // Surface1 (pane)
@@ -197,7 +197,7 @@ func New(name string) *Themes {
 				0xf43753, 0x2b2b2b, // Subtext2 (highlight)
 			},
 
-			"Nord": palette{
+			"Nord": {
 				0xd8dee9, 0x2e3440, // Base
 				0xeceff4, 0x3b4252, // Surface0 (line)
 				0xeceff4, 0x4c566a, // Surface1 (pane)
@@ -210,7 +210,7 @@ func New(name string) *Themes {
 				0x5e81ac, 0x2e3440, // Subtext2 (highlight)
 			},
 
-			"Matrix": palette{
+			"Matrix": {
 				0x008f11, 0x0d0208, // Base
 				0x003b00, 0x0d0208, // Surface0 (line)
 				0x00ff41, 0x0d0208, // Surface1 (pane)
@@ -223,7 +223,7 @@ func New(name string) *Themes {
 				0x00ff41, 0x0d0208, // Subtext2 (highlight)
 			},
 
-			"Ansi16": palette{
+			"Ansi16": {
 				0xc0c0c0, 0x000000, // Base
 				0x000000, 0x000000, // Surface0 (line)
 				0xffffff, 0x000000, // Surface1 (pane)
@@ -236,7 +236,7 @@ func New(name string) *Themes {
 				0x00ff00, 0x000000, // Subtext2 (highlight)
 			},
 
-			"Monochrome": palette{
+			"Monochrome": {
 				0xffffff, 0x000000, // Base
 				0xffffff, 0x000000, // Surface0 (line)
 				0xffffff, 0x000000, // Surface1 (pane)
