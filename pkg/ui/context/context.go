@@ -25,7 +25,6 @@ type Context struct {
 	follow atomic.Bool
 	line   atomic.Bool
 	wrap   atomic.Bool
-	busy   atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
@@ -49,7 +48,6 @@ func New(root tcell.Screen) *Context {
 	ctx.follow.Store(cfg.Follow)
 	ctx.line.Store(cfg.Line)
 	ctx.wrap.Store(cfg.Wrap)
-	ctx.busy.Store(false)
 
 	return ctx
 }
@@ -82,10 +80,6 @@ func (ctx *Context) IsLine() bool {
 
 func (ctx *Context) IsWrap() bool {
 	return ctx.wrap.Load()
-}
-
-func (ctx *Context) IsBusy() bool {
-	return ctx.busy.Load()
 }
 
 func (ctx *Context) Interrupt() {
@@ -129,14 +123,11 @@ func (ctx *Context) ToggleWrap() {
 	ctx.wrap.Store(!ctx.wrap.Load())
 }
 
-func (ctx *Context) Busy() {
-	ctx.busy.Store(true)
-	ctx.Interrupt()
-}
-
-func (ctx *Context) Idle() {
-	ctx.busy.Store(false)
-	ctx.Interrupt()
+func (ctx *Context) Exec(fn func()) {
+	go func() {
+		fn()
+		ctx.Interrupt()
+	}()
 }
 
 func (ctx *Context) Save() {
