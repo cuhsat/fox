@@ -24,9 +24,7 @@ type Heap struct {
 	Type types.Heap // heap type
 
 	mmap mmap.MMap // memory map
-	rmap smap.SMap // render map
-	smap smap.SMap // string map (current)
-	omap smap.SMap // string map (original)
+	smap smap.SMap // string map
 
 	chain []*Link // filter chain
 
@@ -38,6 +36,7 @@ type Heap struct {
 type Link struct {
 	Name string    // filter name
 	smap smap.SMap // filter string map
+	rmap smap.SMap // filter render map
 }
 
 func (h *Heap) MMap() *mmap.MMap {
@@ -49,13 +48,13 @@ func (h *Heap) MMap() *mmap.MMap {
 func (h *Heap) SMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return &h.smap
+	return &h.last().smap
 }
 
 func (h *Heap) RMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return &h.rmap
+	return &h.last().rmap
 }
 
 func (h *Heap) String() string {
@@ -71,6 +70,20 @@ func (h *Heap) String() string {
 	default:
 		return h.Path
 	}
+}
+
+func (h *Heap) Ensure() *Heap {
+	if !h.Loaded() {
+		h.Reload()
+	}
+
+	return h
+}
+
+func (h *Heap) Loaded() bool {
+	h.RLock()
+	defer h.RUnlock()
+	return h.file != nil
 }
 
 func (h *Heap) Reload() {
@@ -120,8 +133,10 @@ func (h *Heap) Reload() {
 	// reduce smap
 	h.smap = l.ReduceSMap(smap.Map(h.mmap))
 
-	h.rmap = nil
-	h.omap = h.smap
+	h.chain = append(h.chain, &Link{
+		"", h.smap, nil,
+	})
+
 	h.hash = make(Hash)
 
 	h.Unlock()
@@ -129,22 +144,16 @@ func (h *Heap) Reload() {
 	h.Filter()
 }
 
-func (h *Heap) Loaded() bool {
-	h.RLock()
-	defer h.RUnlock()
-	return h.file != nil
-}
-
 func (h *Heap) Length() int {
 	h.RLock()
 	defer h.RUnlock()
-	return len(h.omap)
+	return len(h.smap)
 }
 
 func (h *Heap) Lines() int {
 	h.RLock()
 	defer h.RUnlock()
-	return len(h.smap)
+	return len(h.last().smap)
 }
 
 func (h *Heap) Bytes() []byte {
@@ -152,10 +161,10 @@ func (h *Heap) Bytes() []byte {
 
 	h.RLock()
 
-	for i, s := range h.smap {
+	for i, s := range h.last().smap {
 		end := s.End
 
-		if i < len(h.smap)-1 {
+		if i < len(h.last().smap)-1 {
 			end += 1 // include breaks between strings
 		}
 
@@ -173,7 +182,7 @@ func (h *Heap) Bytes() []byte {
 
 func (h *Heap) Wrap(w int) {
 	h.RLock()
-	cached := h.rmap != nil
+	cached := h.last().rmap != nil
 	h.RUnlock()
 
 	if cached {
@@ -182,10 +191,12 @@ func (h *Heap) Wrap(w int) {
 
 	h.Lock()
 
+	l := h.last()
+
 	if file.CanIndent(h.Path) {
-		h.rmap = h.smap.Indent(h.mmap)
+		l.rmap = l.smap.Indent(h.mmap)
 	} else {
-		h.rmap = h.smap.Wrap(w)
+		l.rmap = l.smap.Wrap(w)
 	}
 
 	h.Unlock()
@@ -193,6 +204,8 @@ func (h *Heap) Wrap(w int) {
 
 func (h *Heap) ThrowAway() {
 	h.Lock()
+
+	h.smap = nil
 
 	if h.mmap != nil {
 		h.mmap.Unmap()
@@ -204,11 +217,11 @@ func (h *Heap) ThrowAway() {
 		h.file = nil
 	}
 
-	h.rmap = nil
-	h.smap = nil
-	h.omap = nil
-
 	h.Unlock()
 
 	runtime.GC()
+}
+
+func (h *Heap) last() *Link {
+	return h.chain[len(h.chain)-1]
 }

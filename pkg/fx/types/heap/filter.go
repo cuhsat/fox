@@ -18,20 +18,11 @@ type chunk struct {
 
 func (h *Heap) Filter() {
 	h.Lock()
-
-	// reset maps
-	h.smap = h.omap
-	h.rmap = nil
-
-	// reset chain
-	h.chain = h.chain[:0]
-
+	h.chain = h.chain[:1]
 	h.Unlock()
 
 	// apply global filters
-	fs := *types.Filters()
-
-	for _, f := range fs {
+	for _, f := range *types.Filters() {
 		h.addLink(f)
 	}
 }
@@ -51,11 +42,8 @@ func (h *Heap) addLink(name string) {
 
 	h.Lock()
 
-	h.smap = s
-	h.rmap = nil
-
 	h.chain = append(h.chain, &Link{
-		name, h.smap,
+		name, s, nil,
 	})
 
 	h.Unlock()
@@ -66,18 +54,8 @@ func (h *Heap) delLink() {
 
 	l := len(h.chain)
 
-	if l > 0 {
+	if l > 1 {
 		h.chain = h.chain[:l-1]
-	}
-
-	l -= 1
-
-	h.rmap = nil
-
-	if l > 0 {
-		h.smap = h.chain[l-1].smap
-	} else {
-		h.smap = h.omap
 	}
 
 	h.Unlock()
@@ -107,7 +85,7 @@ func (h *Heap) find(b []byte, bs int) smap.SMap {
 func chunks(n int) (c []*chunk) {
 	m := min(runtime.GOMAXPROCS(0), n)
 
-	for i := 0; i < m; i++ {
+	for i := range m {
 		c = append(c, &chunk{
 			min: i * n / m,
 			max: ((i + 1) * n) / m,
@@ -122,7 +100,7 @@ func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
 
 	h.RLock()
 
-	for _, s := range h.smap[c.min:c.max] {
+	for _, s := range (*h.SMap())[c.min:c.max] {
 		if re.Match(h.mmap[s.Start:s.End]) {
 			ch <- s
 		}
