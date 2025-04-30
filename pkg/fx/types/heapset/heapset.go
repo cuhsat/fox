@@ -317,7 +317,7 @@ func (hs *HeapSet) load() *heap.Heap {
 
 		hs.watchHeap(h)
 	} else {
-		h.Filter()
+		h.Filter() // TODO: Resets rmap to nil
 	}
 
 	return h

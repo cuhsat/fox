@@ -64,7 +64,7 @@ func Text(ctx *Context) TextBuffer {
 		ctx.W -= (d + SpaceText)
 	}
 
-	if ctx.Wrap && ctx.Heap.RMap() != nil {
+	if ctx.Wrap && *ctx.Heap.RMap() == nil {
 		ctx.Heap.Wrap(ctx.W)
 	}
 
