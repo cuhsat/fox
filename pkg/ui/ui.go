@@ -351,14 +351,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.state(ui.ctx.Last())
 
 					case mode.Open:
-						ui.async(func() {
+						ui.ctx.Exec(func() {
 							hs.Open(v)
 						})
 						ui.state(ui.ctx.Last())
 
 					default:
 						ui.view.Reset()
-						ui.async(func() {
+						ui.ctx.Exec(func() {
 							heap.AddFilter(v)
 						})
 						ui.state(mode.Less)
@@ -382,7 +382,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.state(ui.ctx.Last())
 					} else if len(*types.Filters()) > 0 {
 						ui.view.Reset()
-						ui.async(heap.DelFilter)
+						heap.DelFilter()
 					} else if ui.ctx.Mode() == mode.Grep {
 						ui.state(mode.Less)
 					}
@@ -420,14 +420,6 @@ func (ui *UI) Close() {
 	ui.overlay.Close()
 	ui.root.Fini()
 	ui.ctx.Save()
-}
-
-func (ui *UI) async(fn func()) {
-	go func() {
-		ui.ctx.Busy()
-		fn()
-		ui.ctx.Idle()
-	}()
 }
 
 func (ui *UI) state(m mode.Mode) {
