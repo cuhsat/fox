@@ -1,7 +1,7 @@
 # Keymap
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
-| <kbd>Esc</kbd>                                       | Exit                  |
+| <kbd>Esc</kbd> (twice)                               | Exit                  |
 | <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>l</kbd>       | Less mode             |
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |

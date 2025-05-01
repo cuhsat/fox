@@ -26,17 +26,11 @@ type Heap struct {
 	mmap mmap.MMap // memory map
 	smap smap.SMap // string map
 
-	chain []*Link // filter chain
+	filters []*filter // filters
 
 	hash Hash // file hash sums
 
 	file *os.File // file handle
-}
-
-type Link struct {
-	Name string    // filter name
-	smap smap.SMap // filter string map
-	rmap smap.SMap // filter render map
 }
 
 func (h *Heap) MMap() *mmap.MMap {
@@ -73,17 +67,11 @@ func (h *Heap) String() string {
 }
 
 func (h *Heap) Ensure() *Heap {
-	if !h.Loaded() {
+	if h.file == nil {
 		h.Reload()
 	}
 
 	return h
-}
-
-func (h *Heap) Loaded() bool {
-	h.RLock()
-	defer h.RUnlock()
-	return h.file != nil
 }
 
 func (h *Heap) Reload() {
@@ -133,15 +121,14 @@ func (h *Heap) Reload() {
 	// reduce smap
 	h.smap = l.ReduceSMap(smap.Map(h.mmap))
 
-	h.chain = append(h.chain, &Link{
+	// resets filters
+	h.filters = append(h.filters, &filter{
 		"", h.smap, nil,
 	})
 
 	h.hash = make(Hash)
 
 	h.Unlock()
-
-	h.Filter()
 }
 
 func (h *Heap) Length() int {
@@ -161,10 +148,12 @@ func (h *Heap) Bytes() []byte {
 
 	h.RLock()
 
-	for i, s := range h.last().smap {
+	l := h.last()
+
+	for i, s := range l.smap {
 		end := s.End
 
-		if i < len(h.last().smap)-1 {
+		if i < len(l.smap)-1 {
 			end += 1 // include breaks between strings
 		}
 
@@ -189,9 +178,9 @@ func (h *Heap) Wrap(w int) {
 		return // use cache
 	}
 
-	h.Lock()
-
 	l := h.last()
+
+	h.Lock()
 
 	if file.CanIndent(h.Path) {
 		l.rmap = l.smap.Indent(h.mmap)
@@ -204,6 +193,8 @@ func (h *Heap) Wrap(w int) {
 
 func (h *Heap) ThrowAway() {
 	h.Lock()
+
+	h.filters = h.filters[:0]
 
 	h.smap = nil
 
@@ -220,8 +211,4 @@ func (h *Heap) ThrowAway() {
 	h.Unlock()
 
 	runtime.GC()
-}
-
-func (h *Heap) last() *Link {
-	return h.chain[len(h.chain)-1]
 }
