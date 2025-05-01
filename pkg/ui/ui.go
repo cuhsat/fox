@@ -103,6 +103,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
 
+	esc := false
+
 	for {
 		select {
 		case _ = <-closed:
@@ -171,9 +173,21 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					page_w -= text.Dec(heap.Length()) + buffer.SpaceText
 				}
 
+				if ev.Key() != tcell.KeyEscape {
+					esc = false
+				}
+
 				switch ev.Key() {
 				case tcell.KeyEscape:
-					return
+					if esc {
+						return
+					} else if ui.ctx.Mode() == mode.Goto {
+						ui.state(ui.ctx.Last())
+					} else if ui.ctx.Mode() == mode.Open {
+						ui.state(ui.ctx.Last())
+					}
+
+					esc = true
 
 				case tcell.KeyCtrlL, tcell.KeyF1:
 					ui.state(mode.Less)
@@ -357,6 +371,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.state(ui.ctx.Last())
 
 					default:
+						types.Filters().Set(v)
 						ui.view.Reset()
 						ui.ctx.Exec(func() {
 							heap.AddFilter(v)
@@ -381,6 +396,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					} else if ui.ctx.Mode() == mode.Open {
 						ui.state(ui.ctx.Last())
 					} else if len(*types.Filters()) > 0 {
+						types.Filters().Pop()
 						ui.view.Reset()
 						heap.DelFilter()
 					} else if ui.ctx.Mode() == mode.Grep {
@@ -427,12 +443,17 @@ func (ui *UI) state(m mode.Mode) {
 		return
 	}
 
+	// former mode
+	switch ui.ctx.Last() {
+	case mode.Grep, mode.Goto, mode.Open:
+		ui.status.Value = ""
+	}
+
+	// actual mode
 	switch m {
-	// static modes
 	case mode.Less, mode.Hex:
 		ui.status.Lock = true
 
-	// input modes
 	case mode.Grep, mode.Goto, mode.Open:
 		ui.status.Lock = false
 	}

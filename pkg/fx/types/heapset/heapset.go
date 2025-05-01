@@ -313,13 +313,7 @@ func (hs *HeapSet) loadItem(i *file.Item, base string) {
 func (hs *HeapSet) load() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	if !h.Loaded() {
-		h.Reload()
-
-		hs.watchHeap(h)
-	} else {
-		h.Filter() // TODO: Resets rmap to nil
-	}
+	hs.watchHeap(h.Ensure().Filter())
 
 	return h
 }

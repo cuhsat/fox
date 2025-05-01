@@ -25,8 +25,8 @@ func (f *filters) Type() string {
 	return "strings"
 }
 
-func (f *filters) Set(s string) error {
-	*f = append(*f, s)
+func (f *filters) Set(p string) error {
+	*f = append(*f, p)
 
 	return nil
 }

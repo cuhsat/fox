@@ -11,54 +11,92 @@ import (
 	"github.com/cuhsat/fx/pkg/fx/types/smap"
 )
 
+type filter struct {
+	pattern string    // filter pattern
+	smap    smap.SMap // filter string map
+	rmap    smap.SMap // filter render map
+}
+
 type chunk struct {
-	min int
-	max int
+	min int // chunk start
+	max int // chunk end
 }
 
-func (h *Heap) Filter() {
-	h.Lock()
-	h.chain = h.chain[:1]
-	h.Unlock()
+func (h *Heap) Filter() *Heap {
+	fs := *types.Filters()
 
-	// apply global filters
-	for _, f := range *types.Filters() {
-		h.addLink(f)
+	h.RLock()
+	c := len(h.filters) - 1
+	h.RUnlock()
+
+	// cut heap filters if longer than global filters
+	if c > len(fs) {
+		h.Lock()
+		h.filters = h.filters[:1+len(fs)]
+		h.Unlock()
 	}
+
+	// check if global filters has changed
+	for i, f := range fs {
+		// add missing global filters
+		if i+1 > c {
+			h.AddFilter(f)
+			continue
+		}
+
+		h.RLock()
+		p := h.filters[1+i].pattern
+		h.RUnlock()
+
+		// cut heap filters if patterns do not match
+		if p != f {
+			h.Lock()
+			h.filters = h.filters[:1+i]
+			h.Unlock()
+
+			// add missing global filters
+			h.AddFilter(f)
+		}
+	}
+
+	return h
 }
 
-func (h *Heap) AddFilter(value string) {
-	types.Filters().Set(value)
-	h.addLink(value)
-}
-
-func (h *Heap) DelFilter() {
-	types.Filters().Pop()
-	h.delLink()
-}
-
-func (h *Heap) addLink(name string) {
-	s := h.find([]byte(name), h.Lines())
+func (h *Heap) AddFilter(p string) {
+	s := h.find([]byte(p), h.Lines())
 
 	h.Lock()
 
-	h.chain = append(h.chain, &Link{
-		name, s, nil,
+	h.filters = append(h.filters, &filter{
+		p, s, nil,
 	})
 
 	h.Unlock()
 }
 
-func (h *Heap) delLink() {
+func (h *Heap) DelFilter() {
 	h.Lock()
 
-	l := len(h.chain)
+	l := len(h.filters)
 
 	if l > 1 {
-		h.chain = h.chain[:l-1]
+		h.filters = h.filters[:l-1]
 	}
 
 	h.Unlock()
+}
+
+func (h *Heap) last() *filter {
+	h.RLock()
+	defer h.RUnlock()
+
+	l := len(h.filters)
+
+	if l > 0 {
+		return h.filters[l-1]
+	} else {
+		return &filter{}
+	}
 }
 
 func (h *Heap) find(b []byte, bs int) smap.SMap {
