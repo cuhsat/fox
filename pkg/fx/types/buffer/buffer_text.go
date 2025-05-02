@@ -134,7 +134,7 @@ func unmap(m *mmap.MMap, s *smap.String) string {
 
 	// prepend blank for offset
 	if s.Off > 0 {
-		str = strings.Repeat(BlankOff, s.Off) + strings.TrimSpace(str)
+		str = strings.Repeat(BlankOff, int(s.Off)) + strings.TrimSpace(str)
 	}
 
 	return str

@@ -1,8 +1,0 @@
-"Hello World"
-
-{"Hello": "World"}
-{"Foo": "\"Hello\", World", "Bar": 456}
-{"Values": ["Foo", "Bar"]}
-{"Values": {"Indirect": [["123", "456"], ["Foo", "Bar"]]}, "Fields": {"Nr": 1}}
-{",\",,"}
-{"0"}
