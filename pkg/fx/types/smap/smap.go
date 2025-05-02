@@ -19,7 +19,7 @@ type String struct {
 }
 
 func Map(m mmap.MMap) (s SMap) {
-	i, j := 0, 0
+	var i, j int
 
 	for ; i < len(m); i++ {
 		if m[i] != '\n' {
@@ -46,7 +46,7 @@ func Map(m mmap.MMap) (s SMap) {
 	return
 }
 
-func (s SMap) Indent(m mmap.MMap) (r SMap) {
+func (s SMap) Format(m mmap.MMap) (r SMap) {
 	for _, str := range s {
 		l := len(r)
 
@@ -62,9 +62,7 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 		for i := str.Start; i < str.End; i++ {
 			switch m[i] {
 			case '{', '[':
-				j := pos.Pop()
-
-				if j >= 0 && j < i {
+				if ok, j := pos.Pop(); ok && j < i {
 					add(&r, str.Nr, j, i, off)
 				}
 
@@ -76,9 +74,7 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 				off += Space
 
 			case '}', ']':
-				j := pos.Pop()
-
-				if j >= 0 && j < i {
+				if ok, j := pos.Pop(); ok && j < i {
 					add(&r, str.Nr, j, i, off)
 				}
 
@@ -103,9 +99,7 @@ func (s SMap) Indent(m mmap.MMap) (r SMap) {
 					continue
 				}
 
-				j := pos.Pop()
-
-				if j >= 0 {
+				if ok, j := pos.Pop(); ok {
 					add(&r, str.Nr, j, i+1, off)
 				}
 
@@ -156,14 +150,14 @@ func (s SMap) Wrap(w int) (r SMap) {
 	return
 }
 
-func (s SMap) Find(nr int) int {
+func (s SMap) Find(nr int) (bool, int) {
 	for i, str := range s {
 		if str.Nr == nr {
-			return i
+			return true, i
 		}
 	}
 
-	return -1
+	return false, 0
 }
 
 func (s SMap) Size() (w, h int) {

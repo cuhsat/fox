@@ -65,20 +65,18 @@ func (v *View) textGoto(s string) {
 
 	switch s[0] {
 	case '+':
-		delta, _ := strconv.Atoi(s[1:])
-		nr = v.smap[v.delta_y].Nr + delta
+		i, _ := strconv.Atoi(s[1:])
+		nr = v.smap[v.delta_y].Nr + i
 
 	case '-':
-		delta, _ := strconv.Atoi(s[1:])
-		nr = v.smap[v.delta_y].Nr - delta
+		i, _ := strconv.Atoi(s[1:])
+		nr = v.smap[v.delta_y].Nr - i
 
 	default:
 		nr, _ = strconv.Atoi(s)
 	}
 
-	y := v.smap.Find(nr)
-
-	if y >= 0 {
+	if ok, y := v.smap.Find(nr); ok {
 		v.ScrollTo(v.delta_x, y)
 	}
 }

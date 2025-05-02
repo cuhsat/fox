@@ -1,45 +1,45 @@
 package file
 
 import (
-    "bytes"
-    "io"
-    "strings"
+	"bytes"
+	"io"
+	"strings"
 
-    "github.com/cuhsat/fx/pkg/fx/sys"
+	"github.com/cuhsat/fx/pkg/fx/sys"
 )
 
 type Item struct {
-    Path string
-    Name string
+	Path string
+	Name string
 }
 
-func CanIndent(p string) bool {
-    return strings.HasSuffix(strings.ToLower(p), ".jsonl")
+func CanFormat(p string) bool {
+	return strings.HasSuffix(strings.ToLower(p), ".jsonl")
 }
 
 func HasMagic(p string, o int, m []byte) bool {
-    buf := make([]byte, o + len(m))
+	buf := make([]byte, o+len(m))
 
-    f := sys.Open(p)
-    defer f.Close()
+	f := sys.Open(p)
+	defer f.Close()
 
-    fi, err := f.Stat()
+	fi, err := f.Stat()
 
-    if err != nil {
-        sys.Error(err)
-        return false
-    }
+	if err != nil {
+		sys.Error(err)
+		return false
+	}
 
-    if fi.Size() < int64(o + len(m)) {
-        return false
-    }
+	if fi.Size() < int64(o+len(m)) {
+		return false
+	}
 
-    _, err = io.ReadFull(f, buf)
+	_, err = io.ReadFull(f, buf)
 
-    if err != nil {
-        sys.Error(err)
-        return false
-    }
+	if err != nil {
+		sys.Error(err)
+		return false
+	}
 
-    return bytes.Equal(buf[o:], m)
+	return bytes.Equal(buf[o:], m)
 }

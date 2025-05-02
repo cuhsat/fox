@@ -182,8 +182,8 @@ func (h *Heap) Wrap(w int) {
 
 	h.Lock()
 
-	if file.CanIndent(h.Path) {
-		l.rmap = l.smap.Indent(h.mmap)
+	if file.CanFormat(h.Path) {
+		l.rmap = l.smap.Format(h.mmap)
 	} else {
 		l.rmap = l.smap.Wrap(w)
 	}
