@@ -8,7 +8,7 @@ const (
 	Space = 2
 )
 
-type SMap []*String
+type SMap []String
 
 type String struct {
 	Nr    int
@@ -18,16 +18,18 @@ type String struct {
 	Off   int
 }
 
-func Map(m mmap.MMap) (s SMap) {
+func Map(m *mmap.MMap) *SMap {
+	s := new(SMap)
+
 	var i, j int
 
-	for ; i < len(m); i++ {
-		if m[i] != '\n' {
+	for ; i < len(*m); i++ {
+		if (*m)[i] != '\n' {
 			continue
 		}
 
-		s = append(s, &String{
-			Nr:    len(s) + 1,
+		*s = append(*s, String{
+			Nr:    len(*s) + 1,
 			Start: j,
 			End:   i,
 			Len:   i - j,
@@ -36,23 +38,25 @@ func Map(m mmap.MMap) (s SMap) {
 		j = i + 1
 	}
 
-	s = append(s, &String{
-		Nr:    len(s) + 1,
+	*s = append(*s, String{
+		Nr:    len(*s) + 1,
 		Start: j,
-		End:   len(m),
-		Len:   len(m) - j,
+		End:   len(*m),
+		Len:   len(*m) - j,
 	})
 
-	return
+	return s
 }
 
-func (s SMap) Format(m mmap.MMap) (r SMap) {
-	for _, str := range s {
-		l := len(r)
+func (s *SMap) Format(m *mmap.MMap) *SMap {
+	r := new(SMap)
+
+	for _, str := range *s {
+		l := len(*r)
 
 		// blank line
 		if str.Len == 0 {
-			r = append(r, str)
+			*r = append(*r, str)
 		}
 
 		pos := make(stack, 0)
@@ -60,22 +64,22 @@ func (s SMap) Format(m mmap.MMap) (r SMap) {
 		off := 0
 
 		for i := str.Start; i < str.End; i++ {
-			switch m[i] {
+			switch (*m)[i] {
 			case '{', '[':
 				if ok, j := pos.Pop(); ok && j < i {
-					add(&r, str.Nr, j, i, off)
+					add(r, str.Nr, j, i, off)
 				}
 
 				pos.Push(i + 1)
 
 				// bracket line
-				add(&r, str.Nr, i, i+1, off)
+				add(r, str.Nr, i, i+1, off)
 
 				off += Space
 
 			case '}', ']':
 				if ok, j := pos.Pop(); ok && j < i {
-					add(&r, str.Nr, j, i, off)
+					add(r, str.Nr, j, i, off)
 				}
 
 				off -= Space
@@ -83,12 +87,12 @@ func (s SMap) Format(m mmap.MMap) (r SMap) {
 				d := 1
 
 				// append existing comma
-				if i < str.End-1 && m[i+1] == ',' {
+				if i < str.End-1 && (*m)[i+1] == ',' {
 					d += 1
 				}
 
 				// bracket line
-				add(&r, str.Nr, i, i+d, off)
+				add(r, str.Nr, i, i+d, off)
 
 				i += (d - 1)
 
@@ -100,58 +104,57 @@ func (s SMap) Format(m mmap.MMap) (r SMap) {
 				}
 
 				if ok, j := pos.Pop(); ok {
-					add(&r, str.Nr, j, i+1, off)
+					add(r, str.Nr, j, i+1, off)
 				}
 
 				pos.Push(i + 1)
 
 			case '"':
 				// parser look back
-				if m[max(i-1, 0)] != '\\' {
+				if (*m)[max(i-1, 0)] != '\\' {
 					dqt += 1
 				}
 			}
 		}
 
 		// normal line
-		if len(r) == l {
-			r = append(r, str)
+		if len(*r) == l {
+			*r = append(*r, str)
 		}
 	}
 
-	return
+	return r
 }
 
-func (s SMap) Wrap(w int) (r SMap) {
-	for _, str := range s {
-		s := str.Start
-		l := str.Len
+func (s *SMap) Wrap(w int) *SMap {
+	r := new(SMap)
 
-		for l > w {
-			r = append(r, &String{
+	for _, str := range *s {
+		for str.Len > w {
+			*r = append(*r, String{
 				Nr:    str.Nr,
-				Start: s,
-				End:   s + w,
+				Start: str.Start,
+				End:   str.Start + w,
 				Len:   w,
 			})
 
-			s += w
-			l -= w
+			str.Start += w
+			str.Len -= w
 		}
 
-		r = append(r, &String{
+		*r = append(*r, String{
 			Nr:    str.Nr,
-			Start: s,
+			Start: str.Start,
 			End:   str.End,
-			Len:   l,
+			Len:   str.Len,
 		})
 	}
 
-	return
+	return r
 }
 
-func (s SMap) Find(nr int) (bool, int) {
-	for i, str := range s {
+func (s *SMap) Find(nr int) (bool, int) {
+	for i, str := range *s {
 		if str.Nr == nr {
 			return true, i
 		}
@@ -160,18 +163,18 @@ func (s SMap) Find(nr int) (bool, int) {
 	return false, 0
 }
 
-func (s SMap) Size() (w, h int) {
-	for _, str := range s {
+func (s *SMap) Size() (w, h int) {
+	for _, str := range *s {
 		w = max(w, str.Len)
 	}
 
-	h = len(s)
+	h = len(*s)
 
 	return
 }
 
 func add(s *SMap, n, i, j, o int) {
-	*s = append(*s, &String{
+	*s = append(*s, String{
 		Nr: n, Start: i, End: j, Len: j - i, Off: o,
 	})
 }

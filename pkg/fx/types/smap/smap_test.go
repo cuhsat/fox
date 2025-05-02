@@ -1,6 +1,7 @@
 package smap
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -9,30 +10,79 @@ import (
 	"github.com/edsrzf/mmap-go"
 )
 
-func Testdata(name string) string {
+func Testdata(name string) (*os.File, *mmap.MMap, error) {
 	_, c, _, ok := runtime.Caller(0)
 
 	if !ok {
-		return "error"
+		return nil, nil, errors.New("error")
 	}
 
-	return filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", name)
+	p := filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", name)
+
+	f, err := os.OpenFile(p, os.O_RDONLY, 0400)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	m, err := mmap.Map(f, mmap.RDONLY, 0)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return f, &m, nil
+}
+
+func BenchmarkMap(b *testing.B) {
+	b.Run("Benchmark Map", func(b *testing.B) {
+		f, m, err := Testdata("evtx.jsonl")
+
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		defer f.Close()
+		defer m.Unmap()
+
+		b.ResetTimer()
+
+		for b.Loop() {
+			Map(m)
+		}
+	})
+}
+
+func BenchmarkFormat(b *testing.B) {
+	b.Run("Benchmark Format", func(b *testing.B) {
+		f, m, err := Testdata("evtx.jsonl")
+
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		defer f.Close()
+		defer m.Unmap()
+
+		s := Map(m)
+
+		b.ResetTimer()
+
+		for b.Loop() {
+			s.Format(m)
+		}
+	})
 }
 
 func BenchmarkWrap(b *testing.B) {
 	b.Run("Benchmark Wrap", func(b *testing.B) {
-		f, err := os.OpenFile(Testdata("evtx.jsonl"), os.O_RDONLY, 0400)
+		f, m, err := Testdata("evtx.jsonl")
 
 		if err != nil {
 			b.Fatal(err)
 		}
 
-		m, err := mmap.Map(f, mmap.RDONLY, 0)
-
-		if err != nil {
-			b.Fatal(err)
-		}
-
+		defer f.Close()
 		defer m.Unmap()
 
 		s := Map(m)

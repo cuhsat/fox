@@ -6,7 +6,7 @@ import (
 )
 
 func (v *View) hexRender(x, y, w, h int) {
-	rule_w := buffer.SpaceHex * 2
+	rule_w := 2
 
 	buf := buffer.Hex(&buffer.Context{
 		Heap: v.heap,
@@ -19,7 +19,7 @@ func (v *View) hexRender(x, y, w, h int) {
 	})
 
 	if len(buf.Lines) > 0 {
-		w -= len(buf.Lines[0].Nr) + buffer.SpaceHex
+		w -= len(buf.Lines[0].Nr) + 1
 	}
 
 	// set buffer bounds
@@ -31,25 +31,17 @@ func (v *View) hexRender(x, y, w, h int) {
 		line_x := x
 		line_y := y + i
 
-		hex_x := line_x
+		// print offset number
+		v.print(line_x+0, line_y, line.Nr, themes.Subtext0)
 
-		// offset number
-		v.print(hex_x, line_y, line.Nr, themes.Subtext0)
-		hex_x += len(line.Nr)
+		// print hex values
+		v.print(line_x+11, line_y, line.Hex, themes.Base)
 
-		// offset separator
-		v.print(hex_x, line_y, "│", themes.Subtext1)
-		hex_x += rule_w
+		// print text value
+		v.print(line_x+62, line_y, line.Str, themes.Base)
 
-		// hex values
-		v.print(hex_x, line_y, line.Hex, themes.Base)
-		text_x := hex_x + len(line.Hex)
-
-		// hex separator
-		v.print(text_x, line_y, "│", themes.Subtext1)
-		text_x += rule_w
-
-		// text value
-		v.print(text_x, line_y, line.Str, themes.Base)
+		// print separators on top
+		v.print(line_x+9, line_y, "│", themes.Subtext1)
+		v.print(line_x+60, line_y, "│", themes.Subtext1)
 	}
 }

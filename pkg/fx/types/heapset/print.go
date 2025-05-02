@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/cuhsat/fx/pkg/fx/sys"
 	"github.com/cuhsat/fx/pkg/fx/text"
 	"github.com/cuhsat/fx/pkg/fx/types"
 	"github.com/cuhsat/fx/pkg/fx/types/buffer"
 )
 
-type Printable interface {
-	String() string
-}
-
-func (hs *HeapSet) Print(hex bool) {
+func (hs *HeapSet) Print(op types.Output, sum string) {
 	ctx := buffer.Context{
 		Line: true,
 		Wrap: false,
@@ -32,16 +29,48 @@ func (hs *HeapSet) Print(hex bool) {
 
 		ctx.Heap = h.Ensure().Filter()
 
-		if hex {
-			ctx.W = 67 // use default width
+		if h.Lines() == 0 {
+			continue
+		}
 
-			fmt.Println(text.Title(h.String(), ctx.W))
-
-			fmt.Println(buffer.Hex(&ctx))
-		} else {
-			fmt.Println(buffer.Text(&ctx))
+		switch op {
+		case types.File:
+			printFile(&ctx)
+		case types.Grep:
+			printGrep(&ctx)
+		case types.Hash:
+			printHash(&ctx, sum)
+		case types.Hex:
+			printHex(&ctx)
 		}
 	}
 
 	hs.RUnlock()
+}
+
+func printFile(ctx *buffer.Context) {
+	fmt.Print(buffer.Text(ctx))
+}
+
+func printGrep(ctx *buffer.Context) {
+	for _, tl := range buffer.Text(ctx).Lines {
+		fmt.Printf("%s:%s\n", ctx.Heap.String(), tl)
+	}
+}
+
+func printHash(ctx *buffer.Context, sum string) {
+	buf, err := ctx.Heap.Hashsum(sum)
+
+	if err != nil {
+		sys.Exit(err)
+	}
+
+	fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
+}
+
+func printHex(ctx *buffer.Context) {
+	ctx.W = 78 // use default terminal width
+
+	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
+	fmt.Println(buffer.Hex(ctx))
 }

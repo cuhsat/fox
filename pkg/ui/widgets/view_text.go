@@ -22,7 +22,7 @@ func (v *View) textRender(x, y, w, h int) {
 	v.smap = buf.SMap
 
 	if v.ctx.IsLine() {
-		w -= text.Dec(v.heap.Length()) + buffer.SpaceText
+		w -= text.Dec(v.heap.Total()) + buffer.SpaceText
 	}
 
 	// set buffer bounds
@@ -66,11 +66,11 @@ func (v *View) textGoto(s string) {
 	switch s[0] {
 	case '+':
 		i, _ := strconv.Atoi(s[1:])
-		nr = v.smap[v.delta_y].Nr + i
+		nr = (*v.smap)[v.delta_y].Nr + i
 
 	case '-':
 		i, _ := strconv.Atoi(s[1:])
-		nr = v.smap[v.delta_y].Nr - i
+		nr = (*v.smap)[v.delta_y].Nr - i
 
 	default:
 		nr, _ = strconv.Atoi(s)

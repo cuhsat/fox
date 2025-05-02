@@ -78,12 +78,18 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
+	sum, err := h.Sha256()
+
+	if err != nil {
+		sys.Error(err)
+	}
+
 	bag.w.Start()
 
 	bag.w.WriteFile(h.String(), *types.Filters())
 	bag.w.WriteUser(usr)
 	bag.w.WriteTime(time.Now())
-	bag.w.WriteHash(h.Sha256())
+	bag.w.WriteHash(sum)
 
 	smap := *h.SMap()
 	mmap := *h.MMap()

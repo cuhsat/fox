@@ -27,25 +27,33 @@ func Limits() *limits {
 	return _limits
 }
 
-func (l *limits) ReduceMMap(m mmap.MMap) mmap.MMap {
+func (l *limits) ReduceMMap(m *mmap.MMap) *mmap.MMap {
 	if l.Head.Bytes > 0 {
-		m = m[:min(l.Head.Bytes, len(m))]
+		r := make(mmap.MMap, min(l.Head.Bytes, len(*m)))
+		copy(r, (*m)[:len(r)])
+		return &r
 	}
 
 	if l.Tail.Bytes > 0 {
-		m = m[max(len(m)-l.Tail.Bytes, 0):]
+		r := make(mmap.MMap, min(len(*m), l.Tail.Bytes))
+		copy(r, (*m)[max(len(*m)-len(r), 0):])
+		return &r
 	}
 
 	return m
 }
 
-func (l *limits) ReduceSMap(s smap.SMap) smap.SMap {
+func (l *limits) ReduceSMap(s *smap.SMap) *smap.SMap {
 	if l.Head.Lines > 0 {
-		s = s[:min(l.Head.Lines, len(s))]
+		r := make(smap.SMap, min(l.Head.Lines, len(*s)))
+		copy(r, (*s)[:len(r)])
+		return &r
 	}
 
 	if l.Tail.Lines > 0 {
-		s = s[max(len(s)-l.Tail.Lines, 0):]
+		r := make(smap.SMap, min(len(*s), l.Tail.Lines))
+		copy(r, (*s)[max(len(*s)-len(r), 0):])
+		return &r
 	}
 
 	return s
