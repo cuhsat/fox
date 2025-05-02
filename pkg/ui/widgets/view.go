@@ -11,7 +11,7 @@ import (
 type View struct {
 	base
 	heap *heap.Heap
-	smap smap.SMap
+	smap *smap.SMap
 
 	last_x int
 	last_y int

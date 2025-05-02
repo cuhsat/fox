@@ -23,32 +23,32 @@ type Heap struct {
 
 	Type types.Heap // heap type
 
-	mmap mmap.MMap // memory map
-	smap smap.SMap // string map
+	mmap *mmap.MMap // memory map
+	smap *smap.SMap // string map
 
 	filters []*filter // filters
 
-	hash Hash // file hash sums
-
+	hash Hash     // file hashsums
+	size int64    // file size
 	file *os.File // file handle
 }
 
 func (h *Heap) MMap() *mmap.MMap {
 	h.RLock()
 	defer h.RUnlock()
-	return &h.mmap
+	return h.mmap
 }
 
 func (h *Heap) SMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return &h.last().smap
+	return h.last().smap
 }
 
 func (h *Heap) RMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return &h.last().rmap
+	return h.last().rmap
 }
 
 func (h *Heap) String() string {
@@ -92,6 +92,12 @@ func (h *Heap) Reload() {
 		return
 	}
 
+	h.Lock()
+
+	h.size = fi.Size()
+
+	h.Unlock()
+
 	if fi.Size() == 0 {
 		return
 	}
@@ -102,7 +108,9 @@ func (h *Heap) Reload() {
 		h.mmap.Unmap()
 	}
 
-	h.mmap, err = mmap.Map(h.file, mmap.RDONLY, 0)
+	m, err := mmap.Map(h.file, mmap.RDONLY, 0)
+
+	h.mmap = &m
 
 	h.Unlock()
 
@@ -129,18 +137,26 @@ func (h *Heap) Reload() {
 	h.hash = make(Hash)
 
 	h.Unlock()
+
+	runtime.GC()
 }
 
-func (h *Heap) Length() int {
+func (h *Heap) Size() int64 {
 	h.RLock()
 	defer h.RUnlock()
-	return len(h.smap)
+	return h.size
+}
+
+func (h *Heap) Total() int {
+	h.RLock()
+	defer h.RUnlock()
+	return len(*h.smap)
 }
 
 func (h *Heap) Lines() int {
 	h.RLock()
 	defer h.RUnlock()
-	return len(h.last().smap)
+	return len(*h.last().smap)
 }
 
 func (h *Heap) Bytes() []byte {
@@ -150,14 +166,14 @@ func (h *Heap) Bytes() []byte {
 
 	l := h.last()
 
-	for i, s := range l.smap {
+	for i, s := range *l.smap {
 		end := s.End
 
-		if i < len(l.smap)-1 {
+		if i < len(*l.smap)-1 {
 			end += 1 // include breaks between strings
 		}
 
-		_, err := buf.Write(h.mmap[s.Start:end])
+		_, err := buf.Write((*h.mmap)[s.Start:end])
 
 		if err != nil {
 			sys.Error(err)
@@ -196,6 +212,7 @@ func (h *Heap) ThrowAway() {
 
 	h.filters = h.filters[:0]
 
+	h.size = 0
 	h.smap = nil
 
 	if h.mmap != nil {

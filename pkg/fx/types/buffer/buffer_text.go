@@ -26,7 +26,7 @@ type TextBuffer struct {
 	Lines []TextLine
 	Parts []TextPart
 
-	SMap smap.SMap
+	SMap *smap.SMap
 }
 
 type TextLine struct {
@@ -58,20 +58,20 @@ func (tl TextLine) String() string {
 func Text(ctx *Context) TextBuffer {
 	var tb TextBuffer
 
-	d := text.Dec(ctx.Heap.Length())
+	d := text.Dec(ctx.Heap.Total())
 
 	if ctx.Line {
 		ctx.W -= (d + SpaceText)
 	}
 
-	if ctx.Wrap && *ctx.Heap.RMap() == nil {
+	if ctx.Wrap && ctx.Heap.RMap() == nil {
 		ctx.Heap.Wrap(ctx.W)
 	}
 
 	if ctx.Wrap {
-		tb.SMap = *ctx.Heap.RMap()
+		tb.SMap = ctx.Heap.RMap()
 	} else {
-		tb.SMap = *ctx.Heap.SMap()
+		tb.SMap = ctx.Heap.SMap()
 	}
 
 	tb.W, tb.H = tb.SMap.Size()
@@ -92,14 +92,14 @@ func Text(ctx *Context) TextBuffer {
 func addLines(ctx *Context, tb *TextBuffer, d int) {
 	m := ctx.Heap.MMap()
 
-	for i, s := range tb.SMap[ctx.Y:] {
+	for i, s := range (*tb.SMap)[ctx.Y:] {
 		if i >= ctx.H {
 			break
 		}
 
 		nr := fmt.Sprintf("%0*d", d, s.Nr)
 
-		str := unmap(m, s)
+		str := unmap(m, &s)
 
 		tb.Lines = append(tb.Lines, TextLine{
 			Line: Line{Nr: nr, Str: trim(str, ctx.X, ctx.W)},

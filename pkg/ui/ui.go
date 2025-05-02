@@ -170,7 +170,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				page_h := h - 2 // minus title and status
 
 				if ui.ctx.IsLine() {
-					page_w -= text.Dec(heap.Length()) + buffer.SpaceText
+					page_w -= text.Dec(heap.Total()) + buffer.SpaceText
 				}
 
 				if ev.Key() != tcell.KeyEscape {
@@ -198,11 +198,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlX, tcell.KeyF3:
 					ui.state(mode.Hex)
 
-				case tcell.KeyCtrlSpace, tcell.KeyF4:
-					ui.state(mode.Goto)
-
-				case tcell.KeyCtrlO, tcell.KeyF5:
+				case tcell.KeyCtrlO:
 					ui.state(mode.Open)
+
+				case tcell.KeyCtrlSpace:
+					ui.state(mode.Goto)
 
 				case tcell.KeyF9:
 					hs.Stats()

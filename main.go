@@ -10,6 +10,7 @@ import (
 	"github.com/cuhsat/fx/pkg/fx"
 	"github.com/cuhsat/fx/pkg/fx/sys"
 	"github.com/cuhsat/fx/pkg/fx/types"
+	"github.com/cuhsat/fx/pkg/fx/types/heap"
 	"github.com/cuhsat/fx/pkg/fx/types/heapset"
 	"github.com/cuhsat/fx/pkg/fx/types/mode"
 	"github.com/cuhsat/fx/pkg/fx/user/bag"
@@ -30,7 +31,8 @@ const (
 
 The Swiss Army Knife for examining text files
 
-usage: fx [--print] [--hex] [--head|tail] [--lines|bytes=NUM]
+usage: fx [--print] [--hex] [--sum={md5|sha1|sha256}]
+          [--head|tail] [--lines|bytes=NUMBER]
           [--json|jsonl] [--file=FILE] [--key=KEY]
           [--regexp=PATTERN ...]
           [-|PATH ...]
@@ -38,15 +40,17 @@ usage: fx [--print] [--hex] [--head|tail] [--lines|bytes=NUM]
 positional arguments:
   PATH(s) to open or '-' for STDIN (default: current directory)
 
-general:
+console:
   -p, --print              print to console (no UI)
-  -x, --hex                print or start in HEX mode
+  -x, --hex                output file in hex / start in HEX mode
+  -s, --sum=ALGORITHM      output file hashsums (default: sha256)
+                           available: md5, sha1, sha256
 
 file limits:
   -h, --head               limit head of file by ...
   -t, --tail               limit tail of file by ...
-  -n, --lines=NUM          number of lines (default: 10)
-  -c, --bytes=NUM          number of bytes (default: 16)
+  -n, --lines=NUMBER       number of lines (default: 10)
+  -c, --bytes=NUMBER       number of bytes (default: 16)
 
 line filter:
   -e, --regexp=PATTERN     filter for lines that matches pattern
@@ -66,11 +70,19 @@ Full documentation: <https://github.com/cuhsat/fx/docs>
 )
 
 func main() {
-	// general
+	// console
 	m := mode.Default
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
-	x := flag.BoolP("hex", "x", false, "print or start in HEX mode")
+	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
+
+	om := types.File
+
+	s := flag.StringP("sum", "s", "", "output file hashsums")
+
+	if len(*s) == 0 {
+		flag.Lookup("sum").NoOptDefVal = heap.Sha256
+	}
 
 	// file limits
 	l := types.Limits()
@@ -124,6 +136,10 @@ func main() {
 		sys.Exit("head or tail")
 	}
 
+	if *x && len(*s) > 0 {
+		sys.Exit("hex or sum")
+	}
+
 	if *x && len(*e) > 0 {
 		sys.Exit("hex or pattern")
 	}
@@ -155,10 +171,16 @@ func main() {
 
 	if *x {
 		m = mode.Hex
+		om = types.Hex
 	}
 
 	if len(*e) > 0 {
 		m = mode.Grep
+		om = types.Grep
+	}
+
+	if len(*s) > 0 {
+		om = types.Hash
 	}
 
 	sys.SetupLogger()
@@ -182,7 +204,7 @@ func main() {
 	defer hs.ThrowAway()
 
 	if *p {
-		hs.Print(*x)
+		hs.Print(om, *s)
 		return
 	}
 

@@ -5,8 +5,6 @@
 | <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>l</kbd>       | Less mode             |
 | <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
 | <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
-| <kbd>F4</kbd> / <kbd>Ctrl</kbd> + <kbd>Space</kbd>   | Goto line             |
-| <kbd>F5</kbd> / <kbd>Ctrl</kbd> + <kbd>o</kbd>       | Open file(s)          |
 | <kbd>F9</kbd>                                        | Show file(s) counts   |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |
@@ -19,6 +17,8 @@
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                  | Scroll page right     |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Up</kbd>   | Scroll to start       |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Down</kbd> | Scroll to end         |
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd>                   | Goto line             |
+| <kbd>Ctrl</kbd> + <kbd>o</kbd>                       | Open file(s)          |
 | <kbd>Ctrl</kbd> + <kbd>q</kbd>                       | Close file            |
 | <kbd>Ctrl</kbd> + <kbd>t</kbd>                       | Cycle themes          |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |

@@ -18,14 +18,20 @@ Examine all `.jsonl` files in all sub dirs
 fx ./**/*.jsonl
 ```
 
-Print all lines with `John Doe` from all files
+Print the `MD5` hashsum from all files in `nist.zip`
+
+```console
+fx -ps=md5 nist.zip
+```
+
+Print all lines containing `John Doe` from all files
 
 ```console
 fx -pe "John Doe"
 ```
 
-Print the first `512` bytes from `nist.dd` to `mbr` in hex
+Print the first `512` bytes from `img.dd` to `mbr` in hex
 
 ```console
-fx -xhc 512 nist.dd > mbr
+fx -pxhc=512 img.dd > mbr
 ```

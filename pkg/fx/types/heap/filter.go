@@ -12,9 +12,9 @@ import (
 )
 
 type filter struct {
-	pattern string    // filter pattern
-	smap    smap.SMap // filter string map
-	rmap    smap.SMap // filter render map
+	pattern string     // filter pattern
+	smap    *smap.SMap // filter string map
+	rmap    *smap.SMap // filter render map
 }
 
 type chunk struct {
@@ -99,8 +99,8 @@ func (h *Heap) last() *filter {
 	}
 }
 
-func (h *Heap) find(b []byte, bs int) smap.SMap {
-	ch := make(chan *smap.String, bs)
+func (h *Heap) find(b []byte, bs int) *smap.SMap {
+	ch := make(chan smap.String, bs)
 
 	defer close(ch)
 
@@ -133,13 +133,13 @@ func chunks(n int) (c []*chunk) {
 	return
 }
 
-func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
+func grep(ch chan<- smap.String, h *Heap, c *chunk, b []byte) {
 	re, _ := regexp.Compile(string(b))
 
 	h.RLock()
 
 	for _, s := range (*h.SMap())[c.min:c.max] {
-		if re.Match(h.mmap[s.Start:s.End]) {
+		if re.Match((*h.mmap)[s.Start:s.End]) {
 			ch <- s
 		}
 	}
@@ -147,14 +147,16 @@ func grep(ch chan<- *smap.String, h *Heap, c *chunk, b []byte) {
 	h.RUnlock()
 }
 
-func sort(ch <-chan *smap.String) (s smap.SMap) {
+func sort(ch <-chan smap.String) *smap.SMap {
+	s := make(smap.SMap, 0)
+
 	for len(ch) > 0 {
 		s = append(s, <-ch)
 	}
 
-	slices.SortFunc(s, func(a, b *smap.String) int {
+	slices.SortFunc(s, func(a, b smap.String) int {
 		return cmp.Compare(a.Nr, b.Nr)
 	})
 
-	return
+	return &s
 }

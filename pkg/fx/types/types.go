@@ -17,3 +17,12 @@ const (
 	Json
 	Jsonl
 )
+
+type Output int
+
+const (
+	File Output = iota
+	Grep
+	Hash
+	Hex
+)

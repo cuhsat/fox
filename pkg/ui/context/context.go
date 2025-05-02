@@ -15,7 +15,7 @@ type Context struct {
 
 	Root tcell.Screen
 
-	cfg config.Config
+	cfg *config.Config
 
 	mode mode.Mode
 	last mode.Mode
@@ -28,7 +28,7 @@ type Context struct {
 }
 
 func New(root tcell.Screen) *Context {
-	cfg := *config.New()
+	cfg := config.New()
 	ctx := &Context{
 		// screen
 		Root: root,
