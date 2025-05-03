@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	Value string
+	Input chan string
 )
 
 type Plugins struct {
@@ -24,11 +24,14 @@ type Plugins struct {
 }
 
 type Plugin struct {
-	Name string `toml:"Name"`
-	Exec string `toml:"Exec"`
+	Name  string `toml:"Name"`
+	Exec  string `toml:"Exec"`
+	Input bool   `toml:"Input"`
 }
 
 func New() *Plugins {
+	Input = make(chan string)
+
 	ps := new(Plugins)
 
 	is, p := user.Config(filename)
@@ -47,23 +50,27 @@ func New() *Plugins {
 	return ps
 }
 
-func (p *Plugins) Execute(hs *heapset.HeapSet, name string) (string, bool) {
-	pl, ok := p.Plugins[name]
+func Close() {
+	close(Input)
+}
 
-	if ok {
-		_, h := hs.Heap()
+func (p *Plugin) Execute(hs *heapset.HeapSet, fn func()) {
+	var v string
 
-		all := strings.Join(hs.Files(), " ")
-
-		cmd := pl.Exec
-		cmd = strings.ReplaceAll(cmd, "$?", Value)
-		cmd = strings.ReplaceAll(cmd, "$+", h.Path)
-		cmd = strings.ReplaceAll(cmd, "$*", all)
-
-		hs.OpenFile(sys.Exec(cmd), pl.Name, types.Stdout)
-
-		return pl.Name, true
+	if p.Input {
+		v = <-Input
 	}
 
-	return "", false
+	_, h := hs.Heap()
+
+	all := strings.Join(hs.Files(), " ")
+
+	cmd := p.Exec
+	cmd = strings.ReplaceAll(cmd, "$?", v)
+	cmd = strings.ReplaceAll(cmd, "$+", h.Path)
+	cmd = strings.ReplaceAll(cmd, "$*", all)
+
+	hs.OpenFile(sys.Exec(cmd), p.Name, types.Stdout)
+
+	fn()
 }

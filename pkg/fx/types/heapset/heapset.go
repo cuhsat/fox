@@ -74,7 +74,7 @@ func (hs *HeapSet) Size() int32 {
 func (hs *HeapSet) Files() []string {
 	hs.RLock()
 
-	fs := make([]string, 0)
+	fs := make([]string, 0, len(hs.heaps))
 
 	for _, h := range hs.heaps {
 		if h.Type == types.Regular {

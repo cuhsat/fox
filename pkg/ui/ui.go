@@ -185,7 +185,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyEscape:
 					if esc {
 						return
-					} else if ui.ctx.Mode().Interactive() {
+					}
+
+					if ui.ctx.Mode().Interactive() {
 						if !ui.ctx.Last().Interactive() {
 							ui.state(ui.ctx.Last())
 						} else {
@@ -223,8 +225,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					if p, ok := ui.plugins.Execute(hs, ev.Name()); ok {
-						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p))
+					pl, ok := ui.plugins.Plugins[ev.Name()]
+
+					if !ok {
+						continue
+					}
+
+					go pl.Execute(hs, ui.ctx.Interrupt)
+
+					if pl.Input {
+						ui.state(mode.User)
 					}
 
 				case tcell.KeyF9:
@@ -287,6 +297,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyEnd:
 					ui.view.ScrollEnd()
 
+				case tcell.KeyCtrlSpace:
+					ui.state(mode.Goto)
+
 				case tcell.KeyCtrlL:
 					ui.state(mode.Less)
 
@@ -298,9 +311,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyCtrlO:
 					ui.state(mode.Open)
-
-				case tcell.KeyCtrlSpace:
-					ui.state(mode.Goto)
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
@@ -328,7 +338,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					ui.overlay.SendInfo("Copied to clipboard")
 
-				case tcell.KeyCtrlS, tcell.KeyPrint:
+				case tcell.KeyCtrlS:
 					if ui.ctx.Mode() == mode.Hex {
 						continue
 					}
@@ -409,7 +419,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.state(ui.ctx.Last())
 
 					case mode.User:
-						plugins.Value = v
+						plugins.Input <- v
 						ui.state(ui.ctx.Last())
 
 					default:
@@ -466,6 +476,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 }
 
 func (ui *UI) Close() {
+	if ui.plugins != nil {
+		plugins.Close()
+	}
+
 	ui.overlay.Close()
 	ui.root.Fini()
 	ui.ctx.Save()

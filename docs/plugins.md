@@ -4,7 +4,8 @@
 ```toml
 [Plugin.F1]
 Name = "Echo Plugin"
-Exec = "echo $!"
+Exec = "echo $?"
+Input = true
 ```
 
 ## Variabes

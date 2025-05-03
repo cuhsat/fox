@@ -5,4 +5,7 @@
 Name = "Test Plugin"
 
 # Execute command
-Exec = "echo $!"
+Exec = "echo $?"
+
+# Requires user input
+Input = true
