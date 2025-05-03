@@ -223,7 +223,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					if p, ok := ui.plugins.Execute(ev.Name(), hs); ok {
+					if p, ok := ui.plugins.Execute(hs, ev.Name()); ok {
 						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p))
 					}
 
