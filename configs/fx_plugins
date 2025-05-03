@@ -1,8 +1,8 @@
 # Forensic Examiner Example Plugins
-[Plugin.Custom]
+[Plugin.F1]
 
 # Plugin name
-Name = "Custom"
-Key = "F1"
-Run = "echo $0"
-Ps1 = "ECHO"
+Name = "Test Plugin"
+
+# Execute command
+Exec = "echo $!"

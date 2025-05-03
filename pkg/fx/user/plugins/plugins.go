@@ -17,9 +17,7 @@ type Plugins struct {
 
 type Plugin struct {
 	Name string `toml:"Name"`
-	Key  string `toml:"Key"`
-	Run  string `toml:"Run"`
-	Ps1  string `toml:"Ps1"`
+	Exec string `toml:"Exec"`
 }
 
 func New() *Plugins {

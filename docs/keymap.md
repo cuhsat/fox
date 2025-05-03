@@ -24,7 +24,7 @@
 | <kbd>Ctrl</kbd> + <kbd>s</kbd> / <kbd>Print</kbd>    | Save evidence         |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
 | <kbd>Ctrl</kbd> + <kbd>z</kbd>                       | Suspend to shell      |
-| <kbd>F1</kbd> - kbd>F8</kbd>                         | Execute plugin        |
+| <kbd>F1</kbd> - <kbd>F8</kbd>                        | Execute plugin        |
 | <kbd>F9</kbd>                                        | Show file(s) counts   |
 | <kbd>F10</kbd>                                       | Show file(s) MD5      |
 | <kbd>F11</kbd>                                       | Show file(s) SHA1     |
