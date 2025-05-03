@@ -96,14 +96,6 @@ func (h *Heap) Reload() {
 
 	h.size = fi.Size()
 
-	h.Unlock()
-
-	if fi.Size() == 0 {
-		return
-	}
-
-	h.Lock()
-
 	if h.mmap != nil {
 		h.mmap.Unmap()
 	}
@@ -150,17 +142,27 @@ func (h *Heap) Size() int64 {
 func (h *Heap) Total() int {
 	h.RLock()
 	defer h.RUnlock()
+	if h.smap == nil {
+		return 0
+	}
 	return len(*h.smap)
 }
 
 func (h *Heap) Lines() int {
 	h.RLock()
 	defer h.RUnlock()
+	if h.last().smap == nil {
+		return 0
+	}
 	return len(*h.last().smap)
 }
 
 func (h *Heap) Bytes() []byte {
 	var buf bytes.Buffer
+
+	if h.last().smap == nil {
+		return buf.Bytes()
+	}
 
 	h.RLock()
 

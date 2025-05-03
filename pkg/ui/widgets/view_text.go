@@ -22,7 +22,7 @@ func (v *View) textRender(x, y, w, h int) {
 	v.smap = buf.SMap
 
 	if v.ctx.IsLine() {
-		w -= text.Dec(v.heap.Total()) + buffer.SpaceText
+		w -= text.Dec(v.heap.Total()) + 1
 	}
 
 	// set buffer bounds
@@ -37,7 +37,7 @@ func (v *View) textRender(x, y, w, h int) {
 		// line number
 		if v.ctx.IsLine() {
 			v.print(line_x, line_y, line.Nr, themes.Subtext0)
-			line_x += len(line.Nr) + buffer.SpaceText
+			line_x += len(line.Nr) + 1
 		}
 
 		// text value
@@ -52,7 +52,7 @@ func (v *View) textRender(x, y, w, h int) {
 		part_y := y + part.Y
 
 		if v.ctx.IsLine() {
-			part_x += len(buf.Lines[0].Nr) + buffer.SpaceText
+			part_x += len(buf.Lines[0].Nr) + 1
 		}
 
 		// part value

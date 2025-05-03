@@ -29,19 +29,17 @@ func (hs *HeapSet) Print(op types.Output, sum string) {
 
 		ctx.Heap = h.Ensure().Filter()
 
-		if h.Lines() == 0 {
-			continue
-		}
-
 		switch op {
 		case types.File:
 			printFile(&ctx)
 		case types.Grep:
 			printGrep(&ctx)
-		case types.Hash:
-			printHash(&ctx, sum)
 		case types.Hex:
 			printHex(&ctx)
+		case types.Hash:
+			printHash(&ctx, sum)
+		case types.Count:
+			printCount(&ctx)
 		}
 	}
 
@@ -49,13 +47,24 @@ func (hs *HeapSet) Print(op types.Output, sum string) {
 }
 
 func printFile(ctx *buffer.Context) {
-	fmt.Print(buffer.Text(ctx))
+	if ctx.Heap.Lines() != 0 {
+		fmt.Print(buffer.Text(ctx))
+	}
 }
 
 func printGrep(ctx *buffer.Context) {
-	for _, tl := range buffer.Text(ctx).Lines {
-		fmt.Printf("%s:%s\n", ctx.Heap.String(), tl)
+	if ctx.Heap.Lines() != 0 {
+		for _, tl := range buffer.Text(ctx).Lines {
+			fmt.Printf("%s:%s\n", ctx.Heap.String(), tl)
+		}
 	}
+}
+
+func printHex(ctx *buffer.Context) {
+	ctx.W = 78 // use default terminal width
+
+	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
+	fmt.Println(buffer.Hex(ctx))
 }
 
 func printHash(ctx *buffer.Context, sum string) {
@@ -68,9 +77,6 @@ func printHash(ctx *buffer.Context, sum string) {
 	fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
 }
 
-func printHex(ctx *buffer.Context) {
-	ctx.W = 78 // use default terminal width
-
-	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
-	fmt.Println(buffer.Hex(ctx))
+func printCount(ctx *buffer.Context) {
+	fmt.Printf("%8dL %8dB  %s\n", ctx.Heap.Size(), ctx.Heap.Size(), ctx.Heap.String())
 }

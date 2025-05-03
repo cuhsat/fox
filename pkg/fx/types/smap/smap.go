@@ -51,6 +51,10 @@ func Map(m *mmap.MMap) *SMap {
 func (s *SMap) Format(m *mmap.MMap) *SMap {
 	r := new(SMap)
 
+	if s == nil {
+		return r
+	}
+
 	for _, str := range *s {
 		l := len(*r)
 
@@ -129,6 +133,10 @@ func (s *SMap) Format(m *mmap.MMap) *SMap {
 func (s *SMap) Wrap(w int) *SMap {
 	r := new(SMap)
 
+	if s == nil {
+		return r
+	}
+
 	for _, str := range *s {
 		for str.Len > w {
 			*r = append(*r, String{
@@ -154,6 +162,10 @@ func (s *SMap) Wrap(w int) *SMap {
 }
 
 func (s *SMap) Find(nr int) (bool, int) {
+	if s == nil {
+		return false, 0
+	}
+
 	for i, str := range *s {
 		if str.Nr == nr {
 			return true, i
@@ -164,6 +176,10 @@ func (s *SMap) Find(nr int) (bool, int) {
 }
 
 func (s *SMap) Size() (w, h int) {
+	if s == nil {
+		return 0, 0
+	}
+
 	for _, str := range *s {
 		w = max(w, str.Len)
 	}

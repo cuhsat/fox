@@ -23,6 +23,7 @@ type Output int
 const (
 	File Output = iota
 	Grep
-	Hash
 	Hex
+	Hash
+	Count
 )

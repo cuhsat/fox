@@ -64,11 +64,5 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 		return nil, err
 	}
 
-	sum = imp.Sum(nil)
-
-	h.Lock()
-	h.hash[algo] = sum
-	h.Unlock()
-
-	return sum, nil
+	return imp.Sum(nil), nil
 }
