@@ -17,6 +17,7 @@ const (
 
 type Plugins struct {
 	Plugins map[string]Plugin `toml:"Plugin"`
+	buffer  string
 }
 
 type Plugin struct {
@@ -43,14 +44,18 @@ func New() *Plugins {
 	return ps
 }
 
-func (p *Plugins) Execute(name string, hs *heapset.HeapSet) (string, bool) {
+func (p *Plugins) Execute(hs *heapset.HeapSet, name string) (string, bool) {
 	pl, ok := p.Plugins[name]
 
 	if ok {
 		_, h := hs.Current()
 
+		all := strings.Join(hs.Files(), " ")
+
 		cmd := pl.Exec
+		cmd = strings.ReplaceAll(cmd, "$?", p.buffer)
 		cmd = strings.ReplaceAll(cmd, "$!", h.Path)
+		cmd = strings.ReplaceAll(cmd, "$*", all)
 
 		hs.OpenFile(sys.Exec(cmd), pl.Name, types.Stdout)
 
