@@ -48,7 +48,7 @@ func (p *Plugins) Execute(hs *heapset.HeapSet, name string) (string, bool) {
 	pl, ok := p.Plugins[name]
 
 	if ok {
-		_, h := hs.Current()
+		_, h := hs.Heap()
 
 		all := strings.Join(hs.Files(), " ")
 

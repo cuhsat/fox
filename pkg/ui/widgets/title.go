@@ -20,8 +20,8 @@ func NewTitle(ctx *context.Context) *Title {
 }
 
 func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-	i, heap := hs.Current()
-	n := hs.Length()
+	i, heap := hs.Heap()
+	n := hs.Size()
 	p := heap.String()
 
 	var s string

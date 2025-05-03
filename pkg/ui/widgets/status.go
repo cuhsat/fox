@@ -48,7 +48,7 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
 	x += text.Len(m)
 
-	_, heap := hs.Current()
+	_, heap := hs.Heap()
 
 	f := st.fmtFilters()
 	s := st.fmtStatus(heap.Lines())

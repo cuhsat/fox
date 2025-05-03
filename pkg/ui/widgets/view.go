@@ -33,7 +33,7 @@ func NewView(ctx *context.Context) *View {
 }
 
 func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-	_, v.heap = hs.Current()
+	_, v.heap = hs.Heap()
 
 	h -= 1 // fill all but least line
 

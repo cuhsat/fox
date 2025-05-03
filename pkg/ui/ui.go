@@ -121,7 +121,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 			w, h := ui.root.Size()
 
-			_, heap := hs.Current()
+			_, heap := hs.Heap()
 
 			switch ev := ev.(type) {
 			case *tcell.EventInterrupt:
@@ -495,7 +495,7 @@ func (ui *UI) state(m mode.Mode) {
 func (ui *UI) render(hs *heapset.HeapSet) {
 	defer ui.root.Show()
 
-	_, heap := hs.Current()
+	_, heap := hs.Heap()
 
 	if heap.Type == types.Stdin {
 		ui.root.Sync() // prevent hickups
