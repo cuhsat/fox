@@ -51,7 +51,7 @@ func New(paths []string) *HeapSet {
 		hs.Open(path)
 	}
 
-	if hs.Length() == 0 {
+	if hs.Size() == 0 {
 		sys.Exit("no files found")
 	}
 
@@ -63,6 +63,12 @@ func New(paths []string) *HeapSet {
 func (hs *HeapSet) Bind(fn1, fn2 callback) {
 	hs.watch_fn = fn1
 	hs.error_fn = fn2
+}
+
+func (hs *HeapSet) Size() int32 {
+	hs.RLock()
+	defer hs.RUnlock()
+	return int32(len(hs.heaps))
 }
 
 func (hs *HeapSet) Files() []string {
@@ -81,13 +87,7 @@ func (hs *HeapSet) Files() []string {
 	return fs
 }
 
-func (hs *HeapSet) Length() int32 {
-	hs.RLock()
-	defer hs.RUnlock()
-	return int32(len(hs.heaps))
-}
-
-func (hs *HeapSet) Current() (int32, *heap.Heap) {
+func (hs *HeapSet) Heap() (int32, *heap.Heap) {
 	idx := atomic.LoadInt32(hs.index)
 	return idx + 1, hs.atomicGet(idx)
 }
@@ -108,7 +108,7 @@ func (hs *HeapSet) OpenLog() {
 	idx := hs.findByPath(sys.Log.Name)
 
 	if idx < 0 {
-		idx = hs.Length()
+		idx = hs.Size()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "log",
@@ -131,7 +131,7 @@ func (hs *HeapSet) OpenFile(path, title string, tp types.Heap) {
 	idx := hs.findByPath(path)
 
 	if idx < 0 {
-		idx = hs.Length()
+		idx = hs.Size()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: title,
@@ -150,7 +150,7 @@ func (hs *HeapSet) PrevHeap() *heap.Heap {
 	idx := atomic.AddInt32(hs.index, -1)
 
 	if idx < 0 {
-		atomic.StoreInt32(hs.index, hs.Length()-1)
+		atomic.StoreInt32(hs.index, hs.Size()-1)
 	}
 
 	return hs.load()
@@ -159,7 +159,7 @@ func (hs *HeapSet) PrevHeap() *heap.Heap {
 func (hs *HeapSet) NextHeap() *heap.Heap {
 	idx := atomic.AddInt32(hs.index, 1)
 
-	if idx >= hs.Length() {
+	if idx >= hs.Size() {
 		atomic.StoreInt32(hs.index, 0)
 	}
 
@@ -167,7 +167,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) CloseHeap() *heap.Heap {
-	if hs.Length() == 1 {
+	if hs.Size() == 1 {
 		return nil
 	}
 

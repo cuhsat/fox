@@ -93,7 +93,7 @@ func (hs *HeapSet) newBuffer(t string, fn util) {
 			Type:  types.Stdout,
 		})
 
-		atomic.StoreInt32(hs.index, hs.Length()-1)
+		atomic.StoreInt32(hs.index, hs.Size()-1)
 
 		hs.load()
 	}
