@@ -229,7 +229,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						cmd := p.Exec
 						cmd = strings.ReplaceAll(cmd, "$!", heap.Path)
 
-						hs.OpenHeap(sys.Exec(cmd))
+						hs.OpenFile(sys.Exec(cmd), p.Name, types.Stdout)
 
 						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p.Name))
 					}
@@ -348,7 +348,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyCtrlE:
 					if sys.Exists(bag.Path) {
-						hs.OpenHeap(bag.Path)
+						hs.OpenFile(bag.Path, bag.Path, types.Regular)
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}

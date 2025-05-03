@@ -75,7 +75,6 @@ func (hs *HeapSet) Bind(fn1, fn2 callback) {
 func (hs *HeapSet) Length() int32 {
 	hs.RLock()
 	defer hs.RUnlock()
-
 	return int32(len(hs.heaps))
 }
 
@@ -116,7 +115,7 @@ func (hs *HeapSet) OpenLog() {
 	hs.atomicGet(idx).Reload()
 }
 
-func (hs *HeapSet) OpenHeap(path string) {
+func (hs *HeapSet) OpenFile(path, title string, tp types.Heap) {
 	if !sys.Exists(path) {
 		return
 	}
@@ -126,7 +125,12 @@ func (hs *HeapSet) OpenHeap(path string) {
 	if idx < 0 {
 		idx = hs.Length()
 
-		hs.loadPath(path)
+		hs.atomicAdd(&heap.Heap{
+			Title: title,
+			Path:  path,
+			Base:  path,
+			Type:  tp,
+		})
 	}
 
 	atomic.StoreInt32(hs.index, idx)
