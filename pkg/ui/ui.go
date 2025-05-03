@@ -185,12 +185,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyEscape:
 					if esc {
 						return
-					} else if ui.ctx.Mode() == mode.Grep {
-						ui.state(mode.Less)
-					} else if ui.ctx.Mode() == mode.Goto {
-						ui.state(mode.Less)
-					} else if ui.ctx.Mode() == mode.Open {
-						ui.state(mode.Less)
+					} else if ui.ctx.Mode().Interactive() {
+						if !ui.ctx.Last().Interactive() {
+							ui.state(ui.ctx.Last())
+						} else {
+							ui.state(mode.Less)
+						}
 					}
 
 					esc = true
@@ -408,6 +408,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						})
 						ui.state(ui.ctx.Last())
 
+					case mode.User:
+						plugins.Value = v
+						ui.state(ui.ctx.Last())
+
 					default:
 						types.Filters().Set(v)
 						ui.view.Reset()
@@ -420,16 +424,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyBackspace2:
 					if len(ui.status.Value) > 0 {
 						ui.status.DelRune()
-					} else if ui.ctx.Mode() == mode.Goto {
-						ui.state(ui.ctx.Last())
-					} else if ui.ctx.Mode() == mode.Open {
-						ui.state(ui.ctx.Last())
+					} else if ui.ctx.Mode().Interactive() {
+						if !ui.ctx.Last().Interactive() {
+							ui.state(ui.ctx.Last())
+						} else {
+							ui.state(mode.Less)
+						}
 					} else if len(*types.Filters()) > 0 {
 						types.Filters().Pop()
 						ui.view.Reset()
 						heap.DelFilter()
-					} else if ui.ctx.Mode() == mode.Grep {
-						ui.state(mode.Less)
 					}
 
 				default:
@@ -473,19 +477,12 @@ func (ui *UI) state(m mode.Mode) {
 	}
 
 	// former mode
-	switch ui.ctx.Last() {
-	case mode.Grep, mode.Goto, mode.Open:
+	if ui.ctx.Last().Interactive() {
 		ui.status.Value = ""
 	}
 
 	// actual mode
-	switch m {
-	case mode.Less, mode.Hex:
-		ui.status.Lock = true
-
-	case mode.Grep, mode.Goto, mode.Open:
-		ui.status.Lock = false
-	}
+	ui.status.Lock = !m.Interactive()
 
 	if ui.ctx.Last() == mode.Hex || m == mode.Hex {
 		ui.view.Reset()

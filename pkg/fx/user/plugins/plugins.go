@@ -15,9 +15,12 @@ const (
 	filename = ".fx_plugins"
 )
 
+var (
+	Value string
+)
+
 type Plugins struct {
 	Plugins map[string]Plugin `toml:"Plugin"`
-	value   string
 }
 
 type Plugin struct {
@@ -44,10 +47,6 @@ func New() *Plugins {
 	return ps
 }
 
-func (p *Plugins) Input(v string) {
-	p.value = v
-}
-
 func (p *Plugins) Execute(hs *heapset.HeapSet, name string) (string, bool) {
 	pl, ok := p.Plugins[name]
 
@@ -57,8 +56,8 @@ func (p *Plugins) Execute(hs *heapset.HeapSet, name string) (string, bool) {
 		all := strings.Join(hs.Files(), " ")
 
 		cmd := pl.Exec
-		cmd = strings.ReplaceAll(cmd, "$?", p.value)
-		cmd = strings.ReplaceAll(cmd, "$!", h.Path)
+		cmd = strings.ReplaceAll(cmd, "$?", Value)
+		cmd = strings.ReplaceAll(cmd, "$+", h.Path)
 		cmd = strings.ReplaceAll(cmd, "$*", all)
 
 		hs.OpenFile(sys.Exec(cmd), pl.Name, types.Stdout)

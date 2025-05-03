@@ -14,6 +14,7 @@ const (
 	Hex
 	Goto
 	Open
+	User
 )
 
 type Mode int
@@ -25,6 +26,7 @@ func (m Mode) String() string {
 		"Hex",
 		"Goto",
 		"Open",
+		"User",
 	}
 
 	if int(m) < 0 || int(m) > len(modes) {
@@ -32,4 +34,13 @@ func (m Mode) String() string {
 	}
 
 	return strings.ToUpper(modes[m])
+}
+
+func (m Mode) Interactive() bool {
+	switch m {
+	case Grep, Goto, Open, User:
+		return true
+	default:
+		return false
+	}
 }

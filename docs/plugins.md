@@ -6,3 +6,8 @@
 Name = "Echo Plugin"
 Exec = "echo $!"
 ```
+
+## Variabes
+* `$?` User input
+* `$+` Current file path
+* `$*` All open file paths
