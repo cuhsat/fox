@@ -223,15 +223,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					p, ok := ui.plugins.Plugins[ev.Name()]
-
-					if ok {
-						cmd := p.Exec
-						cmd = strings.ReplaceAll(cmd, "$!", heap.Path)
-
-						hs.OpenFile(sys.Exec(cmd), p.Name, types.Stdout)
-
-						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p.Name))
+					if p, ok := ui.plugins.Execute(ev.Name(), hs); ok {
+						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p))
 					}
 
 				case tcell.KeyF9:
