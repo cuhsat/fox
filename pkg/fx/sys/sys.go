@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/cuhsat/fx/pkg/fx"
 )
@@ -20,6 +21,21 @@ const (
 	cmdShell = "CMD.EXE"
 	pshShell = "/bin/sh"
 )
+
+func Exec(s string) string {
+	f := Temp("exec", ".txt")
+
+	args := strings.Split(s, " ")
+
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdout = f
+	cmd.Stderr = f
+	cmd.Run()
+
+	f.Close()
+
+	return f.Name()
+}
 
 func Shell() {
 	shl := os.Getenv("SHELL")

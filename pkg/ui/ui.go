@@ -16,6 +16,7 @@ import (
 	"github.com/cuhsat/fx/pkg/fx/types/mode"
 	"github.com/cuhsat/fx/pkg/fx/user/bag"
 	"github.com/cuhsat/fx/pkg/fx/user/history"
+	"github.com/cuhsat/fx/pkg/fx/user/plugins"
 	"github.com/cuhsat/fx/pkg/ui/context"
 	"github.com/cuhsat/fx/pkg/ui/themes"
 	"github.com/cuhsat/fx/pkg/ui/widgets"
@@ -45,6 +46,8 @@ type UI struct {
 	view    *widgets.View
 	status  *widgets.Status
 	overlay *widgets.Overlay
+
+	plugins *plugins.Plugins
 }
 
 func New(m mode.Mode) *UI {
@@ -78,6 +81,8 @@ func New(m mode.Mode) *UI {
 		view:    widgets.NewView(ctx),
 		status:  widgets.NewStatus(ctx),
 		overlay: widgets.NewOverlay(ctx),
+
+		plugins: plugins.New(),
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -180,13 +185,114 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyEscape:
 					if esc {
 						return
+					} else if ui.ctx.Mode() == mode.Grep {
+						ui.state(mode.Less)
 					} else if ui.ctx.Mode() == mode.Goto {
-						ui.state(ui.ctx.Last())
+						ui.state(mode.Less)
 					} else if ui.ctx.Mode() == mode.Open {
-						ui.state(ui.ctx.Last())
+						ui.state(mode.Less)
 					}
 
 					esc = true
+
+				case tcell.KeyTab:
+					ui.view.Reset()
+
+					if mods&tcell.ModShift != 0 {
+						heap = hs.PrevHeap()
+					} else {
+						heap = hs.NextHeap()
+					}
+
+				case tcell.KeyF1:
+					fallthrough
+				case tcell.KeyF2:
+					fallthrough
+				case tcell.KeyF3:
+					fallthrough
+				case tcell.KeyF4:
+					fallthrough
+				case tcell.KeyF5:
+					fallthrough
+				case tcell.KeyF6:
+					fallthrough
+				case tcell.KeyF7:
+					fallthrough
+				case tcell.KeyF8:
+					if ui.plugins == nil {
+						continue
+					}
+
+					p, ok := ui.plugins.Plugins[ev.Name()]
+
+					if ok {
+						cmd := p.Exec
+						cmd = strings.ReplaceAll(cmd, "$!", heap.Path)
+
+						hs.OpenHeap(sys.Exec(cmd))
+
+						ui.overlay.SendInfo(fmt.Sprintf("Executed %s", p.Name))
+					}
+
+				case tcell.KeyF9:
+					hs.Counts()
+
+				case tcell.KeyF10:
+					hs.Md5()
+
+				case tcell.KeyF11:
+					hs.Sha1()
+
+				case tcell.KeyF12:
+					hs.Sha256()
+
+				case tcell.KeyUp:
+					if mods&tcell.ModAlt != 0 {
+						ui.status.Value = hi.PrevCommand()
+					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
+						ui.view.ScrollStart()
+					} else if mods&tcell.ModShift != 0 {
+						ui.view.ScrollUp(page_h)
+					} else {
+						ui.view.ScrollUp(delta)
+					}
+
+				case tcell.KeyDown:
+					if mods&tcell.ModAlt != 0 {
+						ui.status.Value = hi.NextCommand()
+					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
+						ui.view.ScrollEnd()
+					} else if mods&tcell.ModShift != 0 {
+						ui.view.ScrollDown(page_h)
+					} else {
+						ui.view.ScrollDown(delta)
+					}
+
+				case tcell.KeyLeft:
+					if mods&tcell.ModShift != 0 {
+						ui.view.ScrollLeft(page_w)
+					} else {
+						ui.view.ScrollLeft(delta)
+					}
+
+				case tcell.KeyRight:
+					if mods&tcell.ModShift != 0 {
+						ui.view.ScrollRight(page_w)
+					} else {
+						ui.view.ScrollRight(delta)
+					}
+
+				case tcell.KeyHome:
+					ui.view.ScrollStart()
+
+				case tcell.KeyPgUp:
+					ui.view.ScrollUp(page_h)
+
+				case tcell.KeyPgDn:
+					ui.view.ScrollDown(page_h)
+
+				case tcell.KeyEnd:
+					ui.view.ScrollEnd()
 
 				case tcell.KeyCtrlL:
 					ui.state(mode.Less)
@@ -203,17 +309,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlSpace:
 					ui.state(mode.Goto)
 
-				case tcell.KeyF9:
-					hs.Counts()
+				case tcell.KeyCtrlT:
+					ui.ctx.ChangeTheme(ui.themes.Cycle())
 
-				case tcell.KeyF10:
-					hs.Md5()
+					ui.root.Fill(' ', themes.Base)
+					ui.root.Show()
 
-				case tcell.KeyF11:
-					hs.Sha1()
+					ui.root.SetCursorStyle(cursor, themes.Cursor)
 
-				case tcell.KeyF12:
-					hs.Sha256()
+					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
 
 				case tcell.KeyCtrlV:
 					if ui.ctx.Mode() == mode.Hex {
@@ -259,32 +363,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						return // exit
 					}
 
-				case tcell.KeyCtrlZ:
-					err := ui.root.Suspend()
-
-					if err != nil {
-						sys.Error(err)
-						continue
-					}
-
-					sys.Shell()
-
-					err = ui.root.Resume()
-
-					if err != nil {
-						sys.Panic(err)
-					}
-
-				case tcell.KeyCtrlT:
-					ui.ctx.ChangeTheme(ui.themes.Cycle())
-
-					ui.root.Fill(' ', themes.Base)
-					ui.root.Show()
-
-					ui.root.SetCursorStyle(cursor, themes.Cursor)
-
-					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
-
 				case tcell.KeyCtrlF:
 					if ui.ctx.Mode() != mode.Hex {
 						ui.ctx.ToggleFollow()
@@ -301,53 +379,21 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.view.Reset()
 					}
 
-				case tcell.KeyHome:
-					ui.view.ScrollStart()
+				case tcell.KeyCtrlZ:
+					err := ui.root.Suspend()
 
-				case tcell.KeyEnd:
-					ui.view.ScrollEnd()
-
-				case tcell.KeyUp:
-					if mods&tcell.ModAlt != 0 {
-						ui.status.Value = hi.PrevCommand()
-					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
-						ui.view.ScrollStart()
-					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollUp(page_h)
-					} else {
-						ui.view.ScrollUp(delta)
+					if err != nil {
+						sys.Error(err)
+						continue
 					}
 
-				case tcell.KeyDown:
-					if mods&tcell.ModAlt != 0 {
-						ui.status.Value = hi.NextCommand()
-					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
-						ui.view.ScrollEnd()
-					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollDown(page_h)
-					} else {
-						ui.view.ScrollDown(delta)
+					sys.Shell()
+
+					err = ui.root.Resume()
+
+					if err != nil {
+						sys.Panic(err)
 					}
-
-				case tcell.KeyLeft:
-					if mods&tcell.ModShift != 0 {
-						ui.view.ScrollLeft(page_w)
-					} else {
-						ui.view.ScrollLeft(delta)
-					}
-
-				case tcell.KeyRight:
-					if mods&tcell.ModShift != 0 {
-						ui.view.ScrollRight(page_w)
-					} else {
-						ui.view.ScrollRight(delta)
-					}
-
-				case tcell.KeyPgUp:
-					ui.view.ScrollUp(page_h)
-
-				case tcell.KeyPgDn:
-					ui.view.ScrollDown(page_h)
 
 				case tcell.KeyEnter:
 					v := ui.status.Accept()
@@ -376,15 +422,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							heap.AddFilter(v)
 						})
 						ui.state(mode.Less)
-					}
-
-				case tcell.KeyTab:
-					ui.view.Reset()
-
-					if mods&tcell.ModShift != 0 {
-						heap = hs.PrevHeap()
-					} else {
-						heap = hs.NextHeap()
 					}
 
 				case tcell.KeyBackspace2:
