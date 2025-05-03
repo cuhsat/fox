@@ -21,7 +21,7 @@
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
-| <kbd>Ctrl</kbd> + <kbd>s</kbd> / <kbd>Print</kbd>    | Save evidence         |
+| <kbd>Ctrl</kbd> + <kbd>s</kbd>                       | Save evidence         |
 | <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
 | <kbd>Ctrl</kbd> + <kbd>z</kbd>                       | Suspend to shell      |
 | <kbd>F1</kbd> - <kbd>F8</kbd>                        | Execute plugin        |
