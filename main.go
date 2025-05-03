@@ -31,7 +31,7 @@ const (
 
 The Swiss Army Knife for examining text files
 
-usage: fx [--print] [--hex] [--sum={md5|sha1|sha256}]
+usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
           [--head|tail] [--lines|bytes=NUMBER]
           [--json|jsonl] [--file=FILE] [--key=KEY]
           [--regexp=PATTERN ...]
@@ -42,6 +42,7 @@ positional arguments:
 
 console:
   -p, --print              print to console (no UI)
+  -w, --count              output file line and byte counts
   -x, --hex                output file in hex / start in HEX mode
   -s, --sum=ALGORITHM      output file hashsums (default: sha256)
                            available: md5, sha1, sha256
@@ -72,12 +73,11 @@ Full documentation: <https://github.com/cuhsat/fx/docs>
 func main() {
 	// console
 	m := mode.Default
+	om := types.File
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
-
-	om := types.File
-
+	w := flag.BoolP("count", "w", false, "output file line and byte count")
 	s := flag.StringP("sum", "s", "", "output file hashsums")
 
 	if len(*s) == 0 {
@@ -167,6 +167,10 @@ func main() {
 
 	if *J {
 		fm = types.Jsonl
+	}
+
+	if *w {
+		om = types.Count
 	}
 
 	if *x {

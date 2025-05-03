@@ -12,7 +12,6 @@ import (
 	"github.com/cuhsat/fx/pkg/fx/sys"
 	"github.com/cuhsat/fx/pkg/fx/text"
 	"github.com/cuhsat/fx/pkg/fx/types"
-	"github.com/cuhsat/fx/pkg/fx/types/buffer"
 	"github.com/cuhsat/fx/pkg/fx/types/heapset"
 	"github.com/cuhsat/fx/pkg/fx/types/mode"
 	"github.com/cuhsat/fx/pkg/fx/user/bag"
@@ -170,7 +169,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				page_h := h - 2 // minus title and status
 
 				if ui.ctx.IsLine() {
-					page_w -= text.Dec(heap.Total()) + buffer.SpaceText
+					page_w -= text.Dec(heap.Total()) + 1
 				}
 
 				if ev.Key() != tcell.KeyEscape {
@@ -205,7 +204,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.state(mode.Goto)
 
 				case tcell.KeyF9:
-					hs.Stats()
+					hs.Counts()
 
 				case tcell.KeyF10:
 					hs.Md5()

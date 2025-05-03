@@ -13,10 +13,6 @@ import (
 )
 
 const (
-	SpaceText = 1
-)
-
-const (
 	BlankTab = "    "
 	BlankOff = " "
 )
@@ -61,7 +57,7 @@ func Text(ctx *Context) TextBuffer {
 	d := text.Dec(ctx.Heap.Total())
 
 	if ctx.Line {
-		ctx.W -= (d + SpaceText)
+		ctx.W -= (d + 1)
 	}
 
 	if ctx.Wrap && ctx.Heap.RMap() == nil {
@@ -76,7 +72,9 @@ func Text(ctx *Context) TextBuffer {
 
 	tb.W, tb.H = tb.SMap.Size()
 
-	addLines(ctx, &tb, d)
+	if tb.SMap != nil {
+		addLines(ctx, &tb, d)
+	}
 
 	if len(tb.Lines) >= ctx.H {
 		tb.Lines = tb.Lines[:ctx.H]
