@@ -72,9 +72,7 @@ func Text(ctx *Context) TextBuffer {
 
 	tb.W, tb.H = tb.SMap.Size()
 
-	if tb.SMap != nil {
-		addLines(ctx, &tb, d)
-	}
+	addLines(ctx, &tb, d)
 
 	if len(tb.Lines) >= ctx.H {
 		tb.Lines = tb.Lines[:ctx.H]

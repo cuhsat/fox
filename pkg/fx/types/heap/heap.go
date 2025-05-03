@@ -85,35 +85,28 @@ func (h *Heap) Reload() {
 
 	fi, err := h.file.Stat()
 
-	h.Unlock()
-
 	if err != nil {
 		sys.Error(err)
-		return
 	}
 
-	h.Lock()
-
+	h.hash = make(Hash, 3)
 	h.size = fi.Size()
 
 	if h.mmap != nil {
 		h.mmap.Unmap()
 	}
 
-	m, err := mmap.Map(h.file, mmap.RDONLY, 0)
+	if h.size == 0 {
+		h.mmap = new(mmap.MMap) // empty files will cause issues
+	} else {
+		m, err := mmap.Map(h.file, mmap.RDONLY, 0)
 
-	h.mmap = &m
-
-	h.Unlock()
-
-	if err != nil {
-		sys.Error(err)
-		return
+		if h.mmap = &m; err != nil {
+			sys.Error(err)
+		}
 	}
 
 	l := types.Limits()
-
-	h.Lock()
 
 	// reduce mmap
 	h.mmap = l.ReduceMMap(h.mmap)
@@ -125,8 +118,6 @@ func (h *Heap) Reload() {
 	h.filters = append(h.filters, &filter{
 		"", h.smap, nil,
 	})
-
-	h.hash = make(Hash)
 
 	h.Unlock()
 
@@ -142,27 +133,17 @@ func (h *Heap) Size() int64 {
 func (h *Heap) Total() int {
 	h.RLock()
 	defer h.RUnlock()
-	if h.smap == nil {
-		return 0
-	}
 	return len(*h.smap)
 }
 
 func (h *Heap) Lines() int {
 	h.RLock()
 	defer h.RUnlock()
-	if h.last().smap == nil {
-		return 0
-	}
 	return len(*h.last().smap)
 }
 
 func (h *Heap) Bytes() []byte {
 	var buf bytes.Buffer
-
-	if h.last().smap == nil {
-		return buf.Bytes()
-	}
 
 	h.RLock()
 
@@ -212,7 +193,8 @@ func (h *Heap) Wrap(w int) {
 func (h *Heap) ThrowAway() {
 	h.Lock()
 
-	h.filters = h.filters[:0]
+	clear(h.filters)
+	clear(h.hash)
 
 	h.size = 0
 	h.smap = nil

@@ -33,6 +33,8 @@ func (h *Heap) Sha256() ([]byte, error) {
 }
 
 func (h *Heap) Hashsum(algo string) ([]byte, error) {
+	algo = strings.ToLower(algo)
+
 	h.RLock()
 	sum, ok := h.hash[algo]
 	h.RUnlock()
@@ -43,7 +45,7 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 
 	var imp hash.Hash
 
-	switch strings.ToLower(algo) {
+	switch algo {
 	case Md5:
 		imp = md5.New()
 	case Sha1:
@@ -64,5 +66,11 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 		return nil, err
 	}
 
-	return imp.Sum(nil), nil
+	sum = imp.Sum(nil)
+
+	h.Lock()
+	h.hash[algo] = sum
+	h.Unlock()
+
+	return sum, nil
 }
