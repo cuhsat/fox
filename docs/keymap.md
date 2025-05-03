@@ -2,13 +2,6 @@
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
 | <kbd>Esc</kbd> <kbd>Esc</kbd>                        | Exit                  |
-| <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>l</kbd>       | Less mode             |
-| <kbd>F2</kbd> / <kbd>Ctrl</kbd> + <kbd>g</kbd>       | Grep mode             |
-| <kbd>F3</kbd> / <kbd>Ctrl</kbd> + <kbd>x</kbd>       | Hex mode              |
-| <kbd>F9</kbd>                                        | Show file(s) counts   |
-| <kbd>F10</kbd>                                       | Show file(s) MD5      |
-| <kbd>F11</kbd>                                       | Show file(s) SHA1     |
-| <kbd>F12</kbd>                                       | Show file(s) SHA256   |
 | <kbd>Tab</kbd>                                       | Load next file        |
 | <kbd>Shift</kbd> + <kbd>Tab</kbd>                    | Load prev file        |
 | <kbd>Shift</kbd> + <kbd>Up</kbd>                     | Scroll page up        |
@@ -17,52 +10,44 @@
 | <kbd>Shift</kbd> + <kbd>Right</kbd>                  | Scroll page right     |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Up</kbd>   | Scroll to start       |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Down</kbd> | Scroll to end         |
-| <kbd>Ctrl</kbd> + <kbd>Space</kbd>                   | Goto line             |
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd>                   | Scroll to line [+|-]# |
+| <kbd>Ctrl</kbd> + <kbd>t</kbd>                       | Cycle themes          |
+| <kbd>Ctrl</kbd> + <kbd>l</kbd>                       | Switch to LESS mode   |
+| <kbd>Ctrl</kbd> + <kbd>g</kbd>                       | Switch to GREP mode   |
+| <kbd>Ctrl</kbd> + <kbd>x</kbd>                       | Switch to HEX mode    |
 | <kbd>Ctrl</kbd> + <kbd>o</kbd>                       | Open file(s)          |
 | <kbd>Ctrl</kbd> + <kbd>q</kbd>                       | Close file            |
-| <kbd>Ctrl</kbd> + <kbd>t</kbd>                       | Cycle themes          |
-| <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
 | <kbd>Ctrl</kbd> + <kbd>f</kbd>                       | Toggle file follow    |
 | <kbd>Ctrl</kbd> + <kbd>n</kbd>                       | Toggle line numbers   |
 | <kbd>Ctrl</kbd> + <kbd>w</kbd>                       | Toggle text wrap      |
-| <kbd>Ctrl</kbd> + <kbd>z</kbd>                       | Suspend to shell      |
 | <kbd>Ctrl</kbd> + <kbd>e</kbd>                       | Open evidence         |
 | <kbd>Ctrl</kbd> + <kbd>s</kbd> / <kbd>Print</kbd>    | Save evidence         |
+| <kbd>Ctrl</kbd> + <kbd>c</kbd>                       | Copy to clipboard     |
+| <kbd>Ctrl</kbd> + <kbd>z</kbd>                       | Suspend to shell      |
+| <kbd>F1</kbd> - kbd>F8</kbd>                         | Execute plugin        |
+| <kbd>F9</kbd>                                        | Show file(s) counts   |
+| <kbd>F10</kbd>                                       | Show file(s) MD5      |
+| <kbd>F11</kbd>                                       | Show file(s) SHA1     |
+| <kbd>F12</kbd>                                       | Show file(s) SHA256   |
 
-## F1 - LESS Mode
+## LESS
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
-| <kbd>Space</kbd>                                     | Scroll page down      |
+| <kbd>Space</kbd>                                     | Scroll one page down  |
+| Any other key                                        | Switch to GREP mode   |
 
-## F2 - GREP Mode
+## GREP
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
+| <kbd>Esc</kbd>                                       | Switch to LESS mode   |
 | <kbd>Enter</kbd>                                     | Append filter         |
-| <kbd>Backspace</kbd>                                 | Delete filter         |
-| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
-| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
-| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
-| <kbd>Any Key</kbd>                                   | Filter content        |
+| <kbd>Backspace</kbd>                                 | Remove filter         |
+| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste from clipboard  |
+| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev value in history |
+| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next value in history |
+| Any other key                                        | Define regex pattern  |
 
-## F3 - HEX Mode
+## HEX
 | Shortcut                                             | Action                |
 | ---------------------------------------------------- | --------------------- |
-| <kbd>Space</kbd>                                     | Scroll page down      |
-
-## F4 - GOTO Mode
-| Shortcut                                             | Action                |
-| ---------------------------------------------------- | --------------------- |
-| <kbd>Enter</kbd>                                     | Goto line             |
-| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
-| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
-| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
-| <kbd>Any Key</kbd>                                   | Line number           |
-
-## F5 - OPEN Mode
-| Shortcut                                             | Action                |
-| ---------------------------------------------------- | --------------------- |
-| <kbd>Enter</kbd>                                     | Open file             |
-| <kbd>Alt</kbd> + <kbd>Up</kbd>                       | Prev input in history |
-| <kbd>Alt</kbd> + <kbd>Down</kbd>                     | Next input in history |
-| <kbd>Ctrl</kbd> + <kbd>v</kbd>                       | Paste input           |
-| <kbd>Any Key</kbd>                                   | File name or pattern  |
+| <kbd>Space</kbd>                                     | Scroll one page down  |

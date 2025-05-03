@@ -1,0 +1,8 @@
+# Forensic Examiner Example Plugins
+[Plugin.Custom]
+
+# Plugin name
+Name = "Custom"
+Key = "F1"
+Run = "echo $0"
+Ps1 = "ECHO"

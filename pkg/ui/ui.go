@@ -188,13 +188,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					esc = true
 
-				case tcell.KeyCtrlL, tcell.KeyF1:
+				case tcell.KeyCtrlL:
 					ui.state(mode.Less)
 
-				case tcell.KeyCtrlG, tcell.KeyF2:
+				case tcell.KeyCtrlG:
 					ui.state(mode.Grep)
 
-				case tcell.KeyCtrlX, tcell.KeyF3:
+				case tcell.KeyCtrlX:
 					ui.state(mode.Hex)
 
 				case tcell.KeyCtrlO:
