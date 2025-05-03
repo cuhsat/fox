@@ -1,9 +1,13 @@
 package plugins
 
 import (
+	"strings"
+
 	"github.com/BurntSushi/toml"
 
 	"github.com/cuhsat/fx/pkg/fx/sys"
+	"github.com/cuhsat/fx/pkg/fx/types"
+	"github.com/cuhsat/fx/pkg/fx/types/heapset"
 	"github.com/cuhsat/fx/pkg/fx/user"
 )
 
@@ -37,4 +41,21 @@ func New() *Plugins {
 	}
 
 	return ps
+}
+
+func (p *Plugins) Execute(name string, hs *heapset.HeapSet) (string, bool) {
+	pl, ok := p.Plugins[name]
+
+	if ok {
+		_, h := hs.Current()
+
+		cmd := pl.Exec
+		cmd = strings.ReplaceAll(cmd, "$!", h.Path)
+
+		hs.OpenFile(sys.Exec(cmd), pl.Name, types.Stdout)
+
+		return pl.Name, true
+	}
+
+	return "", false
 }
