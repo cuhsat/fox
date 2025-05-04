@@ -26,7 +26,7 @@ type Plugins struct {
 type Plugin struct {
 	Name  string `toml:"Name"`
 	Exec  string `toml:"Exec"`
-	Input bool   `toml:"Input"`
+	Input string `toml:"Input"`
 }
 
 func New() *Plugins {
@@ -57,7 +57,7 @@ func Close() {
 func (p *Plugin) Execute(hs *heapset.HeapSet, fn func()) {
 	var v string
 
-	if p.Input {
+	if len(p.Input) > 0 {
 		v = <-Input
 	}
 

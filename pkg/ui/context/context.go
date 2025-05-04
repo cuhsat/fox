@@ -123,7 +123,7 @@ func (ctx *Context) ToggleWrap() {
 	ctx.wrap.Store(!ctx.wrap.Load())
 }
 
-func (ctx *Context) Exec(fn func()) {
+func (ctx *Context) Background(fn func()) {
 	go func() {
 		fn()
 		ctx.Interrupt()

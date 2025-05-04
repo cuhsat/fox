@@ -31,38 +31,38 @@ const (
 
 The Swiss Army Knife for examining text files
 
-usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
+Usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
           [--head|tail] [--lines|bytes=NUMBER]
           [--json|jsonl] [--file=FILE] [--key=KEY]
           [--regexp=PATTERN ...]
-          [-|PATH ...]
+          [PATH ...]
 
-positional arguments:
+Positional arguments:
   PATH(s) to open or '-' for STDIN (default: current directory)
 
-console:
+Console:
   -p, --print              print to console (no UI)
   -w, --count              output file line and byte counts
   -x, --hex                output file in hex / start in HEX mode
   -s, --sum=ALGORITHM      output file hashsums (default: sha256)
                            available: md5, sha1, sha256
 
-file limits:
+File limits:
   -h, --head               limit head of file by ...
   -t, --tail               limit tail of file by ...
   -n, --lines=NUMBER       number of lines (default: 10)
   -c, --bytes=NUMBER       number of bytes (default: 16)
 
-line filter:
+Line filter:
   -e, --regexp=PATTERN     filter for lines that matches pattern
 
-evidence bag:
+Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
   -k, --key=KEY            key phrase for signing with HMAC
   -j, --json               export in JSON format
   -J, --jsonl              export in JSON Lines format
 
-standard options:
+Standard options:
       --help               shows this message
       --version            shows version
 
