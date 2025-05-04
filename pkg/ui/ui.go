@@ -89,7 +89,7 @@ func New(m mode.Mode) *UI {
 	root.SetStyle(themes.Base)
 	root.Sync()
 
-	ui.state(m)
+	ui.change(m)
 
 	return &ui
 }
@@ -187,11 +187,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						return
 					}
 
-					if ui.ctx.Mode().Interactive() {
-						if !ui.ctx.Last().Interactive() {
-							ui.state(ui.ctx.Last())
+					if ui.ctx.Mode().Prompt() {
+						if !ui.ctx.Last().Prompt() {
+							ui.change(ui.ctx.Last())
 						} else {
-							ui.state(mode.Less)
+							ui.change(mode.Less)
 						}
 					}
 
@@ -233,8 +233,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					go pl.Execute(hs, ui.ctx.Interrupt)
 
-					if pl.Input {
-						ui.state(mode.User)
+					if len(pl.Input) > 0 {
+						ui.change(mode.Mode(pl.Input))
 					}
 
 				case tcell.KeyF9:
@@ -298,19 +298,19 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.view.ScrollEnd()
 
 				case tcell.KeyCtrlSpace:
-					ui.state(mode.Goto)
+					ui.change(mode.Goto)
 
 				case tcell.KeyCtrlL:
-					ui.state(mode.Less)
+					ui.change(mode.Less)
 
 				case tcell.KeyCtrlG:
-					ui.state(mode.Grep)
+					ui.change(mode.Grep)
 
 				case tcell.KeyCtrlX:
-					ui.state(mode.Hex)
+					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlO:
-					ui.state(mode.Open)
+					ui.change(mode.Open)
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
@@ -407,38 +407,40 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					hi.AddCommand(v)
 
-					switch ui.ctx.Mode() {
-					case mode.Goto:
-						ui.view.Goto(v)
-						ui.state(ui.ctx.Last())
+					m := ui.ctx.Mode()
 
-					case mode.Open:
-						ui.ctx.Exec(func() {
-							hs.Open(v)
-						})
-						ui.state(ui.ctx.Last())
-
-					case mode.User:
-						plugins.Input <- v
-						ui.state(ui.ctx.Last())
-
-					default:
+					switch m {
+					case mode.Grep:
 						types.Filters().Set(v)
 						ui.view.Reset()
-						ui.ctx.Exec(func() {
+						ui.ctx.Background(func() {
 							heap.AddFilter(v)
 						})
-						ui.state(mode.Less)
+						ui.change(mode.Less)
+
+					case mode.Goto:
+						ui.view.Goto(v)
+						ui.change(ui.ctx.Last())
+
+					case mode.Open:
+						ui.ctx.Background(func() {
+							hs.Open(v)
+						})
+						ui.change(ui.ctx.Last())
+
+					default:
+						plugins.Input <- v
+						ui.change(ui.ctx.Last())
 					}
 
 				case tcell.KeyBackspace2:
 					if len(ui.status.Value) > 0 {
 						ui.status.DelRune()
-					} else if ui.ctx.Mode().Interactive() {
-						if !ui.ctx.Last().Interactive() {
-							ui.state(ui.ctx.Last())
+					} else if ui.ctx.Mode().Prompt() {
+						if !ui.ctx.Last().Prompt() {
+							ui.change(ui.ctx.Last())
 						} else {
-							ui.state(mode.Less)
+							ui.change(mode.Less)
 						}
 					} else if len(*types.Filters()) > 0 {
 						types.Filters().Pop()
@@ -462,7 +464,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					default: // all other keys
 						if ui.ctx.Mode() == mode.Less {
-							ui.state(mode.Grep)
+							ui.change(mode.Grep)
 						}
 
 						ui.status.AddRune(r)
@@ -485,18 +487,18 @@ func (ui *UI) Close() {
 	ui.ctx.Save()
 }
 
-func (ui *UI) state(m mode.Mode) {
+func (ui *UI) change(m mode.Mode) {
 	if !ui.ctx.SwitchMode(m) {
 		return
 	}
 
 	// former mode
-	if ui.ctx.Last().Interactive() {
+	if ui.ctx.Last().Prompt() {
 		ui.status.Value = ""
 	}
 
 	// actual mode
-	ui.status.Lock = !m.Interactive()
+	ui.status.Lock = !m.Prompt()
 
 	if ui.ctx.Last() == mode.Hex || m == mode.Hex {
 		ui.view.Reset()

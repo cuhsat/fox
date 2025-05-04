@@ -8,4 +8,4 @@ Name = "Test Plugin"
 Exec = "echo $?"
 
 # Requires user input
-Input = true
+Input = "Echo"

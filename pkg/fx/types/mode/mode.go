@@ -9,38 +9,24 @@ const (
 )
 
 const (
-	Less Mode = iota
-	Grep
-	Hex
-	Goto
-	Open
-	User
+	Less = Mode("Less")
+	Grep = Mode("Grep")
+	Hex  = Mode("Hex")
+	Goto = Mode("Goto")
+	Open = Mode("Open")
 )
 
-type Mode int
+type Mode string
 
 func (m Mode) String() string {
-	modes := [...]string{
-		"Less",
-		"Grep",
-		"Hex",
-		"Goto",
-		"Open",
-		"User",
-	}
-
-	if int(m) < 0 || int(m) > len(modes) {
-		return "..."
-	}
-
-	return strings.ToUpper(modes[m])
+	return strings.ToUpper(string(m))
 }
 
-func (m Mode) Interactive() bool {
+func (m Mode) Prompt() bool {
 	switch m {
-	case Grep, Goto, Open, User:
-		return true
-	default:
+	case Less, Hex:
 		return false
+	default:
+		return true
 	}
 }

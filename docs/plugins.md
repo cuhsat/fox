@@ -3,9 +3,13 @@
 
 ```toml
 [Plugin.F1]
-Name = "Echo Plugin"
-Exec = "echo $?"
-Input = true
+Name = "target-info"
+Exec = "target-info $+"
+
+[Plugin.F2]
+Name = "target-query"
+Exec = "target-query -f $? $+"
+Input = "Func"
 ```
 
 ## Variabes
