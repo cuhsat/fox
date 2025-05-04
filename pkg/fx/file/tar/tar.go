@@ -17,7 +17,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) (i []*file.Item) {
-	a := sys.Open(path)
+	a := sys.OpenFile(path)
 	defer a.Close()
 
 	r := tar.NewReader(a)
@@ -38,7 +38,7 @@ func Deflate(path string) (i []*file.Item) {
 			continue
 		}
 
-		t := sys.Temp("tar", filepath.Ext(filepath.Base(h.Name)))
+		t := sys.TempFile("tar", filepath.Ext(filepath.Base(h.Name)))
 
 		_, err = io.Copy(t, r)
 

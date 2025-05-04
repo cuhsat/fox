@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
 	"strings"
 
@@ -22,19 +23,30 @@ const (
 	pshShell = "/bin/sh"
 )
 
+type uncolor struct {
+	File *os.File
+	ansi *regexp.Regexp
+}
+
+func Exit(v ...any) {
+	fmt.Fprintln(os.Stderr, v...)
+
+	os.Exit(1)
+}
+
 func Exec(s string) string {
-	f := Temp("exec", ".txt")
+	uc := Uncolor(TempFile("exec", ".txt"))
 
 	args := strings.Split(s, " ")
 
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdout = f
-	cmd.Stderr = f
+	cmd.Stdout = uc
+	cmd.Stderr = uc
 	cmd.Run()
 
-	f.Close()
+	uc.File.Close()
 
-	return f.Name()
+	return uc.File.Name()
 }
 
 func Shell() {
@@ -65,7 +77,7 @@ func Stdin() string {
 		Panic("invalid mode")
 	}
 
-	f := Temp("stdin", ".txt")
+	f := TempFile("stdin", ".txt")
 
 	go func(f *os.File) {
 		r := bufio.NewReader(os.Stdin)
@@ -95,11 +107,11 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-	return Temp("stdout", ".txt")
+	return TempFile("stdout", ".txt")
 }
 
 func Stderr() *os.File {
-	return Temp("stderr", ".txt")
+	return TempFile("stderr", ".txt")
 }
 
 func IsPiped(f *os.File) bool {
@@ -122,7 +134,7 @@ func Exists(path string) bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-func Open(path string) *os.File {
+func OpenFile(path string) *os.File {
 	f, err := os.OpenFile(path, os.O_RDONLY, 0400)
 
 	if err != nil {
@@ -132,7 +144,7 @@ func Open(path string) *os.File {
 	return f
 }
 
-func Temp(name, ext string) *os.File {
+func TempFile(name, ext string) *os.File {
 	f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", name, ext))
 
 	if err != nil {
@@ -142,7 +154,7 @@ func Temp(name, ext string) *os.File {
 	return f
 }
 
-func Dump(err any, stack any) {
+func DumpErr(err any, stack any) {
 	s := fmt.Sprintf("%+v\n\n%s", err, stack)
 
 	err = os.WriteFile(FileDump, []byte(s), 0600)
@@ -152,8 +164,16 @@ func Dump(err any, stack any) {
 	}
 }
 
-func Exit(v ...any) {
-	fmt.Fprintln(os.Stderr, v...)
+func Uncolor(f *os.File) *uncolor {
+	// remove 7-bit C1 ANSI sequences
+	r := regexp.MustCompile(`\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])`)
 
-	os.Exit(1)
+	return &uncolor{
+		File: f,
+		ansi: r,
+	}
+}
+
+func (uc *uncolor) Write(p []byte) (n int, err error) {
+	return uc.File.Write(uc.ansi.ReplaceAll(p, []byte("")))
 }

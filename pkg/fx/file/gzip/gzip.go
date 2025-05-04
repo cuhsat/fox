@@ -17,7 +17,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-	a := sys.Open(path)
+	a := sys.OpenFile(path)
 	defer a.Close()
 
 	r, err := gzip.NewReader(a)
@@ -31,7 +31,7 @@ func Deflate(path string) string {
 
 	b := strings.TrimSuffix(filepath.Base(path), ".gz")
 
-	t := sys.Temp("gzip", filepath.Ext(b))
+	t := sys.TempFile("gzip", filepath.Ext(b))
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

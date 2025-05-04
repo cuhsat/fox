@@ -44,7 +44,7 @@ func Deflate(path string) (i []*file.Item) {
 			continue
 		}
 
-		t := sys.Temp("zip", filepath.Ext(filepath.Base(f.Name)))
+		t := sys.TempFile("zip", filepath.Ext(filepath.Base(f.Name)))
 
 		_, err = io.Copy(t, a)
 

@@ -194,7 +194,7 @@ func main() {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			sys.Dump(err, debug.Stack())
+			sys.DumpErr(err, debug.Stack())
 		}
 
 		sys.Log.Close()

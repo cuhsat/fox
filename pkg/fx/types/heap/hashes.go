@@ -56,7 +56,7 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 		return nil, errors.New("hash not supported")
 	}
 
-	f := sys.Open(h.Base)
+	f := sys.OpenFile(h.Base)
 
 	defer f.Close()
 
