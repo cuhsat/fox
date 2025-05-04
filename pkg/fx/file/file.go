@@ -20,7 +20,7 @@ func CanFormat(p string) bool {
 func HasMagic(p string, o int, m []byte) bool {
 	buf := make([]byte, o+len(m))
 
-	f := sys.Open(p)
+	f := sys.OpenFile(p)
 	defer f.Close()
 
 	fi, err := f.Stat()

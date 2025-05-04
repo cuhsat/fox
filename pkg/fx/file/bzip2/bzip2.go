@@ -17,14 +17,14 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-	a := sys.Open(path)
+	a := sys.OpenFile(path)
 	defer a.Close()
 
 	r := bzip2.NewReader(a)
 
 	b := strings.TrimSuffix(filepath.Base(path), ".bz2")
 
-	t := sys.Temp("bzip2", filepath.Ext(b))
+	t := sys.TempFile("bzip2", filepath.Ext(b))
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

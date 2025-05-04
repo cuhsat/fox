@@ -80,7 +80,7 @@ func (h *Heap) Reload() {
 	h.Lock()
 
 	if h.file == nil {
-		h.file = sys.Open(h.Path)
+		h.file = sys.OpenFile(h.Path)
 	}
 
 	fi, err := h.file.Stat()
