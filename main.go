@@ -7,15 +7,15 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/cuhsat/fx/pkg/fx"
-	"github.com/cuhsat/fx/pkg/fx/sys"
-	"github.com/cuhsat/fx/pkg/fx/types"
-	"github.com/cuhsat/fx/pkg/fx/types/heap"
-	"github.com/cuhsat/fx/pkg/fx/types/heapset"
-	"github.com/cuhsat/fx/pkg/fx/types/mode"
-	"github.com/cuhsat/fx/pkg/fx/user/bag"
-	"github.com/cuhsat/fx/pkg/fx/user/history"
-	"github.com/cuhsat/fx/pkg/ui"
+	"github.com/cuhsat/fx/internal/app/fx"
+	"github.com/cuhsat/fx/internal/pkg/gui"
+	"github.com/cuhsat/fx/internal/pkg/sys"
+	"github.com/cuhsat/fx/internal/pkg/types"
+	"github.com/cuhsat/fx/internal/pkg/types/heap"
+	"github.com/cuhsat/fx/internal/pkg/types/heapset"
+	"github.com/cuhsat/fx/internal/pkg/types/mode"
+	"github.com/cuhsat/fx/internal/pkg/user/bag"
+	"github.com/cuhsat/fx/internal/pkg/user/history"
 )
 
 const (
@@ -218,8 +218,8 @@ func main() {
 	bg := bag.New(*f, *k, fm)
 	defer bg.Close()
 
-	ui := ui.New(m)
-	defer ui.Close()
+	gui := gui.New(m)
+	defer gui.Close()
 
-	ui.Run(hs, hi, bg)
+	gui.Run(hs, hi, bg)
 }
