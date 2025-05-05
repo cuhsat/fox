@@ -11,23 +11,23 @@ import (
 )
 
 const (
-	indent = "  "
+	jsonIndent = "  "
 )
 
 type JsonWriter struct {
-	file   *os.File   // file handle
-	pretty bool       // export pretty
-	title  string     // export title
-	entry  *jsonEntry // current entry
+	file   *os.File      // file handle
+	pretty bool          // export pretty
+	title  string        // export title
+	entry  *jsonEvidence // current entry
 }
 
-type jsonEntry struct {
-	Title string     `json:"_comment"`
-	Meta  jsonMeta   `json:"meta"`
-	Data  []jsonLine `json:"data"`
+type jsonEvidence struct {
+	Title    string       `json:"_comment"`
+	Metadata jsonMetadata `json:"metadata"`
+	Lines    []jsonLine   `json:"lines"`
 }
 
-type jsonMeta struct {
+type jsonMetadata struct {
 	File jsonFile `json:"file"`
 	User jsonUser `json:"user"`
 	Time jsonTime `json:"time"`
@@ -45,7 +45,7 @@ type jsonUser struct {
 }
 
 type jsonTime struct {
-	UTC   time.Time `json:"utc"`
+	Bagged   time.Time `json:"bagged"`
 	Modified time.Time `json:"modified"`
 }
 
@@ -66,7 +66,7 @@ func (w *JsonWriter) Init(f *os.File, _ bool, t string) {
 }
 
 func (w *JsonWriter) Start() {
-	w.entry = &jsonEntry{
+	w.entry = &jsonEvidence{
 		Title: w.title,
 	}
 }
@@ -76,7 +76,7 @@ func (w *JsonWriter) Finalize() {
 	var err error
 
 	if w.pretty {
-		buf, err = json.MarshalIndent(w.entry, "", indent)
+		buf, err = json.MarshalIndent(w.entry, "", jsonIndent)
 	} else {
 		buf, err = json.Marshal(w.entry)
 	}
@@ -90,30 +90,30 @@ func (w *JsonWriter) Finalize() {
 }
 
 func (w *JsonWriter) WriteFile(p string, fs []string) {
-	w.entry.Meta.File = jsonFile{
+	w.entry.Metadata.File = jsonFile{
 		Path: p, Filters: fs,
 	}
 }
 
 func (w *JsonWriter) WriteUser(u *user.User) {
-	w.entry.Meta.User = jsonUser{
+	w.entry.Metadata.User = jsonUser{
 		Login: u.Username, Name: u.Name,
 	}
 }
 
 func (w *JsonWriter) WriteTime(t, f time.Time) {
-	w.entry.Meta.Time = jsonTime{
-		UTC: t.UTC(), Modified: f.UTC(),
+	w.entry.Metadata.Time = jsonTime{
+		Bagged: t.UTC(), Modified: f.UTC(),
 	}
 }
 
 func (w *JsonWriter) WriteHash(b []byte) {
-	w.entry.Meta.Hash = fmt.Sprintf("%x", b)
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", b)
 }
 
 func (w *JsonWriter) WriteLines(ns []int, ss []string) {
 	for i := 0; i < len(ss); i++ {
-		w.entry.Data = append(w.entry.Data, jsonLine{
+		w.entry.Lines = append(w.entry.Lines, jsonLine{
 			Line: ns[i], Data: ss[i],
 		})
 	}

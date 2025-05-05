@@ -35,7 +35,7 @@ Usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
           [--head|tail] [--lines|bytes=NUMBER]
           [--regexp=PATTERN ...]
           [--file=FILE] [--key=KEY]
-          [--mode={text,json,jsonlines,markdown}] [-j|J|M]
+          [--mode={text,xml,json,jsonlines,markdown}] [-j|J|M|X]
           [PATH ...]
 
 Positional arguments:
@@ -59,7 +59,7 @@ Line filter:
 
 Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
-  -m, --mode={text,json,jsonl,markdown}
+  -m, --mode={text,xml,json,jsonl,markdown}
                            output mode (default: text)
   -k, --key=KEY            key phrase for signing with HMAC
 
@@ -67,6 +67,7 @@ Aliases:
   -j, --json               short for --mode=json
   -J, --jsonlines          short for --mode=jsonlines
   -M, --markdown           short for --mode=markdown
+  -X, --xml                short for --mode=xml
 
 Standard options:
       --help               shows this message
@@ -118,7 +119,7 @@ func main() {
 	f := flag.StringP("file", "f", "EVIDENCE", "file name of evidence bag")
 	m := flag.StringP("mode", "m", "", "output mode")
 	k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
-	
+
 	if len(*m) == 0 {
 		flag.Lookup("mode").NoOptDefVal = bag.Text
 	}
@@ -127,6 +128,7 @@ func main() {
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
 	M := flag.BoolP("markdown", "M", false, "export in Markdown format")
+	X := flag.BoolP("xml", "X", false, "export in XML format")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "shows version")
@@ -183,6 +185,10 @@ func main() {
 
 	if *M {
 		*m = bag.Markdown
+	}
+
+	if *X {
+		*m = bag.Xml
 	}
 
 	if *w {
