@@ -33,8 +33,9 @@ The Swiss Army Knife for examining text files
 
 Usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
           [--head|tail] [--lines|bytes=NUMBER]
-          [--json|jsonl] [--file=FILE] [--key=KEY]
           [--regexp=PATTERN ...]
+          [--file=FILE] [--key=KEY]
+          [--mode={text,json,jsonlines,markdown}] [-j|J|M]
           [PATH ...]
 
 Positional arguments:
@@ -44,8 +45,8 @@ Console:
   -p, --print              print to console (no UI)
   -w, --count              output file line and byte counts
   -x, --hex                output file in hex / start in HEX mode
-  -s, --sum=ALGORITHM      output file hashsums (default: sha256)
-                           available: md5, sha1, sha256
+  -s, --sum={md5,sha1,sha256}      
+                           output file hashsums (default: sha256)
 
 File limits:
   -h, --head               limit head of file by ...
@@ -58,9 +59,14 @@ Line filter:
 
 Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
+  -m, --mode={text,json,jsonl,markdown}
+                           output mode (default: text)
   -k, --key=KEY            key phrase for signing with HMAC
-  -j, --json               export in JSON format
-  -J, --jsonl              export in JSON Lines format
+
+Aliases:
+  -j, --json               short for --mode=json
+  -J, --jsonlines          short for --mode=jsonlines
+  -M, --markdown           short for --mode=markdown
 
 Standard options:
       --help               shows this message
@@ -72,7 +78,7 @@ Full documentation: <https://github.com/cuhsat/fx/docs>
 
 func main() {
 	// console
-	m := mode.Default
+	rm := mode.Default
 	om := types.File
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
@@ -109,12 +115,18 @@ func main() {
 	flag.VarP(e, "regexp", "e", "filter for lines that matches pattern")
 
 	// evidence bag
-	fm := types.Text
-
 	f := flag.StringP("file", "f", "EVIDENCE", "file name of evidence bag")
+	m := flag.StringP("mode", "m", "", "output mode")
 	k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
+	
+	if len(*m) == 0 {
+		flag.Lookup("mode").NoOptDefVal = bag.Text
+	}
+
+	// aliases
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
+	M := flag.BoolP("markdown", "M", false, "export in Markdown format")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "shows version")
@@ -162,11 +174,15 @@ func main() {
 	}
 
 	if *j {
-		fm = types.Json
+		*m = bag.Json
 	}
 
 	if *J {
-		fm = types.Jsonl
+		*m = bag.Jsonl
+	}
+
+	if *M {
+		*m = bag.Markdown
 	}
 
 	if *w {
@@ -174,12 +190,12 @@ func main() {
 	}
 
 	if *x {
-		m = mode.Hex
+		rm = mode.Hex
 		om = types.Hex
 	}
 
 	if len(*e) > 0 {
-		m = mode.Grep
+		rm = mode.Grep
 		om = types.Grep
 	}
 
@@ -215,10 +231,10 @@ func main() {
 	hi := history.New()
 	defer hi.Close()
 
-	bg := bag.New(*f, *k, fm)
+	bg := bag.New(*f, *k, *m)
 	defer bg.Close()
 
-	ui := ui.New(m)
+	ui := ui.New(rm)
 	defer ui.Close()
 
 	ui.Run(hs, hi, bg)

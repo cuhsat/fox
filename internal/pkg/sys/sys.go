@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"regexp"
 	"runtime"
 	"strings"
 
@@ -23,11 +22,6 @@ const (
 	pshShell = "/bin/sh"
 )
 
-type uncolor struct {
-	File *os.File
-	ansi *regexp.Regexp
-}
-
 func Exit(v ...any) {
 	fmt.Fprintln(os.Stderr, v...)
 
@@ -35,18 +29,18 @@ func Exit(v ...any) {
 }
 
 func Exec(s string) string {
-	uc := Uncolor(TempFile("exec", ".txt"))
+	f := TempFile("exec", ".txt")
 
 	args := strings.Split(s, " ")
 
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdout = uc
-	cmd.Stderr = uc
+	cmd.Stdout = f
+	cmd.Stderr = f
 	cmd.Run()
 
-	uc.File.Close()
+	f.Close()
 
-	return uc.File.Name()
+	return f.Name()
 }
 
 func Shell() {
@@ -162,18 +156,4 @@ func DumpErr(err any, stack any) {
 	if err != nil {
 		Exit(err)
 	}
-}
-
-func Uncolor(f *os.File) *uncolor {
-	// remove 7-bit C1 ANSI sequences
-	r := regexp.MustCompile(`\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])`)
-
-	return &uncolor{
-		File: f,
-		ansi: r,
-	}
-}
-
-func (uc *uncolor) Write(p []byte) (n int, err error) {
-	return uc.File.Write(uc.ansi.ReplaceAll(p, []byte("")))
 }

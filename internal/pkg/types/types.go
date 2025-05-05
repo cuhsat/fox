@@ -10,14 +10,6 @@ const (
 	Deflate
 )
 
-type Export int
-
-const (
-	Text Export = iota
-	Json
-	Jsonl
-)
-
 type Output int
 
 const (

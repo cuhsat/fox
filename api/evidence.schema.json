@@ -57,17 +57,17 @@
           "type": "object",
           "properties": {
             "utc": {
-              "description": "ISO 3338 formated saving time in UTC",
+              "description": "ISO 3338 formated UTC time of bag saving",
               "type": "string"
             },
-            "local": {
-              "description": "ISO 3338 formated saving time in local time",
+            "modified": {
+              "description": "ISO 3338 formated UTC time of last file modification",
               "type": "string"
             }
           },
           "required": [
             "utc",
-            "local"
+            "modified"
           ]
         },
         "hash": {

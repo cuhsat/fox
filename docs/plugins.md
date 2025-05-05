@@ -4,11 +4,11 @@
 ```toml
 [Plugin.F1]
 Name = "target-info"
-Exec = "target-info $+"
+Exec = "target-info $+ | unesc"
 
 [Plugin.F2]
 Name = "target-query"
-Exec = "target-query -f $? $+"
+Exec = "target-query -f $? $+ | unesc"
 Input = "Func"
 ```
 
