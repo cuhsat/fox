@@ -8,7 +8,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/cuhsat/fx/internal/app/fx"
-	"github.com/cuhsat/fx/internal/pkg/gui"
+	"github.com/cuhsat/fx/internal/app/ui"
 	"github.com/cuhsat/fx/internal/pkg/sys"
 	"github.com/cuhsat/fx/internal/pkg/types"
 	"github.com/cuhsat/fx/internal/pkg/types/heap"
@@ -218,8 +218,8 @@ func main() {
 	bg := bag.New(*f, *k, fm)
 	defer bg.Close()
 
-	gui := gui.New(m)
-	defer gui.Close()
+	ui := ui.New(m)
+	defer ui.Close()
 
-	gui.Run(hs, hi, bg)
+	ui.Run(hs, hi, bg)
 }

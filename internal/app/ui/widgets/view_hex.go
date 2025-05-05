@@ -1,7 +1,7 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fx/internal/pkg/gui/themes"
+	"github.com/cuhsat/fx/internal/app/ui/themes"
 	"github.com/cuhsat/fx/internal/pkg/types/buffer"
 )
 

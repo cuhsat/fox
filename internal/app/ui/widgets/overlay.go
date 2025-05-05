@@ -7,8 +7,8 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/cuhsat/fx/internal/pkg/gui/context"
-	"github.com/cuhsat/fx/internal/pkg/gui/themes"
+	"github.com/cuhsat/fx/internal/app/ui/context"
+	"github.com/cuhsat/fx/internal/app/ui/themes"
 )
 
 const (

@@ -1,7 +1,7 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fx/internal/pkg/gui/context"
+	"github.com/cuhsat/fx/internal/app/ui/context"
 	"github.com/cuhsat/fx/internal/pkg/types/heap"
 	"github.com/cuhsat/fx/internal/pkg/types/heapset"
 	"github.com/cuhsat/fx/internal/pkg/types/mode"

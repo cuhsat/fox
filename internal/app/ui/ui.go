@@ -1,4 +1,4 @@
-package gui
+package ui
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 	"github.com/mattn/go-runewidth"
 
 	"github.com/cuhsat/fx/internal/app/fx"
-	"github.com/cuhsat/fx/internal/pkg/gui/context"
-	"github.com/cuhsat/fx/internal/pkg/gui/themes"
-	"github.com/cuhsat/fx/internal/pkg/gui/widgets"
+	"github.com/cuhsat/fx/internal/app/ui/context"
+	"github.com/cuhsat/fx/internal/app/ui/themes"
+	"github.com/cuhsat/fx/internal/app/ui/widgets"
 	"github.com/cuhsat/fx/internal/pkg/sys"
 	"github.com/cuhsat/fx/internal/pkg/text"
 	"github.com/cuhsat/fx/internal/pkg/types"
@@ -35,7 +35,7 @@ const (
 	cursor = tcell.CursorStyleBlinkingBar
 )
 
-type GUI struct {
+type UI struct {
 	ctx *context.Context
 
 	root tcell.Screen
@@ -50,7 +50,7 @@ type GUI struct {
 	plugins *plugins.Plugins
 }
 
-func New(m mode.Mode) *GUI {
+func New(m mode.Mode) *UI {
 	runewidth.CreateLUT()
 
 	root, err := tcell.NewScreen()
@@ -70,7 +70,7 @@ func New(m mode.Mode) *GUI {
 
 	ctx := context.New(root)
 
-	gui := GUI{
+	ui := UI{
 		ctx: ctx,
 
 		root: root,
@@ -89,23 +89,23 @@ func New(m mode.Mode) *GUI {
 	root.SetStyle(themes.Base)
 	root.Sync()
 
-	gui.change(m)
+	ui.change(m)
 
-	return &gui
+	return &ui
 }
 
-func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
+func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	hs.Bind(func() {
-		gui.root.PostEvent(tcell.NewEventInterrupt(gui.ctx.IsFollow()))
+		ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
 	}, func() {
-		gui.root.PostEvent(tcell.NewEventError(nil))
+		ui.root.PostEvent(tcell.NewEventError(nil))
 	})
 
 	events := make(chan tcell.Event, 128)
 	closed := make(chan struct{})
 
-	go gui.root.ChannelEvents(events, closed)
-	go gui.overlay.Listen()
+	go ui.root.ChannelEvents(events, closed)
+	go ui.overlay.Listen()
 
 	esc := false
 
@@ -119,7 +119,7 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				return // term closed
 			}
 
-			w, h := gui.root.Size()
+			w, h := ui.root.Size()
 
 			_, heap := hs.Heap()
 
@@ -128,11 +128,11 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				v, ok := ev.Data().(bool)
 
 				if ok && v {
-					gui.view.ScrollEnd()
+					ui.view.ScrollEnd()
 				}
 
 			case *tcell.EventClipboard:
-				if gui.ctx.Mode() == mode.Hex {
+				if ui.ctx.Mode() == mode.Hex {
 					continue
 				}
 
@@ -141,30 +141,30 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				v = strings.TrimPrefix(v, brPrefix)
 				v = strings.TrimSuffix(v, brSuffix)
 
-				gui.status.Value = v
+				ui.status.Value = v
 
 			case *tcell.EventResize:
-				gui.root.Sync()
-				gui.view.Reset()
+				ui.root.Sync()
+				ui.view.Reset()
 
 			case *tcell.EventError:
 				hs.OpenLog()
 
-				gui.overlay.SendError("An error occurred")
+				ui.overlay.SendError("An error occurred")
 
 			case *tcell.EventMouse:
 				btns := ev.Buttons()
 
 				if btns&tcell.ButtonMiddle != 0 {
-					gui.root.GetClipboard()
+					ui.root.GetClipboard()
 				} else if btns&tcell.WheelUp != 0 {
-					gui.view.ScrollUp(delta)
+					ui.view.ScrollUp(delta)
 				} else if btns&tcell.WheelDown != 0 {
-					gui.view.ScrollDown(delta)
+					ui.view.ScrollDown(delta)
 				} else if btns&tcell.WheelLeft != 0 {
-					gui.view.ScrollLeft(delta)
+					ui.view.ScrollLeft(delta)
 				} else if btns&tcell.WheelRight != 0 {
-					gui.root.GetClipboard()
+					ui.root.GetClipboard()
 				}
 
 			case *tcell.EventKey:
@@ -173,7 +173,7 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				page_w := w - 1 // minus text abbreviation
 				page_h := h - 2 // minus title and status
 
-				if gui.ctx.IsLine() {
+				if ui.ctx.IsLine() {
 					page_w -= text.Dec(heap.Total()) + 1
 				}
 
@@ -187,18 +187,18 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						return
 					}
 
-					if gui.ctx.Mode().Prompt() {
-						if !gui.ctx.Last().Prompt() {
-							gui.change(gui.ctx.Last())
+					if ui.ctx.Mode().Prompt() {
+						if !ui.ctx.Last().Prompt() {
+							ui.change(ui.ctx.Last())
 						} else {
-							gui.change(mode.Less)
+							ui.change(mode.Less)
 						}
 					}
 
 					esc = true
 
 				case tcell.KeyTab:
-					gui.view.Reset()
+					ui.view.Reset()
 
 					if mods&tcell.ModShift != 0 {
 						heap = hs.PrevHeap()
@@ -221,20 +221,20 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyF7:
 					fallthrough
 				case tcell.KeyF8:
-					if gui.plugins == nil {
+					if ui.plugins == nil {
 						continue
 					}
 
-					pl, ok := gui.plugins.Plugins[ev.Name()]
+					pl, ok := ui.plugins.Plugins[ev.Name()]
 
 					if !ok {
 						continue
 					}
 
-					go pl.Execute(hs, gui.ctx.Interrupt)
+					go pl.Execute(hs, ui.ctx.Interrupt)
 
 					if len(pl.Input) > 0 {
-						gui.change(mode.Mode(pl.Input))
+						ui.change(mode.Mode(pl.Input))
 					}
 
 				case tcell.KeyF9:
@@ -251,95 +251,95 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyUp:
 					if mods&tcell.ModAlt != 0 {
-						gui.status.Value = hi.PrevCommand()
+						ui.status.Value = hi.PrevCommand()
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
-						gui.view.ScrollStart()
+						ui.view.ScrollStart()
 					} else if mods&tcell.ModShift != 0 {
-						gui.view.ScrollUp(page_h)
+						ui.view.ScrollUp(page_h)
 					} else {
-						gui.view.ScrollUp(delta)
+						ui.view.ScrollUp(delta)
 					}
 
 				case tcell.KeyDown:
 					if mods&tcell.ModAlt != 0 {
-						gui.status.Value = hi.NextCommand()
+						ui.status.Value = hi.NextCommand()
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
-						gui.view.ScrollEnd()
+						ui.view.ScrollEnd()
 					} else if mods&tcell.ModShift != 0 {
-						gui.view.ScrollDown(page_h)
+						ui.view.ScrollDown(page_h)
 					} else {
-						gui.view.ScrollDown(delta)
+						ui.view.ScrollDown(delta)
 					}
 
 				case tcell.KeyLeft:
 					if mods&tcell.ModShift != 0 {
-						gui.view.ScrollLeft(page_w)
+						ui.view.ScrollLeft(page_w)
 					} else {
-						gui.view.ScrollLeft(delta)
+						ui.view.ScrollLeft(delta)
 					}
 
 				case tcell.KeyRight:
 					if mods&tcell.ModShift != 0 {
-						gui.view.ScrollRight(page_w)
+						ui.view.ScrollRight(page_w)
 					} else {
-						gui.view.ScrollRight(delta)
+						ui.view.ScrollRight(delta)
 					}
 
 				case tcell.KeyHome:
-					gui.view.ScrollStart()
+					ui.view.ScrollStart()
 
 				case tcell.KeyPgUp:
-					gui.view.ScrollUp(page_h)
+					ui.view.ScrollUp(page_h)
 
 				case tcell.KeyPgDn:
-					gui.view.ScrollDown(page_h)
+					ui.view.ScrollDown(page_h)
 
 				case tcell.KeyEnd:
-					gui.view.ScrollEnd()
+					ui.view.ScrollEnd()
 
 				case tcell.KeyCtrlSpace:
-					gui.change(mode.Goto)
+					ui.change(mode.Goto)
 
 				case tcell.KeyCtrlL:
-					gui.change(mode.Less)
+					ui.change(mode.Less)
 
 				case tcell.KeyCtrlG:
-					gui.change(mode.Grep)
+					ui.change(mode.Grep)
 
 				case tcell.KeyCtrlX:
-					gui.change(mode.Hex)
+					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlO:
-					gui.change(mode.Open)
+					ui.change(mode.Open)
 
 				case tcell.KeyCtrlT:
-					gui.ctx.ChangeTheme(gui.themes.Cycle())
+					ui.ctx.ChangeTheme(ui.themes.Cycle())
 
-					gui.root.Fill(' ', themes.Base)
-					gui.root.Show()
+					ui.root.Fill(' ', themes.Base)
+					ui.root.Show()
 
-					gui.root.SetCursorStyle(cursor, themes.Cursor)
+					ui.root.SetCursorStyle(cursor, themes.Cursor)
 
-					gui.overlay.SendInfo(fmt.Sprintf("Theme %s", gui.ctx.Theme()))
+					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
 
 				case tcell.KeyCtrlV:
-					if gui.ctx.Mode() == mode.Hex {
+					if ui.ctx.Mode() == mode.Hex {
 						continue
 					}
 
-					gui.root.GetClipboard()
+					ui.root.GetClipboard()
 
 				case tcell.KeyCtrlC:
-					if gui.ctx.Mode() == mode.Hex {
+					if ui.ctx.Mode() == mode.Hex {
 						continue
 					}
 
-					gui.root.SetClipboard(heap.Bytes())
+					ui.root.SetClipboard(heap.Bytes())
 
-					gui.overlay.SendInfo("Copied to clipboard")
+					ui.overlay.SendInfo("Copied to clipboard")
 
 				case tcell.KeyCtrlS:
-					if gui.ctx.Mode() == mode.Hex {
+					if ui.ctx.Mode() == mode.Hex {
 						continue
 					}
 
@@ -347,43 +347,43 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					gui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
+					ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
 
 				case tcell.KeyCtrlE:
 					if sys.Exists(bag.Path) {
 						hs.OpenFile(bag.Path, bag.Path, types.Regular)
 					} else {
-						gui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
+						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}
 
 				case tcell.KeyCtrlD:
 					hs.OpenLog()
 
 				case tcell.KeyCtrlQ:
-					gui.view.Reset()
+					ui.view.Reset()
 
 					if hs.CloseHeap() == nil {
 						return // exit
 					}
 
 				case tcell.KeyCtrlF:
-					if gui.ctx.Mode() != mode.Hex {
-						gui.ctx.ToggleFollow()
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleFollow()
 					}
 
 				case tcell.KeyCtrlN:
-					if gui.ctx.Mode() != mode.Hex {
-						gui.ctx.ToggleNumbers()
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleNumbers()
 					}
 
 				case tcell.KeyCtrlW:
-					if gui.ctx.Mode() != mode.Hex {
-						gui.ctx.ToggleWrap()
-						gui.view.Reset()
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleWrap()
+						ui.view.Reset()
 					}
 
 				case tcell.KeyCtrlZ:
-					err := gui.root.Suspend()
+					err := ui.root.Suspend()
 
 					if err != nil {
 						sys.Error(err)
@@ -392,14 +392,14 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					sys.Shell()
 
-					err = gui.root.Resume()
+					err = ui.root.Resume()
 
 					if err != nil {
 						sys.Panic(err)
 					}
 
 				case tcell.KeyEnter:
-					v := gui.status.Accept()
+					v := ui.status.Accept()
 
 					if len(v) == 0 {
 						continue
@@ -407,44 +407,44 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					hi.AddCommand(v)
 
-					m := gui.ctx.Mode()
+					m := ui.ctx.Mode()
 
 					switch m {
 					case mode.Grep:
 						types.Filters().Set(v)
-						gui.view.Reset()
-						gui.ctx.Background(func() {
+						ui.view.Reset()
+						ui.ctx.Background(func() {
 							heap.AddFilter(v)
 						})
-						gui.change(mode.Less)
+						ui.change(mode.Less)
 
 					case mode.Goto:
-						gui.view.Goto(v)
-						gui.change(gui.ctx.Last())
+						ui.view.Goto(v)
+						ui.change(ui.ctx.Last())
 
 					case mode.Open:
-						gui.ctx.Background(func() {
+						ui.ctx.Background(func() {
 							hs.Open(v)
 						})
-						gui.change(gui.ctx.Last())
+						ui.change(ui.ctx.Last())
 
 					default:
 						plugins.Input <- v
-						gui.change(gui.ctx.Last())
+						ui.change(ui.ctx.Last())
 					}
 
 				case tcell.KeyBackspace2:
-					if len(gui.status.Value) > 0 {
-						gui.status.DelRune()
-					} else if gui.ctx.Mode().Prompt() {
-						if !gui.ctx.Last().Prompt() {
-							gui.change(gui.ctx.Last())
+					if len(ui.status.Value) > 0 {
+						ui.status.DelRune()
+					} else if ui.ctx.Mode().Prompt() {
+						if !ui.ctx.Last().Prompt() {
+							ui.change(ui.ctx.Last())
 						} else {
-							gui.change(mode.Less)
+							ui.change(mode.Less)
 						}
 					} else if len(*types.Filters()) > 0 {
 						types.Filters().Pop()
-						gui.view.Reset()
+						ui.view.Reset()
 						heap.DelFilter()
 					}
 
@@ -456,78 +456,78 @@ func (gui *GUI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 
 					case 32: // space
-						if gui.status.Lock {
-							gui.view.ScrollDown(page_h)
+						if ui.status.Lock {
+							ui.view.ScrollDown(page_h)
 						} else {
-							gui.status.AddRune(r)
+							ui.status.AddRune(r)
 						}
 
 					default: // all other keys
-						if gui.ctx.Mode() == mode.Less {
-							gui.change(mode.Grep)
+						if ui.ctx.Mode() == mode.Less {
+							ui.change(mode.Grep)
 						}
 
-						gui.status.AddRune(r)
+						ui.status.AddRune(r)
 					}
 				}
 			}
 
-			gui.render(hs)
+			ui.render(hs)
 		}
 	}
 }
 
-func (gui *GUI) Close() {
-	if gui.plugins != nil {
+func (ui *UI) Close() {
+	if ui.plugins != nil {
 		plugins.Close()
 	}
 
-	gui.overlay.Close()
-	gui.root.Fini()
-	gui.ctx.Save()
+	ui.overlay.Close()
+	ui.root.Fini()
+	ui.ctx.Save()
 }
 
-func (gui *GUI) change(m mode.Mode) {
-	if !gui.ctx.SwitchMode(m) {
+func (ui *UI) change(m mode.Mode) {
+	if !ui.ctx.SwitchMode(m) {
 		return
 	}
 
 	// former mode
-	if gui.ctx.Last().Prompt() {
-		gui.status.Value = ""
+	if ui.ctx.Last().Prompt() {
+		ui.status.Value = ""
 	}
 
 	// actual mode
-	gui.status.Lock = !m.Prompt()
+	ui.status.Lock = !m.Prompt()
 
-	if gui.ctx.Last() == mode.Hex || m == mode.Hex {
-		gui.view.Reset()
+	if ui.ctx.Last() == mode.Hex || m == mode.Hex {
+		ui.view.Reset()
 	}
 }
 
-func (gui *GUI) render(hs *heapset.HeapSet) {
-	defer gui.root.Show()
+func (ui *UI) render(hs *heapset.HeapSet) {
+	defer ui.root.Show()
 
 	_, heap := hs.Heap()
 
 	if heap.Type == types.Stdin {
-		gui.root.Sync() // prevent hickups
+		ui.root.Sync() // prevent hickups
 	}
 
-	gui.root.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
-	gui.root.SetStyle(themes.Base)
-	gui.root.Clear()
+	ui.root.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
+	ui.root.SetStyle(themes.Base)
+	ui.root.Clear()
 
 	x, y := 0, 0
-	w, h := gui.root.Size()
+	w, h := ui.root.Size()
 
 	for _, base := range [...]widgets.Queueable{
-		gui.title,
-		gui.view,
-		gui.status,
+		ui.title,
+		ui.view,
+		ui.status,
 	} {
 		y += base.Render(hs, x, y, w, h-y)
 	}
 
-	gui.overlay.Render(0, 0, w, h)
+	ui.overlay.Render(0, 0, w, h)
 }
