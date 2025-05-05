@@ -46,7 +46,7 @@ type jsonUser struct {
 
 type jsonTime struct {
 	UTC   time.Time `json:"utc"`
-	Local time.Time `json:"local"`
+	Modified time.Time `json:"modified"`
 }
 
 type jsonLine struct {
@@ -89,9 +89,9 @@ func (w *JsonWriter) Finalize() {
 	writeln(w.file, string(buf))
 }
 
-func (w *JsonWriter) WriteFile(p string, f []string) {
+func (w *JsonWriter) WriteFile(p string, fs []string) {
 	w.entry.Meta.File = jsonFile{
-		Path: p, Filters: f,
+		Path: p, Filters: fs,
 	}
 }
 
@@ -101,9 +101,9 @@ func (w *JsonWriter) WriteUser(u *user.User) {
 	}
 }
 
-func (w *JsonWriter) WriteTime(t time.Time) {
+func (w *JsonWriter) WriteTime(t, f time.Time) {
 	w.entry.Meta.Time = jsonTime{
-		UTC: t.UTC(), Local: t,
+		UTC: t.UTC(), Modified: f.UTC(),
 	}
 }
 
@@ -111,8 +111,10 @@ func (w *JsonWriter) WriteHash(b []byte) {
 	w.entry.Meta.Hash = fmt.Sprintf("%x", b)
 }
 
-func (w *JsonWriter) WriteLine(n int, s string) {
-	w.entry.Data = append(w.entry.Data, jsonLine{
-		Line: n, Data: s,
-	})
+func (w *JsonWriter) WriteLines(ns []int, ss []string) {
+	for i := 0; i < len(ss); i++ {
+		w.entry.Data = append(w.entry.Data, jsonLine{
+			Line: ns[i], Data: ss[i],
+		})
+	}
 }

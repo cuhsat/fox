@@ -7,11 +7,19 @@ import (
 	"hash"
 	"os"
 	"os/user"
+	"strings"
 	"time"
 
 	"github.com/cuhsat/fx/internal/pkg/sys"
 	"github.com/cuhsat/fx/internal/pkg/types"
 	"github.com/cuhsat/fx/internal/pkg/types/heap"
+)
+
+const (
+	Text     = "text"
+	Json     = "json"
+	Jsonl    = "jsonl"
+	Markdown = "markdown"
 )
 
 const (
@@ -33,30 +41,39 @@ type writer interface {
 	Init(f *os.File, n bool, t string)
 	Start()
 	Finalize()
-	WriteFile(p string, f []string)
+	WriteFile(p string, fs []string)
 	WriteUser(u *user.User)
-	WriteTime(t time.Time)
+	WriteTime(t, f time.Time)
 	WriteHash(b []byte)
-	WriteLine(n int, s string)
+	WriteLines(ns []int, ss []string)
 }
 
-func New(path, key string, ex types.Export) *Bag {
+func New(path, key, wt string) *Bag {
 	var w writer
 	var e string
 
-	switch ex {
-	case types.Jsonl:
+	switch strings.ToLower(wt) {
+	case Jsonl:
 		w = NewJsonWriter(false)
 		e = ".jsonl"
-	case types.Json:
+	case Json:
 		w = NewJsonWriter(true)
 		e = ".json"
+	case Markdown:
+		w = NewMarkdownWriter()
+		e = ".md"
+	case Text:
+		fallthrough
 	default:
 		w = NewTextWriter()
 	}
 
 	if len(path) == 0 {
-		path = filename + e
+		path = filename
+	}
+
+	if len(e) > 0 {
+		path += e
 	}
 
 	return &Bag{
@@ -84,19 +101,31 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
+	fi, err := os.Stat(h.Path)
+
+	if err != nil {
+		sys.Error(err)
+	}
+
 	bag.w.Start()
 
 	bag.w.WriteFile(h.String(), *types.Filters())
 	bag.w.WriteUser(usr)
-	bag.w.WriteTime(time.Now())
+	bag.w.WriteTime(time.Now(), fi.ModTime())
 	bag.w.WriteHash(sum)
 
 	smap := *h.SMap()
 	mmap := *h.MMap()
 
+	var ns []int
+	var ss []string
+
 	for _, s := range smap {
-		bag.w.WriteLine(s.Nr, string(mmap[s.Start:s.End]))
+		ns = append(ns, s.Nr)
+		ss = append(ss, string(mmap[s.Start:s.End]))
 	}
+
+	bag.w.WriteLines(ns, ss)
 
 	bag.w.Finalize()
 
