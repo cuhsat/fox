@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	short = 1 // seconds
-	long  = 2 // seconds
+	short = 2 // seconds
+	long  = 5 // seconds
 )
 
 type Overlay struct {
@@ -43,7 +43,7 @@ func (o *Overlay) Render(x, y, w, h int) {
 	o.m.RUnlock()
 
 	if msg != nil {
-		o.print(x, y, fmt.Sprintf(" %-*s", w-1, msg.v), msg.s)
+		o.print(x, y, fmt.Sprintf("%-*s", w, msg.v), msg.s)
 	}
 }
 

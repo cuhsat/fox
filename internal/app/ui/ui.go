@@ -336,7 +336,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					ui.root.SetClipboard(heap.Bytes())
 
-					ui.overlay.SendInfo("Copied to clipboard")
+					ui.overlay.SendInfo(fmt.Sprintf("%s copied to clipboard", heap.String()))
 
 				case tcell.KeyCtrlS:
 					if ui.ctx.Mode() == mode.Hex {
@@ -347,7 +347,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					ui.overlay.SendInfo(fmt.Sprintf("Saved to %s", bag.Path))
+					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
 
 				case tcell.KeyCtrlE:
 					if sys.Exists(bag.Path) {
