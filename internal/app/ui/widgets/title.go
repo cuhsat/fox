@@ -3,8 +3,8 @@ package widgets
 import (
 	"fmt"
 
-	"github.com/cuhsat/fx/internal/pkg/gui/context"
-	"github.com/cuhsat/fx/internal/pkg/gui/themes"
+	"github.com/cuhsat/fx/internal/app/ui/context"
+	"github.com/cuhsat/fx/internal/app/ui/themes"
 	"github.com/cuhsat/fx/internal/pkg/text"
 	"github.com/cuhsat/fx/internal/pkg/types/heapset"
 )
