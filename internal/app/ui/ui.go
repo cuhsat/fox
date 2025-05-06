@@ -356,6 +356,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}
 
+				case tcell.KeyCtrlH:
+					hs.OpenHelp()
+
 				case tcell.KeyCtrlD:
 					hs.OpenLog()
 

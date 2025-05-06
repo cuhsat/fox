@@ -18,65 +18,6 @@ import (
 	"github.com/cuhsat/fx/internal/pkg/user/history"
 )
 
-const (
-	Usage = ` _____                        _
-|  ___|__  _ __ ___ _ __  ___(_) ___
-| |_ / _ \| '__/ _ \ '_ \/ __| |/ __|
-|  _| (_) | | |  __/ | | \__ \ | (__
-|_|__\___/|_|  \___|_| |_|___/_|\___|
-| ____|_  ____ _ _ __ ___ (_)_ __   ___ _ __
-|  _| \ \/ / _' | '_ ' _ \| | '_ \ / _ \ '__|
-| |___ >  < (_| | | | | | | | | | |  __/ |
-|_____/_/\_\__,_|_| |_| |_|_|_| |_|\___|_| %s
-
-The Swiss Army Knife for examining text files
-
-Usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256}]
-          [--head|tail] [--lines|bytes=NUMBER]
-          [--regexp=PATTERN ...]
-          [--file=FILE] [--key=KEY]
-          [--mode={text,xml,json,jsonlines,markdown}] [-j|J|M|X]
-          [PATH ...]
-
-Positional arguments:
-  PATH(s) to open or '-' for STDIN (default: current directory)
-
-Console:
-  -p, --print              print to console (no UI)
-  -w, --count              output file line and byte counts
-  -x, --hex                output file in hex / start in HEX mode
-  -s, --sum={md5,sha1,sha256}      
-                           output file hashsums (default: sha256)
-
-File limits:
-  -h, --head               limit head of file by ...
-  -t, --tail               limit tail of file by ...
-  -n, --lines=NUMBER       number of lines (default: 10)
-  -c, --bytes=NUMBER       number of bytes (default: 16)
-
-Line filter:
-  -e, --regexp=PATTERN     filter for lines that matches pattern
-
-Evidence bag:
-  -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
-  -m, --mode={text,xml,json,jsonl,markdown}
-                           output mode (default: text)
-  -k, --key=KEY            key phrase for signing with HMAC
-
-Aliases:
-  -j, --json               short for --mode=json
-  -J, --jsonlines          short for --mode=jsonlines
-  -M, --markdown           short for --mode=markdown
-  -X, --xml                short for --mode=xml
-
-Standard options:
-      --help               shows this message
-      --version            shows version
-
-Full documentation: <https://github.com/cuhsat/fx/docs>
-`
-)
-
 func main() {
 	// console
 	rm := mode.Default
@@ -134,17 +75,13 @@ func main() {
 	v := flag.BoolP("version", "v", false, "shows version")
 
 	flag.Usage = func() {
-		fmt.Printf(Usage, fx.Version)
+		fmt.Printf(fx.Usage, fx.Version)
 		os.Exit(2)
 	}
 
 	flag.Parse()
 
 	a := flag.Args()
-
-	if len(a) == 0 {
-		a = append(a, ".")
-	}
 
 	if *h && *t {
 		sys.Exit("head or tail")

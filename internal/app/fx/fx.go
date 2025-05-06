@@ -1,6 +1,20 @@
 package fx
 
+import (
+	_ "embed"
+)
+
 const (
 	Product = "Forensic Examiner"
-	Version = "v0.0.0"
+)
+
+var (
+	//go:embed version.txt
+	Version string
+
+	//go:embed usage.txt
+	Usage string
+
+	//go:embed help.txt
+	Help string
 )
