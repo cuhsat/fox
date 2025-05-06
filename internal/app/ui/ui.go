@@ -446,9 +446,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.change(mode.Less)
 						}
 					} else if len(*types.Filters()) > 0 {
-						types.Filters().Pop()
-						ui.view.Reset()
-						heap.DelFilter()
+						if !ui.status.Locked() {
+							types.Filters().Pop()
+							ui.view.Reset()
+							heap.DelFilter()
+						}
 					}
 
 				default:
@@ -459,7 +461,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 
 					case 32: // space
-						if ui.status.Lock {
+						if ui.status.Locked() {
 							ui.view.ScrollDown(page_h)
 						} else {
 							ui.status.AddRune(r)
@@ -501,7 +503,11 @@ func (ui *UI) change(m mode.Mode) {
 	}
 
 	// actual mode
-	ui.status.Lock = !m.Prompt()
+	ui.status.Lock(!m.Prompt())
+
+	if ui.status.Locked() {
+		ui.ctx.Root.HideCursor()
+	}
 
 	if ui.ctx.Last() == mode.Hex || m == mode.Hex {
 		ui.view.Reset()

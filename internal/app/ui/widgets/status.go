@@ -2,6 +2,7 @@ package widgets
 
 import (
 	"fmt"
+	"sync/atomic"
 
 	"github.com/cuhsat/fx/internal/app/ui/context"
 	"github.com/cuhsat/fx/internal/app/ui/themes"
@@ -20,17 +21,19 @@ const (
 
 type Status struct {
 	base
-	Lock  bool
+	lock  atomic.Bool
 	Value string
 }
 
 func NewStatus(ctx *context.Context) *Status {
-	return &Status{
-		base: base{ctx},
-
-		Lock:  true,
+	s := Status{
+		base:  base{ctx},
 		Value: "",
 	}
+
+	s.Lock(true)
+
+	return &s
 }
 
 func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
@@ -61,7 +64,7 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	// render status
 	st.print((w - text.Len(s)), y, s, themes.Surface1)
 
-	if st.Lock {
+	if st.Locked() {
 		st.ctx.Root.HideCursor()
 	} else {
 		st.ctx.Root.ShowCursor(x+text.Len(f)-1, y)
@@ -71,23 +74,31 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 }
 
 func (st *Status) AddRune(r rune) {
-	if !st.Lock {
+	if !st.Locked() {
 		st.Value += string(r)
 	}
 }
 
 func (st *Status) DelRune() {
-	if !st.Lock && len(st.Value) > 0 {
+	if !st.Locked() && len(st.Value) > 0 {
 		st.Value = st.Value[:len(st.Value)-1]
 	}
 }
 
 func (st *Status) Accept() (s string) {
-	if !st.Lock {
+	if !st.Locked() {
 		s, st.Value = st.Value, ""
 	}
 
 	return
+}
+
+func (st *Status) Locked() bool {
+	return st.lock.Load()
+}
+
+func (st *Status) Lock(v bool) {
+	st.lock.Store(v)
 }
 
 func (st *Status) fmtMode() string {
