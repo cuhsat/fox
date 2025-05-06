@@ -22,16 +22,14 @@ const (
 type Status struct {
 	base
 	lock  atomic.Bool
-	Value string
+	value atomic.Value
 }
 
 func NewStatus(ctx *context.Context) *Status {
-	s := Status{
-		base:  base{ctx},
-		Value: "",
-	}
+	s := Status{base: base{ctx}}
 
 	s.Lock(true)
+	s.Enter("")
 
 	return &s
 }
@@ -73,32 +71,43 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	return 1
 }
 
-func (st *Status) AddRune(r rune) {
-	if !st.Locked() {
-		st.Value += string(r)
-	}
-}
-
-func (st *Status) DelRune() {
-	if !st.Locked() && len(st.Value) > 0 {
-		st.Value = st.Value[:len(st.Value)-1]
-	}
-}
-
-func (st *Status) Accept() (s string) {
-	if !st.Locked() {
-		s, st.Value = st.Value, ""
-	}
-
-	return
+func (st *Status) Lock(v bool) {
+	st.lock.Store(v)
 }
 
 func (st *Status) Locked() bool {
 	return st.lock.Load()
 }
 
-func (st *Status) Lock(v bool) {
-	st.lock.Store(v)
+func (st *Status) AddRune(r rune) {
+	if !st.Locked() {
+		v := st.value.Load().(string)
+		st.value.Store(v + string(r))
+	}
+}
+
+func (st *Status) DelRune() {
+	v := st.value.Load().(string)
+	if !st.Locked() && len(v) > 0 {
+		st.value.Store(v[:len(v)-1])
+	}
+}
+
+func (st *Status) Accept() (v string) {
+	if !st.Locked() {
+		v = st.value.Load().(string)
+		st.value.Store("")
+	}
+
+	return
+}
+
+func (st *Status) Enter(s string) {
+	st.value.Store(s)
+}
+
+func (st *Status) Value() string {
+	return st.value.Load().(string)
 }
 
 func (st *Status) fmtMode() string {
@@ -110,7 +119,9 @@ func (st *Status) fmtFilters() (s string) {
 		s = fmt.Sprintf("%s %s %s", s, f, filter)
 	}
 
-	s = fmt.Sprintf("%s %s ", s, st.Value)
+	v := st.value.Load().(string)
+
+	s = fmt.Sprintf("%s %s ", s, v)
 
 	return
 }

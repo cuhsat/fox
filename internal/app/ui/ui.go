@@ -141,7 +141,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				v = strings.TrimPrefix(v, brPrefix)
 				v = strings.TrimSuffix(v, brSuffix)
 
-				ui.status.Value = v
+				ui.status.Enter(v)
 
 			case *tcell.EventResize:
 				ui.root.Sync()
@@ -251,7 +251,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyUp:
 					if mods&tcell.ModAlt != 0 {
-						ui.status.Value = hi.PrevCommand()
+						ui.status.Enter(hi.PrevCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollStart()
 					} else if mods&tcell.ModShift != 0 {
@@ -262,7 +262,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyDown:
 					if mods&tcell.ModAlt != 0 {
-						ui.status.Value = hi.NextCommand()
+						ui.status.Enter(hi.NextCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollEnd()
 					} else if mods&tcell.ModShift != 0 {
@@ -437,7 +437,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyBackspace2:
-					if len(ui.status.Value) > 0 {
+					if len(ui.status.Value()) > 0 {
 						ui.status.DelRune()
 					} else if ui.ctx.Mode().Prompt() {
 						if !ui.ctx.Last().Prompt() {
@@ -446,7 +446,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.change(mode.Less)
 						}
 					} else if len(*types.Filters()) > 0 {
-						if !ui.status.Locked() {
+						if ui.ctx.Mode() != mode.Hex {
 							types.Filters().Pop()
 							ui.view.Reset()
 							heap.DelFilter()
@@ -499,12 +499,13 @@ func (ui *UI) change(m mode.Mode) {
 
 	// former mode
 	if ui.ctx.Last().Prompt() {
-		ui.status.Value = ""
+		ui.status.Enter("")
 	}
 
 	// actual mode
 	ui.status.Lock(!m.Prompt())
 
+	// force cursor off
 	if ui.status.Locked() {
 		ui.ctx.Root.HideCursor()
 	}

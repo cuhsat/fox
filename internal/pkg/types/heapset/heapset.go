@@ -44,10 +44,6 @@ func New(paths []string) *HeapSet {
 
 	hs.watchPath(sys.Log.Name)
 
-	if hs.Size() == 0 {
-		hs.OpenHelp()
-	}
-
 	for _, path := range paths {
 		if path == "-" {
 			hs.loadPipe()
@@ -57,7 +53,9 @@ func New(paths []string) *HeapSet {
 		hs.Open(path)
 	}
 
-	if hs.Size() == 0 {
+	if len(paths) == 0 {
+		hs.OpenHelp()
+	} else if hs.Size() == 0 {
 		sys.Exit("no files found")
 	}
 

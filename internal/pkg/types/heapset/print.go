@@ -78,5 +78,5 @@ func printHash(ctx *buffer.Context, sum string) {
 }
 
 func printCount(ctx *buffer.Context) {
-	fmt.Printf("%8dL %8dB  %s\n", ctx.Heap.Size(), ctx.Heap.Size(), ctx.Heap.String())
+	fmt.Printf("%8dL %8dB  %s\n", ctx.Heap.Total(), ctx.Heap.Size(), ctx.Heap.String())
 }
