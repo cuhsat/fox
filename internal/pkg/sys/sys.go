@@ -148,6 +148,20 @@ func TempFile(name, ext string) *os.File {
 	return f
 }
 
+func Extract(data string) string {
+	f := TempFile("extract", ".txt")
+
+	_, err := f.WriteString(data)
+
+	if err != nil {
+		Error(err)
+	}
+
+	f.Close()
+
+	return f.Name()
+}
+
 func DumpErr(err any, stack any) {
 	s := fmt.Sprintf("%+v\n\n%s", err, stack)
 

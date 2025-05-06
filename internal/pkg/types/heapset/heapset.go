@@ -1,6 +1,7 @@
 package heapset
 
 import (
+	"fmt"
 	"slices"
 	"sync"
 	"sync/atomic"
@@ -8,6 +9,7 @@ import (
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/fsnotify/fsnotify"
 
+	"github.com/cuhsat/fx/internal/app/fx"
 	"github.com/cuhsat/fx/internal/pkg/sys"
 	"github.com/cuhsat/fx/internal/pkg/types"
 	"github.com/cuhsat/fx/internal/pkg/types/heap"
@@ -41,6 +43,11 @@ func New(paths []string) *HeapSet {
 	go hs.notify()
 
 	hs.watchPath(sys.Log.Name)
+
+	if hs.Size() == 0 {
+		hs.OpenHelp()
+		return &hs
+	}
 
 	for _, path := range paths {
 		if path == "-" {
@@ -111,10 +118,31 @@ func (hs *HeapSet) OpenLog() {
 		idx = hs.Size()
 
 		hs.atomicAdd(&heap.Heap{
-			Title: "log",
+			Title: "Log",
 			Path:  sys.Log.Name,
 			Base:  sys.Log.Name,
 			Type:  types.Stderr,
+		})
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.atomicGet(idx).Reload()
+}
+
+func (hs *HeapSet) OpenHelp() {
+	idx := hs.findByName("Help")
+
+	if idx < 0 {
+		idx = hs.Size()
+
+		p := sys.Extract(fmt.Sprintf(fx.Help, fx.Version))
+
+		hs.atomicAdd(&heap.Heap{
+			Title: "Help",
+			Path:  p,
+			Base:  p,
+			Type:  types.Stdout,
 		})
 	}
 
