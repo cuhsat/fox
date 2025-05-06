@@ -3,8 +3,10 @@ package bag
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"os"
 	"os/user"
+	"strings"
 	"time"
 
 	"github.com/cuhsat/fx/internal/pkg/sys"
@@ -15,15 +17,15 @@ const (
 )
 
 type XmlWriter struct {
-	file  *os.File // file handle
-	title string   // export title
-	bag   *xmlBag  // root element
+	file  *os.File     // file handle
+	bag   *xmlBag      // root element
+	entry *xmlEvidence // current entry
 }
 
 type xmlBag struct {
-	Title    string      `xml:",comment"`
-	XMLName  xml.Name    `xml:"bag"`
-	Evidence xmlEvidence `xml:"evidence"`
+	Title    string        `xml:",comment"`
+	XMLName  xml.Name      `xml:"bag"`
+	Evidence []xmlEvidence `xml:"evidence"`
 }
 
 type xmlEvidence struct {
@@ -49,8 +51,8 @@ type xmlUser struct {
 }
 
 type xmlTime struct {
-	Bagged   time.Time `xml:"bagged"`
-	Modified time.Time `xml:"modified"`
+	Bagged   string `xml:"bagged"`
+	Modified string `xml:"modified"`
 }
 
 type xmlLines struct {
@@ -68,56 +70,93 @@ func NewXmlWriter() *XmlWriter {
 	}
 }
 
-func (w *XmlWriter) Init(f *os.File, n bool, t string) {
+func (w *XmlWriter) Init(f *os.File, _ bool, t string) {
 	w.file = f
-	w.title = t
-	w.file = f
-	w.title = t
-}
 
-func (w *XmlWriter) Start() {
 	w.bag = &xmlBag{
-		Title: w.title,
+		Title: t,
 	}
-}
 
-func (w *XmlWriter) Finalize() {
-	var buf []byte
-	var err error
-
-	buf, err = xml.MarshalIndent(w.bag, "", jsonIndent)
+	buf, err := io.ReadAll(w.file)
 
 	if err != nil {
 		sys.Error(err)
 		return
 	}
 
-	writeln(w.file, xml.Header+string(buf))
+	err = xml.Unmarshal(buf, &w.bag)
+
+	if err != nil && err != io.EOF {
+		sys.Error(err)
+		return
+	}
+}
+
+func (w *XmlWriter) Start() {
+	w.entry = new(xmlEvidence)
+}
+
+func (w *XmlWriter) Finalize() {
+	var buf []byte
+	var err error
+
+	w.bag.Evidence = append(w.bag.Evidence, *w.entry)
+
+	buf, err = xml.MarshalIndent(w.bag, "", xmlIndent)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	_, err = w.file.Seek(0, 0)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	err = w.file.Truncate(0)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	var sb strings.Builder
+
+	sb.WriteString(xml.Header)
+	sb.Write(buf)
+
+	writeln(w.file, sb.String())
 }
 
 func (w *XmlWriter) WriteFile(p string, fs []string) {
-	w.bag.Evidence.Metadata.File.Filters = fs
+	w.entry.Metadata.File = xmlFile{
+		Path: p, Filters: fs,
+	}
 }
 
 func (w *XmlWriter) WriteUser(u *user.User) {
-	w.bag.Evidence.Metadata.User = xmlUser{
+	w.entry.Metadata.User = xmlUser{
 		Login: u.Username, Name: u.Name,
 	}
 }
 
 func (w *XmlWriter) WriteTime(t, f time.Time) {
-	w.bag.Evidence.Metadata.Time = xmlTime{
-		Bagged: t.UTC(), Modified: f.UTC(),
+	w.entry.Metadata.Time = xmlTime{
+		Bagged:   t.UTC().Format(time.RFC3339),
+		Modified: f.UTC().Format(time.RFC3339),
 	}
 }
 
 func (w *XmlWriter) WriteHash(b []byte) {
-	w.bag.Evidence.Metadata.Hash = fmt.Sprintf("%x", b)
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", b)
 }
 
 func (w *XmlWriter) WriteLines(ns []int, ss []string) {
 	for i := 0; i < len(ss); i++ {
-		w.bag.Evidence.Lines.Line = append(w.bag.Evidence.Lines.Line, xmlLine{
+		w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{
 			Line: ns[i], Data: ss[i],
 		})
 	}
