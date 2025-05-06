@@ -46,7 +46,6 @@ func New(paths []string) *HeapSet {
 
 	if hs.Size() == 0 {
 		hs.OpenHelp()
-		return &hs
 	}
 
 	for _, path := range paths {

@@ -1,13 +1,38 @@
-# Forensic Examiner Example Config
+# Forensic Examiner config
+# Standard location is ~/.fxrc
 
-# UI theme
+# available env vars:
+#
+#   FX_THEME
+#
+
+# available themes:
+#
+#   Examiner-Light
+#   Examiner-Dark
+#   Catppuccin-Latte
+#   Catppuccin-Frappe
+#   Catppuccin-Macchiato
+#   Catppuccin-Mocha
+#   Solarized-Light
+#   Solarized-Dark
+#   VSCode-Light
+#   VSCode-Dark
+#   Monokai
+#   Darcula
+#   Nord
+#   Corporate
+#   Matrix
+#   Ansi16
+#   Monochrome
+#
 Theme = "Default"
 
-# Scroll to end on reload
+# scroll to end on reload
 Follow = false
 
-# Show line numbers
+# show line numbers
 Line = false
 
-# Wrap text
+# wrap text
 Wrap = false

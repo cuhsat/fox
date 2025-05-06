@@ -1,45 +1,47 @@
-# Forensic Examiner Example Themes
+# Forensic Examiner themes config
+# Standard location is ~/.fx_themes
+
 [Theme.Custom]
 
-# Theme name
+# theme name
 Name = "Custom"
 
-# Basic text area
+# basic text area
 Base.Fg = 0x000000
 Base.Bg = 0x000000
 
-# Top and bottom lines
+# top and bottom lines
 Surface0.Fg = 0x000000
 Surface0.Bg = 0x000000
 
-# Information areas
+# information areas
 Surface1.Fg = 0x000000
 Surface1.Bg = 0x000000
 
-# Busy indicator and filename
+# busy indicator and filename
 Surface2.Fg = 0x000000
 Surface2.Bg = 0x000000
 
-# Mode indicator
+# mode indicator
 Surface3.Fg = 0x000000
 Surface3.Bg = 0x000000
 
-# Error messages
+# error messages
 Overlay0.Fg = 0x000000
 Overlay0.Bg = 0x000000
 
-# Success messages
+# success messages
 Overlay1.Fg = 0x000000
 Overlay1.Bg = 0x000000
 
-# Line numbers and file offsets
+# line numbers and file offsets
 Subtext0.Fg = 0x000000
 Subtext0.Bg = 0x000000
 
-# Vertical lines
+# vertical lines
 Subtext1.Fg = 0x000000
 Subtext1.Bg = 0x000000
 
-# Text highlights
+# text highlights
 Subtext2.Fg = 0x000000
 Subtext2.Bg = 0x000000

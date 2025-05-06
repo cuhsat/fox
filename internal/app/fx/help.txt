@@ -55,5 +55,3 @@ KEYMAP
   HEX
 
   Space                Scroll one page down
-
-Full documentation: <https://github.com/cuhsat/fx/docs>

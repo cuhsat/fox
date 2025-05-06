@@ -210,6 +210,19 @@ func New(name string) *Themes {
 				0x5e81ac, 0x2e3440, // Subtext2 (highlight)
 			},
 
+			"Corporate": {
+				0x696969, 0xf4f6f8, // Base
+				0x000000, 0xffffff, // Surface0 (line)
+				0x000000, 0xffffff, // Surface1 (pane)
+				0x000000, 0xffffff, // Surface2 (title)
+				0x000000, 0x22f4ae, // Surface3 (mode)
+				0xf4f6f8, 0xff5a5f, // Overlay0 (error)
+				0xf4f6f8, 0x5a5fff, // Overlay1 (success)
+				0x99a0a7, 0xf4f6f8, // Subtext0 (numbers)
+				0xffffff, 0xf4f6f8, // Subtext1 (vrule)
+				0x0d6145, 0x22f4ae, // Subtext2 (highlight)
+			},
+
 			"Matrix": {
 				0x008f11, 0x0d0208, // Base
 				0x003b00, 0x0d0208, // Surface0 (line)
@@ -263,6 +276,7 @@ func New(name string) *Themes {
 			"Monokai",
 			"Darcula",
 			"Nord",
+			"Corporate",
 			"Matrix",
 			"Ansi16",
 			"Monochrome",
