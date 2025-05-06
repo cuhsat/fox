@@ -216,11 +216,11 @@ func New(name string) *Themes {
 				0x000000, 0xffffff, // Surface1 (pane)
 				0x000000, 0xffffff, // Surface2 (title)
 				0x000000, 0x22f4ae, // Surface3 (mode)
-				0xf4f6f8, 0xff5a5f, // Overlay0 (error)
-				0xf4f6f8, 0x5a5fff, // Overlay1 (success)
+				0x000000, 0xff5a5f, // Overlay0 (error)
+				0x000000, 0x22f4ae, // Overlay1 (success)
 				0x99a0a7, 0xf4f6f8, // Subtext0 (numbers)
 				0xffffff, 0xf4f6f8, // Subtext1 (vrule)
-				0x0d6145, 0x22f4ae, // Subtext2 (highlight)
+				0x000000, 0x22f4ae, // Subtext2 (highlight)
 			},
 
 			"Matrix": {
