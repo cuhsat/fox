@@ -54,18 +54,18 @@ func New(path, key, wt string) *Bag {
 	var e string
 
 	switch strings.ToLower(wt) {
-	case Xml:
-		w = NewXmlWriter()
-		e = ".xml"
+	case Markdown:
+		w = NewMarkdownWriter()
+		e = ".md"
 	case Jsonl:
 		w = NewJsonWriter(false)
 		e = ".jsonl"
 	case Json:
 		w = NewJsonWriter(true)
 		e = ".json"
-	case Markdown:
-		w = NewMarkdownWriter()
-		e = ".md"
+	case Xml:
+		w = NewXmlWriter()
+		e = ".xml"
 	case Text:
 		fallthrough
 	default:
@@ -149,7 +149,7 @@ func (bag *Bag) init() bool {
 
 	is := sys.Exists(bag.Path)
 
-	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
 	if err != nil {
 		sys.Error(err)
