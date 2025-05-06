@@ -76,7 +76,7 @@ func main() {
 
 	flag.Usage = func() {
 		fmt.Printf(fx.Usage, fx.Version)
-		os.Exit(2)
+		os.Exit(0)
 	}
 
 	flag.Parse()

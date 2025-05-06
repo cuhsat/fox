@@ -1,11 +1,19 @@
-# Forensic Examiner Example Plugins
+# Forensic Examiner plugins config
+# Standard location is ~/.fx_plugins
+
+# plugin hotkey (F1-F8)
 [Plugin.F1]
 
-# Plugin name
+# plugin name
 Name = "Test Plugin"
 
-# Execute command
+# execute command with variables:
+#
+#   $* path of open files
+#   $+ path of open file
+#   $? user input value
+#
 Exec = "echo $?"
 
-# Requires user input
-Input = "Echo"
+# requires user input
+Input = "Test"

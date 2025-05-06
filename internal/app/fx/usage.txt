@@ -47,4 +47,13 @@ Standard options:
       --help               shows this message
       --version            shows version
 
-Full documentation: <https://github.com/cuhsat/fx/docs>
+Example: print matching lines
+  $ fx -pe "John Doe" ./**/*.jsonl
+
+Example: print content hashes
+  $ fx -ps=sha256 example.zip
+
+Example: print first sector in hex
+  $ fx -pxhc=512 example.dd > mbr
+
+Type "fx" for more help...
