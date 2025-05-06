@@ -20,7 +20,13 @@ var (
 )
 
 type Plugins struct {
-	Plugins map[string]Plugin `toml:"Plugin"`
+	Autostart map[string][]Autostart `toml:"Autostart"`
+	Plugins   map[string]Plugin      `toml:"Plugin"`
+}
+
+type Autostart struct {
+	Path string `toml:"Path"`
+	Exec string `toml:"Exec"`
 }
 
 type Plugin struct {
@@ -52,6 +58,10 @@ func New() *Plugins {
 
 func Close() {
 	close(Input)
+}
+
+func (p *Plugin) Autostart(path string) {
+
 }
 
 func (p *Plugin) Execute(hs *heapset.HeapSet, fn func()) {

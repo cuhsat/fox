@@ -30,6 +30,8 @@ func (hs *HeapSet) loadPath(path string) {
 
 	base := path
 
+	// TODO: autostart
+
 	if bzip2.Detect(path) {
 		path = bzip2.Deflate(path)
 	}
