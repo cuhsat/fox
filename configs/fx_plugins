@@ -1,6 +1,13 @@
 # Forensic Examiner plugins config
 # Standard location is ~/.fx_plugins
 
+[[Autostart]]
+# path pattern
+Path = "test"
+
+# execute command
+Exec = "echo $+"
+
 # plugin hotkey (F1-F8)
 [Plugin.F1]
 
