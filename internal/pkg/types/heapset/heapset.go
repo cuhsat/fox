@@ -13,13 +13,14 @@ import (
 	"github.com/cuhsat/fx/internal/pkg/sys"
 	"github.com/cuhsat/fx/internal/pkg/types"
 	"github.com/cuhsat/fx/internal/pkg/types/heap"
+	"github.com/cuhsat/fx/internal/pkg/user/plugins"
 )
 
 type callback func()
 
 type HeapSet struct {
 	sync.RWMutex
-
+	starts   *[]plugins.Start  // autostarts
 	watch    *fsnotify.Watcher // file watcher
 	watch_fn callback          // file watcher callback
 	error_fn callback          // error callback
@@ -38,6 +39,12 @@ func New(paths []string) *HeapSet {
 	hs := HeapSet{
 		watch: w,
 		index: new(int32),
+	}
+
+	if ps := plugins.New(); ps != nil {
+		if s, ok := ps.Starts["Start"]; ok {
+			hs.starts = &s
+		}
 	}
 
 	go hs.notify()
