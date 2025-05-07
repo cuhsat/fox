@@ -231,7 +231,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					go pl.Execute(hs, ui.ctx.Interrupt)
+					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(p, t string) {
+						hs.OpenFile(p, t, types.Stdout)
+						ui.ctx.Interrupt()
+					})
+
+					ui.overlay.SendInfo(fmt.Sprintf("%s executed", pl.Name))
 
 					if len(pl.Input) > 0 {
 						ui.change(mode.Mode(pl.Input))

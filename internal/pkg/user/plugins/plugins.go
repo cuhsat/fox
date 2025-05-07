@@ -6,8 +6,6 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/heapset"
 	"github.com/cuhsat/fx/internal/pkg/user"
 )
 
@@ -19,12 +17,15 @@ var (
 	Input chan string
 )
 
+type Callback func(p, t string)
+
 type Plugins struct {
-	Autostart map[string][]Autostart `toml:"Autostart"`
-	Plugins   map[string]Plugin      `toml:"Plugin"`
+	Starts  map[string][]Start `toml:"Plugins"`
+	Plugins map[string]Plugin  `toml:"Plugin"`
 }
 
-type Autostart struct {
+type Start struct {
+	Name string `toml:"Name"`
 	Path string `toml:"Path"`
 	Exec string `toml:"Exec"`
 }
@@ -60,27 +61,26 @@ func Close() {
 	close(Input)
 }
 
-func (p *Plugin) Autostart(path string) {
+func (s *Start) Execute(f, b string) string {
+	cmd := s.Exec
+	cmd = strings.ReplaceAll(cmd, "$.", b)
+	cmd = strings.ReplaceAll(cmd, "$+", f)
 
+	return sys.Exec(cmd)
 }
 
-func (p *Plugin) Execute(hs *heapset.HeapSet, fn func()) {
+func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
 	var v string
 
 	if len(p.Input) > 0 {
 		v = <-Input
 	}
 
-	_, h := hs.Heap()
-
-	all := strings.Join(hs.Files(), " ")
-
 	cmd := p.Exec
 	cmd = strings.ReplaceAll(cmd, "$?", v)
-	cmd = strings.ReplaceAll(cmd, "$+", h.Path)
-	cmd = strings.ReplaceAll(cmd, "$*", all)
+	cmd = strings.ReplaceAll(cmd, "$.", b)
+	cmd = strings.ReplaceAll(cmd, "$+", f)
+	cmd = strings.ReplaceAll(cmd, "$*", strings.Join(hs, " "))
 
-	hs.OpenFile(sys.Exec(cmd), p.Name, types.Stdout)
-
-	fn()
+	fn(sys.Exec(cmd), p.Name)
 }

@@ -3,6 +3,7 @@ package heapset
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"sync/atomic"
 
 	"github.com/cuhsat/fx/internal/pkg/file"
@@ -30,8 +31,6 @@ func (hs *HeapSet) loadPath(path string) {
 
 	base := path
 
-	// TODO: autostart
-
 	if bzip2.Detect(path) {
 		path = bzip2.Deflate(path)
 	}
@@ -48,6 +47,17 @@ func (hs *HeapSet) loadPath(path string) {
 	if zip.Detect(path) {
 		hs.loadZip(path, base)
 		return
+	}
+
+	if hs.starts != nil {
+		for _, s := range *hs.starts {
+			re := regexp.MustCompile(s.Path)
+
+			if re.MatchString(path) {
+				path = s.Execute(path, base)
+				break
+			}
+		}
 	}
 
 	hs.loadFile(path, base)
