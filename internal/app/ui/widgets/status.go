@@ -29,13 +29,14 @@ type Status struct {
 }
 
 func NewStatus(ctx *context.Context) *Status {
-	s := Status{base: base{ctx}}
+	st := Status{base: base{ctx}}
 
-	s.Lock(true)
-	s.Enter("")
-	s.cursor.Store(0)
+	// defaults
+	st.lock.Store(true)
+	st.value.Store("")
+	st.cursor.Store(0)
 
-	return &s
+	return &st
 }
 
 func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
