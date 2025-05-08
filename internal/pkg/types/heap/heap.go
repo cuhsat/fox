@@ -61,6 +61,8 @@ func (h *Heap) String() string {
 		return h.Title
 	case types.Deflate:
 		return h.Title
+	case types.Plugin:
+		return h.Title
 	default:
 		return h.Path
 	}

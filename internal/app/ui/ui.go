@@ -231,8 +231,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(p, t string) {
-						hs.OpenFile(p, t, types.Stdout)
+					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(p, b, t string) {
+						hs.OpenFile(p, b, t, types.Stdout)
 						ui.ctx.Interrupt()
 					})
 
@@ -356,7 +356,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyCtrlE:
 					if sys.Exists(bag.Path) {
-						hs.OpenFile(bag.Path, bag.Path, types.Regular)
+						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Regular)
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}
