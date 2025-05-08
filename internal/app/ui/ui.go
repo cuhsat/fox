@@ -453,14 +453,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.change(ui.ctx.Last())
 					}
 
-				case tcell.KeyDelete:
-					if len(ui.status.Value()) > 0 {
-						// TODO: ui.status.DelRune(before)
-					}
+				case tcell.KeyDelete, tcell.KeyCtrlK:
+					ui.status.DelRune(false)
 
 				case tcell.KeyBackspace2:
 					if len(ui.status.Value()) > 0 {
-						ui.status.DelRune()
+						ui.status.DelRune(true)
 					} else if ui.ctx.Mode().Prompt() {
 						if !ui.ctx.Last().Prompt() {
 							ui.change(ui.ctx.Last())

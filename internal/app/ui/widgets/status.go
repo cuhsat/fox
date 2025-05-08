@@ -114,12 +114,16 @@ func (st *Status) AddRune(r rune) {
 	}
 }
 
-func (st *Status) DelRune() {
+func (st *Status) DelRune(b bool) {
 	v := st.value.Load().(string)
 	c := st.cursor.Load()
 	if !st.Locked() && len(v) > 0 {
-		st.value.Store(v[:max(c-1, 0)] + v[c:])
-		st.Move(-1)
+		if !b {
+			st.value.Store(v[:c] + v[min(int(c+1), text.Len(v)):])
+		} else {
+			st.value.Store(v[:max(c-1, 0)] + v[c:])
+			st.Move(-1)
+		}
 	}
 }
 
