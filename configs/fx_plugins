@@ -1,34 +1,45 @@
-# Forensic Examiner plugins config
-# Standard location is ~/.fx_plugins
+# Forensic Examiner plugins config (~/.fx_plugins)
 
-[[Plugins.Start]]
+# available variables:
+#
+#  $FILE    path of open file
+#  $BASE    path of base file
+#
+[[Plugins.Autostart]]
+
 # plugin name
-Name = "Test Start"
+Name = "Test Autostart"
 
 # filename pattern
-Path = "test"
+Pattern = "test"
 
-# execute command with variables:
-#
-#   $+ path of open file
-#   $. path of base file
-#
-Exec = "echo $. $+"
+# execute command
+Command = "echo $BASE $FILE"
 
-# plugin hotkey (F1-F8)
+# output type
+Output = "text"
+
+# available variables:
+#
+#  $INPUT   user input value
+#  $FILES   path of open files
+#  $FILE    path of open file
+#  $BASE    path of base file
+#
+# available hotkeys:
+#
+#  F1 - F8
+#
 [Plugin.F1]
 
 # plugin name
 Name = "Test Plugin"
 
-# execute command with variables:
-#
-#   $* path of open files
-#   $+ path of open file
-#   $. path of base file
-#   $? user input value
-#
-Exec = "echo $?"
+# user input prompt
+Prompt = "Test"
 
-# requires user input
-Input = "Test"
+# execute command
+Command = "echo $BASE $FILE $FILES $INPUT"
+
+# output type
+Output = "text"

@@ -20,7 +20,8 @@ type callback func()
 
 type HeapSet struct {
 	sync.RWMutex
-	starts   *[]plugins.Start  // autostarts
+	plugins []plugins.Autostart // autostart plugins
+
 	watch    *fsnotify.Watcher // file watcher
 	watch_fn callback          // file watcher callback
 	error_fn callback          // error callback
@@ -42,9 +43,7 @@ func New(paths []string) *HeapSet {
 	}
 
 	if ps := plugins.New(); ps != nil {
-		if s, ok := ps.Starts["Start"]; ok {
-			hs.starts = &s
-		}
+		hs.plugins = ps.Autostarts()
 	}
 
 	go hs.notify()
@@ -116,9 +115,9 @@ func (hs *HeapSet) Open(path string) {
 }
 
 func (hs *HeapSet) OpenLog() {
-	idx := hs.findByPath(sys.Log.Name)
+	idx, ok := hs.findByPath(sys.Log.Name)
 
-	if idx < 0 {
+	if !ok {
 		idx = hs.Size()
 
 		hs.atomicAdd(&heap.Heap{
@@ -135,9 +134,9 @@ func (hs *HeapSet) OpenLog() {
 }
 
 func (hs *HeapSet) OpenHelp() {
-	idx := hs.findByName("Help")
+	idx, ok := hs.findByName("Help")
 
-	if idx < 0 {
+	if !ok {
 		idx = hs.Size()
 
 		p := sys.Extract(fmt.Sprintf(fx.Help, fx.Version))
@@ -160,9 +159,9 @@ func (hs *HeapSet) OpenFile(path, title string, tp types.Heap) {
 		return
 	}
 
-	idx := hs.findByPath(path)
+	idx, ok := hs.findByPath(path)
 
-	if idx < 0 {
+	if !ok {
 		idx = hs.Size()
 
 		hs.atomicAdd(&heap.Heap{
@@ -231,30 +230,30 @@ func (hs *HeapSet) ThrowAway() {
 	atomic.AddInt32(hs.index, -1)
 }
 
-func (hs *HeapSet) findByPath(path string) int32 {
+func (hs *HeapSet) findByPath(path string) (int32, bool) {
 	hs.RLock()
 	defer hs.RUnlock()
 
 	for i, h := range hs.heaps {
 		if h.Base == path {
-			return int32(i)
+			return int32(i), true
 		}
 	}
 
-	return -1
+	return 0, false
 }
 
-func (hs *HeapSet) findByName(name string) int32 {
+func (hs *HeapSet) findByName(name string) (int32, bool) {
 	hs.RLock()
 	defer hs.RUnlock()
 
 	for i, h := range hs.heaps {
 		if h.Title == name {
-			return int32(i)
+			return int32(i), true
 		}
 	}
 
-	return -1
+	return 0, false
 }
 
 func (hs *HeapSet) atomicAdd(h *heap.Heap) {

@@ -28,14 +28,13 @@ func Exit(v ...any) {
 	os.Exit(1)
 }
 
-func Exec(s string) string {
-	f := TempFile("exec", ".txt")
+func Exec(s, e string) string {
+	f := TempFile("exec", "."+e)
 
 	args := strings.Split(s, " ")
 
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = f
-	cmd.Stderr = f
 	cmd.Run()
 
 	f.Close()

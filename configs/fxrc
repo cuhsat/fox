@@ -1,30 +1,28 @@
-# Forensic Examiner config
-# Standard location is ~/.fxrc
+# Forensic Examiner config (~/.fxrc)
 
 # available env vars:
 #
-#   FX_THEME
+#  FX_THEME
 #
-
 # available themes:
 #
-#   Examiner-Light
-#   Examiner-Dark
-#   Catppuccin-Latte
-#   Catppuccin-Frappe
-#   Catppuccin-Macchiato
-#   Catppuccin-Mocha
-#   Solarized-Light
-#   Solarized-Dark
-#   VSCode-Light
-#   VSCode-Dark
-#   Monokai
-#   Darcula
-#   Nord
-#   Corporate
-#   Matrix
-#   Ansi16
-#   Monochrome
+#  Examiner-Light
+#  Examiner-Dark
+#  Catppuccin-Latte
+#  Catppuccin-Frappe
+#  Catppuccin-Macchiato
+#  Catppuccin-Mocha
+#  Solarized-Light
+#  Solarized-Dark
+#  VSCode-Light
+#  VSCode-Dark
+#  Monokai
+#  Darcula
+#  Nord
+#  Corporate
+#  Matrix
+#  Ansi16
+#  Monochrome
 #
 Theme = "Default"
 
