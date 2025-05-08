@@ -96,7 +96,7 @@ func New(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	hs.Bind(func() {
-		ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
+		ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsTail()))
 	}, func() {
 		ui.root.PostEvent(tcell.NewEventError(nil))
 	})
