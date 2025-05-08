@@ -40,7 +40,7 @@ func New() *History {
 	s := bufio.NewScanner(h.file)
 
 	for s.Scan() {
-		t := strings.SplitN(s.Text(), ";", 1)
+		t := strings.SplitN(s.Text(), ";", 2)
 
 		if len(t) > 1 {
 			h.lines = append(h.lines, t[1])
@@ -79,6 +79,8 @@ func (h *History) AddCommand(cmd string) {
 func (h *History) PrevCommand() string {
 	if h.index > 0 {
 		h.index--
+	} else {
+		return ""
 	}
 
 	return h.lines[h.index]

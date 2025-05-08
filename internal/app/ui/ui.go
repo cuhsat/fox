@@ -255,7 +255,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					hs.Sha256()
 
 				case tcell.KeyUp:
-					if mods&tcell.ModAlt != 0 {
+					if ui.ctx.Mode().Prompt() {
 						ui.status.Enter(hi.PrevCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollStart()
@@ -266,7 +266,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyDown:
-					if mods&tcell.ModAlt != 0 {
+					if ui.ctx.Mode().Prompt() {
 						ui.status.Enter(hi.NextCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollEnd()
@@ -440,6 +440,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						plugins.Input <- v
 						ui.change(ui.ctx.Last())
 					}
+
+				case tcell.KeyDelete:
+					// TODO
 
 				case tcell.KeyBackspace2:
 					if len(ui.status.Value()) > 0 {
