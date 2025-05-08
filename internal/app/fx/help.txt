@@ -45,11 +45,11 @@ KEYMAP
   GREP
 
   Esc                  Switch to LESS mode
+  Up                   Prev value in history
+  Down                 Next value in history
   Enter                Append filter
   Backspace            Remove filter
   Ctrl + v             Paste from clipboard
-  Alt + Up             Prev value in history
-  Alt + Down           Next value in history
   Any other key        Define regex pattern
 
   HEX
