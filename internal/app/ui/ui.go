@@ -277,14 +277,26 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyLeft:
-					if mods&tcell.ModShift != 0 {
+					if ui.ctx.Mode().Prompt() {
+						if mods&tcell.ModCtrl != 0 {
+							ui.status.MoveStart()
+						} else {
+							ui.status.Move(-1)
+						}
+					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollLeft(page_w)
 					} else {
 						ui.view.ScrollLeft(delta)
 					}
 
 				case tcell.KeyRight:
-					if mods&tcell.ModShift != 0 {
+					if ui.ctx.Mode().Prompt() {
+						if mods&tcell.ModCtrl != 0 {
+							ui.status.MoveEnd()
+						} else {
+							ui.status.Move(+1)
+						}
+					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollRight(page_w)
 					} else {
 						ui.view.ScrollRight(delta)
@@ -442,7 +454,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyDelete:
-					// TODO
+					if len(ui.status.Value()) > 0 {
+						// TODO: ui.status.DelRune(before)
+					}
 
 				case tcell.KeyBackspace2:
 					if len(ui.status.Value()) > 0 {

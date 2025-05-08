@@ -50,7 +50,7 @@ func (hs *HeapSet) loadPath(path string) {
 
 	for _, p := range hs.plugins {
 		if p.Match(path) {
-			path, title := p.Execute(path, base)
+			path, title := p.Execute(path, base, hs.Files())
 			hs.loadAuto(path, base, title)
 			return
 		}
@@ -114,9 +114,9 @@ func (hs *HeapSet) loadFile(path, base string) {
 func (hs *HeapSet) loadAuto(path, base, title string) {
 	hs.atomicAdd(&heap.Heap{
 		Title: title,
-		Path: path,
-		Base: base,
-		Type: types.Plugin,
+		Path:  path,
+		Base:  base,
+		Type:  types.Plugin,
 	})
 }
 

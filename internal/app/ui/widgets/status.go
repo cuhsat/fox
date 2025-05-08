@@ -2,6 +2,7 @@ package widgets
 
 import (
 	"fmt"
+	"strings"
 	"sync/atomic"
 
 	"github.com/cuhsat/fx/internal/app/ui/context"
@@ -13,16 +14,18 @@ import (
 )
 
 const (
-	filter = "❯"
-	tail   = "T"
-	line   = "N"
-	wrap   = "W"
+	filter = '❯'
+	tail   = 'F'
+	line   = 'N'
+	wrap   = 'W'
+	off    = '·'
 )
 
 type Status struct {
 	base
-	lock  atomic.Bool
-	value atomic.Value
+	lock   atomic.Bool
+	value  atomic.Value
+	cursor atomic.Int32
 }
 
 func NewStatus(ctx *context.Context) *Status {
@@ -30,6 +33,7 @@ func NewStatus(ctx *context.Context) *Status {
 
 	s.Lock(true)
 	s.Enter("")
+	s.cursor.Store(0)
 
 	return &s
 }
@@ -51,8 +55,10 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
 	_, heap := hs.Heap()
 
-	f := st.fmtFilters()
+	f := st.fmtInput()
 	s := st.fmtStatus(heap.Lines())
+	v := st.value.Load().(string)
+	c := int(st.cursor.Load())
 
 	// render filters
 	if st.ctx.Mode() == mode.Grep || len(f) > 2 {
@@ -65,31 +71,54 @@ func (st *Status) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	if st.Locked() {
 		st.ctx.Root.HideCursor()
 	} else {
-		st.ctx.Root.ShowCursor(x+text.Len(f)-1, y)
+		st.ctx.Root.ShowCursor(x+(text.Len(f)-text.Len(v))+c-1, y)
 	}
 
 	return 1
 }
 
-func (st *Status) Lock(v bool) {
-	st.lock.Store(v)
+func (st *Status) Lock(l bool) {
+	st.lock.Store(l)
 }
 
 func (st *Status) Locked() bool {
 	return st.lock.Load()
 }
 
+func (st *Status) MoveStart() {
+	st.cursor.Store(0)
+}
+
+func (st *Status) MoveEnd() {
+	v := st.value.Load().(string)
+	st.cursor.Store(int32(text.Len(v)))
+}
+
+func (st *Status) Move(d int) {
+	v := st.value.Load().(string)
+
+	c := st.cursor.Load()
+	c += int32(d)
+	c = min(max(c, 0), int32(text.Len(v)))
+
+	st.cursor.Store(c)
+}
+
 func (st *Status) AddRune(r rune) {
 	if !st.Locked() {
 		v := st.value.Load().(string)
-		st.value.Store(v + string(r))
+		c := st.cursor.Load()
+		st.value.Store(v[:c] + string(r) + v[c:])
+		st.Move(+1)
 	}
 }
 
 func (st *Status) DelRune() {
 	v := st.value.Load().(string)
+	c := st.cursor.Load()
 	if !st.Locked() && len(v) > 0 {
-		st.value.Store(v[:len(v)-1])
+		st.value.Store(v[:max(c-1, 0)] + v[c:])
+		st.Move(-1)
 	}
 }
 
@@ -97,12 +126,14 @@ func (st *Status) Accept() (v string) {
 	if !st.Locked() {
 		v = st.value.Load().(string)
 		st.value.Store("")
+		st.cursor.Store(int32(text.Len(v)))
 	}
 
 	return
 }
 
 func (st *Status) Enter(s string) {
+	st.cursor.Store(int32(text.Len(s)))
 	st.value.Store(s)
 }
 
@@ -114,32 +145,50 @@ func (st *Status) fmtMode() string {
 	return fmt.Sprintf(" %s ", st.ctx.Mode())
 }
 
-func (st *Status) fmtFilters() (s string) {
+func (st *Status) fmtInput() string {
+	var sb strings.Builder
+
 	for _, f := range *types.Filters() {
-		s = fmt.Sprintf("%s %s %s", s, f, filter)
+		sb.WriteRune(' ')
+		sb.WriteString(f)
+		sb.WriteRune(' ')
+		sb.WriteRune(filter)
 	}
 
-	v := st.value.Load().(string)
+	if v, ok := st.value.Load().(string); ok {
+		sb.WriteRune(' ')
+		sb.WriteString(v)
+	}
 
-	s = fmt.Sprintf("%s %s ", s, v)
+	sb.WriteRune(' ')
 
-	return
+	return sb.String()
 }
 
 func (st *Status) fmtStatus(l int) string {
-	t, n, w := "·", "·", "·"
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf(" %d ", l))
 
 	if st.ctx.IsTail() {
-		t = tail
+		sb.WriteRune(tail)
+	} else {
+		sb.WriteRune(off)
 	}
 
 	if st.ctx.IsLine() {
-		n = line
+		sb.WriteRune(line)
+	} else {
+		sb.WriteRune(off)
 	}
 
 	if st.ctx.IsWrap() {
-		w = wrap
+		sb.WriteRune(wrap)
+	} else {
+		sb.WriteRune(off)
 	}
 
-	return fmt.Sprintf(" %d %s%s%s ", l, t, n, w)
+	sb.WriteRune(' ')
+
+	return sb.String()
 }

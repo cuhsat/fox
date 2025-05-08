@@ -58,43 +58,32 @@ func (a *Autostart) Match(p string) bool {
 	return a.re.MatchString(p)
 }
 
-func (a *Autostart) Execute(f, b string) (string, string) {
+func (a *Autostart) Execute(f, b string, hs []string) (string, string) {
 	var e string = ext
 
 	if len(a.Output) > 0 {
 		e = a.Output
 	}
 
-	cmd := a.Command
-	cmd = strings.ReplaceAll(cmd, varBase, b)
-	cmd = strings.ReplaceAll(cmd, varFile, f)
+	cmd := expand(a.Command, f, b, "", hs)
 
-	return sys.Exec(cmd, e), fmt.Sprintf("%s@%s", b, a.Name)
+	return sys.Exec(cmd, e), title(b, a.Name, "")
 }
 
 func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
-	var e string = ext
+	var e, i string = ext, ""
 
 	if len(p.Output) > 0 {
 		e = p.Output
 	}
 
-	var s, t string
-
 	if len(p.Prompt) > 0 {
-		s = <-Input
-		t = fmt.Sprintf(":%s", s)
+		i = expand(<-Input, f, b, "", hs)
 	}
 
-	fs := strings.Join(hs, " ")
+	cmd := expand(p.Command, f, b, i, hs)
 
-	cmd := p.Command
-	cmd = strings.ReplaceAll(cmd, varBase, b)
-	cmd = strings.ReplaceAll(cmd, varFile, f)
-	cmd = strings.ReplaceAll(cmd, varFiles, fs)
-	cmd = strings.ReplaceAll(cmd, varInput, s)
-
-	fn(sys.Exec(cmd, e), b, fmt.Sprintf("%s@%s%s", b, p.Name, t))
+	fn(sys.Exec(cmd, e), b, title(b, p.Name, i))
 }
 
 func (ps *Plugins) Automatic() (as []Autostart) {
@@ -141,4 +130,25 @@ func New() *Plugins {
 
 func Close() {
 	close(Input)
+}
+
+func title(b, p, i string) string {
+	var s string
+
+	if len(i) > 0 {
+		s = fmt.Sprintf(":%s", i)
+	}
+
+	return fmt.Sprintf("%s@%s%s", b, p, s)
+}
+
+func expand(s, f, b, i string, hs []string) string {
+	fs := strings.Join(hs, " ")
+
+	s = strings.ReplaceAll(s, varBase, b)
+	s = strings.ReplaceAll(s, varFile, f)
+	s = strings.ReplaceAll(s, varFiles, fs)
+	s = strings.ReplaceAll(s, varInput, i)
+
+	return s
 }
