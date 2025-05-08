@@ -75,9 +75,7 @@ func (hs *HeapSet) newBuffer(t string, fn util) {
 
 	f.Close()
 
-	idx := hs.findByName(t)
-
-	if idx != -1 {
+	if idx, ok := hs.findByName(t); ok {
 		h := hs.atomicGet(idx)
 
 		h.Path = f.Name()

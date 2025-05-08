@@ -40,14 +40,14 @@ type UI struct {
 
 	root tcell.Screen
 
-	themes *themes.Themes
+	plugins *plugins.Plugins
 
 	title   *widgets.Title
 	view    *widgets.View
 	status  *widgets.Status
 	overlay *widgets.Overlay
 
-	plugins *plugins.Plugins
+	themes *themes.Themes
 }
 
 func New(m mode.Mode) *UI {
@@ -75,14 +75,14 @@ func New(m mode.Mode) *UI {
 
 		root: root,
 
-		themes: themes.New(ctx.Theme()),
+		plugins: plugins.New(),
 
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
 		status:  widgets.NewStatus(ctx),
 		overlay: widgets.NewOverlay(ctx),
 
-		plugins: plugins.New(),
+		themes: themes.New(ctx.Theme()),
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -238,8 +238,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					ui.overlay.SendInfo(fmt.Sprintf("%s executed", pl.Name))
 
-					if len(pl.Input) > 0 {
-						ui.change(mode.Mode(pl.Input))
+					if len(pl.Prompt) > 0 {
+						ui.change(mode.Mode(pl.Prompt))
 					}
 
 				case tcell.KeyF9:

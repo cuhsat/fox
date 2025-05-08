@@ -3,7 +3,6 @@ package heapset
 import (
 	"os"
 	"path/filepath"
-	"regexp"
 	"sync/atomic"
 
 	"github.com/cuhsat/fx/internal/pkg/file"
@@ -49,14 +48,10 @@ func (hs *HeapSet) loadPath(path string) {
 		return
 	}
 
-	if hs.starts != nil {
-		for _, s := range *hs.starts {
-			re := regexp.MustCompile(s.Path)
-
-			if re.MatchString(path) {
-				path = s.Execute(path, base)
-				break
-			}
+	for _, p := range hs.plugins {
+		if p.Match(path) {
+			path = p.Execute(path, base)
+			break
 		}
 	}
 
