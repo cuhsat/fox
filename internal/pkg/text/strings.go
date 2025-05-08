@@ -9,7 +9,7 @@ import (
 )
 
 func Dec(n int) int {
-	return int(math.Log10(float64(n)))+1
+	return int(math.Log10(float64(n))) + 1
 }
 
 func Len(s string) (l int) {

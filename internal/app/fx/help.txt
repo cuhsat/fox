@@ -45,10 +45,14 @@ KEYMAP
   GREP
 
   Esc                  Switch to LESS mode
-  Up                   Prev value in history
-  Down                 Next value in history
   Enter                Append filter
   Backspace            Remove filter
+  Up                   Prev value in history
+  Down                 Next value in history
+  Left                 Move cursor left
+  Right                Move cursor right
+  Ctrl + Left          Move cursor to start
+  Ctrl + Right         Move cursor to end
   Ctrl + v             Paste from clipboard
   Any other key        Define regex pattern
 
