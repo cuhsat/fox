@@ -14,7 +14,7 @@ import (
 
 const (
 	filter = "❯"
-	follow = "F"
+	tail   = "T"
 	line   = "N"
 	wrap   = "W"
 )
@@ -127,10 +127,10 @@ func (st *Status) fmtFilters() (s string) {
 }
 
 func (st *Status) fmtStatus(l int) string {
-	f, n, w := "·", "·", "·"
+	t, n, w := "·", "·", "·"
 
-	if st.ctx.IsFollow() {
-		f = follow
+	if st.ctx.IsTail() {
+		t = tail
 	}
 
 	if st.ctx.IsLine() {
@@ -141,5 +141,5 @@ func (st *Status) fmtStatus(l int) string {
 		w = wrap
 	}
 
-	return fmt.Sprintf(" %d %s%s%s ", l, f, n, w)
+	return fmt.Sprintf(" %d %s%s%s ", l, t, n, w)
 }

@@ -23,7 +23,7 @@ KEYMAP
   Ctrl + x             Switch to HEX mode
   Ctrl + o             Open file(s)
   Ctrl + q             Close file
-  Ctrl + f             Toggle file follow
+  Ctrl + f             Toggle tail follow
   Ctrl + n             Toggle line numbers
   Ctrl + w             Toggle text wrap
   Ctrl + h             Open help

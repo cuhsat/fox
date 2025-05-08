@@ -27,7 +27,7 @@
 Theme = "Default"
 
 # scroll to end on reload
-Follow = false
+Tail = false
 
 # show line numbers
 Line = false

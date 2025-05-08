@@ -22,9 +22,9 @@ type Context struct {
 
 	theme string
 
-	follow atomic.Bool
-	line   atomic.Bool
-	wrap   atomic.Bool
+	tail atomic.Bool
+	line atomic.Bool
+	wrap atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
@@ -45,7 +45,7 @@ func New(root tcell.Screen) *Context {
 	}
 
 	// flags
-	ctx.follow.Store(cfg.Follow)
+	ctx.tail.Store(cfg.Tail)
 	ctx.line.Store(cfg.Line)
 	ctx.wrap.Store(cfg.Wrap)
 
@@ -70,8 +70,8 @@ func (ctx *Context) Theme() string {
 	return ctx.theme
 }
 
-func (ctx *Context) IsFollow() bool {
-	return ctx.follow.Load()
+func (ctx *Context) IsTail() bool {
+	return ctx.tail.Load()
 }
 
 func (ctx *Context) IsLine() bool {
@@ -112,7 +112,7 @@ func (ctx *Context) ChangeTheme(t string) {
 }
 
 func (ctx *Context) ToggleFollow() {
-	ctx.follow.Store(!ctx.follow.Load())
+	ctx.tail.Store(!ctx.tail.Load())
 }
 
 func (ctx *Context) ToggleNumbers() {
@@ -132,7 +132,7 @@ func (ctx *Context) Background(fn func()) {
 
 func (ctx *Context) Save() {
 	ctx.cfg.Theme = ctx.Theme()
-	ctx.cfg.Follow = ctx.IsFollow()
+	ctx.cfg.Tail = ctx.IsTail()
 	ctx.cfg.Line = ctx.IsLine()
 	ctx.cfg.Wrap = ctx.IsWrap()
 	ctx.cfg.Save()
