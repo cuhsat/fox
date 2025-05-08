@@ -34,7 +34,7 @@ func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	t.blank(x, y, w, themes.Surface0)
 
 	// render heap file path
-	t.print(x, y, text.Abr(p, w-(x+text.Len(s))), themes.Surface2)
+	t.print(x, y, text.Abl(p, w-(x+text.Len(s))), themes.Surface2)
 
 	// render heapset index
 	t.print(x+w-text.Len(s), y, s, themes.Surface1)
