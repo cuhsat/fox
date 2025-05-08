@@ -9,7 +9,7 @@ import (
 )
 
 func Dec(n int) int {
-	return int(math.Log10(float64(n))) + 1
+	return int(math.Log10(float64(n)))+1
 }
 
 func Len(s string) (l int) {
@@ -18,6 +18,14 @@ func Len(s string) (l int) {
 
 func Abr(s string, w int) string {
 	return runewidth.Truncate(s, w, "…")
+}
+
+func Abl(s string, w int) string {
+	if Len(s) > w {
+		s = "…" + runewidth.TruncateLeft(s, (Len(s)-w)+1, "")
+	}
+
+	return s
 }
 
 func Trim(s string, l, r int) string {
