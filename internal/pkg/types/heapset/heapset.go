@@ -43,7 +43,7 @@ func New(paths []string) *HeapSet {
 	}
 
 	if ps := plugins.New(); ps != nil {
-		hs.plugins = ps.Autostarts()
+		hs.plugins = ps.Automatic()
 	}
 
 	go hs.notify()
@@ -154,7 +154,7 @@ func (hs *HeapSet) OpenHelp() {
 	hs.atomicGet(idx).Reload()
 }
 
-func (hs *HeapSet) OpenFile(path, title string, tp types.Heap) {
+func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
 	if !sys.Exists(path) {
 		return
 	}
@@ -167,7 +167,7 @@ func (hs *HeapSet) OpenFile(path, title string, tp types.Heap) {
 		hs.atomicAdd(&heap.Heap{
 			Title: title,
 			Path:  path,
-			Base:  path,
+			Base:  base,
 			Type:  tp,
 		})
 	}

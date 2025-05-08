@@ -5,16 +5,16 @@
 #  $FILE    path of open file
 #  $BASE    path of base file
 #
-[[Plugins.Autostart]]
+[Autostart.Info]
 
 # plugin name
-Name = "Test Autostart"
+Name = "target-info"
 
 # filename pattern
-Pattern = "test"
+Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
 # execute command
-Command = "echo $BASE $FILE"
+Command = "target-info $FILE"
 
 # output type
 Output = "text"
@@ -33,13 +33,13 @@ Output = "text"
 [Plugin.F1]
 
 # plugin name
-Name = "Test Plugin"
+Name = "target-query"
 
 # user input prompt
-Prompt = "Test"
+Prompt = "Query"
 
 # execute command
-Command = "echo $BASE $FILE $FILES $INPUT"
+Command = "target-query -j -f $INPUT $BASE"
 
 # output type
-Output = "text"
+Output = "jsonl"

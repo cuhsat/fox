@@ -7,6 +7,7 @@ const (
 	Stdin
 	Stdout
 	Stderr
+	Plugin
 	Deflate
 )
 

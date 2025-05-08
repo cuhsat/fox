@@ -3,6 +3,7 @@ package plugins
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -30,11 +31,11 @@ var (
 	Input chan string
 )
 
-type Callback func(p, t string)
+type Callback func(p, b, t string)
 
 type Plugins struct {
-	Starts  map[string][]Autostart `toml:"Plugins"`
-	Plugins map[string]Plugin      `toml:"Plugin"`
+	Autostarts map[string]Autostart `toml:"Autostart"`
+	Plugins    map[string]Plugin    `toml:"Plugin"`
 }
 
 type Autostart struct {
@@ -57,7 +58,7 @@ func (a *Autostart) Match(p string) bool {
 	return a.re.MatchString(p)
 }
 
-func (a *Autostart) Execute(f, b string) string {
+func (a *Autostart) Execute(f, b string) (string, string) {
 	var e string = ext
 
 	if len(a.Output) > 0 {
@@ -68,7 +69,7 @@ func (a *Autostart) Execute(f, b string) string {
 	cmd = strings.ReplaceAll(cmd, varBase, b)
 	cmd = strings.ReplaceAll(cmd, varFile, f)
 
-	return sys.Exec(cmd, e)
+	return sys.Exec(cmd, e), fmt.Sprintf("%s@%s", b, a.Name)
 }
 
 func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
@@ -78,10 +79,11 @@ func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
 		e = p.Output
 	}
 
-	var s string
+	var s, t string
 
 	if len(p.Prompt) > 0 {
 		s = <-Input
+		t = fmt.Sprintf(":%s", s)
 	}
 
 	fs := strings.Join(hs, " ")
@@ -92,11 +94,23 @@ func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
 	cmd = strings.ReplaceAll(cmd, varFiles, fs)
 	cmd = strings.ReplaceAll(cmd, varInput, s)
 
-	fn(sys.Exec(cmd, e), fmt.Sprintf("%s/%s", b, s))
+	fn(sys.Exec(cmd, e), b, fmt.Sprintf("%s@%s%s", b, p.Name, t))
 }
 
-func (ps *Plugins) Autostarts() []Autostart {
-	return ps.Starts["Autostart"]
+func (ps *Plugins) Automatic() (as []Autostart) {
+	keys := make([]string, 0, len(as))
+
+	for k := range ps.Autostarts {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		as = append(as, ps.Autostarts[k])
+	}
+
+	return
 }
 
 func New() *Plugins {
@@ -117,10 +131,9 @@ func New() *Plugins {
 		return nil
 	}
 
-	for _, ps := range ps.Starts {
-		for i, p := range ps {
-			ps[i].re = regexp.MustCompile(p.Pattern)
-		}
+	for k, v := range ps.Autostarts {
+		v.re = regexp.MustCompile(v.Pattern)
+		ps.Autostarts[k] = v
 	}
 
 	return ps
