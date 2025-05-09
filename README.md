@@ -2,8 +2,46 @@
 
 The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. As a forensic tool, no write access is made. For more information type `fx --help`.
 
+![](assets/demo.png "Demo")
+
+# Install
+
 ```console
 go install github.com/cuhsat/fx@latest
 ```
 
-![](assets/demo.png "Demo")
+# Features
+* Memory mapped lazy loading in support of big files
+* Multi core data handling for fast response time
+* Canonical hex view of binary files
+* Regular expression filtering
+* Unicode multi-byte support
+* Unicode bi-directional character filtering
+* Build-in decompressors for: bzip2, gzip, tar, zip
+* Build-in cryptographic hashes: md5, sha1, sha256
+* Build-in file statisics support
+* Build-in input history
+* Evidence bag formats: text, xml, json, jsonl, markdown
+* Evidence bag cryptographic signing
+* Graphical user interface
+* Suspend to shell support
+* Mouse scrolling support
+* Clipboard support
+* Theme support (already build-in)
+  *  Examiner-Light
+  *  Examiner-Dark
+  *  Catppuccin-Latte
+  *  Catppuccin-Frappe
+  *  Catppuccin-Macchiato
+  *  Catppuccin-Mocha
+  *  Solarized-Light
+  *  Solarized-Dark
+  *  VSCode-Light
+  *  VSCode-Dark
+  *  Monokai
+  *  Darcula
+  *  Nord
+  *  Corporate
+  *  Matrix
+  *  Ansi16
+  *  Monochrome
