@@ -44,7 +44,7 @@ type UI struct {
 
 	title   *widgets.Title
 	view    *widgets.View
-	status  *widgets.Status
+	prompt  *widgets.Prompt
 	overlay *widgets.Overlay
 
 	themes *themes.Themes
@@ -79,7 +79,7 @@ func New(m mode.Mode) *UI {
 
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
-		status:  widgets.NewStatus(ctx),
+		prompt:  widgets.NewPrompt(ctx),
 		overlay: widgets.NewOverlay(ctx),
 
 		themes: themes.New(ctx.Theme()),
@@ -141,7 +141,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				v = strings.TrimPrefix(v, brPrefix)
 				v = strings.TrimSuffix(v, brSuffix)
 
-				ui.status.Enter(v)
+				ui.prompt.Enter(v)
 
 			case *tcell.EventResize:
 				ui.root.Sync()
@@ -256,7 +256,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyUp:
 					if ui.ctx.Mode().Prompt() {
-						ui.status.Enter(hi.PrevCommand())
+						ui.prompt.Enter(hi.PrevCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollStart()
 					} else if mods&tcell.ModShift != 0 {
@@ -267,7 +267,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyDown:
 					if ui.ctx.Mode().Prompt() {
-						ui.status.Enter(hi.NextCommand())
+						ui.prompt.Enter(hi.NextCommand())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollEnd()
 					} else if mods&tcell.ModShift != 0 {
@@ -279,9 +279,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyLeft:
 					if ui.ctx.Mode().Prompt() {
 						if mods&tcell.ModCtrl != 0 {
-							ui.status.MoveStart()
+							ui.prompt.MoveStart()
 						} else {
-							ui.status.Move(-1)
+							ui.prompt.Move(-1)
 						}
 					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollLeft(page_w)
@@ -292,9 +292,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyRight:
 					if ui.ctx.Mode().Prompt() {
 						if mods&tcell.ModCtrl != 0 {
-							ui.status.MoveEnd()
+							ui.prompt.MoveEnd()
 						} else {
-							ui.status.Move(+1)
+							ui.prompt.Move(+1)
 						}
 					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollRight(page_w)
@@ -419,7 +419,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyEnter:
-					v := ui.status.Accept()
+					v := ui.prompt.Accept()
 
 					if len(v) == 0 {
 						continue
@@ -454,11 +454,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyDelete, tcell.KeyCtrlK:
-					ui.status.DelRune(false)
+					ui.prompt.DelRune(false)
 
 				case tcell.KeyBackspace2:
-					if len(ui.status.Value()) > 0 {
-						ui.status.DelRune(true)
+					if len(ui.prompt.Value()) > 0 {
+						ui.prompt.DelRune(true)
 					} else if ui.ctx.Mode().Prompt() {
 						if !ui.ctx.Last().Prompt() {
 							ui.change(ui.ctx.Last())
@@ -481,10 +481,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 
 					case 32: // space
-						if ui.status.Locked() {
+						if ui.prompt.Locked() {
 							ui.view.ScrollDown(page_h)
 						} else {
-							ui.status.AddRune(r)
+							ui.prompt.AddRune(r)
 						}
 
 					default: // all other keys
@@ -492,7 +492,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.change(mode.Grep)
 						}
 
-						ui.status.AddRune(r)
+						ui.prompt.AddRune(r)
 					}
 				}
 			}
@@ -519,14 +519,14 @@ func (ui *UI) change(m mode.Mode) {
 
 	// former mode
 	if ui.ctx.Last().Prompt() {
-		ui.status.Enter("")
+		ui.prompt.Enter("")
 	}
 
 	// actual mode
-	ui.status.Lock(!m.Prompt())
+	ui.prompt.Lock(!m.Prompt())
 
 	// force cursor off
-	if ui.status.Locked() {
+	if ui.prompt.Locked() {
 		ui.ctx.Root.HideCursor()
 	}
 
@@ -554,7 +554,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 	for _, base := range [...]widgets.Queueable{
 		ui.title,
 		ui.view,
-		ui.status,
+		ui.prompt,
 	} {
 		y += base.Render(hs, x, y, w, h-y)
 	}
