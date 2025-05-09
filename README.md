@@ -17,7 +17,7 @@ go install github.com/cuhsat/fx@latest
 * Regular expression filtering
 * Unicode multi-byte support
 * Unicode bi-directional character filtering
-* Build-in decompressors for: bzip2, gzip, tar, zip
+* Build-in decompression of: bzip2, gzip, tar, zip
 * Build-in cryptographic hashes: md5, sha1, sha256
 * Build-in file statisics support
 * Build-in input history
