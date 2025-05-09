@@ -1,0 +1,211 @@
+package widgets
+
+import (
+	"fmt"
+	"strings"
+	"sync/atomic"
+
+	"github.com/cuhsat/fx/internal/app/ui/context"
+	"github.com/cuhsat/fx/internal/app/ui/themes"
+	"github.com/cuhsat/fx/internal/pkg/text"
+	"github.com/cuhsat/fx/internal/pkg/types"
+	"github.com/cuhsat/fx/internal/pkg/types/heapset"
+	"github.com/cuhsat/fx/internal/pkg/types/mode"
+)
+
+const (
+	grep = '❯'
+	tail = 'F'
+	line = 'N'
+	wrap = 'W'
+	off  = '·'
+)
+
+type Prompt struct {
+	base
+	lock   atomic.Bool
+	value  atomic.Value
+	cursor atomic.Int32
+}
+
+func NewPrompt(ctx *context.Context) *Prompt {
+	p := Prompt{base: base{ctx}}
+
+	// defaults
+	p.lock.Store(true)
+	p.value.Store("")
+	p.cursor.Store(0)
+
+	return &p
+}
+
+func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
+	_, heap := hs.Heap()
+
+	m := p.fmtMode()
+	i := p.fmtInput()
+	s := p.fmtStatus(heap.Lines())
+
+	// render blank line
+	p.blank(x, y, w, themes.Surface0)
+
+	// render mode
+	p.print(x, y, m, themes.Surface3)
+
+	if p.ctx.Mode() == mode.Hex {
+		return 1
+	}
+
+	x += text.Len(m)
+	l := text.Len(s)
+
+	// render filters
+	if p.ctx.Mode() == mode.Grep || len(i) > 2 {
+		p.print(x, y, text.Abr(i, w-(x+l)), themes.Surface1)
+	}
+
+	// render status
+	p.print(w-l, y, s, themes.Surface1)
+
+	v := p.value.Load().(string)
+	c := int(p.cursor.Load())
+
+	// calculate cursor position
+	c = (text.Len(i) - text.Len(v)) + c - 1
+
+	if !p.ctx.Mode().Prompt() {
+		p.ctx.Root.HideCursor()
+	} else {
+		p.ctx.Root.ShowCursor(x+c, y)
+	}
+
+	return 1
+}
+
+func (p *Prompt) MoveStart() {
+	p.cursor.Store(0)
+}
+
+func (p *Prompt) MoveEnd() {
+	v := p.value.Load().(string)
+	p.cursor.Store(int32(text.Len(v)))
+}
+
+func (p *Prompt) Move(d int) {
+	c := p.cursor.Add(int32(d))
+	v := p.value.Load().(string)
+
+	p.cursor.Store(min(max(c, 0), int32(text.Len(v))))
+}
+
+func (p *Prompt) Lock(b bool) {
+	p.lock.Store(b)
+}
+
+func (p *Prompt) Locked() bool {
+	return p.lock.Load()
+}
+
+func (p *Prompt) AddRune(r rune) {
+	if p.Locked() {
+		return
+	}
+
+	v := p.value.Load().(string)
+	c := p.cursor.Load()
+
+	p.value.Store(v[:c] + string(r) + v[c:])
+
+	p.Move(+1)
+}
+
+func (p *Prompt) DelRune(b bool) {
+	v := p.value.Load().(string)
+	c := int(p.cursor.Load())
+
+	if p.Locked() || len(v) == 0 {
+		return
+	}
+
+	l := text.Len(v)
+
+	if !b {
+		p.value.Store(v[:c] + v[min(c+1, l):])
+	} else {
+		p.value.Store(v[:max(c-1, 0)] + v[c:])
+		p.Move(-1)
+	}
+}
+
+func (p *Prompt) Accept() (s string) {
+	if p.Locked() {
+		return
+	}
+
+	s = p.Value()
+
+	p.Enter("")
+
+	return
+}
+
+func (p *Prompt) Enter(s string) {
+	p.value.Store(s)
+	p.cursor.Store(int32(text.Len(s)))
+}
+
+func (p *Prompt) Value() string {
+	return p.value.Load().(string)
+}
+
+func (p *Prompt) fmtMode() string {
+	return fmt.Sprintf(" %s ", p.ctx.Mode())
+}
+
+func (p *Prompt) fmtInput() string {
+	var sb strings.Builder
+
+	for _, f := range *types.Filters() {
+		sb.WriteRune(' ')
+		sb.WriteString(f)
+		sb.WriteRune(' ')
+		sb.WriteRune(grep)
+	}
+
+	if v, ok := p.value.Load().(string); ok {
+		sb.WriteRune(' ')
+		sb.WriteString(v)
+	}
+
+	sb.WriteRune(' ')
+
+	return sb.String()
+}
+
+func (p *Prompt) fmtStatus(n int) string {
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf(" %d ", n))
+
+	if p.ctx.IsTail() {
+		sb.WriteRune(tail)
+	} else {
+		sb.WriteRune(off)
+	}
+
+	if p.ctx.IsLine() {
+		sb.WriteRune(line)
+	} else {
+		sb.WriteRune(off)
+	}
+
+	if p.ctx.IsWrap() {
+		sb.WriteRune(wrap)
+	} else {
+		sb.WriteRune(off)
+	}
+
+	sb.WriteRune(' ')
+
+	return sb.String()
+}
