@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/cuhsat/fx/internal/pkg/sys"
@@ -16,6 +17,8 @@ const (
 )
 
 type History struct {
+	sync.RWMutex
+
 	file  *os.File // file handle
 	lines []string // buffer lines
 	index int      // buffer index
@@ -40,7 +43,7 @@ func New() *History {
 	s := bufio.NewScanner(h.file)
 
 	for s.Scan() {
-		t := strings.SplitN(s.Text(), ";", 2)
+		t := strings.SplitN(s.Text(), ":", 2)
 
 		if len(t) > 1 {
 			h.lines = append(h.lines, t[1])
@@ -58,16 +61,18 @@ func New() *History {
 	return &h
 }
 
-func (h *History) AddCommand(cmd string) {
+func (h *History) AddEntry(r, s string) {
 	defer h.Reset()
 
-	h.lines = append(h.lines, cmd)
+	h.Lock()
+	h.lines = append(h.lines, s)
+	h.Unlock()
 
 	if h.file == nil {
 		return
 	}
 
-	l := fmt.Sprintf("%10d;%s", time.Now().Unix(), cmd)
+	l := fmt.Sprintf("%10d;%s:%s", time.Now().Unix(), r, s)
 
 	_, err := fmt.Fprintln(h.file, l)
 
@@ -76,7 +81,14 @@ func (h *History) AddCommand(cmd string) {
 	}
 }
 
+func (h *History) AddCommand(cmd string) {
+	h.AddEntry("user", cmd)
+}
+
 func (h *History) PrevCommand() string {
+	h.RLock()
+	defer h.RUnlock()
+
 	if h.index > 0 {
 		h.index--
 	} else {
@@ -87,6 +99,9 @@ func (h *History) PrevCommand() string {
 }
 
 func (h *History) NextCommand() string {
+	h.RLock()
+	defer h.RUnlock()
+
 	if h.index < len(h.lines)-1 {
 		h.index++
 	} else {
@@ -97,7 +112,9 @@ func (h *History) NextCommand() string {
 }
 
 func (h *History) Reset() {
+	h.RLock()
 	h.index = len(h.lines)
+	h.RUnlock()
 }
 
 func (h *History) Close() {

@@ -3,6 +3,7 @@
 # available env vars:
 #
 #  FX_THEME
+#  FX_MODEL
 #
 # available themes:
 #
@@ -25,6 +26,9 @@
 #  Monochrome
 #
 Theme = "Default"
+
+# ollama model
+Model = "Default"
 
 # scroll to end on reload
 Tail = false

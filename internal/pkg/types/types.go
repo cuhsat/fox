@@ -4,11 +4,12 @@ type Heap int
 
 const (
 	Regular Heap = iota
+	Deflate
 	Stdin
 	Stdout
 	Stderr
 	Plugin
-	Deflate
+	Prompt
 )
 
 type Output int

@@ -19,6 +19,7 @@ go install github.com/cuhsat/fx@latest
 * Unicode bi-directional character filtering
 * Build-in decompression of: bzip2, gzip, tar, zip
 * Build-in cryptographic hashes: md5, sha1, sha256
+* Build-in AI support via Ollama
 * Build-in file statisics support
 * Build-in input history
 * Evidence bag formats: text, xml, json, jsonl, markdown
@@ -26,8 +27,8 @@ go install github.com/cuhsat/fx@latest
 * Graphical user interface
 * Suspend to shell support
 * Mouse scrolling support
-* Clipboard support
-* Theme support (already build-in)
+* Full clipboard support
+* Theme support including:
   *  Examiner-Light
   *  Examiner-Dark
   *  Catppuccin-Latte

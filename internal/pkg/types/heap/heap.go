@@ -53,18 +53,12 @@ func (h *Heap) RMap() *smap.SMap {
 
 func (h *Heap) String() string {
 	switch h.Type {
+	case types.Regular:
+		return h.Path
 	case types.Stdin:
 		return "-"
-	case types.Stdout:
-		return h.Title
-	case types.Stderr:
-		return h.Title
-	case types.Deflate:
-		return h.Title
-	case types.Plugin:
-		return h.Title
 	default:
-		return h.Path
+		return h.Title
 	}
 }
 
@@ -117,6 +111,7 @@ func (h *Heap) Reload() {
 	h.smap = l.ReduceSMap(smap.Map(h.mmap))
 
 	// resets filters
+	h.filters = h.filters[:0]
 	h.filters = append(h.filters, &filter{
 		"", h.smap, nil,
 	})

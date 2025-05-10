@@ -8,6 +8,7 @@ import (
 	_ "github.com/gdamore/tcell/v2/encoding"
 	"github.com/mattn/go-runewidth"
 
+	"github.com/cuhsat/fx/internal/app/ai"
 	"github.com/cuhsat/fx/internal/app/fx"
 	"github.com/cuhsat/fx/internal/app/ui/context"
 	"github.com/cuhsat/fx/internal/app/ui/themes"
@@ -40,14 +41,14 @@ type UI struct {
 
 	root tcell.Screen
 
-	plugins *plugins.Plugins
-
 	title   *widgets.Title
 	view    *widgets.View
 	prompt  *widgets.Prompt
 	overlay *widgets.Overlay
 
-	themes *themes.Themes
+	themes  *themes.Themes
+	ollama  *ai.Ollama
+	plugins *plugins.Plugins
 }
 
 func New(m mode.Mode) *UI {
@@ -75,14 +76,14 @@ func New(m mode.Mode) *UI {
 
 		root: root,
 
-		plugins: plugins.New(),
-
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
 		prompt:  widgets.NewPrompt(ctx),
 		overlay: widgets.NewOverlay(ctx),
 
-		themes: themes.New(ctx.Theme()),
+		themes:  themes.New(ctx.Theme()),
+		ollama:  ai.NewOllama(ctx.Model()),
+		plugins: plugins.New(),
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -106,6 +107,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
+
+	if ui.ollama != nil {
+		go ui.ollama.Listen(hi)
+	}
 
 	esc := false
 
@@ -317,6 +322,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlSpace:
 					ui.change(mode.Goto)
 
+				case tcell.KeyCtrlO:
+					ui.change(mode.Open)
+
 				case tcell.KeyCtrlL:
 					ui.change(mode.Less)
 
@@ -326,8 +334,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
 
-				case tcell.KeyCtrlO:
-					ui.change(mode.Open)
+				case tcell.KeyCtrlA:
+					ui.change(mode.AI)
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
@@ -419,7 +427,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyEnter:
-					v := ui.prompt.Accept()
+					v := ui.prompt.ReadLine()
 
 					if len(v) == 0 {
 						continue
@@ -447,6 +455,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							hs.Open(v)
 						})
 						ui.change(ui.ctx.Last())
+
+					case mode.AI:
+						ui.view.Reset()
+						ui.ctx.Background(func() {
+							ui.ollama.Prompt(v, heap)
+						})
+						hs.OpenAI(ui.ollama.Path())
 
 					default:
 						plugins.Input <- v
@@ -507,12 +522,19 @@ func (ui *UI) Close() {
 		plugins.Close()
 	}
 
+	ui.ollama.Close()
 	ui.overlay.Close()
 	ui.root.Fini()
 	ui.ctx.Save()
 }
 
 func (ui *UI) change(m mode.Mode) {
+	// check for ai support
+	if m == mode.AI && ui.ollama == nil {
+		ui.overlay.SendError("AI not available")
+		return
+	}
+
 	if !ui.ctx.SwitchMode(m) {
 		return
 	}
