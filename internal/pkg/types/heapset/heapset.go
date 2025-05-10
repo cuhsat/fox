@@ -114,6 +114,25 @@ func (hs *HeapSet) Open(path string) {
 	}
 }
 
+func (hs *HeapSet) OpenAI(path string) {
+	idx, ok := hs.findByPath(path)
+
+	if !ok {
+		idx = hs.Size()
+
+		hs.atomicAdd(&heap.Heap{
+			Title: "AI",
+			Path:  path,
+			Base:  path,
+			Type:  types.Prompt,
+		})
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.atomicGet(idx).Reload()
+}
+
 func (hs *HeapSet) OpenLog() {
 	idx, ok := hs.findByPath(sys.Log.Name)
 

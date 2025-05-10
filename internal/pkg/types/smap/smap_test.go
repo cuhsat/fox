@@ -17,7 +17,7 @@ func Testdata(name string) (*os.File, *mmap.MMap, error) {
 		return nil, nil, errors.New("error")
 	}
 
-	p := filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", name)
+	p := filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", "jsonl", name)
 
 	f, err := os.OpenFile(p, os.O_RDONLY, 0400)
 

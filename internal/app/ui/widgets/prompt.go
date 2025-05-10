@@ -137,7 +137,7 @@ func (p *Prompt) DelRune(b bool) {
 	}
 }
 
-func (p *Prompt) Accept() (s string) {
+func (p *Prompt) ReadLine() (s string) {
 	if p.Locked() {
 		return
 	}

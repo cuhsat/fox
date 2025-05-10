@@ -54,15 +54,7 @@ func Shell() {
 		}
 	}
 
-	banner := `
- ___ ___  ___ ___ _  _ ___ ___ ___   _____  __   _   __  __ ___ _  _ ___ ___
-| __/ _ \| _ \ __| \| / __|_ _/ __| | __\ \/ /  /_\ |  \/  |_ _| \| | __| _ \
-| _| (_) |   / _|| .' \__ \| | (__  | _| >  <  / _ \| |\/| || || .' | _||   /
-|_| \___/|_|_\___|_|\_|___/___\___| |___/_/\_\/_/ \_\_|  |_|___|_|\_|___|_|_\
-
-The Swiss Army Knife for examining text files`
-
-	fmt.Println(banner)
+	fmt.Println(fx.Product, fx.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shl, "-l") // login shell

@@ -89,14 +89,7 @@ func (h *Heap) DelFilter() {
 func (h *Heap) last() *filter {
 	h.RLock()
 	defer h.RUnlock()
-
-	l := len(h.filters)
-
-	if l > 0 {
-		return h.filters[l-1]
-	} else {
-		return &filter{}
-	}
+	return h.filters[len(h.filters)-1]
 }
 
 func (h *Heap) find(b []byte, bs int) *smap.SMap {
@@ -154,7 +147,7 @@ func sort(ch <-chan smap.String) *smap.SMap {
 		s = append(s, <-ch)
 	}
 
-	slices.SortFunc(s, func(a, b smap.String) int {
+	slices.SortStableFunc(s, func(a, b smap.String) int {
 		return cmp.Compare(a.Nr, b.Nr)
 	})
 

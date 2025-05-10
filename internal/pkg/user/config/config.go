@@ -16,6 +16,7 @@ const (
 
 type Config struct {
 	Theme string `toml:"Theme"`
+	Model string `toml:"Model"`
 	Tail  bool   `toml:"Tail"`
 	Line  bool   `toml:"Line"`
 	Wrap  bool   `toml:"Wrap"`
@@ -37,10 +38,16 @@ func New() *Config {
 	}
 
 	// higher ranking variables
-	env := os.Getenv("FX_THEME")
+	t := os.Getenv("FX_THEME")
 
-	if len(env) > 0 {
-		cfg.Theme = env
+	if len(t) > 0 {
+		cfg.Theme = t
+	}
+
+	m := os.Getenv("FX_MODEL")
+
+	if len(m) > 0 {
+		cfg.Model = m
 	}
 
 	return cfg

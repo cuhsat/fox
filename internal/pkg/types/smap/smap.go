@@ -8,41 +8,42 @@ const (
 	Space = 2
 )
 
+const (
+	LF = 0xa
+	CR = 0xd
+)
+
 type SMap []String
 
 type String struct {
 	Nr    int
+	Off   uint8
 	Start int
 	End   int
-	Len   int
-	Off   int
 }
 
 func Map(m *mmap.MMap) *SMap {
 	s := new(SMap)
+	l := len(*m)
 
 	var i, j int
 
-	for ; i < len(*m); i++ {
-		if (*m)[i] != '\n' {
-			continue
+	for ; i < l; i++ {
+		if (*m)[i] == LF || ((*m)[i] == CR && (*m)[min(i+1, l)] != LF) {
+			*s = append(*s, String{
+				Nr:    len(*s) + 1,
+				Start: j,
+				End:   i,
+			})
+
+			j = i + 1
 		}
-
-		*s = append(*s, String{
-			Nr:    len(*s) + 1,
-			Start: j,
-			End:   i,
-			Len:   i - j,
-		})
-
-		j = i + 1
 	}
 
 	*s = append(*s, String{
 		Nr:    len(*s) + 1,
 		Start: j,
 		End:   len(*m),
-		Len:   len(*m) - j,
 	})
 
 	return s
@@ -55,13 +56,14 @@ func (s *SMap) Format(m *mmap.MMap) *SMap {
 		l := len(*r)
 
 		// blank line
-		if str.Len == 0 {
+		if str.End-str.Start == 0 {
 			*r = append(*r, str)
 		}
 
 		pos := make(stack, 0)
 		dqt := 0
-		off := 0
+
+		var off uint8 = 0
 
 		for i := str.Start; i < str.End; i++ {
 			switch (*m)[i] {
@@ -130,23 +132,20 @@ func (s *SMap) Wrap(w int) *SMap {
 	r := new(SMap)
 
 	for _, str := range *s {
-		for str.Len > w {
+		for str.End-str.Start > w {
 			*r = append(*r, String{
 				Nr:    str.Nr,
 				Start: str.Start,
 				End:   str.Start + w,
-				Len:   w,
 			})
 
 			str.Start += w
-			str.Len -= w
 		}
 
 		*r = append(*r, String{
 			Nr:    str.Nr,
 			Start: str.Start,
 			End:   str.End,
-			Len:   str.Len,
 		})
 	}
 
@@ -173,7 +172,7 @@ func (s *SMap) Size() (w, h int) {
 	}
 
 	for _, str := range *s {
-		w = max(w, str.Len)
+		w = max(w, str.End-str.Start)
 	}
 
 	h = len(*s)
@@ -181,8 +180,8 @@ func (s *SMap) Size() (w, h int) {
 	return
 }
 
-func add(s *SMap, n, i, j, o int) {
+func add(s *SMap, n, i, j int, o uint8) {
 	*s = append(*s, String{
-		Nr: n, Start: i, End: j, Len: j - i, Off: o,
+		Nr: n, Off: o, Start: i, End: j,
 	})
 }

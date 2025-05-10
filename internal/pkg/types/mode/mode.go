@@ -11,9 +11,10 @@ const (
 const (
 	Less = Mode("Less")
 	Grep = Mode("Grep")
-	Hex  = Mode("Hex")
 	Goto = Mode("Goto")
 	Open = Mode("Open")
+	Hex  = Mode("Hex")
+	AI   = Mode("AI")
 )
 
 type Mode string

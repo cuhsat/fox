@@ -21,6 +21,7 @@ KEYMAP
   Ctrl + l             Switch to LESS mode
   Ctrl + g             Switch to GREP mode
   Ctrl + x             Switch to HEX mode
+  Ctrl + a             Switch to AI mode
   Ctrl + o             Open file(s)
   Ctrl + q             Close file
   Ctrl + f             Toggle tail follow
