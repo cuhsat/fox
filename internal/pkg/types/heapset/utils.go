@@ -48,6 +48,18 @@ func (hs *HeapSet) Sha256() {
 	})
 }
 
+func (hs *HeapSet) Sha3() {
+	hs.newBuffer("sha3sum", func(h *heap.Heap) string {
+		buf, err := h.Sha3()
+
+		if err != nil {
+			sys.Error(err)
+		}
+
+		return fmt.Sprintf("%x  %s\n", buf, h.String())
+	})
+}
+
 func (hs *HeapSet) Counts() {
 	hs.newBuffer("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Total(), h.Size(), h.String())
