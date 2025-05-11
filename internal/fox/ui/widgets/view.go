@@ -1,11 +1,11 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fx/internal/app/ui/context"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
-	"github.com/cuhsat/fx/internal/pkg/types/heapset"
-	"github.com/cuhsat/fx/internal/pkg/types/mode"
-	"github.com/cuhsat/fx/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/fox/ui/context"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type View struct {

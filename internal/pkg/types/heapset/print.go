@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/text"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
 func (hs *HeapSet) Print(op types.Output, sum string) {

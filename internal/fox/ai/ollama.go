@@ -9,9 +9,9 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
-	"github.com/cuhsat/fx/internal/pkg/user/history"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
 const (

@@ -5,14 +5,14 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
-	"github.com/cuhsat/fx/internal/pkg/file"
-	"github.com/cuhsat/fx/internal/pkg/file/bzip2"
-	"github.com/cuhsat/fx/internal/pkg/file/gzip"
-	"github.com/cuhsat/fx/internal/pkg/file/tar"
-	"github.com/cuhsat/fx/internal/pkg/file/zip"
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/file"
+	"github.com/cuhsat/fox/internal/pkg/file/bzip2"
+	"github.com/cuhsat/fox/internal/pkg/file/gzip"
+	"github.com/cuhsat/fox/internal/pkg/file/tar"
+	"github.com/cuhsat/fox/internal/pkg/file/zip"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 func (hs *HeapSet) loadPath(path string) {

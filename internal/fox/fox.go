@@ -1,4 +1,4 @@
-package fx
+package fox
 
 import (
 	_ "embed"

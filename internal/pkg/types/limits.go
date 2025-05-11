@@ -3,7 +3,7 @@ package types
 import (
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/cuhsat/fx/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type Counts struct {

@@ -7,15 +7,15 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/cuhsat/fx/internal/app/fx"
-	"github.com/cuhsat/fx/internal/app/ui"
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
-	"github.com/cuhsat/fx/internal/pkg/types/heapset"
-	"github.com/cuhsat/fx/internal/pkg/types/mode"
-	"github.com/cuhsat/fx/internal/pkg/user/bag"
-	"github.com/cuhsat/fx/internal/pkg/user/history"
+	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/fox/ui"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/user/bag"
+	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
 func main() {
@@ -75,7 +75,7 @@ func main() {
 	v := flag.BoolP("version", "v", false, "shows version")
 
 	flag.Usage = func() {
-		fmt.Printf(fx.Usage, fx.Version)
+		fmt.Printf(fox.Usage, fox.Version)
 		os.Exit(0)
 	}
 
@@ -100,7 +100,7 @@ func main() {
 	}
 
 	if *v {
-		fmt.Println(fx.Product, fx.Version)
+		fmt.Println(fox.Product, fox.Version)
 		os.Exit(0)
 	}
 

@@ -1,4 +1,4 @@
-# Forensic Examiner plugins config (~/.fx_plugins)
+# Forensic Examiner plugins config (~/.fox_plugins)
 
 # available variables:
 #
@@ -28,7 +28,7 @@ Output = "text"
 #
 # available hotkeys:
 #
-#  F1 - F8
+#  F1 - F7
 #
 [Plugin.F1]
 

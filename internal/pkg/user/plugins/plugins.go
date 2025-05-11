@@ -8,12 +8,12 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/user"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 const (
-	filename = ".fx_plugins"
+	filename = ".fox_plugins"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/cuhsat/fx/internal/app/fx"
+	"github.com/cuhsat/fox/internal/fox"
 )
 
 const (
@@ -54,7 +54,7 @@ func Shell() {
 		}
 	}
 
-	fmt.Println(fx.Product, fx.Version)
+	fmt.Println(fox.Product, fox.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shl, "-l") // login shell
@@ -139,7 +139,7 @@ func OpenFile(path string) *os.File {
 }
 
 func TempFile(name, ext string) *os.File {
-	f, err := os.CreateTemp("", fmt.Sprintf("fx-%s-*%s", name, ext))
+	f, err := os.CreateTemp("", fmt.Sprintf("fox-%s-*%s", name, ext))
 
 	if err != nil {
 		Panic(err)

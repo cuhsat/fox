@@ -9,11 +9,11 @@ import (
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/cuhsat/fx/internal/app/fx"
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
-	"github.com/cuhsat/fx/internal/pkg/user/plugins"
+	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/user/plugins"
 )
 
 type callback func()
@@ -158,7 +158,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Size()
 
-		p := sys.Extract(fmt.Sprintf(fx.Help, fx.Version))
+		p := sys.Extract(fmt.Sprintf(fox.Help, fox.Version))
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",
