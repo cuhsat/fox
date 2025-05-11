@@ -1,8 +1,8 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fx/internal/app/ui/themes"
-	"github.com/cuhsat/fx/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/fox/ui/themes"
+	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
 func (v *View) hexRender(x, y, w, h int) {

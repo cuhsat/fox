@@ -5,12 +5,12 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Usage: fx [--print] [--count] [--hex] [--sum={md5|sha1|sha256|sha3}]
-          [--head|tail] [--lines|bytes=NUMBER]
-          [--regexp=PATTERN ...]
-          [--file=FILE] [--key=KEY]
-          [--mode={text,xml,json,jsonlines,markdown}]
-          [PATH ...]
+Usage: fox [--print] [--count] [--hex] [--sum={md5|sha1|sha256|sha3}]
+           [--head|tail] [--lines|bytes=NUMBER]
+           [--regexp=PATTERN ...]
+           [--file=FILE] [--key=KEY]
+           [--mode={text,xml,json,jsonlines,markdown}]
+           [PATH ...]
 
 Positional arguments:
   PATH(s) to open or '-' for STDIN (default: open UI and show Help)
@@ -48,12 +48,12 @@ Standard options:
       --version            shows version
 
 Example: print matching lines
-  $ fx -pe "John Doe" ./**/*.jsonl
+  $ fox -pe "John Doe" ./**/*.jsonl
 
 Example: print content hashes
-  $ fx -ps sha256 example.zip
+  $ fox -ps sha256 example.zip
 
 Example: print first sector in hex
-  $ fx -pxhc=512 example.dd > mbr
+  $ fox -pxhc=512 example.dd > mbr
 
-Type "fx" for more help...
+Type "fox" for more help...

@@ -1,4 +1,4 @@
-module github.com/cuhsat/fx
+module github.com/cuhsat/fox
 
 go 1.24.3
 

@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/user"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 const (
-	filename = ".fx_history"
+	filename = ".fox_history"
 )
 
 type History struct {

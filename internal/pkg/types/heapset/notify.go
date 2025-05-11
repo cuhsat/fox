@@ -7,8 +7,8 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 func (hs *HeapSet) watchHeap(h *heap.Heap) {

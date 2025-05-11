@@ -6,12 +6,12 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/user"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 const (
-	filename = ".fxrc"
+	filename = ".foxrc"
 )
 
 type Config struct {
@@ -38,13 +38,13 @@ func New() *Config {
 	}
 
 	// higher ranking variables
-	t := os.Getenv("FX_THEME")
+	t := os.Getenv("FOX_THEME")
 
 	if len(t) > 0 {
 		cfg.Theme = t
 	}
 
-	m := os.Getenv("FX_MODEL")
+	m := os.Getenv("FOX_MODEL")
 
 	if len(m) > 0 {
 		cfg.Model = m

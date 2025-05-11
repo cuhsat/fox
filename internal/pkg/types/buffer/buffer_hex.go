@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cuhsat/fx/internal/pkg/text"
-	"github.com/cuhsat/fx/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
 )
 
 type HexBuffer struct {

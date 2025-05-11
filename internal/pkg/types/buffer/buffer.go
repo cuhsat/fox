@@ -1,7 +1,7 @@
 package buffer
 
 import (
-	"github.com/cuhsat/fx/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 type Buffer struct {

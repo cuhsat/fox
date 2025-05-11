@@ -1,9 +1,9 @@
-# Forensic Examiner config (~/.fxrc)
+# Forensic Examiner config (~/.foxrc)
 
 # available env vars:
 #
-#  FX_THEME
-#  FX_MODEL
+#  FOX_THEME
+#  FOX_MODEL
 #
 # available themes:
 #

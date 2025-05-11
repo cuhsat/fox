@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 const (

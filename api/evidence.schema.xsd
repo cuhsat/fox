@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="https://github.com/cuhsat/fx">
+           xmlns="https://github.com/cuhsat/fox">
   <xs:element name="bag">
     <xs:complexType>
       <xs:sequence>

@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/cuhsat/fx/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 type Item struct {

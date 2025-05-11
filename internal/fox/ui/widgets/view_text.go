@@ -3,9 +3,9 @@ package widgets
 import (
 	"strconv"
 
-	"github.com/cuhsat/fx/internal/app/ui/themes"
-	"github.com/cuhsat/fx/internal/pkg/text"
-	"github.com/cuhsat/fx/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/fox/ui/themes"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
 func (v *View) textRender(x, y, w, h int) {

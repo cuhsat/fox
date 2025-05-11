@@ -8,19 +8,19 @@ import (
 	_ "github.com/gdamore/tcell/v2/encoding"
 	"github.com/mattn/go-runewidth"
 
-	"github.com/cuhsat/fx/internal/app/ai"
-	"github.com/cuhsat/fx/internal/app/fx"
-	"github.com/cuhsat/fx/internal/app/ui/context"
-	"github.com/cuhsat/fx/internal/app/ui/themes"
-	"github.com/cuhsat/fx/internal/app/ui/widgets"
-	"github.com/cuhsat/fx/internal/pkg/sys"
-	"github.com/cuhsat/fx/internal/pkg/text"
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/heapset"
-	"github.com/cuhsat/fx/internal/pkg/types/mode"
-	"github.com/cuhsat/fx/internal/pkg/user/bag"
-	"github.com/cuhsat/fx/internal/pkg/user/history"
-	"github.com/cuhsat/fx/internal/pkg/user/plugins"
+	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/fox/ai"
+	"github.com/cuhsat/fox/internal/fox/ui/context"
+	"github.com/cuhsat/fox/internal/fox/ui/themes"
+	"github.com/cuhsat/fox/internal/fox/ui/widgets"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/user/bag"
+	"github.com/cuhsat/fox/internal/pkg/user/history"
+	"github.com/cuhsat/fox/internal/pkg/user/plugins"
 )
 
 const (
@@ -567,7 +567,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 		ui.root.Sync() // prevent hickups
 	}
 
-	ui.root.SetTitle(fmt.Sprintf("%s - %s", fx.Product, heap))
+	ui.root.SetTitle(fmt.Sprintf("%s - %s", fox.Product, heap))
 	ui.root.SetStyle(themes.Base)
 	ui.root.Clear()
 

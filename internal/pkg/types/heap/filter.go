@@ -7,8 +7,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/cuhsat/fx/internal/pkg/types"
-	"github.com/cuhsat/fx/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type filter struct {

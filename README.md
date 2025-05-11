@@ -1,13 +1,13 @@
-![](assets/fx.png "Forensic Examiner")
+![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. As a forensic tool, no write access is made. For more information type `fx --help`.
+The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. As a forensic tool, no write access is made. For more information type `fox --help`.
 
 ![](assets/demo.png "Demo")
 
 # Install
 
 ```console
-go install github.com/cuhsat/fx@latest
+go install github.com/cuhsat/fox@latest
 ```
 
 # Features
