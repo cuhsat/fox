@@ -14,9 +14,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Local test images
-*.E0?
-
 # Build directory
 bin/
 
