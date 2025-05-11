@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Default = "llama3.2"
+	Default = "mistral"
 )
 
 const (
@@ -64,7 +64,11 @@ func (o *Ollama) Close() {
 }
 
 func (o *Ollama) Prompt(s string, h *heap.Heap) {
-	s = fmt.Sprintf("Context: %s", h.Bytes())
+	o.write(fmt.Sprintf("> %s\n", s))
+
+	if strings.Contains(strings.ToLower(s), "this file") {
+		s = fmt.Sprintf("%s The content of the file is: %s", s, h.Bytes())
+	}
 
 	o.Lock()
 	o.history = append(o.history, api.Message{
@@ -106,19 +110,11 @@ func (o *Ollama) Listen(hi *history.History) {
 	for s := range o.content {
 		buf.WriteString(s)
 
-		_, err := o.file.WriteString(s)
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		err = o.file.Sync()
-
-		if err != nil {
-			sys.Error(err)
-		}
+		o.write(s)
 
 		if s == "\n" {
+			o.write("\n")
+
 			b := strings.TrimSpace(buf.String())
 
 			o.Lock()
@@ -132,5 +128,23 @@ func (o *Ollama) Listen(hi *history.History) {
 
 			buf.Reset()
 		}
+	}
+}
+
+func (o *Ollama) write(s string) {
+	o.Lock()
+	_, err := o.file.WriteString(s)
+	o.Unlock()
+
+	if err != nil {
+		sys.Error(err)
+	}
+
+	o.Lock()
+	err = o.file.Sync()
+	o.Unlock()
+
+	if err != nil {
+		sys.Error(err)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha3"
 	"errors"
 	"hash"
 	"io"
@@ -16,6 +17,7 @@ const (
 	Md5    = "md5"
 	Sha1   = "sha1"
 	Sha256 = "sha256"
+	Sha3   = "sha3"
 )
 
 type Hash map[string][]byte
@@ -30,6 +32,10 @@ func (h *Heap) Sha1() ([]byte, error) {
 
 func (h *Heap) Sha256() ([]byte, error) {
 	return h.Hashsum(Sha256)
+}
+
+func (h *Heap) Sha3() ([]byte, error) {
+	return h.Hashsum(Sha3)
 }
 
 func (h *Heap) Hashsum(algo string) ([]byte, error) {
@@ -52,6 +58,8 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 		imp = sha1.New()
 	case Sha256:
 		imp = sha256.New()
+	case Sha3:
+		imp = sha3.New512()
 	default:
 		return nil, errors.New("hash not supported")
 	}

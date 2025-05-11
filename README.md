@@ -18,7 +18,7 @@ go install github.com/cuhsat/fx@latest
 * Unicode multi-byte support
 * Unicode bi-directional character filtering
 * Build-in decompression of: bzip2, gzip, tar, zip
-* Build-in cryptographic hashes: md5, sha1, sha256
+* Build-in cryptographic hashes: md5, sha1, sha256, sha3
 * Build-in AI support via Ollama
 * Build-in file statisics support
 * Build-in input history

@@ -32,11 +32,12 @@ KEYMAP
   Ctrl + s             Save evidence
   Ctrl + c             Copy to clipboard
   Ctrl + z             Suspend to shell
-  F1 - F8              Execute plugin
-  F9                   Show file(s) counts
-  F10                  Show file(s) MD5
-  F11                  Show file(s) SHA1
-  F12                  Show file(s) SHA256
+  F1 - F7              Execute plugin
+  F8                   Show file(s) counts
+  F9                   Show file(s) MD5
+  F10                  Show file(s) SHA1
+  F11                  Show file(s) SHA256
+  F12                  Show file(s) SHA3
 
   LESS
 

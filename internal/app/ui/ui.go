@@ -224,8 +224,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyF6:
 					fallthrough
 				case tcell.KeyF7:
-					fallthrough
-				case tcell.KeyF8:
 					if ui.plugins == nil {
 						continue
 					}
@@ -247,17 +245,20 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.change(mode.Mode(pl.Prompt))
 					}
 
-				case tcell.KeyF9:
+				case tcell.KeyF8:
 					hs.Counts()
 
-				case tcell.KeyF10:
+				case tcell.KeyF9:
 					hs.Md5()
 
-				case tcell.KeyF11:
+				case tcell.KeyF10:
 					hs.Sha1()
 
-				case tcell.KeyF12:
+				case tcell.KeyF11:
 					hs.Sha256()
+
+				case tcell.KeyF12:
+					hs.Sha3()
 
 				case tcell.KeyUp:
 					if ui.ctx.Mode().Prompt() {
