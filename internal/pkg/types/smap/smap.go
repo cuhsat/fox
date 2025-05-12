@@ -27,9 +27,13 @@ func Map(m *mmap.MMap) *SMap {
 	l := len(*m)
 
 	var i, j int
+	var a, b byte
 
 	for ; i < l; i++ {
-		if (*m)[i] == LF || ((*m)[i] == CR && (*m)[min(i+1, l)] != LF) {
+		a = (*m)[i]
+		b = (*m)[min(i+1, l-1)]
+
+		if a == LF || (a == CR && b != LF) {
 			*s = append(*s, String{
 				Nr:    len(*s) + 1,
 				Start: j,
@@ -52,23 +56,28 @@ func Map(m *mmap.MMap) *SMap {
 func (s *SMap) Format(m *mmap.MMap) *SMap {
 	r := new(SMap)
 
+	pos := make(stack, 0)
+
+	var dqt, d, i, j, l int
+	var off uint8
+	var ok bool
+
 	for _, str := range *s {
-		l := len(*r)
+		l = len(*r)
 
 		// blank line
 		if str.End-str.Start == 0 {
 			*r = append(*r, str)
 		}
 
-		pos := make(stack, 0)
-		dqt := 0
+		pos = pos[:0]
+		dqt = 0
+		off = 0
 
-		var off uint8 = 0
-
-		for i := str.Start; i < str.End; i++ {
+		for i = str.Start; i < str.End; i++ {
 			switch (*m)[i] {
 			case '{', '[':
-				if ok, j := pos.Pop(); ok && j < i {
+				if ok, j = pos.Pop(); ok && j < i {
 					add(r, str.Nr, j, i, off)
 				}
 
@@ -80,13 +89,13 @@ func (s *SMap) Format(m *mmap.MMap) *SMap {
 				off += Space
 
 			case '}', ']':
-				if ok, j := pos.Pop(); ok && j < i {
+				if ok, j = pos.Pop(); ok && j < i {
 					add(r, str.Nr, j, i, off)
 				}
 
 				off -= Space
 
-				d := 1
+				d = 1
 
 				// append existing comma
 				if i < str.End-1 && (*m)[i+1] == ',' {
@@ -105,7 +114,7 @@ func (s *SMap) Format(m *mmap.MMap) *SMap {
 					continue
 				}
 
-				if ok, j := pos.Pop(); ok {
+				if ok, j = pos.Pop(); ok {
 					add(r, str.Nr, j, i+1, off)
 				}
 
@@ -152,18 +161,18 @@ func (s *SMap) Wrap(w int) *SMap {
 	return r
 }
 
-func (s *SMap) Find(nr int) (bool, int) {
+func (s *SMap) Find(nr int) (int, bool) {
 	if s == nil {
-		return false, 0
+		return 0, false
 	}
 
 	for i, str := range *s {
 		if str.Nr == nr {
-			return true, i
+			return i, true
 		}
 	}
 
-	return false, 0
+	return 0, false
 }
 
 func (s *SMap) Size() (w, h int) {
