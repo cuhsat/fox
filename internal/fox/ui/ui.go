@@ -112,7 +112,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.overlay.Listen()
 
 	if ui.chat != nil {
-		go ui.chat.Listen()
+		go ui.chat.Listen(hi)
 	}
 
 	esc := false

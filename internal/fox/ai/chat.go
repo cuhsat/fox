@@ -11,7 +11,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	//"github.com/cuhsat/fox/internal/pkg/user/history"
+	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
 type Chat struct {
@@ -60,7 +60,7 @@ func (o *Chat) Prompt(s string) {
 	}
 }
 
-func (o *Chat) Listen( /*hi *history.History*/ ) {
+func (o *Chat) Listen(hi *history.History) {
 	var buf strings.Builder
 
 	for s := range o.ch {
@@ -78,8 +78,7 @@ func (o *Chat) Listen( /*hi *history.History*/ ) {
 			s = buf.String()
 
 			o.system(s)
-
-			// 	//hi.AddEntry("system", s)
+			hi.AddSystem(s)
 			buf.Reset()
 		}
 	}

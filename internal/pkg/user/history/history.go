@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -19,9 +20,9 @@ const (
 type History struct {
 	sync.RWMutex
 
-	file  *os.File // file handle
-	lines []string // buffer lines
-	index int      // buffer index
+	file  *os.File     // file handle
+	lines []string     // buffer lines
+	index atomic.Int64 // buffer index
 }
 
 func New() *History {
@@ -43,7 +44,7 @@ func New() *History {
 	s := bufio.NewScanner(h.file)
 
 	for s.Scan() {
-		t := strings.SplitN(s.Text(), ";", 2)
+		t := strings.SplitN(s.Text(), ";user:", 2)
 
 		if len(t) > 1 {
 			h.lines = append(h.lines, t[1])
@@ -56,12 +57,12 @@ func New() *History {
 		sys.Error(err)
 	}
 
-	h.index = len(h.lines)
+	h.index.Store(int64(len(h.lines)))
 
 	return &h
 }
 
-func (h *History) AddCommand(s string) {
+func (h *History) AddEntry(r, s string) {
 	defer h.Reset()
 
 	// prepare string
@@ -76,49 +77,65 @@ func (h *History) AddCommand(s string) {
 		return
 	}
 
-	l := fmt.Sprintf("%10d;%s", time.Now().Unix(), s)
+	l := fmt.Sprintf("%10d;%s:%s", time.Now().Unix(), r, s)
 
+	h.Lock()
 	_, err := fmt.Fprintln(h.file, l)
+	h.Unlock()
 
 	if err != nil {
 		sys.Error(err)
 	}
 }
 
-func (h *History) PrevCommand() string {
-	h.RLock()
-	defer h.RUnlock()
+func (h *History) AddSystem(s string) {
+	h.AddEntry("system", s)
+}
 
-	if h.index > 0 {
-		h.index--
-	} else {
-		return ""
+func (h *History) AddCommand(s string) {
+	h.AddEntry("user", s)
+}
+
+func (h *History) PrevCommand() string {
+	var d int64 = 0
+
+	if h.index.Load() > 0 {
+		d = -1
 	}
 
-	return h.lines[h.index]
+	return h.get(h.index.Add(d))
 }
 
 func (h *History) NextCommand() string {
-	h.RLock()
-	defer h.RUnlock()
-
-	if h.index < len(h.lines)-1 {
-		h.index++
-	} else {
+	if h.index.Load() >= h.len()-1 {
 		return ""
 	}
 
-	return h.lines[h.index]
+	return h.get(h.index.Add(1))
 }
 
 func (h *History) Reset() {
-	h.RLock()
-	h.index = len(h.lines)
-	h.RUnlock()
+	h.index.Store(h.len())
 }
 
 func (h *History) Close() {
+	h.Lock()
+
 	if h.file != nil {
 		h.file.Close()
 	}
+
+	h.Unlock()
+}
+
+func (h *History) len() int64 {
+	h.RLock()
+	defer h.RUnlock()
+	return int64(len(h.lines))
+}
+
+func (h *History) get(idx int64) string {
+	h.RLock()
+	defer h.RUnlock()
+	return h.lines[idx]
 }
