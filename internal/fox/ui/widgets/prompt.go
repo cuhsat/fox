@@ -73,7 +73,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	// calculate cursor position
 	c = (text.Len(i) - text.Len(v)) + c - 1
 
-	if !p.ctx.Mode().Prompt() {
+	if !p.ctx.Mode().Prompt() || p.Locked() {
 		p.ctx.Root.HideCursor()
 	} else {
 		p.ctx.Root.ShowCursor(x+c, y)

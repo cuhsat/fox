@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	// "strings"
+	"strings"
 	"sync"
 
 	"github.com/tmc/langchaingo/llms"
@@ -17,9 +17,9 @@ import (
 type Chat struct {
 	sync.RWMutex
 
-	file *os.File    		   // chat file
+	file *os.File              // chat file
 	msgs []llms.MessageContent // chat messages
-	ch   chan string 		   // chat channel
+	ch   chan string           // chat channel
 }
 
 func NewChat() *Chat {
@@ -60,28 +60,28 @@ func (o *Chat) Prompt(s string) {
 	}
 }
 
-func (o *Chat) Listen(/*hi *history.History*/) {
-	// var buf strings.Builder
+func (o *Chat) Listen( /*hi *history.History*/ ) {
+	var buf strings.Builder
 
 	for s := range o.ch {
 		// response start
-		// if buf.Len() == 0 {
-		// 	s = strings.TrimLeft(s, " ")
-		// }
+		if buf.Len() == 0 {
+			s = strings.TrimLeft(s, " ")
+		}
 
 		// reponse chunk
 		o.write(s)
-		// buf.WriteString(s)
+		buf.WriteString(s)
 
 		// response end
-		// if s == "\n\n" {
-		// 	s = buf.String()
+		if s == "\n\n" {
+			s = buf.String()
 
-		// 	//o.system(s)
+			// 	//o.system(s)
 
-		// 	//hi.AddEntry("system", s)
-		// 	buf.Reset()
-		// }
+			// 	//hi.AddEntry("system", s)
+			buf.Reset()
+		}
 	}
 }
 

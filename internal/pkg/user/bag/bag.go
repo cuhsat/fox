@@ -119,14 +119,13 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 	bag.w.WriteHash(sum)
 
 	smap := *h.SMap()
-	mmap := *h.MMap()
 
 	var ns []int
 	var ss []string
 
 	for _, s := range smap {
 		ns = append(ns, s.Nr)
-		ss = append(ss, string(mmap[s.Start:s.End]))
+		ss = append(ss, h.Unmap(&s))
 	}
 
 	bag.w.WriteLines(ns, ss)

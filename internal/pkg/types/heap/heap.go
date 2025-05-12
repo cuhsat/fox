@@ -85,8 +85,8 @@ func (h *Heap) Reload() {
 		sys.Error(err)
 	}
 
-	h.hash = make(Hash, 3)
 	h.size = fi.Size()
+	h.hash = make(Hash, 4)
 
 	if h.mmap != nil {
 		h.mmap.Unmap()
@@ -163,6 +163,12 @@ func (h *Heap) Bytes() []byte {
 	h.RUnlock()
 
 	return buf.Bytes()
+}
+
+func (h *Heap) Unmap(s *smap.String) string {
+	h.RLock()
+	defer h.RUnlock()
+	return string((*h.mmap)[s.Start:s.End])
 }
 
 func (h *Heap) Wrap(w int) {
