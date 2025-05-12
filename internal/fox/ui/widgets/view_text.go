@@ -31,9 +31,8 @@ func (v *View) textRender(x, y, w, h int) {
 	v.last_x = max(buf.W-w, 0)
 	v.last_y = max(buf.H-h, 0)
 
-	// horizontal separator
-	l := strings.Repeat(text.HSep, w)
-	p := v.heap.Type == types.Prompt
+	// special type of view
+	s := v.heap.Type == types.Prompt
 
 	// render lines
 	for i, line := range buf.Lines {
@@ -48,8 +47,8 @@ func (v *View) textRender(x, y, w, h int) {
 
 		// text value
 		if len(line.Str) > 0 {
-			if p && line.Str == text.HSep {
-				v.print(line_x, line_y, l, themes.Subtext1)
+			if s && strings.HasPrefix(line.Str, text.Chevron) {
+				v.print(line_x, line_y, line.Str, themes.Subtext1)
 			} else {
 				v.print(line_x, line_y, line.Str, themes.Base)
 			}

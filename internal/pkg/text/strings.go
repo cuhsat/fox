@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	HSep = "─"
-	VSep = "│"
+	Chevron = "❯"
 )
 
 func Dec(n int) int {
