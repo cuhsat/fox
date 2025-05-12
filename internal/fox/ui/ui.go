@@ -76,7 +76,6 @@ func New(m mode.Mode) *UI {
 
 		root: root,
 
-		chat:    ai.NewChat(ctx.Model()),
 		plugins: plugins.New(),
 		themes:  themes.New(ctx.Theme()),
 
@@ -84,6 +83,10 @@ func New(m mode.Mode) *UI {
 		view:    widgets.NewView(ctx),
 		prompt:  widgets.NewPrompt(ctx),
 		overlay: widgets.NewOverlay(ctx),
+	}
+
+	if ai.Init(ctx.Model()) {
+		ui.chat = ai.NewChat()
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -109,7 +112,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.overlay.Listen()
 
 	if ui.chat != nil {
-		go ui.chat.Listen(hi)
+		go ui.chat.Listen()
 	}
 
 	esc := false
@@ -458,11 +461,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.change(ui.ctx.Last())
 
 					case mode.AI:
-						ui.view.Reset()
-						ui.ctx.Background(func() {
-							ui.chat.Prompt(v, heap)
-						})
-						hs.OpenChat(ui.chat.Path())
+						if ui.chat != nil {
+							ui.view.Reset()
+							ui.ctx.Background(func() {
+								ui.chat.Prompt(v)
+							})
+							hs.OpenChat(ui.chat.Path())
+						}
 
 					default:
 						plugins.Input <- v
@@ -523,8 +528,11 @@ func (ui *UI) Close() {
 		plugins.Close()
 	}
 
+	if ui.chat != nil {
+		ui.chat.Close()
+	}
+
 	ui.overlay.Close()
-	ui.chat.Close()
 	ui.root.Fini()
 	ui.ctx.Save()
 }
