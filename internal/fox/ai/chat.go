@@ -77,26 +77,12 @@ func (o *Chat) Listen( /*hi *history.History*/ ) {
 		if s == "\n\n" {
 			s = buf.String()
 
-			// 	//o.system(s)
+			o.system(s)
 
 			// 	//hi.AddEntry("system", s)
 			buf.Reset()
 		}
 	}
-}
-
-func (o *Chat) human(s string) {
-	o.history(llms.ChatMessageTypeHuman, s)
-}
-
-// func (o *Chat) system(s string) {
-// 	o.history(llms.ChatMessageTypeSystem, s)
-// }
-
-func (o *Chat) history(r llms.ChatMessageType, s string) {
-	o.Lock()
-	o.msgs = append(o.msgs, llms.TextParts(r, s))
-	o.Unlock()
 }
 
 func (o *Chat) write(s string) {
@@ -114,5 +100,19 @@ func (o *Chat) write(s string) {
 		sys.Error(err)
 	}
 
+	o.Unlock()
+}
+
+func (o *Chat) human(s string) {
+	o.history(llms.ChatMessageTypeHuman, s)
+}
+
+func (o *Chat) system(s string) {
+	o.history(llms.ChatMessageTypeSystem, s)
+}
+
+func (o *Chat) history(r llms.ChatMessageType, s string) {
+	o.Lock()
+	o.msgs = append(o.msgs, llms.TextParts(r, s))
 	o.Unlock()
 }

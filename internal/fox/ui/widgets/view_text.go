@@ -85,7 +85,7 @@ func (v *View) textGoto(s string) {
 		nr, _ = strconv.Atoi(s)
 	}
 
-	if ok, y := v.smap.Find(nr); ok {
+	if y, ok := v.smap.Find(nr); ok {
 		v.ScrollTo(v.delta_x, int(y))
 	}
 }
