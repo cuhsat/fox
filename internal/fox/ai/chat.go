@@ -26,11 +26,17 @@ type Chat struct {
 	model string      // chat model
 	file  *os.File    // chat file
 	llm   *ollama.LLM // ollama llm
-	ch    chan string // responses
+
+	response  chan string           // response channel
+	responses []llms.MessageContent // responses
 }
 
 func NewChat(model string) *Chat {
-	if len(model) == 0 || strings.ToLower(model) == "default" {
+	if len(model) == 0 {
+		model = Default
+	}
+
+	if strings.ToLower(model) == "default" {
 		model = Default
 	}
 
@@ -45,7 +51,9 @@ func NewChat(model string) *Chat {
 		model: model,
 		file:  sys.TempFile("chat", ".txt"),
 		llm:   llm,
-		ch:    make(chan string),
+
+		response:  make(chan string),
+		responses: make([]llms.MessageContent, 0),
 	}
 }
 
@@ -57,31 +65,32 @@ func (o *Chat) Close() {
 	o.file.Close()
 }
 
-func (o *Chat) Prompt(s string, h *heap.Heap) {
-	o.write(fmt.Sprintln(s))
-	o.write(fmt.Sprintln(text.HSep))
-
+func (o *Chat) Embed(h *heap.Heap) {
+	// TODO: TEST
 	ctx := context.Background()
+	str := string(h.Bytes())
 
-	// content := []llms.MessageContent{
-	// 	llms.TextParts(llms.ChatMessageTypeSystem, "You are a company branding design wizard."),
-	// 	llms.TextParts(llms.ChatMessageTypeHuman, "What would be a good company name a company that makes colorful socks?"),
-	// }
+	o.llm.CreateEmbedding(ctx, strings.Split(str, "\n"))
+}
 
-	_, err := o.llm.Call(ctx, s,
+func (o *Chat) Prompt(s string, h *heap.Heap) {
+	o.write(fmt.Sprintf("%s %s\n", text.Chevron, s))
+	o.human(s)
+
+	if _, err := o.llm.GenerateContent(
+		context.Background(),
+		o.responses,
 		llms.WithSeed(0),
 		llms.WithTemperature(0),
 		llms.WithStreamingFunc(func(ctx context.Context, chunk []byte) error {
 			if len(chunk) > 0 {
-				o.ch <- string(chunk)
+				o.response <- string(chunk)
 			} else {
-				o.ch <- "\n\n"
+				o.response <- "\n\n"
 			}
 			return nil
 		}),
-	)
-
-	if err != nil {
+	); err != nil {
 		sys.Error(err)
 	}
 }
@@ -89,21 +98,40 @@ func (o *Chat) Prompt(s string, h *heap.Heap) {
 func (o *Chat) Listen(hi *history.History) {
 	var buf strings.Builder
 
-	for s := range o.ch {
+	for s := range o.response {
+		// response start
 		if buf.Len() == 0 {
 			s = strings.TrimLeft(s, " ")
 		}
 
+		// reponse chunk
 		o.write(s)
-
 		buf.WriteString(s)
 
+		// response end
 		if s == "\n\n" {
-			// o.write(fmt.Sprintln(text.HSep))
-			hi.AddEntry("assistant", buf.String())
+			s = buf.String()
+
+			o.system(s)
+
+			hi.AddEntry("system", s)
 			buf.Reset()
 		}
 	}
+}
+
+func (o *Chat) human(s string) {
+	o.history(llms.ChatMessageTypeHuman, s)
+}
+
+func (o *Chat) system(s string) {
+	o.history(llms.ChatMessageTypeSystem, s)
+}
+
+func (o *Chat) history(r llms.ChatMessageType, s string) {
+	o.Lock()
+	o.responses = append(o.responses, llms.TextParts(r, s))
+	o.Unlock()
 }
 
 func (o *Chat) write(s string) {
