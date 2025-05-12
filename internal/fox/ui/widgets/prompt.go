@@ -61,7 +61,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
 	// render filters
 	if p.ctx.Mode() == mode.Grep || len(i) > 2 {
-		p.print(x, y, text.Abr(i, w-(x+l)), themes.Surface1)
+		p.print(x, y, text.Abl(i, w-(x+l)+1), themes.Surface1)
 	}
 
 	// render status
@@ -150,6 +150,10 @@ func (p *Prompt) ReadLine() (s string) {
 }
 
 func (p *Prompt) Enter(s string) {
+	if p.Locked() {
+		return
+	}
+
 	p.value.Store(s)
 	p.cursor.Store(int32(text.Len(s)))
 }
