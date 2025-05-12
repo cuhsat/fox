@@ -41,14 +41,14 @@ type UI struct {
 
 	root tcell.Screen
 
+	chat    *ai.Chat
+	plugins *plugins.Plugins
+	themes  *themes.Themes
+
 	title   *widgets.Title
 	view    *widgets.View
 	prompt  *widgets.Prompt
 	overlay *widgets.Overlay
-
-	themes  *themes.Themes
-	ollama  *ai.Ollama
-	plugins *plugins.Plugins
 }
 
 func New(m mode.Mode) *UI {
@@ -76,14 +76,14 @@ func New(m mode.Mode) *UI {
 
 		root: root,
 
+		chat:    ai.NewChat(ctx.Model()),
+		plugins: plugins.New(),
+		themes:  themes.New(ctx.Theme()),
+
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
 		prompt:  widgets.NewPrompt(ctx),
 		overlay: widgets.NewOverlay(ctx),
-
-		themes:  themes.New(ctx.Theme()),
-		ollama:  ai.NewOllama(ctx.Model()),
-		plugins: plugins.New(),
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -108,8 +108,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
 
-	if ui.ollama != nil {
-		go ui.ollama.Listen(hi)
+	if ui.chat != nil {
+		go ui.chat.Listen(hi)
 	}
 
 	esc := false
@@ -460,9 +460,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					case mode.AI:
 						ui.view.Reset()
 						ui.ctx.Background(func() {
-							ui.ollama.Prompt(v, heap)
+							ui.chat.Prompt(v, heap)
 						})
-						hs.OpenAI(ui.ollama.Path())
+						hs.OpenChat(ui.chat.Path())
 
 					default:
 						plugins.Input <- v
@@ -523,15 +523,15 @@ func (ui *UI) Close() {
 		plugins.Close()
 	}
 
-	ui.ollama.Close()
 	ui.overlay.Close()
+	ui.chat.Close()
 	ui.root.Fini()
 	ui.ctx.Save()
 }
 
 func (ui *UI) change(m mode.Mode) {
 	// check for ai support
-	if m == mode.AI && ui.ollama == nil {
+	if m == mode.AI && ui.chat == nil {
 		ui.overlay.SendError("AI not available")
 		return
 	}

@@ -64,6 +64,10 @@ func New() *History {
 func (h *History) AddEntry(r, s string) {
 	defer h.Reset()
 
+	// prepare string
+	s = strings.ReplaceAll(s, "\n", "")
+	s = strings.TrimSpace(s)
+
 	h.Lock()
 	h.lines = append(h.lines, s)
 	h.Unlock()

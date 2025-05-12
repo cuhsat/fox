@@ -8,6 +8,11 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
+const (
+	HSep = "─"
+	VSep = "│"
+)
+
 func Dec(n int) int {
 	return int(math.Log10(float64(n))) + 1
 }

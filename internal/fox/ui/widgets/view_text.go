@@ -2,9 +2,11 @@ package widgets
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
@@ -29,6 +31,10 @@ func (v *View) textRender(x, y, w, h int) {
 	v.last_x = max(buf.W-w, 0)
 	v.last_y = max(buf.H-h, 0)
 
+	// horizontal separator
+	l := strings.Repeat(text.HSep, w)
+	p := v.heap.Type == types.Prompt
+
 	// render lines
 	for i, line := range buf.Lines {
 		line_x := x
@@ -42,7 +48,11 @@ func (v *View) textRender(x, y, w, h int) {
 
 		// text value
 		if len(line.Str) > 0 {
-			v.print(line_x, line_y, line.Str, themes.Base)
+			if p && line.Str == text.HSep {
+				v.print(line_x, line_y, l, themes.Subtext1)
+			} else {
+				v.print(line_x, line_y, line.Str, themes.Base)
+			}
 		}
 	}
 
