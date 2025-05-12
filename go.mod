@@ -10,12 +10,15 @@ require (
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/spf13/pflag v1.0.6
+	github.com/tmc/langchaingo v0.1.13
 )
 
 require (
+	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/ollama/ollama v0.6.8 // indirect
+	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/term v0.31.0 // indirect

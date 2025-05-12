@@ -2,6 +2,7 @@ package widgets
 
 import (
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
+	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
@@ -41,7 +42,7 @@ func (v *View) hexRender(x, y, w, h int) {
 		v.print(line_x+62, line_y, line.Str, themes.Base)
 
 		// print separators on top
-		v.print(line_x+9, line_y, "│", themes.Subtext1)
-		v.print(line_x+60, line_y, "│", themes.Subtext1)
+		v.print(line_x+9, line_y, text.VSep, themes.Subtext1)
+		v.print(line_x+60, line_y, text.VSep, themes.Subtext1)
 	}
 }
