@@ -86,6 +86,6 @@ func (v *View) textGoto(s string) {
 	}
 
 	if ok, y := v.smap.Find(nr); ok {
-		v.ScrollTo(v.delta_x, y)
+		v.ScrollTo(v.delta_x, int(y))
 	}
 }
