@@ -89,7 +89,7 @@ func (h *Heap) Reload() {
 	h.hash = make(Hash, 4)
 
 	if h.mmap != nil {
-		h.mmap.Unmap()
+		_ = h.mmap.Unmap()
 	}
 
 	if h.size == 0 {
@@ -102,7 +102,7 @@ func (h *Heap) Reload() {
 		}
 	}
 
-	l := types.Limits()
+	l := types.GetLimits()
 
 	// reduce mmap
 	h.mmap = l.ReduceMMap(h.mmap)
@@ -203,12 +203,12 @@ func (h *Heap) ThrowAway() {
 	h.smap = nil
 
 	if h.mmap != nil {
-		h.mmap.Unmap()
+		_ = h.mmap.Unmap()
 		h.mmap = nil
 	}
 
 	if h.file != nil {
-		h.file.Close()
+		_ = h.file.Close()
 		h.file = nil
 	}
 

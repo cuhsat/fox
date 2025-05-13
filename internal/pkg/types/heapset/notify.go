@@ -39,8 +39,8 @@ func (hs *HeapSet) notify() {
 			}
 
 			if ev.Name == sys.Log.Name {
-				if hs.error_fn != nil {
-					hs.error_fn() // bound callback
+				if hs.errorFn != nil {
+					hs.errorFn() // bound callback
 				}
 
 				continue
@@ -57,8 +57,8 @@ func (hs *HeapSet) notify() {
 
 				idx := int(atomic.LoadInt32(hs.index))
 
-				if hs.watch_fn != nil && idx == i {
-					hs.watch_fn() // bound callback
+				if hs.watchFn != nil && idx == i {
+					hs.watchFn() // bound callback
 				}
 
 				break

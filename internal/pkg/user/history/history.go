@@ -122,7 +122,7 @@ func (h *History) Close() {
 	h.Lock()
 
 	if h.file != nil {
-		h.file.Close()
+		_ = h.file.Close()
 	}
 
 	h.Unlock()

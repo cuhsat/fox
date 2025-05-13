@@ -4,33 +4,33 @@ import (
 	"fmt"
 )
 
-type filters []string
+type Filters []string
 
 // singleton
-var _filters *filters = nil
+var filters *Filters = nil
 
-func Filters() *filters {
-	if _filters == nil {
-		_filters = new(filters)
+func GetFilters() *Filters {
+	if filters == nil {
+		filters = new(Filters)
 	}
 
-	return _filters
+	return filters
 }
 
-func (f *filters) String() string {
+func (f *Filters) String() string {
 	return fmt.Sprintf("%v", *f)
 }
 
-func (f *filters) Type() string {
+func (f *Filters) Type() string {
 	return "strings"
 }
 
-func (f *filters) Set(p string) error {
+func (f *Filters) Set(p string) error {
 	*f = append(*f, p)
 
 	return nil
 }
 
-func (f *filters) Pop() {
+func (f *Filters) Pop() {
 	*f = (*f)[:len(*f)-1]
 }

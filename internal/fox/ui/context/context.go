@@ -93,7 +93,7 @@ func (ctx *Context) IsWrap() bool {
 }
 
 func (ctx *Context) Interrupt() {
-	ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
+	_ = ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
 }
 
 func (ctx *Context) SwitchMode(m mode.Mode) bool {

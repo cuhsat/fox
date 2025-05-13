@@ -16,13 +16,13 @@ go install github.com/cuhsat/fox@latest
 * Canonical hex view of binary files
 * Regular expression filtering
 * Unicode multi-byte support
-* Unicode bi-directional character filtering
-* Build-in decompression of: bzip2, gzip, tar, zip
-* Build-in cryptographic hashes: md5, sha1, sha256, sha3
+* Unicode bidirectional character filtering
+* Build-in decompression of: BZip2, GZip, Tar, Zip
+* Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3
 * Build-in AI RAC support via langchain
-* Build-in file statisics support
+* Build-in file statistics support
 * Build-in input history
-* Evidence bag formats: text, xml, json, jsonl, markdown
+* Evidence bag formats: Text, XML, JSON, JSONL, Markdown
 * Evidence bag cryptographic signing
 * Graphical user interface
 * Suspend to shell support

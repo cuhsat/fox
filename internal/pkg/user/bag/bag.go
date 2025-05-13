@@ -113,7 +113,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	bag.w.Start()
 
-	bag.w.WriteFile(h.String(), *types.Filters())
+	bag.w.WriteFile(h.String(), *types.GetFilters())
 	bag.w.WriteUser(usr)
 	bag.w.WriteTime(time.Now(), fi.ModTime())
 	bag.w.WriteHash(sum)
@@ -139,7 +139,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 func (bag *Bag) Close() {
 	if bag.file == nil {
-		bag.file.Close()
+		_ = bag.file.Close()
 	}
 }
 

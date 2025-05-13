@@ -85,7 +85,7 @@ func (hs *HeapSet) newBuffer(t string, fn util) {
 
 	hs.RUnlock()
 
-	f.Close()
+	_ = f.Close()
 
 	if idx, ok := hs.findByName(t); ok {
 		h := hs.atomicGet(idx)

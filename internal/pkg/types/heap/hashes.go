@@ -8,6 +8,7 @@ import (
 	"errors"
 	"hash"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -23,22 +24,22 @@ const (
 type Hash map[string][]byte
 
 func (h *Heap) Md5() ([]byte, error) {
-	return h.Hashsum(Md5)
+	return h.HashSum(Md5)
 }
 
 func (h *Heap) Sha1() ([]byte, error) {
-	return h.Hashsum(Sha1)
+	return h.HashSum(Sha1)
 }
 
 func (h *Heap) Sha256() ([]byte, error) {
-	return h.Hashsum(Sha256)
+	return h.HashSum(Sha256)
 }
 
 func (h *Heap) Sha3() ([]byte, error) {
-	return h.Hashsum(Sha3)
+	return h.HashSum(Sha3)
 }
 
-func (h *Heap) Hashsum(algo string) ([]byte, error) {
+func (h *Heap) HashSum(algo string) ([]byte, error) {
 	algo = strings.ToLower(algo)
 
 	h.RLock()
@@ -66,7 +67,9 @@ func (h *Heap) Hashsum(algo string) ([]byte, error) {
 
 	f := sys.OpenFile(h.Base)
 
-	defer f.Close()
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
 
 	_, err := io.Copy(imp, f)
 

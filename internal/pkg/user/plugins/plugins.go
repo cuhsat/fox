@@ -59,7 +59,7 @@ func (a *Autostart) Match(p string) bool {
 }
 
 func (a *Autostart) Execute(f, b string, hs []string) (string, string) {
-	var e string = ext
+	e := ext
 
 	if len(a.Output) > 0 {
 		e = a.Output
@@ -71,7 +71,7 @@ func (a *Autostart) Execute(f, b string, hs []string) (string, string) {
 }
 
 func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
-	var e, i string = ext, ""
+	e, i := ext, ""
 
 	if len(p.Output) > 0 {
 		e = p.Output

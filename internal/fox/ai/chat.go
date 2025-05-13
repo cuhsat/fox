@@ -35,7 +35,7 @@ func (o *Chat) Path() string {
 }
 
 func (o *Chat) Close() {
-	o.file.Close()
+	_ = o.file.Close()
 }
 
 func (o *Chat) Prompt(s string) {
@@ -69,7 +69,7 @@ func (o *Chat) Listen(hi *history.History) {
 			s = strings.TrimLeft(s, " ")
 		}
 
-		// reponse chunk
+		// response chunk
 		o.write(s)
 		buf.WriteString(s)
 

@@ -42,8 +42,13 @@ func BenchmarkMap(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		defer f.Close()
-		defer m.Unmap()
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		defer func(m *mmap.MMap) {
+			_ = m.Unmap()
+		}(m)
 
 		b.ResetTimer()
 
@@ -61,8 +66,13 @@ func BenchmarkFormat(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		defer f.Close()
-		defer m.Unmap()
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		defer func(m *mmap.MMap) {
+			_ = m.Unmap()
+		}(m)
 
 		s := Map(m)
 
@@ -82,8 +92,13 @@ func BenchmarkWrap(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		defer f.Close()
-		defer m.Unmap()
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		defer func(m *mmap.MMap) {
+			_ = m.Unmap()
+		}(m)
 
 		s := Map(m)
 

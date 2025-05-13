@@ -23,7 +23,7 @@ type chunk struct {
 }
 
 func (h *Heap) Filter() *Heap {
-	fs := *types.Filters()
+	fs := *types.GetFilters()
 
 	h.RLock()
 	c := len(h.filters) - 1

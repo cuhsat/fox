@@ -43,8 +43,8 @@ func Hex(ctx *Context) HexBuffer {
 
 	mmap := *ctx.Heap.MMap()
 
-	if types.Limits().Tail.Bytes > 0 {
-		tail = max(int(ctx.Heap.Size())-types.Limits().Tail.Bytes, 0)
+	if types.GetLimits().Tail.Bytes > 0 {
+		tail = max(int(ctx.Heap.Size())-types.GetLimits().Tail.Bytes, 0)
 	}
 
 	hb.W, hb.H = ctx.W, len(mmap)/16

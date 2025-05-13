@@ -39,7 +39,7 @@ func NewPrompt(ctx *context.Context) *Prompt {
 	return &p
 }
 
-func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, h int) int {
+func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	_, heap := hs.Heap()
 
 	m := p.fmtMode()
@@ -169,7 +169,7 @@ func (p *Prompt) fmtMode() string {
 func (p *Prompt) fmtInput() string {
 	var sb strings.Builder
 
-	for _, f := range *types.Filters() {
+	for _, f := range *types.GetFilters() {
 		sb.WriteRune(' ')
 		sb.WriteString(f)
 		sb.WriteRune(' ')

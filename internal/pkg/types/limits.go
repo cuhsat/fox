@@ -11,23 +11,23 @@ type Counts struct {
 	Bytes int // bytes count
 }
 
-type limits struct {
+type Limits struct {
 	Head Counts // head limit
 	Tail Counts // tail limit
 }
 
 // singleton
-var _limits *limits = nil
+var limits *Limits = nil
 
-func Limits() *limits {
-	if _limits == nil {
-		_limits = new(limits)
+func GetLimits() *Limits {
+	if limits == nil {
+		limits = new(Limits)
 	}
 
-	return _limits
+	return limits
 }
 
-func (l *limits) ReduceMMap(m *mmap.MMap) *mmap.MMap {
+func (l *Limits) ReduceMMap(m *mmap.MMap) *mmap.MMap {
 	if l.Head.Bytes > 0 {
 		r := make(mmap.MMap, min(l.Head.Bytes, len(*m)))
 		copy(r, (*m)[:len(r)])
@@ -43,7 +43,7 @@ func (l *limits) ReduceMMap(m *mmap.MMap) *mmap.MMap {
 	return m
 }
 
-func (l *limits) ReduceSMap(s *smap.SMap) *smap.SMap {
+func (l *Limits) ReduceSMap(s *smap.SMap) *smap.SMap {
 	if l.Head.Lines > 0 {
 		r := make(smap.SMap, min(l.Head.Lines, len(*s)))
 		copy(r, (*s)[:len(r)])

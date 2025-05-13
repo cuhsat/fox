@@ -37,7 +37,7 @@ func NewOverlay(ctx *context.Context) *Overlay {
 	}
 }
 
-func (o *Overlay) Render(x, y, w, h int) {
+func (o *Overlay) Render(x, y, w, _ int) {
 	o.m.RLock()
 	msg := o.buffer
 	o.m.RUnlock()

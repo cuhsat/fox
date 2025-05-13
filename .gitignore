@@ -21,6 +21,9 @@ bin/
 go.work
 go.work.sum
 
+# IDEs
+.idea/
+
 # Mac crap
 .DS_Store
 
@@ -32,3 +35,4 @@ go.work.sum
 
 # Evidence files
 /EVIDENCE*
+/.idea/

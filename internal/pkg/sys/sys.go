@@ -23,8 +23,7 @@ const (
 )
 
 func Exit(v ...any) {
-	fmt.Fprintln(os.Stderr, v...)
-
+	_, _ = fmt.Fprintln(os.Stderr, v...)
 	os.Exit(1)
 }
 
@@ -36,9 +35,9 @@ func Exec(s, e string) string {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = f
 	cmd.Stderr = f
-	cmd.Run()
+	_ = cmd.Run()
 
-	f.Close()
+	_ = f.Close()
 
 	return f.Name()
 }
@@ -63,7 +62,7 @@ func Shell() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	cmd.Run()
+	_ = cmd.Run()
 }
 
 func Stdin() string {
@@ -88,7 +87,7 @@ func Stdin() string {
 				}
 
 			case io.EOF:
-				f.Close()
+				_ = f.Close()
 				break
 
 			default:
@@ -157,7 +156,7 @@ func Extract(data string) string {
 		Error(err)
 	}
 
-	f.Close()
+	_ = f.Close()
 
 	return f.Name()
 }
