@@ -26,7 +26,7 @@ func Abr(s string, w int) string {
 
 func Abl(s string, w int) string {
 	if Len(s) > w {
-		s = "…" + runewidth.TruncateLeft(s, (Len(s)-w)+1, "")
+		s = runewidth.TruncateLeft(s, Len(s)-w, "…")
 	}
 
 	return s

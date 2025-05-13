@@ -21,7 +21,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3
 * Build-in AI RAC support via langchain
 * Build-in file statistics support
-* Build-in input history
+* Build-in input and output history
 * Evidence bag formats: Text, XML, JSON, JSONL, Markdown
 * Evidence bag cryptographic signing
 * Graphical user interface
