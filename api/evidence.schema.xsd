@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns="https://github.com/cuhsat/fox"
-           xsi:schemaLocation="https://github.com/cuhsat/fox ">
+           xsi:schemaLocation="https://github.com/cuhsat/fox">
   <xs:element name="bag">
     <xs:complexType>
       <xs:sequence>
