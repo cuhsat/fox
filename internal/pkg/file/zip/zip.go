@@ -48,8 +48,8 @@ func Deflate(path string) (i []*file.Item) {
 
 		_, err = io.Copy(t, a)
 
-		t.Close()
-		a.Close()
+		_ = t.Close()
+		_ = a.Close()
 
 		if err != nil {
 			sys.Error(err)

@@ -13,29 +13,29 @@ type View struct {
 	heap *heap.Heap
 	smap *smap.SMap
 
-	last_x int
-	last_y int
+	lastX int
+	lastY int
 
-	delta_x int
-	delta_y int
+	deltaX int
+	deltaY int
 }
 
 func NewView(ctx *context.Context) *View {
 	return &View{
 		base: base{ctx},
 
-		last_x: 0,
-		last_y: 0,
+		lastX: 0,
+		lastY: 0,
 
-		delta_x: 0,
-		delta_y: 0,
+		deltaX: 0,
+		deltaY: 0,
 	}
 }
 
 func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	_, v.heap = hs.Heap()
 
-	h -= 1 // fill all but least line
+	h -= 1 // fill all but the least line
 
 	if v.ctx.Mode() == mode.Hex {
 		v.hexRender(x, y, w, h)
@@ -47,8 +47,8 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 }
 
 func (v *View) Reset() {
-	v.delta_x = 0
-	v.delta_y = 0
+	v.deltaX = 0
+	v.deltaY = 0
 }
 
 func (v *View) Goto(s string) {
@@ -58,30 +58,30 @@ func (v *View) Goto(s string) {
 }
 
 func (v *View) ScrollStart() {
-	v.delta_y = 0
+	v.deltaY = 0
 }
 
 func (v *View) ScrollEnd() {
-	v.delta_y = v.last_y
+	v.deltaY = v.lastY
 }
 
 func (v *View) ScrollTo(x, y int) {
-	v.delta_x = max(min(x, v.last_x), 0)
-	v.delta_y = max(min(y, v.last_y), 0)
+	v.deltaX = max(min(x, v.lastX), 0)
+	v.deltaY = max(min(y, v.lastY), 0)
 }
 
 func (v *View) ScrollUp(delta int) {
-	v.delta_y = max(v.delta_y-delta, 0)
+	v.deltaY = max(v.deltaY-delta, 0)
 }
 
 func (v *View) ScrollDown(delta int) {
-	v.delta_y = min(v.delta_y+delta, v.last_y)
+	v.deltaY = min(v.deltaY+delta, v.lastY)
 }
 
 func (v *View) ScrollLeft(delta int) {
-	v.delta_x = max(v.delta_x-delta, 0)
+	v.deltaX = max(v.deltaX-delta, 0)
 }
 
 func (v *View) ScrollRight(delta int) {
-	v.delta_x = min(v.delta_x+delta, v.last_x)
+	v.deltaX = min(v.deltaX+delta, v.lastX)
 }

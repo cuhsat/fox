@@ -100,9 +100,9 @@ func New(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	hs.Bind(func() {
-		ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsTail()))
+		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsTail()))
 	}, func() {
-		ui.root.PostEvent(tcell.NewEventError(nil))
+		_ = ui.root.PostEvent(tcell.NewEventError(nil))
 	})
 
 	events := make(chan tcell.Event, 128)
@@ -178,11 +178,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 			case *tcell.EventKey:
 				mods := ev.Modifiers()
 
-				page_w := w - 1 // minus text abbreviation
-				page_h := h - 2 // minus title and status
+				pageW := w - 1 // minus text abbreviation
+				pageH := h - 2 // minus title and status
 
 				if ui.ctx.IsLine() {
-					page_w -= text.Dec(heap.Total()) + 1
+					pageW -= text.Dec(heap.Total()) + 1
 				}
 
 				if ev.Key() != tcell.KeyEscape {
@@ -269,7 +269,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollStart()
 					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollUp(page_h)
+						ui.view.ScrollUp(pageH)
 					} else {
 						ui.view.ScrollUp(delta)
 					}
@@ -280,7 +280,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollEnd()
 					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollDown(page_h)
+						ui.view.ScrollDown(pageH)
 					} else {
 						ui.view.ScrollDown(delta)
 					}
@@ -293,7 +293,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.prompt.Move(-1)
 						}
 					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollLeft(page_w)
+						ui.view.ScrollLeft(pageW)
 					} else {
 						ui.view.ScrollLeft(delta)
 					}
@@ -306,7 +306,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.prompt.Move(+1)
 						}
 					} else if mods&tcell.ModShift != 0 {
-						ui.view.ScrollRight(page_w)
+						ui.view.ScrollRight(pageW)
 					} else {
 						ui.view.ScrollRight(delta)
 					}
@@ -315,10 +315,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.view.ScrollStart()
 
 				case tcell.KeyPgUp:
-					ui.view.ScrollUp(page_h)
+					ui.view.ScrollUp(pageH)
 
 				case tcell.KeyPgDn:
-					ui.view.ScrollDown(page_h)
+					ui.view.ScrollDown(pageH)
 
 				case tcell.KeyEnd:
 					ui.view.ScrollEnd()
@@ -443,7 +443,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					switch m {
 					case mode.Grep:
-						types.Filters().Set(v)
+						_ = types.GetFilters().Set(v)
 						ui.view.Reset()
 						ui.ctx.Background(func() {
 							heap.AddFilter(v)
@@ -488,9 +488,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						} else {
 							ui.change(mode.Less)
 						}
-					} else if len(*types.Filters()) > 0 {
+					} else if len(*types.GetFilters()) > 0 {
 						if ui.ctx.Mode() != mode.Hex {
-							types.Filters().Pop()
+							types.GetFilters().Pop()
 							ui.view.Reset()
 							heap.DelFilter()
 						}
@@ -505,7 +505,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					case 32: // space
 						if ui.prompt.Locked() {
-							ui.view.ScrollDown(page_h)
+							ui.view.ScrollDown(pageH)
 						} else {
 							ui.prompt.AddRune(r)
 						}
@@ -540,7 +540,7 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) change(m mode.Mode) {
-	// check for ai support
+	// check for AI support
 	if m == mode.AI && ui.chat == nil {
 		ui.overlay.SendError("AI not available")
 		return
@@ -574,7 +574,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 	_, heap := hs.Heap()
 
 	if heap.Type == types.Stdin {
-		ui.root.Sync() // prevent hickups
+		ui.root.Sync() // prevent hiccups
 	}
 
 	ui.root.SetTitle(fmt.Sprintf("%s - %s", fox.Product, heap))

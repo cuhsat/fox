@@ -4,7 +4,7 @@
   <xs:element name="bag">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="evidence" minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="evidence" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="metadata">
@@ -43,7 +43,7 @@
               <xs:element name="lines">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="data" minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="data" maxOccurs="unbounded">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">

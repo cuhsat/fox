@@ -15,8 +15,8 @@ func (v *View) textRender(x, y, w, h int) {
 		Heap: v.heap,
 		Line: v.ctx.IsLine(),
 		Wrap: v.ctx.IsWrap(),
-		X:    v.delta_x,
-		Y:    v.delta_y,
+		X:    v.deltaX,
+		Y:    v.deltaY,
 		W:    w,
 		H:    h,
 	})
@@ -28,44 +28,44 @@ func (v *View) textRender(x, y, w, h int) {
 	}
 
 	// set buffer bounds
-	v.last_x = max(buf.W-w, 0)
-	v.last_y = max(buf.H-h, 0)
+	v.lastX = max(buf.W-w, 0)
+	v.lastY = max(buf.H-h, 0)
 
 	// special type of view
 	s := v.heap.Type == types.Prompt
 
 	// render lines
 	for i, line := range buf.Lines {
-		line_x := x
-		line_y := y + i
+		lineX := x
+		lineY := y + i
 
 		// line number
 		if v.ctx.IsLine() {
-			v.print(line_x, line_y, line.Nr, themes.Subtext0)
-			line_x += len(line.Nr) + 1
+			v.print(lineX, lineY, line.Nr, themes.Subtext0)
+			lineX += len(line.Nr) + 1
 		}
 
 		// text value
 		if len(line.Str) > 0 {
 			if s && strings.HasPrefix(line.Str, text.Chevron) {
-				v.print(line_x, line_y, line.Str, themes.Subtext1)
+				v.print(lineX, lineY, line.Str, themes.Subtext1)
 			} else {
-				v.print(line_x, line_y, line.Str, themes.Base)
+				v.print(lineX, lineY, line.Str, themes.Base)
 			}
 		}
 	}
 
 	// render parts on top
 	for _, part := range buf.Parts {
-		part_x := x + part.X
-		part_y := y + part.Y
+		partX := x + part.X
+		partY := y + part.Y
 
 		if v.ctx.IsLine() {
-			part_x += len(buf.Lines[0].Nr) + 1
+			partX += len(buf.Lines[0].Nr) + 1
 		}
 
 		// part value
-		v.print(part_x, part_y, part.Str, themes.Subtext2)
+		v.print(partX, partY, part.Str, themes.Subtext2)
 	}
 }
 
@@ -75,17 +75,17 @@ func (v *View) textGoto(s string) {
 	switch s[0] {
 	case '+':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.delta_y].Nr + i
+		nr = (*v.smap)[v.deltaY].Nr + i
 
 	case '-':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.delta_y].Nr - i
+		nr = (*v.smap)[v.deltaY].Nr - i
 
 	default:
 		nr, _ = strconv.Atoi(s)
 	}
 
 	if y, ok := v.smap.Find(nr); ok {
-		v.ScrollTo(v.delta_x, int(y))
+		v.ScrollTo(v.deltaX, y)
 	}
 }

@@ -55,7 +55,7 @@ func Text(ctx *Context) TextBuffer {
 	d := text.Dec(ctx.Heap.Total())
 
 	if ctx.Line {
-		ctx.W -= (d + 1)
+		ctx.W -= d + 1
 	}
 
 	if ctx.Wrap && ctx.Heap.RMap() == nil {
@@ -76,7 +76,7 @@ func Text(ctx *Context) TextBuffer {
 		tb.Lines = tb.Lines[:ctx.H]
 	}
 
-	for _, f := range *types.Filters() {
+	for _, f := range *types.GetFilters() {
 		addParts(ctx, &tb, f)
 	}
 

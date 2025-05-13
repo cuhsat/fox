@@ -105,7 +105,7 @@ func (s *SMap) Format(m *mmap.MMap) *SMap {
 				// bracket line
 				add(r, str.Nr, i, i+d, off)
 
-				i += (d - 1)
+				i += d - 1
 
 				pos.Push(i + d)
 

@@ -41,8 +41,7 @@ func Deflate(path string) (i []*file.Item) {
 		t := sys.TempFile("tar", filepath.Ext(filepath.Base(h.Name)))
 
 		_, err = io.Copy(t, r)
-
-		t.Close()
+		_ = t.Close()
 
 		if err != nil {
 			sys.Error(err)

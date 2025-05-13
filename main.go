@@ -26,14 +26,14 @@ func main() {
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	w := flag.BoolP("count", "w", false, "output file line and byte count")
-	s := flag.StringP("sum", "s", "", "output file hashsums")
+	s := flag.StringP("sum", "s", "", "output file hash sums")
 
 	if len(*s) == 0 {
 		flag.Lookup("sum").NoOptDefVal = heap.Sha256
 	}
 
 	// file limits
-	l := types.Limits()
+	l := types.GetLimits()
 
 	h := flag.BoolP("head", "h", false, "limit head of file by ...")
 	t := flag.BoolP("tail", "t", false, "limit tail of file by ...")
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// line filter
-	e := types.Filters()
+	e := types.GetFilters()
 
 	flag.VarP(e, "regexp", "e", "filter for lines that matches pattern")
 
@@ -148,11 +148,11 @@ func main() {
 
 	sys.SetupLogger()
 
-	os.Remove(sys.FileDump)
+	_ = os.Remove(sys.FileDump)
 
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			_, _ = fmt.Fprintln(os.Stderr, err)
 			sys.DumpErr(err, debug.Stack())
 		}
 
@@ -177,8 +177,8 @@ func main() {
 	bg := bag.New(*f, *k, *m)
 	defer bg.Close()
 
-	ui := ui.New(rm)
-	defer ui.Close()
+	u := ui.New(rm)
+	defer u.Close()
 
-	ui.Run(hs, hi, bg)
+	u.Run(hs, hi, bg)
 }

@@ -142,6 +142,6 @@ func (hs *HeapSet) unload(h *heap.Heap) {
 
 	// clean up temporary files
 	if h.Type == types.Stdin || h.Type == types.Deflate {
-		os.Remove(h.Path)
+		_ = os.Remove(h.Path)
 	}
 }

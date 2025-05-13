@@ -35,9 +35,9 @@ func (l logger) Write(b []byte) (int, error) {
 }
 
 func (l logger) Close() {
-	l.file.Close()
+	_ = l.file.Close()
 
-	os.Remove(l.Name)
+	_ = os.Remove(l.Name)
 }
 
 func Error(v ...any) {

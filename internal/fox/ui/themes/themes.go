@@ -14,10 +14,7 @@ const (
 )
 
 var (
-	// global colors
-	Cursor tcell.Color
-
-	// global styles
+	Cursor   tcell.Color
 	Base     tcell.Style
 	Surface0 tcell.Style
 	Surface1 tcell.Style

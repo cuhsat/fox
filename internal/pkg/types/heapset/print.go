@@ -68,7 +68,7 @@ func printHex(ctx *buffer.Context) {
 }
 
 func printHash(ctx *buffer.Context, sum string) {
-	buf, err := ctx.Heap.Hashsum(sum)
+	buf, err := ctx.Heap.HashSum(sum)
 
 	if err != nil {
 		sys.Exit(err)
