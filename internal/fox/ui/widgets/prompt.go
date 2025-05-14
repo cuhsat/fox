@@ -126,9 +126,11 @@ func (p *Prompt) AddRune(r rune) {
 	}
 
 	p.value.Store(v[:c] + string(r) + v[c:])
-	p.cursorEnd.Add(+1)
 
-	p.Move(+1)
+	if c < cm {
+		p.cursorEnd.Add(+1)
+		p.Move(+1)
+	}
 }
 
 func (p *Prompt) DelRune(b bool) {
@@ -170,10 +172,10 @@ func (p *Prompt) Enter(s string) {
 		return
 	}
 
-	m := p.cursorMax.Load()
+	c := min(int32(text.Len(s)), p.cursorMax.Load())
 
 	p.value.Store(s)
-	p.cursor.Store(min(int32(text.Len(s)), m))
+	p.cursor.Store(c)
 }
 
 func (p *Prompt) Value() string {
@@ -196,7 +198,7 @@ func (p *Prompt) fmtInput() string {
 
 	if v, ok := p.value.Load().(string); ok {
 		sb.WriteRune(' ')
-		sb.WriteString(text.Abl(v, int(p.cursorMax.Load())))
+		sb.WriteString(v)
 	}
 
 	sb.WriteRune(' ')

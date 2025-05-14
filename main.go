@@ -166,7 +166,7 @@ func main() {
 	hs := heapset.New(a)
 	defer hs.ThrowAway()
 
-	if *p {
+	if *p || !ui.Build {
 		hs.Print(om, *s)
 		return
 	}
