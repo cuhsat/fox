@@ -101,18 +101,18 @@ func main() {
 	}
 
 	if *v {
-		fui, fai := "no", "no"
+		u, a := "no", "no"
 
 		if ui.Build {
-			fui = "yes"
+			u = "yes"
 		}
 
 		if ai.Build {
-			fai = "yes"
+			a = "yes"
 		}
 
 		fmt.Println(fox.Product, fox.Version)
-		fmt.Printf("Features UI: %s AI: %s\n", fui, fai)
+		fmt.Printf("Features UI: %s AI: %s\n", u, a)
 		os.Exit(0)
 	}
 

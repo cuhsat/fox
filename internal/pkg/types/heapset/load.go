@@ -1,17 +1,17 @@
 package heapset
 
 import (
-	"github.com/cuhsat/fox/internal/pkg/file/xz"
-	"github.com/cuhsat/fox/internal/pkg/file/zstd"
 	"os"
 	"path/filepath"
 	"sync/atomic"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
-	"github.com/cuhsat/fox/internal/pkg/file/bzip2"
-	"github.com/cuhsat/fox/internal/pkg/file/gzip"
-	"github.com/cuhsat/fox/internal/pkg/file/tar"
-	"github.com/cuhsat/fox/internal/pkg/file/zip"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/gzip"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/xz"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/zstd"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
