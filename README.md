@@ -18,7 +18,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 * Regular expression filtering
 * Unicode multi-byte support
 * Unicode bidirectional character filtering
-* Build-in decompression of: bzip2, gzip, tar, xz, zip
+* Build-in decompression of: bzip2, gzip, tar, xz, zip, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3-512
 * Build-in AI RAC support via langchain
 * Build-in file statistics support
