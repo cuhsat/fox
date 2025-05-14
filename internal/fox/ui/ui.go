@@ -1,3 +1,5 @@
+//go:build ui
+
 package ui
 
 import (
@@ -21,6 +23,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/bag"
 	"github.com/cuhsat/fox/internal/pkg/user/history"
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
+)
+
+const (
+	Build = true
 )
 
 const (
@@ -85,7 +91,7 @@ func New(m mode.Mode) *UI {
 		overlay: widgets.NewOverlay(ctx),
 	}
 
-	if ai.Init(ctx.Model()) {
+	if ai.Build && ai.Init(ctx.Model()) {
 		ui.chat = ai.NewChat()
 	}
 
