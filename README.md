@@ -11,14 +11,15 @@ go install -tags=ai,ui github.com/cuhsat/fox@latest
 ```
 
 # Features
+* Customizable via feature flags
 * Memory mapped lazy loading in support of big files
-* Multi core data handling for fast response time
+* Multi core data handling for fast response times
 * Canonical hex view of binary files
 * Regular expression filtering
 * Unicode multi-byte support
 * Unicode bidirectional character filtering
 * Build-in decompression of: Bzip2, Gzip, Tar, Zip
-* Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3
+* Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3-512
 * Build-in AI RAC support via langchain
 * Build-in file statistics support
 * Build-in input and output history
