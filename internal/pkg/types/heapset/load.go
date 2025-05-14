@@ -1,6 +1,7 @@
 package heapset
 
 import (
+	"github.com/cuhsat/fox/internal/pkg/file/xz"
 	"os"
 	"path/filepath"
 	"sync/atomic"
@@ -36,6 +37,10 @@ func (hs *HeapSet) loadPath(path string) {
 
 	if gzip.Detect(path) {
 		path = gzip.Deflate(path)
+	}
+
+	if xz.Detect(path) {
+		path = xz.Deflate(path)
 	}
 
 	if tar.Detect(path) {
