@@ -2,6 +2,7 @@ package heapset
 
 import (
 	"github.com/cuhsat/fox/internal/pkg/file/xz"
+	"github.com/cuhsat/fox/internal/pkg/file/zstd"
 	"os"
 	"path/filepath"
 	"sync/atomic"
@@ -31,24 +32,19 @@ func (hs *HeapSet) loadPath(path string) {
 
 	base := path
 
-	if bzip2.Detect(path) {
+	switch {
+	case bzip2.Detect(path):
 		path = bzip2.Deflate(path)
-	}
-
-	if gzip.Detect(path) {
+	case gzip.Detect(path):
 		path = gzip.Deflate(path)
-	}
-
-	if xz.Detect(path) {
+	case xz.Detect(path):
 		path = xz.Deflate(path)
-	}
-
-	if tar.Detect(path) {
+	case zstd.Detect(path):
+		path = zstd.Deflate(path)
+	case tar.Detect(path):
 		hs.loadTar(path, base)
 		return
-	}
-
-	if zip.Detect(path) {
+	case zip.Detect(path):
 		hs.loadZip(path, base)
 		return
 	}
