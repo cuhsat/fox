@@ -7,7 +7,7 @@ The Swiss Army Knife for examining text files. Combining the power of **cat**, *
 # Install
 
 ```console
-go install -tags=ai,ui github.com/cuhsat/fox@latest
+go install -tags=ui,ai github.com/cuhsat/fox@latest
 ```
 
 # Features
