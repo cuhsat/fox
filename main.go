@@ -8,6 +8,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/fox/ai"
 	"github.com/cuhsat/fox/internal/fox/ui"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -100,7 +101,19 @@ func main() {
 	}
 
 	if *v {
+		fui, fai := "no", "no"
+
 		fmt.Println(fox.Product, fox.Version)
+
+		if ui.Build {
+			fui = "yes"
+		}
+
+		if ai.Build {
+			fai = "yes"
+		}
+
+		fmt.Printf("Features UI: %s AI: %s\n", fui, fai)
 		os.Exit(0)
 	}
 
