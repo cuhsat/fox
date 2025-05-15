@@ -71,6 +71,7 @@ func main() {
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
 	M := flag.BoolP("markdown", "M", false, "export in Markdown format")
 	X := flag.BoolP("xml", "X", false, "export in XML format")
+	S := flag.BoolP("sql", "S", false, "export in SQL format")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "shows version")
@@ -138,6 +139,10 @@ func main() {
 
 	if *X {
 		*m = bag.Xml
+	}
+
+	if *S {
+		*m = bag.Sql
 	}
 
 	if *w {
