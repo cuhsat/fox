@@ -30,7 +30,7 @@ func (_ *Chat) Close() {
 	// stub
 }
 
-func (_ *Chat) Prompt(s string) {
+func (_ *Chat) Prompt(s string, b []byte) {
 	// stub
 }
 

@@ -471,7 +471,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.view.Reset()
 							ui.ctx.Background(func() {
 								ui.prompt.Lock(true)
-								ui.chat.Prompt(v)
+								ui.chat.Prompt(v, heap.Bytes())
 								ui.prompt.Lock(false)
 							})
 							hs.OpenChat(ui.chat.Path())

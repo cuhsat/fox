@@ -74,7 +74,7 @@ func (o *Chat) Close() {
 	_ = o.file.Close()
 }
 
-func (o *Chat) Prompt(s string) {
+func (o *Chat) Prompt(s string, b []byte) {
 	o.write(fmt.Sprintf("%s %s\n", text.Chevron, s))
 	o.human(s)
 
