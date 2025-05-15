@@ -192,7 +192,7 @@ func (w *SqlWriter) WriteHash(b []byte) {
 }
 
 func (w *SqlWriter) WriteLines(ns []int, ss []string) {
-	for i := 0; i < len(ss); i++ {
+	for i := range ss {
 		w.entry.file.lines = append(w.entry.file.lines, sqlLine{
 			nr: ns[i], value: ss[i],
 		})
