@@ -11,20 +11,21 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 ```
 
 # Features
+* Standalone native binary
 * Customizable via feature flags
 * Memory mapped lazy loading in support of big files
 * Multi core data handling for fast response times
 * Canonical hex view of binary files
 * Regular expression filtering
 * Unicode multi-byte support
-* Unicode bidirectional character filtering
+* Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in decompression of: bzip2, gzip, tar, xz, zip, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3-512
 * Build-in AI RAC support via langchain
 * Build-in file statistics support
 * Build-in input and output history
 * Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQL
-* Evidence bag cryptographic signing
+* Evidence bag cryptographic signing via HMAC-SHA256
 * Graphical user interface
 * Suspend to shell support
 * Mouse scrolling support
