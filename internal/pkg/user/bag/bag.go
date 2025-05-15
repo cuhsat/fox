@@ -17,10 +17,11 @@ import (
 
 const (
 	Text     = "text"
-	Xml      = "xml"
-	Json     = "json"
-	Jsonl    = "jsonl"
 	Markdown = "markdown"
+	Jsonl    = "jsonl"
+	Json     = "json"
+	Xml      = "xml"
+	Sql      = "sql"
 )
 
 const (
@@ -66,6 +67,9 @@ func New(path, key, wt string) *Bag {
 	case Xml:
 		w = NewXmlWriter()
 		e = ".xml"
+	case Sql:
+		w = NewSqlWriter()
+		e = ".db"
 	case Text:
 		fallthrough
 	default:

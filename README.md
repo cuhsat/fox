@@ -23,7 +23,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 * Build-in AI RAC support via langchain
 * Build-in file statistics support
 * Build-in input and output history
-* Evidence bag formats: Text, XML, JSON, JSONL, Markdown
+* Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQL
 * Evidence bag cryptographic signing
 * Graphical user interface
 * Suspend to shell support
