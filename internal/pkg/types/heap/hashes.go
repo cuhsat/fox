@@ -15,10 +15,14 @@ import (
 )
 
 const (
-	Md5    = "md5"
-	Sha1   = "sha1"
-	Sha256 = "sha256"
-	Sha3   = "sha3"
+	Md5      = "md5"
+	Sha1     = "sha1"
+	Sha256   = "sha256"
+	Sha3     = "sha3"
+	Sha3_224 = "sha3-224"
+	Sha3_256 = "sha3-256"
+	Sha3_384 = "sha3-384"
+	Sha3_512 = "sha3-512"
 )
 
 type Hash map[string][]byte
@@ -59,7 +63,13 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 		imp = sha1.New()
 	case Sha256:
 		imp = sha256.New()
-	case Sha3:
+	case Sha3, Sha3_224:
+		imp = sha3.New224()
+	case Sha3_256:
+		imp = sha3.New256()
+	case Sha3_384:
+		imp = sha3.New384()
+	case Sha3_512:
 		imp = sha3.New512()
 	default:
 		return nil, errors.New("hash not supported")

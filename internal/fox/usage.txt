@@ -5,7 +5,7 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Usage: fox [--print] [--count] [--hex] [--sum={md5|sha1|sha256|sha3}]
+Usage: fox [--print] [--count] [--hex] [--sum={md5|sha1|sha256|sha3|sha3-...}]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...]
            [--file=FILE] [--key=KEY]
@@ -19,7 +19,7 @@ Console:
   -p, --print              print to console (no UI)
   -w, --count              output file line and byte counts
   -x, --hex                output file in hex / start in HEX mode
-  -s, --sum={md5,sha1,sha256,sha3}
+  -s, --sum={md5,sha1,sha256,sha3,sha3-...}
                            output file hash sums (default: sha256)
 
 File limits:
