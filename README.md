@@ -20,7 +20,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in decompression of: bzip2, gzip, tar, xz, zip, zlib, zstd
-* Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3-512
+* Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in AI with RAG support via LangChain and Ollama
 * Build-in file statistics support
 * Build-in input and output history
