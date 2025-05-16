@@ -11,7 +11,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 ```
 
 # Features
-* Standalone native binary
+* Standalone native binary (amd64, arm64, mips64, ppc64, ...)
 * Customizable via feature flags
 * Memory mapped lazy loading in support of big files
 * Multi core data handling for fast response times
