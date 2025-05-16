@@ -1,5 +1,153 @@
 //go:build ai
 
+/*
+Advanced Usage: RAG System with Ollama Embeddings
+Here's a more advanced example showing how to build a simple RAG (Retrieval Augmented Generation) system using Ollama embeddings and LangChainGo:
+
+package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "sort"
+
+    "github.com/tmc/langchaingo/embeddings"
+    "github.com/tmc/langchaingo/embeddings/ollama"
+    "github.com/tmc/langchaingo/llms"
+    ollamallm "github.com/tmc/langchaingo/llms/ollama"
+)
+
+// Document represents a text with its embedding
+type Document struct {
+    Content   string
+    Embedding []float64
+}
+
+// DocumentWithScore represents a document with a similarity score
+type DocumentWithScore struct {
+    Content string
+    Score   float64
+}
+
+// Calculate cosine similarity between two vectors
+func cosineSimilarity(a, b []float64) float64 {
+    var dotProduct float64
+    var normA float64
+    var normB float64
+
+    for i := range a {
+        dotProduct += a[i] * b[i]
+        normA += a[i] * a[i]
+        normB += b[i] * b[i]
+    }
+
+    return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB))
+}
+
+func main() {
+    ctx := context.Background()
+
+    // Initialize the Ollama embeddings model with a specific model
+    embeddingModel, err := ollama.New(
+        ollama.WithModel("nomic-embed-text"), // Specify embedding model
+    )
+    if err != nil {
+        log.Fatalf("Failed to initialize Ollama embeddings: %v", err)
+    }
+
+    // Initialize the Ollama LLM for text generation
+    llm, err := ollamallm.New(
+        ollamallm.WithModel("llama3"), // Specify LLM model
+    )
+    if err != nil {
+        log.Fatalf("Failed to initialize Ollama LLM: %v", err)
+    }
+
+    // Sample knowledge base
+    knowledgeBase := []string{
+        "LangChain is a framework for developing applications powered by language models.",
+        "Ollama is an open-source project that allows running LLMs locally.",
+        "Embeddings are vector representations of text that capture semantic meaning.",
+        "RAG stands for Retrieval Augmented Generation, a technique to enhance LLM responses with external knowledge.",
+        "Go is a statically typed, compiled programming language designed at Google.",
+    }
+
+    // Create document embeddings
+    fmt.Println("Creating document embeddings...")
+    var documents []Document
+
+    docEmbeddings, err := embeddingModel.EmbedDocuments(ctx, knowledgeBase)
+    if err != nil {
+        log.Fatalf("Failed to generate document embeddings: %v", err)
+    }
+
+    for i, content := range knowledgeBase {
+        documents = append(documents, Document{
+            Content:   content,
+            Embedding: docEmbeddings[i],
+        })
+    }
+
+    // Function to retrieve relevant documents
+    retrieveRelevantDocs := func(query string, k int) ([]DocumentWithScore, error) {
+        // Generate embedding for the query
+        queryEmbedding, err := embeddingModel.EmbedQuery(ctx, query)
+        if err != nil {
+            return nil, fmt.Errorf("failed to generate query embedding: %v", err)
+        }
+
+        // Calculate similarity scores
+        var docsWithScores []DocumentWithScore
+        for _, doc := range documents {
+            score := cosineSimilarity(queryEmbedding, doc.Embedding)
+            docsWithScores = append(docsWithScores, DocumentWithScore{
+                Content: doc.Content,
+                Score:   score,
+            })
+        }
+
+        // Sort by similarity score (descending)
+        sort.Slice(docsWithScores, func(i, j int) bool {
+            return docsWithScores[i].Score > docsWithScores[j].Score
+        })
+
+        // Return top k results
+        if k > len(docsWithScores) {
+            k = len(docsWithScores)
+        }
+        return docsWithScores[:k], nil
+    }
+
+    // Example query
+    query := "What is LangChain and how does it relate to embeddings?"
+    fmt.Printf("\nQuery: %s\n", query)
+
+    // Retrieve relevant documents
+    relevantDocs, err := retrieveRelevantDocs(query, 2)
+    if err != nil {
+        log.Fatalf("Failed to retrieve relevant documents: %v", err)
+    }
+
+    fmt.Println("\nRelevant documents:")
+    var context string
+    for i, doc := range relevantDocs {
+        fmt.Printf("%d. [Score: %.4f] %s\n", i+1, doc.Score, doc.Content)
+        context += doc.Content + "\n"
+    }
+
+    // Generate response using the LLM with retrieved context
+    prompt := fmt.Sprintf("Based on the following information:\n\n%s\n\nAnswer this question: %s", context, query)
+
+    response, err := llm.Call(ctx, prompt, llms.WithTemperature(0.2))
+    if err != nil {
+        log.Fatalf("Failed to generate response: %v", err)
+    }
+
+    fmt.Printf("\nGenerated response:\n%s\n", response)
+}
+*/
+
 package ai
 
 import (
