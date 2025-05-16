@@ -11,8 +11,8 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 ```
 
 # Features
-* Standalone native binary (AMD64, ARM64, ...)
-* Customizable via feature flags
+* Standalone native binary for AMD64 and ARM64
+* Binary customizable via feature flags
 * Memory mapped lazy loading in support of big files
 * Multi core data handling for fast response times
 * Canonical hex view of binary files
@@ -24,7 +24,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 * Build-in AI with RAG support via LangChain and Ollama
 * Build-in file statistics support
 * Build-in input and output history
-* Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQL
+* Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQLite
 * Evidence bag cryptographic signing via HMAC-SHA256
 * Graphical user interface
 * Suspend to shell support
