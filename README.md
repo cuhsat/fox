@@ -24,6 +24,7 @@ go install -tags=ui,ai github.com/cuhsat/fox@latest
 * Build-in AI with RAG support via LangChain and Ollama
 * Build-in file statistics support
 * Build-in input and output history
+* Configurable plugin support for tools like Dissect
 * Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQLite
 * Evidence bag cryptographic signing via HMAC-SHA256
 * Graphical user interface

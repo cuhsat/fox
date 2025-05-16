@@ -11,6 +11,8 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
+type action func(ch chan<- smap.String, h *Heap, c *chunk, b []byte)
+
 type filter struct {
 	pattern string     // filter pattern
 	smap    *smap.SMap // filter string map
@@ -63,7 +65,7 @@ func (h *Heap) Filter() *Heap {
 }
 
 func (h *Heap) AddFilter(p string) {
-	s := h.find([]byte(p), h.Lines())
+	s := h.call(grep, []byte(p), h.Lines())
 
 	h.Lock()
 
@@ -92,7 +94,7 @@ func (h *Heap) last() *filter {
 	return h.filters[len(h.filters)-1]
 }
 
-func (h *Heap) find(b []byte, bs int) *smap.SMap {
+func (h *Heap) call(fn action, b []byte, bs int) *smap.SMap {
 	ch := make(chan smap.String, bs)
 
 	defer close(ch)
@@ -104,7 +106,7 @@ func (h *Heap) find(b []byte, bs int) *smap.SMap {
 
 		go func() {
 			defer wg.Done()
-			grep(ch, h, c, b)
+			fn(ch, h, c, b)
 		}()
 	}
 
