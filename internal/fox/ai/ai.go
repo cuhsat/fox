@@ -58,7 +58,7 @@ type Agent struct {
 	ch    chan string           // agent channel
 }
 
-func Init(model, embed string) bool {
+func Init(model string) bool {
 	var err error
 
 	if len(model) == 0 {
@@ -96,12 +96,6 @@ func (a *Agent) Close() {
 }
 
 func (a *Agent) Prompt(s string, h *heap.Heap) {
-	// texts := make([]string, h.Lines())
-
-	// for _, str := range *h.SMap() {
-	// 	texts = append(texts, h.Unmap(&str))
-	// }
-
 	a.write(fmt.Sprintf("%s %s\n", text.Chevron, s))
 	a.human(fmt.Sprintf(input, string(h.Bytes()), s))
 
