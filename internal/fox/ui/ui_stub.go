@@ -1,4 +1,4 @@
-//go:build !ui
+//go:build no_ui
 
 package ui
 

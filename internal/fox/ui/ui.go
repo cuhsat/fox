@@ -1,4 +1,4 @@
-//go:build ui
+//go:build !no_ui
 
 package ui
 
@@ -47,7 +47,7 @@ type UI struct {
 
 	root tcell.Screen
 
-	chat    *ai.Chat
+	agent   *ai.Agent
 	plugins *plugins.Plugins
 	themes  *themes.Themes
 
@@ -92,7 +92,7 @@ func New(m mode.Mode) *UI {
 	}
 
 	if ai.Build && ai.Init(ctx.Model()) {
-		ui.chat = ai.NewChat()
+		ui.agent = ai.NewAgent()
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -117,8 +117,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
 
-	if ui.chat != nil {
-		go ui.chat.Listen(hi)
+	if ui.agent != nil {
+		go ui.agent.Listen(hi)
 	}
 
 	esc := false
@@ -345,7 +345,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlA:
-					ui.change(mode.AI)
+					ui.change(mode.Rag)
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
@@ -466,15 +466,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						})
 						ui.change(ui.ctx.Last())
 
-					case mode.AI:
-						if ui.chat != nil {
+					case mode.Rag:
+						if ui.agent != nil {
 							ui.view.Reset()
 							ui.ctx.Background(func() {
 								ui.prompt.Lock(true)
-								ui.chat.Prompt(v, heap)
+								ui.agent.Prompt(v, heap)
 								ui.prompt.Lock(false)
 							})
-							hs.OpenChat(ui.chat.Path())
+							hs.OpenChat(ui.agent.Path())
 						}
 
 					default:
@@ -536,8 +536,8 @@ func (ui *UI) Close() {
 		plugins.Close()
 	}
 
-	if ui.chat != nil {
-		ui.chat.Close()
+	if ui.agent != nil {
+		ui.agent.Close()
 	}
 
 	ui.overlay.Close()
@@ -546,9 +546,9 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) change(m mode.Mode) {
-	// check for AI support
-	if m == mode.AI && ui.chat == nil {
-		ui.overlay.SendError("AI not available")
+	// check for RAG support
+	if m == mode.Rag && ui.agent == nil {
+		ui.overlay.SendError("RAG agent not available")
 		return
 	}
 

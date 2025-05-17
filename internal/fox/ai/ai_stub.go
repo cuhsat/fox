@@ -1,4 +1,4 @@
-//go:build !ai
+//go:build no_ai
 
 package ai
 
@@ -10,7 +10,7 @@ const (
 	Build = false
 )
 
-type Chat struct {
+type Agent struct {
 	// stub
 }
 
@@ -18,22 +18,22 @@ func Init(model string) bool {
 	return false
 }
 
-func NewChat() *Chat {
+func NewAgent() *Agent {
 	return nil
 }
 
-func (_ *Chat) Path() string {
+func (_ *Agent) Path() string {
 	return ""
 }
 
-func (_ *Chat) Close() {
+func (_ *Agent) Close() {
 	// stub
 }
 
-func (_ *Chat) Prompt(s string, b []byte) {
+func (_ *Agent) Prompt(s string, b []byte) {
 	// stub
 }
 
-func (_ *Chat) Listen(hi *history.History) {
+func (_ *Agent) Listen(hi *history.History) {
 	// stub
 }
