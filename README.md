@@ -1,6 +1,6 @@
 ![](assets/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. As a forensic tool, no write access is made. For more information simply type `fox --help`.
+The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. For more information simply type `fox --help`.
 
 ![](assets/demo.png "Demo")
 
@@ -17,6 +17,7 @@ go install github.com/cuhsat/fox@latest
 * Multi core data handling for fast response times
 * Canonical hex view of binary files
 * Regular expression filtering
+* Write access is prohibited
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in decompression of: bzip2, gzip, tar, xz, zip, zlib, zstd

@@ -3,8 +3,6 @@ package gzip
 import (
 	"compress/gzip"
 	"io"
-	"path/filepath"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -29,9 +27,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	b := strings.TrimSuffix(filepath.Base(path), ".gz")
-
-	t := sys.TempFile("gzip", filepath.Ext(b))
+	t := sys.TempFile("gzip")
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

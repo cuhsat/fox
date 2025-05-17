@@ -52,7 +52,7 @@ func NewSqlWriter() *SqlWriter {
 	return new(SqlWriter)
 }
 
-func (w *SqlWriter) Init(f *os.File, n bool, t string) {
+func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
 	var err error
 
 	f.Close()

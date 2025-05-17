@@ -38,10 +38,6 @@ const (
 	brSuffix = "ESC[201~" // bracketed paste end
 )
 
-const (
-	cursor = tcell.CursorStyleBlinkingBar
-)
-
 type UI struct {
 	ctx *context.Context
 
@@ -72,7 +68,7 @@ func New(m mode.Mode) *UI {
 		sys.Panic(err)
 	}
 
-	root.EnableMouse()
+	root.EnableMouse(tcell.MouseDragEvents)
 	root.EnablePaste()
 
 	ctx := context.New(root)
@@ -95,7 +91,7 @@ func New(m mode.Mode) *UI {
 		ui.agent = ai.NewAgent(ctx.Model())
 	}
 
-	root.SetCursorStyle(cursor, themes.Cursor)
+	root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 	root.SetStyle(themes.Base)
 	root.Sync()
 
@@ -220,8 +216,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						heap = hs.NextHeap()
 					}
 
-				case tcell.KeyF1:
-					fallthrough
 				case tcell.KeyF2:
 					fallthrough
 				case tcell.KeyF3:
@@ -344,7 +338,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
 
-				case tcell.KeyCtrlF:
+				case tcell.KeyCtrlF, tcell.KeyF1:
 					ui.change(mode.Rag)
 
 				case tcell.KeyCtrlE:
@@ -368,8 +362,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					ui.root.Fill(' ', themes.Base)
 					ui.root.Show()
-
-					ui.root.SetCursorStyle(cursor, themes.Cursor)
+					ui.root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 
 					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
 
@@ -518,7 +511,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					default: // all other keys
 						if ui.ctx.Mode() == mode.Less {
-							ui.change(mode.Grep)
+							ui.change(mode.Rag)
 						}
 
 						ui.prompt.AddRune(r)
