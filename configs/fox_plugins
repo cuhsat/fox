@@ -16,9 +16,6 @@ Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 # execute command
 Command = 'target-info "$FILE"'
 
-# output type
-Output = "text"
-
 # available variables:
 #
 #  $INPUT   user input value
@@ -28,9 +25,9 @@ Output = "text"
 #
 # available hotkeys:
 #
-#  F1 - F7
+#  F2 - F7
 #
-[Plugin.F1]
+[Plugin.F2]
 
 # plugin name
 Name = "target-query"
@@ -40,6 +37,3 @@ Prompt = "Query"
 
 # execute command
 Command = 'target-query -j -f "$INPUT" "$BASE"'
-
-# output type
-Output = "jsonl"

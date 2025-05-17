@@ -2,8 +2,6 @@ package zstd
 
 import (
 	"io"
-	"path/filepath"
-	"strings"
 
 	"github.com/klauspost/compress/zstd"
 
@@ -30,9 +28,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	b := strings.TrimSuffix(filepath.Base(path), ".zstd")
-
-	t := sys.TempFile("zstd", filepath.Ext(b))
+	t := sys.TempFile("zstd")
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

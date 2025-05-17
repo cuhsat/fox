@@ -3,6 +3,7 @@
 package ai
 
 import (
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
@@ -14,11 +15,11 @@ type Agent struct {
 	// stub
 }
 
-func Init(model string) bool {
+func Init() bool {
 	return false
 }
 
-func NewAgent() *Agent {
+func NewAgent(model string) *Agent {
 	return nil
 }
 
@@ -30,7 +31,7 @@ func (_ *Agent) Close() {
 	// stub
 }
 
-func (_ *Agent) Prompt(s string, b []byte) {
+func (_ *Agent) Prompt(s string, h *heap.Heap) {
 	// stub
 }
 

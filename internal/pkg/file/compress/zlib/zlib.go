@@ -2,8 +2,6 @@ package zlib
 
 import (
 	"io"
-	"path/filepath"
-	"strings"
 
 	"github.com/klauspost/compress/zlib"
 
@@ -39,9 +37,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	b := strings.TrimSuffix(filepath.Base(path), ".zz")
-
-	t := sys.TempFile("zlib", filepath.Ext(b))
+	t := sys.TempFile("zlib")
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

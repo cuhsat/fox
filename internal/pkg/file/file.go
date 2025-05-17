@@ -13,8 +13,10 @@ type Item struct {
 	Name string
 }
 
-func CanFormat(p string) bool {
-	return strings.HasSuffix(strings.ToLower(p), ".jsonl")
+func CanFormat(l string) bool {
+	l = strings.TrimSpace(l)
+
+	return strings.HasPrefix(l, "{") && strings.HasSuffix(l, "}")
 }
 
 func HasMagic(p string, o int, m []byte) bool {

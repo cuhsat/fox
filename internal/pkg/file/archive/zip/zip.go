@@ -3,7 +3,6 @@ package zip
 import (
 	"archive/zip"
 	"io"
-	"path/filepath"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
@@ -44,7 +43,7 @@ func Deflate(path string) (i []*file.Item) {
 			continue
 		}
 
-		t := sys.TempFile("zip", filepath.Ext(filepath.Base(f.Name)))
+		t := sys.TempFile("zip")
 
 		_, err = io.Copy(t, a)
 

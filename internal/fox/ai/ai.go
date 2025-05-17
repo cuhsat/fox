@@ -68,7 +68,7 @@ func NewAgent(model string) *Agent {
 
 	return &Agent{
 		model: model,
-		file:  sys.TempFile("rag", ".txt"),
+		file:  sys.TempFile("rag"),
 		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}
@@ -95,10 +95,13 @@ func (a *Agent) Prompt(s string, h *heap.Heap) {
 		Model:    a.model,
 		Messages: a.msgs,
 		Options: map[string]any{
+			"num_ctx":     4096,
 			"temperature": 0.1,
 			"seed":        82,
 		},
 	}
+
+	a.RUnlock()
 
 	if err := rag.Chat(ctx, req, func(cr api.ChatResponse) error {
 		if s := cr.Message.Content; len(s) > 0 {
@@ -111,8 +114,6 @@ func (a *Agent) Prompt(s string, h *heap.Heap) {
 	}); err != nil {
 		sys.Error(err)
 	}
-
-	a.RUnlock()
 }
 
 func (a *Agent) Listen(hi *history.History) {

@@ -2,8 +2,6 @@ package xz
 
 import (
 	"io"
-	"path/filepath"
-	"strings"
 
 	"github.com/ulikunitz/xz"
 
@@ -28,9 +26,7 @@ func Deflate(path string) string {
 		return path
 	}
 
-	b := strings.TrimSuffix(filepath.Base(path), ".xz")
-
-	t := sys.TempFile("xz", filepath.Ext(b))
+	t := sys.TempFile("xz")
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

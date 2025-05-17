@@ -3,8 +3,6 @@ package bzip2
 import (
 	"compress/bzip2"
 	"io"
-	"path/filepath"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -22,9 +20,7 @@ func Deflate(path string) string {
 
 	r := bzip2.NewReader(a)
 
-	b := strings.TrimSuffix(filepath.Base(path), ".bz2")
-
-	t := sys.TempFile("bzip2", filepath.Ext(b))
+	t := sys.TempFile("bzip2")
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

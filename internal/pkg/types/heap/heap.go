@@ -182,9 +182,15 @@ func (h *Heap) Wrap(w int) {
 
 	l := h.last()
 
+	if len(*l.smap) == 0 {
+		return // is empty
+	}
+
+	s := h.Unmap(&(*l.smap)[0])
+
 	h.Lock()
 
-	if file.CanFormat(h.Path) {
+	if file.CanFormat(s) {
 		l.rmap = l.smap.Format(h.mmap)
 	} else {
 		l.rmap = l.smap.Wrap(w)

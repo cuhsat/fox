@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
@@ -29,7 +30,7 @@ const (
 )
 
 const (
-	header = "FORENSIC EXAMINER EVIDENCE BAG"
+	header = "Forensic Examiner Evidence Bag %s"
 )
 
 type Bag struct {
@@ -159,7 +160,7 @@ func (bag *Bag) init() bool {
 		return false
 	}
 
-	bag.w.Init(bag.file, !is, header)
+	bag.w.Init(bag.file, !is, fmt.Sprintf(header, fox.Version))
 
 	return true
 }

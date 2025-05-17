@@ -31,7 +31,8 @@ Ctrl + b             Open evidence bag
 Ctrl + s             Save evidence bag
 Ctrl + c             Copy to clipboard
 Ctrl + z             Suspend to shell
-F1 - F7              Execute plugin
+F1                   Execute RAG agent
+F2 - F7              Execute plugin(s)
 F8                   Show file(s) counts
 F9                   Show file(s) MD5
 F10                  Show file(s) SHA1

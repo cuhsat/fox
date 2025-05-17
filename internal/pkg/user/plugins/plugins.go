@@ -23,10 +23,6 @@ const (
 	varInput = "$INPUT"
 )
 
-const (
-	ext = "text"
-)
-
 var (
 	Input chan string
 )
@@ -44,14 +40,12 @@ type Autostart struct {
 	Name    string `toml:"Name"`
 	Pattern string `toml:"Pattern"`
 	Command string `toml:"Command"`
-	Output  string `toml:"Output"`
 }
 
 type Plugin struct {
 	Name    string `toml:"Name"`
 	Prompt  string `toml:"Prompt"`
 	Command string `toml:"Command"`
-	Output  string `toml:"Output"`
 }
 
 func (a *Autostart) Match(p string) bool {
@@ -59,23 +53,13 @@ func (a *Autostart) Match(p string) bool {
 }
 
 func (a *Autostart) Execute(f, b string, hs []string) (string, string) {
-	e := ext
-
-	if len(a.Output) > 0 {
-		e = a.Output
-	}
-
 	cmd := expand(a.Command, f, b, "", hs)
 
-	return sys.Exec(cmd, e), title(b, a.Name, "")
+	return sys.Exec(cmd), title(b, a.Name, "")
 }
 
 func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
-	e, i := ext, ""
-
-	if len(p.Output) > 0 {
-		e = p.Output
-	}
+	i := ""
 
 	if len(p.Prompt) > 0 {
 		i = expand(<-Input, f, b, "", hs)
@@ -83,7 +67,7 @@ func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
 
 	cmd := expand(p.Command, f, b, i, hs)
 
-	fn(sys.Exec(cmd, e), b, title(b, p.Name, i))
+	fn(sys.Exec(cmd), b, title(b, p.Name, i))
 }
 
 func (ps *Plugins) Automatic() (as []Autostart) {

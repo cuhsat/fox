@@ -8,9 +8,9 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
 const (
@@ -27,10 +27,10 @@ func Exit(v ...any) {
 	os.Exit(1)
 }
 
-func Exec(s, e string) string {
-	f := TempFile("exec", "."+e)
+func Exec(s string) string {
+	f := TempFile("exec")
 
-	args := strings.Split(s, " ")
+	args := text.Split(s)
 
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = f
@@ -70,7 +70,7 @@ func Stdin() string {
 		Panic("invalid mode")
 	}
 
-	f := TempFile("stdin", ".txt")
+	f := TempFile("stdin")
 
 	go func(f *os.File) {
 		r := bufio.NewReader(os.Stdin)
@@ -100,11 +100,11 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-	return TempFile("stdout", ".txt")
+	return TempFile("stdout")
 }
 
 func Stderr() *os.File {
-	return TempFile("stderr", ".txt")
+	return TempFile("stderr")
 }
 
 func IsPiped(f *os.File) bool {
@@ -137,8 +137,8 @@ func OpenFile(path string) *os.File {
 	return f
 }
 
-func TempFile(name, ext string) *os.File {
-	f, err := os.CreateTemp("", fmt.Sprintf("fox-%s-*%s", name, ext))
+func TempFile(name string) *os.File {
+	f, err := os.CreateTemp("", fmt.Sprintf("fox-%s-*", name))
 
 	if err != nil {
 		Panic(err)
@@ -148,7 +148,7 @@ func TempFile(name, ext string) *os.File {
 }
 
 func Extract(data string) string {
-	f := TempFile("extract", ".txt")
+	f := TempFile("extract")
 
 	_, err := f.WriteString(data)
 

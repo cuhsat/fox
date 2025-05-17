@@ -3,7 +3,6 @@ package tar
 import (
 	"archive/tar"
 	"io"
-	"path/filepath"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
@@ -38,7 +37,7 @@ func Deflate(path string) (i []*file.Item) {
 			continue
 		}
 
-		t := sys.TempFile("tar", filepath.Ext(filepath.Base(h.Name)))
+		t := sys.TempFile("tar")
 
 		_, err = io.Copy(t, r)
 		_ = t.Close()
