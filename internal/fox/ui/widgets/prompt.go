@@ -15,7 +15,7 @@ import (
 
 const (
 	grep = '❯'
-	tail = 'F'
+	tail = 'E'
 	line = 'N'
 	wrap = 'W'
 	off  = '·'

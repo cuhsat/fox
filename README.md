@@ -21,10 +21,10 @@ go install github.com/cuhsat/fox@latest
 * Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in decompression of: bzip2, gzip, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
-* Build-in RAG agent provided by LangChain and Ollama
+* Build-in RAG agent provided by an Ollama local LLM
 * Build-in file statistics support
 * Build-in input and output history
-* Configurable plugin support for tools like Fox ITs Dissect
+* Configurable plugin support for tools like Fox-IT's Dissect
 * Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQLite
 * Evidence bag cryptographic signing via HMAC-SHA256
 * Graphical user interface

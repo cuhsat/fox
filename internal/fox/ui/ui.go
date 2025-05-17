@@ -91,8 +91,8 @@ func New(m mode.Mode) *UI {
 		overlay: widgets.NewOverlay(ctx),
 	}
 
-	if ai.Build && ai.Init(ctx.Model()) {
-		ui.agent = ai.NewAgent()
+	if ai.Build && ai.Init() {
+		ui.agent = ai.NewAgent(ctx.Model())
 	}
 
 	root.SetCursorStyle(cursor, themes.Cursor)
@@ -344,8 +344,24 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
 
-				case tcell.KeyCtrlA:
+				case tcell.KeyCtrlF:
 					ui.change(mode.Rag)
+
+				case tcell.KeyCtrlE:
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleFollow()
+					}
+
+				case tcell.KeyCtrlN:
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleNumbers()
+					}
+
+				case tcell.KeyCtrlW:
+					if ui.ctx.Mode() != mode.Hex {
+						ui.ctx.ToggleWrap()
+						ui.view.Reset()
+					}
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
@@ -384,7 +400,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
 
-				case tcell.KeyCtrlE:
+				case tcell.KeyCtrlB:
 					if sys.Exists(bag.Path) {
 						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Regular)
 					} else {
@@ -402,22 +418,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					if hs.CloseHeap() == nil {
 						return // exit
-					}
-
-				case tcell.KeyCtrlF:
-					if ui.ctx.Mode() != mode.Hex {
-						ui.ctx.ToggleFollow()
-					}
-
-				case tcell.KeyCtrlN:
-					if ui.ctx.Mode() != mode.Hex {
-						ui.ctx.ToggleNumbers()
-					}
-
-				case tcell.KeyCtrlW:
-					if ui.ctx.Mode() != mode.Hex {
-						ui.ctx.ToggleWrap()
-						ui.view.Reset()
 					}
 
 				case tcell.KeyCtrlZ:

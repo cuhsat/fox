@@ -30,7 +30,7 @@ Theme = "Default"
 # ollama model
 Model = "Default"
 
-# scroll to end on reload
+# scroll to end on changes
 Tail = false
 
 # show line numbers

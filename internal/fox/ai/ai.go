@@ -9,8 +9,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tmc/langchaingo/llms"
-	"github.com/tmc/langchaingo/llms/ollama"
+	_ "embed"
+
+	"github.com/ollama/ollama/api"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
@@ -26,41 +27,37 @@ const (
 	Model = "mistral"
 )
 
-const (
-	input = `
-As an logfile analyst, you are tasked with answering questions about log files,
-or other line based text files.
-Use only the following context to answer the question.
-If you can't find the answer the provided context,
-answer with: "This information is not available in the provided context."
-
-Context (line numbers are in square brackets):
-%s
-
-Question:
-%s
-
-Answer precise, topic oriented and cite relevent lines.
-If you refer to a specific line within the context,
-give also the according line number i.e. "In line [123] ...".
-`
+var (
+	//go:embed prompt.txt
+	Prompt string
 )
 
 var (
-	llm *ollama.LLM
+	rag *api.Client
 )
 
 type Agent struct {
 	sync.RWMutex
 
-	file  *os.File              // agent file
-	parts []llms.MessageContent // agent history
-	ch    chan string           // agent channel
+	model string        // agent model
+	file  *os.File      // agent file
+	msgs  []api.Message // agent history
+	ch    chan string   // agent channel
 }
 
-func Init(model string) bool {
+func Init() bool {
 	var err error
 
+	rag, err = api.ClientFromEnvironment()
+
+	if err != nil {
+		sys.Error(err)
+	}
+
+	return err == nil
+}
+
+func NewAgent(model string) *Agent {
 	if len(model) == 0 {
 		model = Model
 	}
@@ -69,20 +66,10 @@ func Init(model string) bool {
 		model = Model
 	}
 
-	llm, err = ollama.New(ollama.WithModel(model))
-
-	if err != nil {
-		sys.Error(err)
-		return false
-	}
-
-	return true
-}
-
-func NewAgent() *Agent {
 	return &Agent{
+		model: model,
 		file:  sys.TempFile("rag", ".txt"),
-		parts: make([]llms.MessageContent, 0),
+		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}
 }
@@ -97,24 +84,35 @@ func (a *Agent) Close() {
 
 func (a *Agent) Prompt(s string, h *heap.Heap) {
 	a.write(fmt.Sprintf("%s %s\n", text.Chevron, s))
-	a.human(fmt.Sprintf(input, string(h.Bytes()), s))
 
-	if _, err := llm.GenerateContent(
-		context.Background(),
-		a.parts,
-		llms.WithSeed(0),
-		llms.WithTemperature(0),
-		llms.WithStreamingFunc(func(ctx context.Context, chunk []byte) error {
-			if len(chunk) > 0 {
-				a.ch <- string(chunk)
-			} else {
-				a.ch <- "\n\n"
-			}
-			return nil
-		}),
-	); err != nil {
+	a.addHeap(h)
+	a.addPrompt(fmt.Sprintf(Prompt, s))
+
+	a.RLock()
+
+	ctx := context.Background()
+	req := &api.ChatRequest{
+		Model:    a.model,
+		Messages: a.msgs,
+		Options: map[string]any{
+			"temperature": 0.1,
+			"seed":        82,
+		},
+	}
+
+	if err := rag.Chat(ctx, req, func(cr api.ChatResponse) error {
+		if s := cr.Message.Content; len(s) > 0 {
+			a.ch <- s
+		} else {
+			a.ch <- "\n\n"
+		}
+
+		return nil
+	}); err != nil {
 		sys.Error(err)
 	}
+
+	a.RUnlock()
 }
 
 func (a *Agent) Listen(hi *history.History) {
@@ -123,7 +121,7 @@ func (a *Agent) Listen(hi *history.History) {
 	for s := range a.ch {
 		// response start
 		if buf.Len() == 0 {
-			s = strings.TrimLeft(s, " ")
+			s = strings.TrimSpace(s)
 		}
 
 		// response chunk
@@ -134,11 +132,34 @@ func (a *Agent) Listen(hi *history.History) {
 		if s == "\n\n" {
 			s = buf.String()
 
-			a.agent(s)
+			a.addAnswer(s)
 			hi.AddSystem(s)
 			buf.Reset()
 		}
 	}
+}
+
+func (a *Agent) addHeap(h *heap.Heap) {
+	for _, str := range *h.SMap() {
+		a.addMessage("tool", fmt.Sprintf("[%d] %s", str.Nr, h.Unmap(&str)))
+	}
+}
+
+func (a *Agent) addPrompt(s string) {
+	a.addMessage("user", s)
+}
+
+func (a *Agent) addAnswer(s string) {
+	a.addMessage("assistant", s)
+}
+
+func (a *Agent) addMessage(r, s string) {
+	a.Lock()
+	a.msgs = append(a.msgs, api.Message{
+		Role:    r,
+		Content: s,
+	})
+	a.Unlock()
 }
 
 func (a *Agent) write(s string) {
@@ -156,19 +177,5 @@ func (a *Agent) write(s string) {
 		sys.Error(err)
 	}
 
-	a.Unlock()
-}
-
-func (a *Agent) human(s string) {
-	a.history(llms.ChatMessageTypeHuman, s)
-}
-
-func (a *Agent) agent(s string) {
-	a.history(llms.ChatMessageTypeSystem, s)
-}
-
-func (a *Agent) history(r llms.ChatMessageType, s string) {
-	a.Lock()
-	a.parts = append(a.parts, llms.TextParts(r, s))
 	a.Unlock()
 }

@@ -14,7 +14,7 @@ Name = "target-info"
 Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
 # execute command
-Command = "target-info $FILE"
+Command = 'target-info "$FILE"'
 
 # output type
 Output = "text"
@@ -39,7 +39,7 @@ Name = "target-query"
 Prompt = "Query"
 
 # execute command
-Command = "target-query -j -f $INPUT $BASE"
+Command = 'target-query -j -f "$INPUT" "$BASE"'
 
 # output type
 Output = "jsonl"
