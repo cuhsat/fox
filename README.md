@@ -23,7 +23,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in decompression of: bzip2, gzip, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in RAG agent provided by an Ollama local LLM
-* Build-in parser for Windows event log format EVTX
+* Build-in parser for Windows event log EVTX format
 * Build-in file statistics support
 * Build-in input and output history
 * Configurable plugin support for tools like Fox-IT's Dissect
