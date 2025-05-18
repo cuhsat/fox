@@ -180,13 +180,11 @@ func (h *Heap) Wrap(w int) {
 		return // use cache
 	}
 
-	l := h.last()
+	l, s := h.last(), ""
 
-	if len(*l.smap) == 0 {
-		return // is empty
+	if len(*l.smap) > 0 {
+		s = h.Unmap(&(*l.smap)[0])
 	}
-
-	s := h.Unmap(&(*l.smap)[0])
 
 	h.Lock()
 
