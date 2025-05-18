@@ -511,7 +511,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					default: // all other keys
 						if ui.ctx.Mode() == mode.Less {
-							ui.change(mode.Rag)
+							ui.change(mode.Grep)
 						}
 
 						ui.prompt.AddRune(r)

@@ -123,7 +123,7 @@ func title(b, p, i string) string {
 		s = fmt.Sprintf(":%s", i)
 	}
 
-	return fmt.Sprintf("%s@%s%s", b, p, s)
+	return fmt.Sprintf("%s (%s%s)", b, p, s)
 }
 
 func expand(s, f, b, i string, hs []string) string {
