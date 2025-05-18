@@ -29,20 +29,36 @@ func Exit(v ...any) {
 
 func Exec(cmds []string) string {
 	f := TempFile()
+	defer f.Close()
+
+	var stdout io.ReadCloser = nil
+	var stderr io.ReadCloser = nil
 
 	for _, cmd := range cmds {
 		args := text.Split(cmd)
 
 		if len(args) > 0 {
 			cmd := exec.Command(args[0], args[1:]...)
-			cmd.Stdout = f
-			cmd.Stderr = f
 
-			_ = cmd.Run()
+			if stdout != nil && stderr != nil {
+				cmd.Stdin = io.MultiReader(stderr, stdout)
+			}
+
+			stdout, _ = cmd.StdoutPipe()
+			stderr, _ = cmd.StderrPipe()
+
+			_ = cmd.Start()
+			defer cmd.Wait()
 		}
 	}
 
-	_ = f.Close()
+	if stdout != nil {
+		go io.Copy(f, stdout)
+	}
+
+	if stderr != nil {
+		go io.Copy(f, stderr)
+	}
 
 	return f.Name()
 }
