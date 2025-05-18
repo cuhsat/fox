@@ -17,6 +17,8 @@ require (
 )
 
 require (
+	github.com/0xrawsec/golang-evtx v1.2.9 // indirect
+	github.com/0xrawsec/golang-utils v1.3.0 // indirect
 	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect

@@ -5,6 +5,9 @@ NIST Computer Forensic Reference DataSet Portal
 EICAR Anti-Virus Test File
 - https://www.eicar.org/download-anti-malware-testfile/
 
+Windows Events Attack Samples
+- https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES
+
 Microsoft Edge JSON Dummy Data
 - https://microsoftedge.github.io/Demos/json-dummy-data/
 
