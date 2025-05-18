@@ -25,12 +25,13 @@ func main() {
 	om := types.File
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
-	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	w := flag.BoolP("count", "w", false, "output file line and byte count")
-	s := flag.StringP("sum", "s", "", "output file hash sums")
+	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
+	s := flag.BoolP("strings", "s", false, "output file ASCII and Unicode strings")
+	H := flag.StringP("hash", "H", "", "output file hash sums")
 
-	if len(*s) == 0 {
-		flag.Lookup("sum").NoOptDefVal = heap.Sha256
+	if len(*H) == 0 {
+		flag.Lookup("hash").NoOptDefVal = heap.Sha256
 	}
 
 	// file limits
@@ -89,7 +90,7 @@ func main() {
 		sys.Exit("head or tail")
 	}
 
-	if *x && len(*s) > 0 {
+	if *x && len(*H) > 0 {
 		sys.Exit("hex or sum")
 	}
 
@@ -149,6 +150,10 @@ func main() {
 		om = types.Count
 	}
 
+	if *s {
+		om = types.String
+	}
+
 	if *x {
 		rm = mode.Hex
 		om = types.Hex
@@ -159,7 +164,7 @@ func main() {
 		om = types.Grep
 	}
 
-	if len(*s) > 0 {
+	if len(*H) > 0 {
 		om = types.Hash
 	}
 
@@ -184,7 +189,7 @@ func main() {
 	defer hs.ThrowAway()
 
 	if *p || !ui.Build {
-		hs.Print(om, *s)
+		hs.Print(om, *H)
 		return
 	}
 

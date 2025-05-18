@@ -20,4 +20,5 @@ const (
 	Hex
 	Hash
 	Count
+	String
 )

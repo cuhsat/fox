@@ -40,6 +40,8 @@ func (hs *HeapSet) Print(op types.Output, sum string) {
 			printHash(&ctx, sum)
 		case types.Count:
 			printCount(&ctx)
+		case types.String:
+			printString(&ctx)
 		}
 	}
 
@@ -79,4 +81,10 @@ func printHash(ctx *buffer.Context, sum string) {
 
 func printCount(ctx *buffer.Context) {
 	fmt.Printf("%8dL %8dB  %s\n", ctx.Heap.Total(), ctx.Heap.Size(), ctx.Heap.String())
+}
+
+func printString(ctx *buffer.Context) {
+	for _, s := range ctx.Heap.Strings() {
+		fmt.Println(s)
+	}
 }

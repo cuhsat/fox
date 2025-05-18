@@ -3,6 +3,7 @@ package heapset
 import (
 	"fmt"
 	"io"
+	"strings"
 	"sync/atomic"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -63,6 +64,12 @@ func (hs *HeapSet) Sha3() {
 func (hs *HeapSet) Counts() {
 	hs.newBuffer("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Total(), h.Size(), h.String())
+	})
+}
+
+func (hs *HeapSet) Strings() {
+	hs.newBuffer("strings", func(h *heap.Heap) string {
+		return strings.Join(h.Strings(), "\n")
 	})
 }
 
