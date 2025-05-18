@@ -35,8 +35,8 @@ func Exec(s string) string {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = f
 	cmd.Stderr = f
-	_ = cmd.Run()
 
+	_ = cmd.Run()
 	_ = f.Close()
 
 	return f.Name()

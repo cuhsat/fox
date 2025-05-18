@@ -86,7 +86,7 @@ func (h *Heap) Reload() {
 	}
 
 	h.size = fi.Size()
-	h.hash = make(Hash, 4)
+	h.hash = make(Hash, 8)
 
 	if h.mmap != nil {
 		_ = h.mmap.Unmap()
