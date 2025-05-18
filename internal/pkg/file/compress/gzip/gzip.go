@@ -27,7 +27,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	t := sys.TempFile("gzip")
+	t := sys.TempFile()
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

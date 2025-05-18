@@ -28,7 +28,7 @@ func Exit(v ...any) {
 }
 
 func Exec(s string) string {
-	f := TempFile("exec")
+	f := TempFile()
 
 	args := text.Split(s)
 
@@ -70,7 +70,7 @@ func Stdin() string {
 		Panic("invalid mode")
 	}
 
-	f := TempFile("stdin")
+	f := TempFile()
 
 	go func(f *os.File) {
 		r := bufio.NewReader(os.Stdin)
@@ -100,11 +100,11 @@ func Stdin() string {
 }
 
 func Stdout() *os.File {
-	return TempFile("stdout")
+	return TempFile()
 }
 
 func Stderr() *os.File {
-	return TempFile("stderr")
+	return TempFile()
 }
 
 func IsPiped(f *os.File) bool {
@@ -137,8 +137,8 @@ func OpenFile(path string) *os.File {
 	return f
 }
 
-func TempFile(name string) *os.File {
-	f, err := os.CreateTemp("", fmt.Sprintf("fox-%s-*", name))
+func TempFile() *os.File {
+	f, err := os.CreateTemp("", "fox-*")
 
 	if err != nil {
 		Panic(err)
@@ -148,7 +148,7 @@ func TempFile(name string) *os.File {
 }
 
 func Extract(data string) string {
-	f := TempFile("extract")
+	f := TempFile()
 
 	_, err := f.WriteString(data)
 

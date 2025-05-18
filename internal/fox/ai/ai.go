@@ -68,7 +68,7 @@ func NewAgent(model string) *Agent {
 
 	return &Agent{
 		model: model,
-		file:  sys.TempFile("rag"),
+		file:  sys.TempFile(),
 		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}

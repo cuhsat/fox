@@ -52,13 +52,13 @@ func (a *Autostart) Match(p string) bool {
 	return a.re.MatchString(p)
 }
 
-func (a *Autostart) Execute(f, b string, hs []string) (string, string) {
+func (a *Autostart) Exec(f, b string, hs []string) (string, string) {
 	cmd := expand(a.Command, f, b, "", hs)
 
 	return sys.Exec(cmd), title(b, a.Name, "")
 }
 
-func (p *Plugin) Execute(f, b string, hs []string, fn Callback) {
+func (p *Plugin) Exec(f, b string, hs []string, fn Callback) {
 	i := ""
 
 	if len(p.Prompt) > 0 {
