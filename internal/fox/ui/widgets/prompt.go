@@ -139,7 +139,7 @@ func (p *Prompt) AddRune(r rune) {
 	c := p.cursor.Load()
 	cm := p.cursorMax.Load()
 
-	if p.Locked() || c >= cm || cm == 0 {
+	if p.Locked() || c >= cm || cm == 0 || c < 0 {
 		return
 	}
 
