@@ -37,15 +37,15 @@ type Plugins struct {
 type Autostart struct {
 	re *regexp.Regexp
 
-	Name    string `toml:"Name"`
-	Pattern string `toml:"Pattern"`
-	Command string `toml:"Command"`
+	Name     string   `toml:"Name"`
+	Pattern  string   `toml:"Pattern"`
+	Commands []string `toml:"Commands"`
 }
 
 type Plugin struct {
-	Name    string `toml:"Name"`
-	Prompt  string `toml:"Prompt"`
-	Command string `toml:"Command"`
+	Name     string   `toml:"Name"`
+	Prompt   string   `toml:"Prompt"`
+	Commands []string `toml:"Commands"`
 }
 
 func (a *Autostart) Match(p string) bool {
@@ -53,9 +53,14 @@ func (a *Autostart) Match(p string) bool {
 }
 
 func (a *Autostart) Exec(f, b string, hs []string) (string, string) {
-	cmd := expand(a.Command, f, b, "", hs)
+	cmds := make([]string, len(a.Commands))
 
-	return sys.Exec(cmd), title(b, a.Name, "")
+	for _, cmd := range a.Commands {
+		cmds = append(cmds, expand(cmd, f, b, "", hs))
+
+	}
+
+	return sys.Exec(cmds), title(b, a.Name, "")
 }
 
 func (p *Plugin) Exec(f, b string, hs []string, fn Callback) {
@@ -65,9 +70,14 @@ func (p *Plugin) Exec(f, b string, hs []string, fn Callback) {
 		i = expand(<-Input, f, b, "", hs)
 	}
 
-	cmd := expand(p.Command, f, b, i, hs)
+	cmds := make([]string, len(p.Commands))
 
-	fn(sys.Exec(cmd), b, title(b, p.Name, i))
+	for _, cmd := range p.Commands {
+		cmds = append(cmds, expand(cmd, f, b, i, hs))
+
+	}
+
+	fn(sys.Exec(cmds), b, title(b, p.Name, i))
 }
 
 func (ps *Plugins) Automatic() (as []Autostart) {

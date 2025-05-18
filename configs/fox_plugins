@@ -14,7 +14,10 @@ Name = "target-info"
 Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
 # execute command
-Command = 'target-info "$FILE"'
+Commands = [
+  'target-info "$FILE"',
+  'unesc',
+]
 
 # available variables:
 #
@@ -36,4 +39,7 @@ Name = "target-query"
 Prompt = "Query"
 
 # execute command
-Command = 'target-query -j -f "$INPUT" "$BASE"'
+Commands = [
+  'target-query -j -f "$INPUT" "$BASE"',
+  'unesc',
+]
