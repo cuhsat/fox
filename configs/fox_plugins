@@ -16,7 +16,6 @@ Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 # execute command
 Commands = [
   'target-info "$FILE"',
-  'unesc',
 ]
 
 # available variables:
@@ -41,5 +40,4 @@ Prompt = "Query"
 # execute command
 Commands = [
   'target-query -j -f "$INPUT" "$BASE"',
-  'unesc',
 ]
