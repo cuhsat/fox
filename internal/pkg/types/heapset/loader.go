@@ -34,9 +34,8 @@ func (hs *HeapSet) loadPath(path string) {
 
 	base := path
 
+	// check for compression
 	switch {
-	case evtx.Detect(path):
-		path = evtx.Parse(path)
 	case bzip2.Detect(path):
 		path = bzip2.Deflate(path)
 	case gzip.Detect(path):
@@ -47,12 +46,21 @@ func (hs *HeapSet) loadPath(path string) {
 		path = zlib.Deflate(path)
 	case zstd.Detect(path):
 		path = zstd.Deflate(path)
+	}
+
+	// check for archive
+	switch {
 	case tar.Detect(path):
 		hs.loadTar(path, base)
 		return
 	case zip.Detect(path):
 		hs.loadZip(path, base)
 		return
+	}
+
+	// check for parser
+	if evtx.Detect(path) {
+		path = evtx.Parse(path)
 	}
 
 	for _, p := range hs.plugins {
@@ -128,6 +136,11 @@ func (hs *HeapSet) loadAuto(path, base, title string) {
 }
 
 func (hs *HeapSet) loadItem(i *file.Item, base string) {
+	// check for parser
+	if evtx.Detect(i.Path) {
+		i.Path = evtx.Parse(i.Path)
+	}
+
 	hs.atomicAdd(&heap.Heap{
 		Title: filepath.Join(base, i.Name),
 		Path:  i.Path,
