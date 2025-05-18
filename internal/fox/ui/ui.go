@@ -216,6 +216,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						heap = hs.NextHeap()
 					}
 
+				case tcell.KeyF1:
+					fallthrough
 				case tcell.KeyF2:
 					fallthrough
 				case tcell.KeyF3:
@@ -225,8 +227,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyF5:
 					fallthrough
 				case tcell.KeyF6:
-					fallthrough
-				case tcell.KeyF7:
 					if ui.plugins == nil {
 						continue
 					}
@@ -247,6 +247,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					if len(pl.Prompt) > 0 {
 						ui.change(mode.Mode(pl.Prompt))
 					}
+
+				case tcell.KeyF7:
+					hs.Strings()
 
 				case tcell.KeyF8:
 					hs.Counts()
@@ -338,7 +341,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
 
-				case tcell.KeyCtrlF, tcell.KeyF1:
+				case tcell.KeyCtrlF:
 					ui.change(mode.Rag)
 
 				case tcell.KeyCtrlE:
