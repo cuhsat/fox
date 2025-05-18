@@ -27,16 +27,21 @@ func Exit(v ...any) {
 	os.Exit(1)
 }
 
-func Exec(s string) string {
+func Exec(cmds []string) string {
 	f := TempFile()
 
-	args := text.Split(s)
+	for _, cmd := range cmds {
+		args := text.Split(cmd)
 
-	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdout = f
-	cmd.Stderr = f
+		if len(args) > 0 {
+			cmd := exec.Command(args[0], args[1:]...)
+			cmd.Stdout = f
+			cmd.Stderr = f
 
-	_ = cmd.Run()
+			_ = cmd.Run()
+		}
+	}
+
 	_ = f.Close()
 
 	return f.Name()
