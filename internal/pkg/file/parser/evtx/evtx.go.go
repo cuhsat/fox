@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	LF byte = 0xa
+	LF = 0xa
 )
 
 func Detect(path string) bool {

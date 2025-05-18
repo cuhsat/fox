@@ -13,7 +13,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/file/compress/xz"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zlib"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zstd"
-	evtx "github.com/cuhsat/fox/internal/pkg/file/parser"
+	"github.com/cuhsat/fox/internal/pkg/file/parser/evtx"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
