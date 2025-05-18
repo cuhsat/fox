@@ -26,7 +26,7 @@ func Deflate(path string) string {
 		return path
 	}
 
-	t := sys.TempFile("xz")
+	t := sys.TempFile()
 	defer t.Close()
 
 	_, err = io.Copy(t, r)
