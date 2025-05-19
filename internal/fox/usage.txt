@@ -1,3 +1,63 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f5d4127c57d22728d23f7ea9d2e1e53669411ffd815eb68c1a006c22cffab1be
-size 2347
+ ___ ___  ___ ___ _  _ ___ ___ ___   _____  __   _   __  __ ___ _  _ ___ ___
+| __/ _ \| _ \ __| \| / __|_ _/ __| | __\ \/ /  /_\ |  \/  |_ _| \| | __| _ \
+| _| (_) |   / _|| .' \__ \| | (__  | _| >  <  / _ \| |\/| || || .' | _||   /
+|_| \___/|_|_\___|_|\_|___/___\___| |___/_/\_\/_/ \_\_|  |_|___|_|\_|___|_|_\
+
+The Swiss Army Knife for examining text files (%s)
+
+Usage: fox [--print] [--count] [--hex] [--strings]
+           [--hash={md5|sha1|sha256|sha3|sha3-...}]
+           [--head|tail] [--lines|bytes=NUMBER]
+           [--regexp=PATTERN ...]
+           [--file=FILE] [--key=KEY]
+           [--mode={text,markdown,json,jsonlines,xml,sql}]
+           [PATH ...]
+
+Positional arguments:
+  PATH(s) to open or '-' for STDIN (default: open UI and show Help)
+
+Console:
+  -p, --print              print to console (no UI)
+  -w, --count              output file line and byte counts
+  -x, --hex                output file in hex / start in HEX mode
+  -s, --strings            output file ASCII and Unicode strings
+  -H, --hash={md5,sha1,sha256,sha3,sha3-...}
+                           output file hash sums (default: sha256)
+  -l, --lookup=HASHSUM     output reverse lookup of hash sum
+
+File limits:
+  -h, --head               limit head of file by ...
+  -t, --tail               limit tail of file by ...
+  -n, --lines=NUMBER       number of lines (default: 10)
+  -c, --bytes=NUMBER       number of bytes (default: 16)
+
+Line filter:
+  -e, --regexp=PATTERN     filter for lines that matches pattern
+
+Evidence bag:
+  -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
+  -m, --mode={text,markdown,json,jsonl,xml,sql}
+                           output mode (default: text)
+  -k, --key=KEY            key phrase for signing with HMAC
+
+Aliases:
+  -j, --json               short for --mode=json
+  -J, --jsonlines          short for --mode=jsonlines
+  -M, --markdown           short for --mode=markdown
+  -S, --sql                short for --mode=sql
+  -X, --xml                short for --mode=xml
+
+Standard options:
+      --help               shows this message
+      --version            shows version
+
+Example: print matching lines
+  $ fox -pe "John Doe" ./**/*.jsonl
+
+Example: print content hashes
+  $ fox -pH sha256 example.zip
+
+Example: print first sector in hex
+  $ fox -pxhc=512 example.dd > mbr
+
+Type "fox" for more help...
