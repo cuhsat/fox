@@ -23,19 +23,21 @@ func main() {
 	// console
 	rm := mode.Default
 	om := types.File
+	ov := ""
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	w := flag.BoolP("count", "w", false, "output file line and byte count")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	s := flag.BoolP("strings", "s", false, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output file hash sums")
+	l := flag.StringP("lookup", "l", "", "output reverse lookup of hash sum")
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = heap.Sha256
 	}
 
 	// file limits
-	l := types.GetLimits()
+	limits := types.GetLimits()
 
 	h := flag.BoolP("head", "h", false, "limit head of file by ...")
 	t := flag.BoolP("tail", "t", false, "limit tail of file by ...")
@@ -54,9 +56,9 @@ func main() {
 	}
 
 	// line filter
-	e := types.GetFilters()
+	filters := types.GetFilters()
 
-	flag.VarP(e, "regexp", "e", "filter for lines that matches pattern")
+	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
 
 	// evidence bag
 	f := flag.StringP("file", "f", "EVIDENCE", "file name of evidence bag")
@@ -86,6 +88,7 @@ func main() {
 
 	a := flag.Args()
 
+	// flag checks
 	if *h && *t {
 		sys.Exit("head or tail")
 	}
@@ -94,7 +97,7 @@ func main() {
 		sys.Exit("hex or sum")
 	}
 
-	if *x && len(*e) > 0 {
+	if *x && len(*filters) > 0 {
 		sys.Exit("hex or pattern")
 	}
 
@@ -102,6 +105,7 @@ func main() {
 		sys.Exit("hex needs bytes")
 	}
 
+	// features
 	if *v {
 		u, a := "no", "no"
 
@@ -118,14 +122,16 @@ func main() {
 		os.Exit(0)
 	}
 
+	// file limits
 	if *h {
-		l.Head = *c
+		limits.Head = *c
 	}
 
 	if *t {
-		l.Tail = *c
+		limits.Tail = *c
 	}
 
+	// evidence bag types
 	if *j {
 		*m = bag.Json
 	}
@@ -146,6 +152,7 @@ func main() {
 		*m = bag.Sql
 	}
 
+	// output mode
 	if *w {
 		om = types.Count
 	}
@@ -154,18 +161,26 @@ func main() {
 		om = types.String
 	}
 
+	if len(*H) > 0 {
+		om = types.Hash
+		ov = *H
+	}
+
+	if len(*l) > 0 {
+		om = types.Lookup
+		ov = *l
+		*p = true
+	}
+
+	// render mode
 	if *x {
 		rm = mode.Hex
 		om = types.Hex
 	}
 
-	if len(*e) > 0 {
+	if len(*filters) > 0 {
 		rm = mode.Grep
 		om = types.Grep
-	}
-
-	if len(*H) > 0 {
-		om = types.Hash
 	}
 
 	sys.SetupLogger()
@@ -189,7 +204,7 @@ func main() {
 	defer hs.ThrowAway()
 
 	if *p || !ui.Build {
-		hs.Print(om, *H)
+		hs.Print(om, ov)
 		return
 	}
 

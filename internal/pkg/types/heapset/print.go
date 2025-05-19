@@ -10,7 +10,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
-func (hs *HeapSet) Print(op types.Output, sum string) {
+func (hs *HeapSet) Print(op types.Output, v string) {
 	ctx := buffer.Context{
 		Line: true,
 		Wrap: false,
@@ -37,11 +37,13 @@ func (hs *HeapSet) Print(op types.Output, sum string) {
 		case types.Hex:
 			printHex(&ctx)
 		case types.Hash:
-			printHash(&ctx, sum)
+			printHash(&ctx, v)
 		case types.Count:
 			printCount(&ctx)
 		case types.String:
 			printString(&ctx)
+		case types.Lookup:
+			printLookup(v)
 		}
 	}
 
@@ -86,5 +88,11 @@ func printCount(ctx *buffer.Context) {
 func printString(ctx *buffer.Context) {
 	for _, s := range ctx.Heap.Strings() {
 		fmt.Println(s)
+	}
+}
+
+func printLookup(hash string) {
+	for s := range text.Lookup(hash) {
+		fmt.Printf("[+]  %s\n", s)
 	}
 }

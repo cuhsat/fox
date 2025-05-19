@@ -21,4 +21,5 @@ const (
 	Hash
 	Count
 	String
+	Lookup
 )
