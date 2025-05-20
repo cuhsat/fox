@@ -1,6 +1,6 @@
 ![](assets/logo.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **strings**, **head**, **tail**, **wc**, and various decompression and hash algorithms into one performant standalone binary. For more information simply type `fox --help`.
+The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc**, and various decompression and hash algorithms into one performant standalone binary. For more information simply type `fox --help`.
 
 ![](assets/demo.png "Demo")
 
