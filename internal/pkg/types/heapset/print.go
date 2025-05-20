@@ -86,7 +86,7 @@ func printCount(ctx *buffer.Context) {
 }
 
 func printString(ctx *buffer.Context) {
-	for _, s := range ctx.Heap.Strings() {
+	for s := range ctx.Heap.Strings() {
 		fmt.Println(s)
 	}
 }

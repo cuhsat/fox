@@ -154,22 +154,25 @@ func main() {
 
 	// output mode
 	if *w {
+		*p = true
 		om = types.Count
 	}
 
 	if *s {
+		*p = true
 		om = types.String
 	}
 
 	if len(*H) > 0 {
+		*p = true
 		om = types.Hash
 		ov = *H
 	}
 
 	if len(*l) > 0 {
+		*p = true
 		om = types.Lookup
 		ov = *l
-		*p = true
 	}
 
 	// render mode
