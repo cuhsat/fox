@@ -18,8 +18,8 @@ const (
 )
 
 const (
-	minASCII = 0x20
-	maxASCII = 0x7f
+	MinASCII = 0x20
+	MaxASCII = 0x7f
 )
 
 const (
@@ -39,7 +39,7 @@ func ToASCII(s string) string {
 }
 
 func AsASCII(r rune) rune {
-	if r < minASCII || r > maxASCII {
+	if r < MinASCII || r > MaxASCII {
 		return notASCII
 	}
 

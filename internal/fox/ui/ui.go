@@ -249,11 +249,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyF7:
-					hs.Strings()
+					hs.Counts()
 					ui.change(mode.Default)
 
 				case tcell.KeyF8:
-					hs.Counts()
+					hs.Strings()
 					ui.change(mode.Default)
 
 				case tcell.KeyF9:

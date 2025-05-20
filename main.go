@@ -23,14 +23,18 @@ func main() {
 	// console
 	rm := mode.Default
 	om := types.File
-	ov := ""
+	var ov any
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
-	w := flag.BoolP("count", "w", false, "output file line and byte count")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
-	s := flag.BoolP("strings", "s", false, "output file ASCII and Unicode strings")
-	H := flag.StringP("hash", "H", "", "output file hash sums")
-	l := flag.StringP("lookup", "l", "", "output reverse lookup of hash sum")
+	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
+	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
+	H := flag.StringP("hash", "H", "", "output hash sum of file")
+	R := flag.StringP("reverse", "R", "", "output hash sum reverse lookup")
+
+	if *s == 0 {
+		flag.Lookup("strings").NoOptDefVal = "3"
+	}
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = heap.Sha256
@@ -155,12 +159,13 @@ func main() {
 	// output mode
 	if *w {
 		*p = true
-		om = types.Count
+		om = types.Stats
 	}
 
-	if *s {
+	if *s > 0 {
 		*p = true
-		om = types.String
+		om = types.Strings
+		ov = *s
 	}
 
 	if len(*H) > 0 {
@@ -169,10 +174,10 @@ func main() {
 		ov = *H
 	}
 
-	if len(*l) > 0 {
+	if len(*R) > 0 {
 		*p = true
-		om = types.Lookup
-		ov = *l
+		om = types.Reverse
+		ov = *R
 	}
 
 	// render mode

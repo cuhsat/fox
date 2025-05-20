@@ -71,8 +71,8 @@ func (hs *HeapSet) Strings() {
 	hs.newBuffer("strings", func(h *heap.Heap) string {
 		ss := make([]string, 0)
 
-		for s := range h.Strings() {
-			ss = append(ss, s)
+		for s := range h.Strings(3) {
+			ss = append(ss, s.Str)
 		}
 
 		return strings.Join(ss, "\n")

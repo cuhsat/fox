@@ -61,7 +61,7 @@ func Hex(ctx *Context) HexBuffer {
 			return hb
 		}
 
-		nr := fmt.Sprintf("%0*x ", 8, tail+i+(ctx.Y*16))
+		nr := fmt.Sprintf("%08x ", tail+i+(ctx.Y*16))
 
 		l := HexLine{
 			Line: Line{Nr: nr, Str: ""},
