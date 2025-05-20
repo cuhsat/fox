@@ -3,8 +3,10 @@ package text
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strings"
 
+	"github.com/cuhsat/fox/internal/pkg/data"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -70,4 +72,24 @@ func Split(s string) (r []string) {
 	}
 
 	return
+}
+
+func Reverse(s string) <-chan string {
+	ch := make(chan string)
+
+	go func() {
+		for _, h := range data.Hashes {
+			re := regexp.MustCompile(h.Regex)
+
+			if re.MatchString(s) {
+				for _, s := range h.Names {
+					ch <- s
+				}
+			}
+		}
+
+		close(ch)
+	}()
+
+	return ch
 }

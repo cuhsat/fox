@@ -3,103 +3,102 @@ package heap
 import (
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
-const (
-	minString = 3
-)
+type String struct {
+	Off int
+	Str string
+}
 
-const (
-	minASCII = 0x20
-	maxASCII = 0x7f
-)
+func (h *Heap) Strings(min int) <-chan String {
+	ch1 := make(chan byte, 1024)
+	ch2 := make(chan String)
 
-func (h *Heap) Strings() <-chan string {
-	ch := make(chan string)
+	go h.readMMap(ch1)
+	go h.carveStr(ch1, ch2, min)
 
-	rc := make(chan byte, 1024)
+	return ch2
+}
 
-	go func() {
-		for _, c := range *h.mmap {
-			rc <- c
-		}
+func (h *Heap) readMMap(ch chan<- byte) {
+	defer close(ch)
 
-		close(rc)
-	}()
+	h.RLock()
 
-	go func() {
-		var s []rune
+	for _, c := range *h.mmap {
+		ch <- c
+	}
 
-		buf := make([]byte, 4)
+	h.RUnlock()
+}
 
-		h.RLock()
+func (h *Heap) carveStr(ch <-chan byte, s chan<- String, m int) {
+	var rs []rune
 
-		for b := range rc {
-			buf[0] = b
+	buf := make([]byte, 4)
+	off := 0
 
-			if utf8.RuneStart(b) {
-				w := 1
-				m := utf8ByteCount(b)
-
-				if m > 1 && m <= utf8.UTFMax {
-					for i := 1; i < m; i++ {
-						b, ok := <-rc
-
-						if !ok {
-							break
-						}
-
-						buf[i] = b
-						w++
-					}
-				}
-
-				r, _ := utf8.DecodeRune(buf[:w])
-
-				if r != utf8.RuneError && unicode.IsPrint(r) {
-					s = append(s, r)
-				} else {
-					if len(s) >= minString {
-						ch <- string(s)
-					}
-
-					s = s[:0]
-				}
-			} else {
-				if b >= minASCII && b <= maxASCII {
-					s = append(s, rune(b))
-				} else {
-					if len(buf) >= minString {
-						ch <- string(s)
-					}
-
-					s = s[:0]
-				}
+	flush := func(m int) {
+		if len(rs) >= m {
+			s <- String{
+				Off: off - (len(rs) + 1),
+				Str: string(rs),
 			}
 		}
 
-		if len(buf) >= minString {
-			ch <- string(buf)
-		}
-
-		h.RUnlock()
-
-		close(ch)
-	}()
-
-	return ch
-}
-
-func utf8ByteCount(b byte) int {
-	if b&0x80 == 0 {
-		return 1
-	} else if b&0xE0 == 0xC0 {
-		return 2
-	} else if b&0xF0 == 0xE0 {
-		return 3
-	} else if b&0xF8 == 0xF0 {
-		return 4
+		rs = rs[:0]
 	}
 
-	return 1
+	defer close(s)
+	defer flush(m)
+
+	for b := range ch {
+		buf[0] = b
+		off++
+
+		if utf8.RuneStart(b) {
+			l := 1
+			n := 1
+
+			if b&0x80 == 0 {
+				n = 1
+			} else if b&0xE0 == 0xC0 {
+				n = 2
+			} else if b&0xF0 == 0xE0 {
+				n = 3
+			} else if b&0xF8 == 0xF0 {
+				n = 4
+			}
+
+			if n > 1 && n <= utf8.UTFMax {
+				for i := 1; i < n; i++ {
+					b, ok := <-ch
+					off++
+
+					if !ok {
+						break
+					}
+
+					buf[i] = b
+					l++
+				}
+			}
+
+			r, _ := utf8.DecodeRune(buf[:l])
+
+			if r != utf8.RuneError && unicode.IsPrint(r) {
+				rs = append(rs, r)
+			} else {
+				flush(m)
+			}
+		} else {
+			if b >= text.MinASCII && b <= text.MaxASCII {
+				rs = append(rs, rune(b))
+			} else {
+				flush(m)
+			}
+		}
+	}
 }

@@ -10,7 +10,11 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
-func (hs *HeapSet) Print(op types.Output, v string) {
+const (
+	termW = 78 // default terminal width
+)
+
+func (hs *HeapSet) Print(op types.Output, v any) {
 	ctx := buffer.Context{
 		Line: true,
 		Wrap: false,
@@ -37,13 +41,13 @@ func (hs *HeapSet) Print(op types.Output, v string) {
 		case types.Hex:
 			printHex(&ctx)
 		case types.Hash:
-			printHash(&ctx, v)
-		case types.Count:
-			printCount(&ctx)
-		case types.String:
-			printString(&ctx)
-		case types.Lookup:
-			printLookup(v)
+			printHash(&ctx, v.(string))
+		case types.Stats:
+			printStats(&ctx)
+		case types.Strings:
+			printStrings(&ctx, v.(int))
+		case types.Reverse:
+			printReverse(v.(string))
 		}
 	}
 
@@ -65,7 +69,7 @@ func printGrep(ctx *buffer.Context) {
 }
 
 func printHex(ctx *buffer.Context) {
-	ctx.W = 78 // use default terminal width
+	ctx.W = termW
 
 	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
 	fmt.Println(buffer.Hex(ctx))
@@ -81,18 +85,24 @@ func printHash(ctx *buffer.Context, sum string) {
 	fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
 }
 
-func printCount(ctx *buffer.Context) {
-	fmt.Printf("%8dL %8dB  %s\n", ctx.Heap.Total(), ctx.Heap.Size(), ctx.Heap.String())
+func printStats(ctx *buffer.Context) {
+	fmt.Printf("%8dL %8dB  %s\n",
+		ctx.Heap.Total(),
+		ctx.Heap.Size(),
+		ctx.Heap.String(),
+	)
 }
 
-func printString(ctx *buffer.Context) {
-	for s := range ctx.Heap.Strings() {
-		fmt.Println(s)
+func printStrings(ctx *buffer.Context, min int) {
+	fmt.Println(text.Title(ctx.Heap.String(), termW))
+	for s := range ctx.Heap.Strings(min) {
+		fmt.Printf("%08x  %s\n", s.Off, s.Str)
 	}
 }
 
-func printLookup(hash string) {
-	for s := range text.Lookup(hash) {
+func printReverse(hash string) {
+	fmt.Printf("Hash: %s\n", hash)
+	for s := range text.Reverse(hash) {
 		fmt.Printf("[+]  %s\n", s)
 	}
 }

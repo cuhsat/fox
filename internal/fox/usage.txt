@@ -5,8 +5,9 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Usage: fox [--print] [--count] [--hex] [--strings]
-           [--hash={md5|sha1|sha256|sha3|sha3-...}]
+Usage: fox [--print] [--hex] [--counts] [--strings=MIN]
+           [--hash={md5|sha1|sha256|sha3|sha3-224|sha3-256|sha3-384|sha3-512}]
+           [--reverse=HASHSUM]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...]
            [--file=FILE] [--key=KEY]
@@ -18,12 +19,12 @@ Positional arguments:
 
 Console:
   -p, --print              print to console (no UI)
-  -w, --count              output file line and byte counts
   -x, --hex                output file in hex / start in HEX mode
-  -s, --strings            output file ASCII and Unicode strings
-  -H, --hash={md5,sha1,sha256,sha3,sha3-...}
-                           output file hash sums (default: sha256)
-  -l, --lookup=HASHSUM     output reverse lookup of hash sum
+  -w, --counts             output file line and byte counts
+  -s, --strings=MIN        output file ASCII and Unicode strings (default: 3)
+  -H, --hash={md5,sha1,sha256,sha3,sha3-224,sha3-256,sha3-384,sha3-512}
+                           output hash sum of file (default: sha256)
+  -R, --reverse=HASHSUM    output hash sum reverse lookup
 
 File limits:
   -h, --head               limit head of file by ...

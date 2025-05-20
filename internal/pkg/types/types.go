@@ -19,7 +19,7 @@ const (
 	Grep
 	Hex
 	Hash
-	Count
-	String
-	Lookup
+	Reverse
+	Stats
+	Strings
 )
