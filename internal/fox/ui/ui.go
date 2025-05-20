@@ -201,7 +201,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						if !ui.ctx.Last().Prompt() {
 							ui.change(ui.ctx.Last())
 						} else {
-							ui.change(mode.Less)
+							ui.change(mode.Default)
 						}
 					}
 
@@ -250,21 +250,27 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyF7:
 					hs.Strings()
+					ui.change(mode.Default)
 
 				case tcell.KeyF8:
 					hs.Counts()
+					ui.change(mode.Default)
 
 				case tcell.KeyF9:
 					hs.Md5()
+					ui.change(mode.Default)
 
 				case tcell.KeyF10:
 					hs.Sha1()
+					ui.change(mode.Default)
 
 				case tcell.KeyF11:
 					hs.Sha256()
+					ui.change(mode.Default)
 
 				case tcell.KeyF12:
 					hs.Sha3()
+					ui.change(mode.Default)
 
 				case tcell.KeyUp:
 					if ui.ctx.Mode().Prompt() {
@@ -488,7 +494,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						if !ui.ctx.Last().Prompt() {
 							ui.change(ui.ctx.Last())
 						} else {
-							ui.change(mode.Less)
+							ui.change(mode.Default)
 						}
 					} else if len(*types.GetFilters()) > 0 {
 						if ui.ctx.Mode() != mode.Hex {

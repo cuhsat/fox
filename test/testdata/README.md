@@ -5,6 +5,9 @@ NIST Computer Forensic Reference DataSet Portal
 EICAR Anti-Virus Test File
 - https://www.eicar.org/download-anti-malware-testfile/
 
+AMTSO Potentially Unwanted Application Test File
+- https://www.amtso.org/feature-settings-check-potentially-unwanted-applications/
+
 Windows Events Attack Samples
 - https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES
 

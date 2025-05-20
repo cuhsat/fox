@@ -69,7 +69,13 @@ func (hs *HeapSet) Counts() {
 
 func (hs *HeapSet) Strings() {
 	hs.newBuffer("strings", func(h *heap.Heap) string {
-		return strings.Join(h.Strings(), "\n")
+		ss := make([]string, 0)
+
+		for s := range h.Strings() {
+			ss = append(ss, s)
+		}
+
+		return strings.Join(ss, "\n")
 	})
 }
 
