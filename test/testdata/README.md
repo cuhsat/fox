@@ -7,6 +7,7 @@ EICAR Anti-Virus Test File
 
 AMTSO Potentially Unwanted Application Test File
 - https://www.amtso.org/feature-settings-check-potentially-unwanted-applications/
+- https://www.amtso.org/feature-settings-check-cloud-lookups/
 
 Windows Events Attack Samples
 - https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES
