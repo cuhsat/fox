@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/pkg/data"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -78,7 +77,7 @@ func Reverse(s string) <-chan string {
 	ch := make(chan string)
 
 	go func() {
-		for _, h := range data.Hashes {
+		for _, h := range Hashes {
 			re := regexp.MustCompile(h.Regex)
 
 			if re.MatchString(s) {

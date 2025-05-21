@@ -5,9 +5,11 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
-func (v *View) hexRender(x, y, w, h int) {
-	ruleW := 2
+const (
+	ruleW = 2
+)
 
+func (v *View) hexRender(x, y, w, h int) {
 	buf := buffer.Hex(&buffer.Context{
 		Heap: v.heap,
 		Line: v.ctx.IsLine(),
@@ -18,30 +20,25 @@ func (v *View) hexRender(x, y, w, h int) {
 		H:    h,
 	})
 
-	if len(buf.Lines) > 0 {
-		w -= len(buf.Lines[0].Nr) + 1
-	}
-
 	// set buffer bounds
 	v.lastX = max(buf.W, 0)
 	v.lastY = max(buf.H-h, 0)
 
 	// render buffer
-	for i, line := range buf.Lines {
-		lineX := x
-		lineY := y + i
-
+	for line := range buf.Lines {
 		// print offset number
-		v.print(lineX+0, lineY, line.Nr, themes.Subtext0)
+		v.print(x+0, y, line.Nr, themes.Subtext0)
 
 		// print hex values
-		v.print(lineX+11, lineY, line.Hex, themes.Base)
+		v.print(x+11, y, line.Hex, themes.Base)
 
 		// print text value
-		v.print(lineX+62, lineY, line.Str, themes.Base)
+		v.print(x+62, y, line.Str, themes.Base)
 
 		// print separators on top
-		v.print(lineX+9, lineY, "│", themes.Subtext1)
-		v.print(lineX+60, lineY, "│", themes.Subtext1)
+		v.print(x+9, y, "│", themes.Subtext1)
+		v.print(x+60, y, "│", themes.Subtext1)
+
+		y++
 	}
 }
