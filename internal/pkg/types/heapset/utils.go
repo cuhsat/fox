@@ -3,6 +3,7 @@ package heapset
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"sync/atomic"
 
@@ -72,10 +73,12 @@ func (hs *HeapSet) Strings() {
 		ss := make([]string, 0)
 
 		for s := range h.Strings(3) {
-			ss = append(ss, s.Str)
+			ss = append(ss, strings.TrimSpace(s.Str))
 		}
 
-		return strings.Join(ss, "\n")
+		slices.Sort(ss)
+
+		return strings.Join(slices.Compact(ss), "\n")
 	})
 }
 

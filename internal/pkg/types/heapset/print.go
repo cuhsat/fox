@@ -3,6 +3,7 @@ package heapset
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
@@ -96,7 +97,7 @@ func printStats(ctx *buffer.Context) {
 func printStrings(ctx *buffer.Context, min int) {
 	fmt.Println(text.Title(ctx.Heap.String(), termW))
 	for s := range ctx.Heap.Strings(min) {
-		fmt.Printf("%08x  %s\n", s.Off, s.Str)
+		fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
 	}
 }
 
