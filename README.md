@@ -54,3 +54,5 @@ go install github.com/cuhsat/fox@latest
     * Matrix
     * Ansi16
     * Monochrome
+
+![](assets/tail.png "Blue Tail")
