@@ -73,7 +73,9 @@ func printHex(ctx *buffer.Context) {
 	ctx.W = termW
 
 	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
-	fmt.Println(buffer.Hex(ctx))
+	for l := range buffer.Hex(ctx).Lines {
+		fmt.Println(l)
+	}
 }
 
 func printHash(ctx *buffer.Context, sum string) {
