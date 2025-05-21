@@ -2,13 +2,11 @@
 
 The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc**, and various decompression and hash algorithms into one performant standalone binary. For more information simply type `fox --help`.
 
-![](assets/demo.png "Demo")
-
-# Install
-
 ```console
 go install github.com/cuhsat/fox@latest
 ```
+
+![](assets/demo.png "Demo")
 
 # Features
 * Standalone native binary for AMD64 and ARM64
