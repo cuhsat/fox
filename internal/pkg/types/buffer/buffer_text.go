@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	BlankTab = "    "
 	BlankOff = " "
 )
 
@@ -45,7 +44,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 	}
 
 	if ctx.Wrap && ctx.Heap.RMap() == nil {
-		ctx.Heap.Wrap(ctx.W) // TODO: ctx.W not wrapped correctly
+		ctx.Heap.Wrap(ctx.W)
 	}
 
 	if ctx.Wrap {
@@ -104,9 +103,6 @@ func Text(ctx *Context) (buf TextBuffer) {
 }
 
 func format(s string, str *smap.String) string {
-	// replace tabulators
-	s = strings.ReplaceAll(s, "\t", BlankTab)
-
 	// prepend blank for offset
 	if str.Off > 0 {
 		s = strings.Repeat(BlankOff, int(str.Off)) + strings.TrimSpace(s)

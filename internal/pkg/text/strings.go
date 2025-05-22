@@ -34,7 +34,9 @@ func Abl(s string, w int) string {
 }
 
 func Trim(s string, l, r int) string {
-	s = runewidth.TruncateLeft(s, l, "")
+	//s = runewidth.TruncateLeft(s, l, "")
+	s = s[l:]
+
 	s = runewidth.Truncate(s, r, "→")
 
 	return s
