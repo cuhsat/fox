@@ -3,7 +3,6 @@ package file
 import (
 	"bytes"
 	"io"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
@@ -11,12 +10,6 @@ import (
 type Item struct {
 	Path string
 	Name string
-}
-
-func CanFormat(l string) bool {
-	l = strings.TrimSpace(l)
-
-	return strings.HasPrefix(l, "{") && strings.HasSuffix(l, "}")
 }
 
 func HasMagic(p string, o int, m []byte) bool {

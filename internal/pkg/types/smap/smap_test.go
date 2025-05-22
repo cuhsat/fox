@@ -58,8 +58,8 @@ func BenchmarkMap(b *testing.B) {
 	})
 }
 
-func BenchmarkFormat(b *testing.B) {
-	b.Run("Benchmark Format", func(b *testing.B) {
+func BenchmarkIndent(b *testing.B) {
+	b.Run("Benchmark Indent", func(b *testing.B) {
 		f, m, err := Testdata("evtx.jsonl")
 
 		if err != nil {
@@ -79,7 +79,7 @@ func BenchmarkFormat(b *testing.B) {
 		b.ResetTimer()
 
 		for b.Loop() {
-			s.Format(m)
+			s.Indent()
 		}
 	})
 }

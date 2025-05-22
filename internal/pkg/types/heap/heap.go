@@ -2,13 +2,13 @@ package heap
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"runtime"
 	"sync"
 
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/cuhsat/fox/internal/pkg/file"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
@@ -147,28 +147,20 @@ func (h *Heap) Bytes() []byte {
 	l := h.last()
 
 	for i, s := range *l.smap {
-		end := s.End
-
-		if i < len(*l.smap)-1 {
-			end += 1 // include breaks between strings
-		}
-
-		_, err := buf.Write((*h.mmap)[s.Start:end])
+		_, err := buf.WriteString(s.Str)
 
 		if err != nil {
 			sys.Error(err)
+		}
+
+		if i < len(*l.smap)-1 {
+			buf.WriteByte('\n')
 		}
 	}
 
 	h.RUnlock()
 
 	return buf.Bytes()
-}
-
-func (h *Heap) Unmap(s *smap.String) string {
-	h.RLock()
-	defer h.RUnlock()
-	return string((*h.mmap)[s.Start:s.End])
 }
 
 func (h *Heap) Wrap(w int) {
@@ -183,13 +175,13 @@ func (h *Heap) Wrap(w int) {
 	l, s := h.last(), ""
 
 	if len(*l.smap) > 0 {
-		s = h.Unmap(&(*l.smap)[0])
+		s = (*l.smap)[0].Str
 	}
 
 	h.Lock()
 
-	if file.CanFormat(s) {
-		l.rmap = l.smap.Format(h.mmap)
+	if len(s) > 0 && json.Valid([]byte(s)) {
+		l.rmap = l.smap.Indent()
 	} else {
 		l.rmap = l.smap.Wrap(w)
 	}

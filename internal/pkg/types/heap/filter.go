@@ -1,27 +1,14 @@
 package heap
 
 import (
-	"cmp"
-	"regexp"
-	"runtime"
-	"slices"
-	"sync"
-
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
-
-type action func(ch chan<- smap.String, h *Heap, c *chunk, b []byte)
 
 type filter struct {
 	pattern string     // filter pattern
 	smap    *smap.SMap // filter string map
 	rmap    *smap.SMap // filter render map
-}
-
-type chunk struct {
-	min int // chunk start
-	max int // chunk end
 }
 
 func (h *Heap) Filter() *Heap {
@@ -65,7 +52,7 @@ func (h *Heap) Filter() *Heap {
 }
 
 func (h *Heap) AddFilter(p string) {
-	s := h.call(grep, []byte(p), h.Lines())
+	s := h.SMap().Grep([]byte(p))
 
 	h.Lock()
 
@@ -92,66 +79,4 @@ func (h *Heap) last() *filter {
 	h.RLock()
 	defer h.RUnlock()
 	return h.filters[len(h.filters)-1]
-}
-
-func (h *Heap) call(fn action, b []byte, bs int) *smap.SMap {
-	ch := make(chan smap.String, bs)
-
-	defer close(ch)
-
-	var wg sync.WaitGroup
-
-	for _, c := range chunks(bs) {
-		wg.Add(1)
-
-		go func() {
-			defer wg.Done()
-			fn(ch, h, c, b)
-		}()
-	}
-
-	wg.Wait()
-
-	return sort(ch)
-}
-
-func chunks(n int) (c []*chunk) {
-	m := min(runtime.GOMAXPROCS(0), n)
-
-	for i := range m {
-		c = append(c, &chunk{
-			min: i * n / m,
-			max: ((i + 1) * n) / m,
-		})
-	}
-
-	return
-}
-
-func grep(ch chan<- smap.String, h *Heap, c *chunk, b []byte) {
-	re, _ := regexp.Compile(string(b))
-
-	h.RLock()
-
-	for _, s := range (*h.SMap())[c.min:c.max] {
-		if re.Match((*h.mmap)[s.Start:s.End]) {
-			ch <- s
-		}
-	}
-
-	h.RUnlock()
-}
-
-func sort(ch <-chan smap.String) *smap.SMap {
-	s := make(smap.SMap, 0)
-
-	for len(ch) > 0 {
-		s = append(s, <-ch)
-	}
-
-	slices.SortStableFunc(s, func(a, b smap.String) int {
-		return cmp.Compare(a.Nr, b.Nr)
-	})
-
-	return &s
 }
