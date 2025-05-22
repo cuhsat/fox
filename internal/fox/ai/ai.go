@@ -142,7 +142,7 @@ func (a *Agent) Listen(hi *history.History) {
 
 func (a *Agent) addHeap(h *heap.Heap) {
 	for _, str := range *h.SMap() {
-		a.addMessage("tool", fmt.Sprintf("[%d] %s", str.Nr, h.Unmap(&str)))
+		a.addMessage("tool", fmt.Sprintf("[%d] %s", str.Nr, str.Str))
 	}
 }
 

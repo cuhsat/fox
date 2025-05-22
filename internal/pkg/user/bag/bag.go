@@ -130,7 +130,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	for _, s := range smap {
 		ns = append(ns, s.Nr)
-		ss = append(ss, h.Unmap(&s))
+		ss = append(ss, s.Str)
 	}
 
 	bag.w.WriteLines(ns, ss)

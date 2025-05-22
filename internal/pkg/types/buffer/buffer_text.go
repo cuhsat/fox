@@ -3,15 +3,10 @@ package buffer
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
-)
-
-const (
-	BlankOff = " "
 )
 
 type TextBuffer struct {
@@ -74,7 +69,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 				return
 			}
 
-			s := trim(format(ctx.Heap.Unmap(&str), &str), ctx.X, ctx.W)
+			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
 			buf.Lines <- TextLine{
 				Line: Line{
@@ -100,17 +95,4 @@ func Text(ctx *Context) (buf TextBuffer) {
 	}()
 
 	return
-}
-
-func format(s string, str *smap.String) string {
-	// prepend blank for offset
-	if str.Off > 0 {
-		s = strings.Repeat(BlankOff, int(str.Off)) + strings.TrimSpace(s)
-	}
-
-	return s
-}
-
-func trim(s string, x, w int) string {
-	return text.Trim(s, min(x, text.Len(s)), w)
 }

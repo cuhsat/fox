@@ -1,11 +1,15 @@
 package smap
 
 import (
-	"github.com/edsrzf/mmap-go"
-)
+	"bytes"
+	"cmp"
+	"encoding/json"
+	"regexp"
+	"runtime"
+	"slices"
+	"sync"
 
-const (
-	Space = 2
+	"github.com/edsrzf/mmap-go"
 )
 
 const (
@@ -13,13 +17,18 @@ const (
 	CR = 0x0d
 )
 
+type action func(ch chan<- String, c *chunk)
+
 type SMap []String
 
 type String struct {
-	Nr    int
-	Off   uint8
-	Start int
-	End   int
+	Nr  int
+	Str string
+}
+
+type chunk struct {
+	min int // chunk start
+	max int // chunk end
 }
 
 func Map(m *mmap.MMap) *SMap {
@@ -35,9 +44,8 @@ func Map(m *mmap.MMap) *SMap {
 
 		if a == LF || (a == CR && b != LF) {
 			*s = append(*s, String{
-				Nr:    len(*s) + 1,
-				Start: j,
-				End:   i,
+				Nr:  len(*s) + 1,
+				Str: string((*m)[j:i]),
 			})
 
 			j = i + 1
@@ -45,120 +53,61 @@ func Map(m *mmap.MMap) *SMap {
 	}
 
 	*s = append(*s, String{
-		Nr:    len(*s) + 1,
-		Start: j,
-		End:   len(*m),
+		Nr:  len(*s) + 1,
+		Str: string((*m)[j:]),
 	})
 
 	return s
 }
 
-func (s *SMap) Format(m *mmap.MMap) *SMap {
-	r := new(SMap)
+func (s *SMap) Indent() *SMap {
+	return apply(func(ch chan<- String, c *chunk) {
+		var b bytes.Buffer
 
-	pos := make(stack, 0)
+		for _, s := range (*s)[c.min:c.max] {
+			b.Reset()
 
-	var dqt, d, i, j, l int
-	var off uint8
-	var ok bool
+			err := json.Indent(&b, []byte(s.Str), "", "  ")
 
-	for _, str := range *s {
-		l = len(*r)
+			if err != nil {
+				ch <- String{s.Nr, s.Str}
+				continue
+			}
 
-		// blank line
-		if str.End-str.Start == 0 {
-			*r = append(*r, str)
-		}
-
-		pos = pos[:0]
-		dqt = 0
-		off = 0
-
-		for i = str.Start; i < str.End; i++ {
-			switch (*m)[i] {
-			case '{', '[':
-				if ok, j = pos.Pop(); ok && j < i {
-					add(r, str.Nr, j, i, off)
-				}
-
-				pos.Push(i + 1)
-
-				// bracket line
-				add(r, str.Nr, i, i+1, off)
-
-				off += Space
-
-			case '}', ']':
-				if ok, j = pos.Pop(); ok && j < i {
-					add(r, str.Nr, j, i, off)
-				}
-
-				off -= Space
-
-				d = 1
-
-				// append existing comma
-				if i < str.End-1 && (*m)[i+1] == ',' {
-					d += 1
-				}
-
-				// bracket line
-				add(r, str.Nr, i, i+d, off)
-
-				i += d - 1
-
-				pos.Push(i + d)
-
-			case ',':
-				if dqt%2 != 0 {
-					continue
-				}
-
-				if ok, j = pos.Pop(); ok {
-					add(r, str.Nr, j, i+1, off)
-				}
-
-				pos.Push(i + 1)
-
-			case '"':
-				// parser look back
-				if (*m)[max(i-1, 0)] != '\\' {
-					dqt += 1
-				}
+			for l := range bytes.SplitSeq(b.Bytes(), []byte("\n")) {
+				ch <- String{s.Nr, string(l)}
 			}
 		}
-
-		// normal line
-		if len(*r) == l {
-			*r = append(*r, str)
-		}
-	}
-
-	return r
+	}, len(*s))
 }
 
 func (s *SMap) Wrap(w int) *SMap {
-	r := new(SMap)
+	return apply(func(ch chan<- String, c *chunk) {
+		var i = 0
 
-	for _, str := range *s {
-		for str.End-str.Start > w {
-			*r = append(*r, String{
-				Nr:    str.Nr,
-				Start: str.Start,
-				End:   str.Start + w,
-			})
+		for _, s := range (*s)[c.min:c.max] {
+			i = 0
 
-			str.Start += w
+			for i < len(s.Str)-w {
+				ch <- String{s.Nr, s.Str[i : i+w]}
+				i += w
+			}
+
+			ch <- String{s.Nr, s.Str[i:]}
 		}
+	}, len(*s))
+}
 
-		*r = append(*r, String{
-			Nr:    str.Nr,
-			Start: str.Start,
-			End:   str.End,
-		})
-	}
+func (s *SMap) Grep(b []byte) *SMap {
+	return apply(func(ch chan<- String, c *chunk) {
+		re, _ := regexp.Compile(string(b))
 
-	return r
+		for _, s := range (*s)[c.min:c.max] {
+			if re.MatchString(s.Str) {
+				ch <- s
+			}
+		}
+	}, len(*s))
 }
 
 func (s *SMap) Find(nr int) (int, bool) {
@@ -181,7 +130,7 @@ func (s *SMap) Size() (w, h int) {
 	}
 
 	for _, str := range *s {
-		w = max(w, str.End-str.Start)
+		w = max(w, len(str.Str))
 	}
 
 	h = len(*s)
@@ -189,8 +138,52 @@ func (s *SMap) Size() (w, h int) {
 	return
 }
 
-func add(s *SMap, n, i, j int, o uint8) {
-	*s = append(*s, String{
-		Nr: n, Off: o, Start: i, End: j,
+func chunks(n int) (c []*chunk) {
+	m := min(runtime.GOMAXPROCS(0), n)
+
+	for i := range m {
+		c = append(c, &chunk{
+			min: i * n / m,
+			max: ((i + 1) * n) / m,
+		})
+	}
+
+	return
+}
+
+func apply(fn action, n int) *SMap {
+	ch := make(chan String, n)
+
+	go func() {
+		var wg sync.WaitGroup
+
+		for _, c := range chunks(n) {
+			wg.Add(1)
+
+			go func() {
+				fn(ch, c)
+				wg.Done()
+			}()
+		}
+
+		wg.Wait()
+
+		close(ch)
+	}()
+
+	return sort(ch)
+}
+
+func sort(ch <-chan String) *SMap {
+	s := make(SMap, 0)
+
+	for str := range ch {
+		s = append(s, str) // TODO: Insert already sorted!
+	}
+
+	slices.SortStableFunc(s, func(a, b String) int {
+		return cmp.Compare(a.Nr, b.Nr)
 	})
+
+	return &s
 }
