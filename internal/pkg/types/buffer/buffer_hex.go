@@ -22,7 +22,7 @@ func (hl HexLine) String() string {
 	return fmt.Sprintf("%s %s|%-16s|", hl.Nr, hl.Hex, hl.Str)
 }
 
-func Hex(ctx *Context) (hb HexBuffer) {
+func Hex(ctx *Context) (buf HexBuffer) {
 	var tail int
 
 	mmap := *ctx.Heap.MMap()
@@ -31,16 +31,16 @@ func Hex(ctx *Context) (hb HexBuffer) {
 		tail = max(int(ctx.Heap.Size())-types.GetLimits().Tail.Bytes, 0)
 	}
 
-	hb.W, hb.H = ctx.W, len(mmap)/16
+	buf.W, buf.H = ctx.W, len(mmap)/16
 
 	if len(mmap)%16 > 0 {
-		hb.H++
+		buf.H++
 	}
 
-	hb.Lines = make(chan HexLine, 1024)
+	buf.Lines = make(chan HexLine, Size)
 
 	go func() {
-		defer close(hb.Lines)
+		defer close(buf.Lines)
 
 		mmap = mmap[ctx.Y*16:]
 
@@ -77,7 +77,7 @@ func Hex(ctx *Context) (hb HexBuffer) {
 			l.Hex = fmt.Sprintf("%-*s", 50, l.Hex)
 			l.Str = text.ToASCII(l.Str)
 
-			hb.Lines <- l
+			buf.Lines <- l
 		}
 	}()
 

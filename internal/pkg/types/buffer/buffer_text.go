@@ -17,8 +17,10 @@ const (
 
 type TextBuffer struct {
 	Buffer
-	Lines []TextLine
-	Parts []TextPart
+	Width int
+
+	Lines chan TextLine
+	Parts chan TextPart
 
 	SMap *smap.SMap
 }
@@ -31,95 +33,74 @@ type TextPart struct {
 	Part
 }
 
-func (tb TextBuffer) String() string {
-	var sb strings.Builder
-
-	for i, l := range tb.Lines {
-		sb.WriteString(l.String())
-
-		if i < len(tb.Lines)-1 {
-			sb.WriteRune('\n')
-		}
-	}
-
-	return sb.String()
-}
-
 func (tl TextLine) String() string {
 	return tl.Str
 }
 
-func Text(ctx *Context) TextBuffer {
-	var tb TextBuffer
-
-	d := text.Dec(ctx.Heap.Total())
+func Text(ctx *Context) (buf TextBuffer) {
+	buf.Width = text.Dec(ctx.Heap.Total())
 
 	if ctx.Line {
-		ctx.W -= d + 1
+		ctx.W -= buf.Width + 1
 	}
 
 	if ctx.Wrap && ctx.Heap.RMap() == nil {
-		ctx.Heap.Wrap(ctx.W)
+		ctx.Heap.Wrap(ctx.W) // TODO: ctx.W not wrapped correctly
 	}
 
 	if ctx.Wrap {
-		tb.SMap = ctx.Heap.RMap()
+		buf.SMap = ctx.Heap.RMap()
 	} else {
-		tb.SMap = ctx.Heap.SMap()
+		buf.SMap = ctx.Heap.SMap()
 	}
 
-	tb.W, tb.H = tb.SMap.Size()
+	buf.W, buf.H = buf.SMap.Size()
 
-	addLines(ctx, &tb, d)
+	buf.Lines = make(chan TextLine, Size)
+	buf.Parts = make(chan TextPart, Size)
 
-	if len(tb.Lines) >= ctx.H {
-		tb.Lines = tb.Lines[:ctx.H]
+	var re *regexp.Regexp
+	var fs = *types.GetFilters()
+
+	if len(fs) > 0 {
+		re = regexp.MustCompile(fs[len(fs)-1])
 	}
 
-	for _, f := range *types.GetFilters() {
-		addParts(ctx, &tb, f)
-	}
+	go func() {
+		defer close(buf.Lines)
+		defer close(buf.Parts)
 
-	return tb
-}
+		for y, str := range (*buf.SMap)[ctx.Y:] {
+			if y >= ctx.H {
+				return
+			}
 
-func addLines(ctx *Context, tb *TextBuffer, d int) {
-	var nr, str string
+			s := trim(format(ctx.Heap.Unmap(&str), &str), ctx.X, ctx.W)
 
-	for i, s := range (*tb.SMap)[ctx.Y:] {
-		if i >= ctx.H {
-			break
+			buf.Lines <- TextLine{
+				Line: Line{
+					Nr:  fmt.Sprintf("%0*d", buf.Width, str.Nr),
+					Str: s,
+				},
+			}
+
+			if re == nil {
+				continue
+			}
+
+			for _, i := range re.FindAllStringIndex(s, -1) {
+				buf.Parts <- TextPart{
+					Part: Part{
+						X:   text.Len(s[:i[0]]),
+						Y:   y,
+						Str: s[i[0]:i[1]],
+					},
+				}
+			}
 		}
+	}()
 
-		nr = fmt.Sprintf("%0*d", d, s.Nr)
-		str = trim(format(ctx.Heap.Unmap(&s), &s), ctx.X, ctx.W)
-
-		tb.Lines = append(tb.Lines, TextLine{
-			Line: Line{Nr: nr, Str: str},
-		})
-	}
-}
-
-func addParts(ctx *Context, tb *TextBuffer, f string) {
-	var str string
-	var x int
-
-	re, _ := regexp.Compile(f)
-
-	for y, s := range tb.Lines {
-		if y >= ctx.H {
-			break
-		}
-
-		for _, i := range re.FindAllStringIndex(s.Str, -1) {
-			x = text.Len(s.Str[:i[0]])
-			str = s.Str[i[0]:i[1]]
-
-			tb.Parts = append(tb.Parts, TextPart{
-				Part: Part{X: x, Y: y, Str: str},
-			})
-		}
-	}
+	return
 }
 
 func format(s string, str *smap.String) string {

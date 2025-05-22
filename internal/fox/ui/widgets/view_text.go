@@ -34,8 +34,10 @@ func (v *View) textRender(x, y, w, h int) {
 	// special type of view
 	s := v.heap.Type == types.Prompt
 
+	i := 0
+
 	// render lines
-	for i, line := range buf.Lines {
+	for line := range buf.Lines {
 		lineX := x
 		lineY := y + i
 
@@ -53,15 +55,17 @@ func (v *View) textRender(x, y, w, h int) {
 				v.print(lineX, lineY, line.Str, themes.Base)
 			}
 		}
+
+		i++
 	}
 
 	// render parts on top
-	for _, part := range buf.Parts {
+	for part := range buf.Parts {
 		partX := x + part.X
 		partY := y + part.Y
 
 		if v.ctx.IsLine() {
-			partX += len(buf.Lines[0].Nr) + 1
+			partX += buf.Width + 1
 		}
 
 		// part value

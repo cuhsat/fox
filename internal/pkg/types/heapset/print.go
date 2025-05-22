@@ -56,16 +56,30 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 }
 
 func printFile(ctx *buffer.Context) {
-	if ctx.Heap.Lines() != 0 {
-		fmt.Print(buffer.Text(ctx))
+	if ctx.Heap.Lines() == 0 {
+		return // ignore empty files
+	}
+
+	first := true
+
+	for l := range buffer.Text(ctx).Lines {
+		if first {
+			first = false
+		} else {
+			fmt.Println("")
+		}
+
+		fmt.Print(l)
 	}
 }
 
 func printGrep(ctx *buffer.Context) {
-	if ctx.Heap.Lines() != 0 {
-		for _, tl := range buffer.Text(ctx).Lines {
-			fmt.Printf("%s:%s\n", ctx.Heap.String(), tl)
-		}
+	if ctx.Heap.Lines() == 0 {
+		return // ignore empty files
+	}
+
+	for l := range buffer.Text(ctx).Lines {
+		fmt.Printf("%s:%s\n", ctx.Heap.String(), l)
 	}
 }
 

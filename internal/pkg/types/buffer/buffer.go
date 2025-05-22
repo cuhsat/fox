@@ -4,6 +4,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
+const (
+	Size = 1024
+)
+
 type Buffer struct {
 	W int
 	H int
