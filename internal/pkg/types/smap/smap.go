@@ -9,8 +9,8 @@ const (
 )
 
 const (
-	LF = 0xa
-	CR = 0xd
+	LF = 0x0a
+	CR = 0x0d
 )
 
 type SMap []String
