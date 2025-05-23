@@ -21,7 +21,7 @@ func New(_ mode.Mode) *UI {
 	return nil
 }
 
-func (_ *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
+func (_ *UI) Run(_ *heapset.HeapSet, _ *history.History, _ *bag.Bag) {
 	// stub
 }
 

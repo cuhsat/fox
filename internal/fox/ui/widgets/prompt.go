@@ -55,11 +55,16 @@ func NewPrompt(ctx *context.Context) *Prompt {
 }
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
-	_, heap := hs.Heap()
+	var n int
+
+	if hs != nil {
+		_, heap := hs.Heap()
+		n = heap.Lines()
+	}
 
 	m := p.fmtMode()
 	i := p.fmtInput()
-	s := p.fmtStatus(heap.Lines())
+	s := p.fmtStatus(n)
 
 	// render blank line
 	p.blank(x, y, w, themes.Surface0)

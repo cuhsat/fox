@@ -6,6 +6,7 @@ import (
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
@@ -19,14 +20,18 @@ func NewTitle(ctx *context.Context) *Title {
 	}
 }
 
-func (t *Title) Loading() {
-	t.print(0, 0, "Loading...", themes.Base)
-}
-
 func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
-	i, heap := hs.Heap()
-	n := hs.Size()
-	p := heap.String()
+	var i int32
+	var n int32
+	var p string = "Loading..."
+
+	var heap *heap.Heap
+
+	if hs != nil {
+		i, heap = hs.Heap()
+		p = heap.String()
+		n = hs.Size()
+	}
 
 	var s string
 
