@@ -2,7 +2,6 @@ package smap
 
 import (
 	"bytes"
-	"cmp"
 	"encoding/json"
 	"regexp"
 	"runtime"
@@ -183,7 +182,7 @@ func sort(ch <-chan String) *SMap {
 	}
 
 	slices.SortStableFunc(s, func(a, b String) int {
-		return cmp.Compare(a.Nr, b.Nr)
+		return a.Nr - b.Nr
 	})
 
 	return &s
