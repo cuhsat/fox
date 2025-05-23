@@ -8,6 +8,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/file"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/gzip"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/xz"
@@ -36,6 +37,8 @@ func (hs *HeapSet) loadPath(path string) {
 
 	// check for compression
 	switch {
+	case br.Detect(path):
+		path = br.Deflate(path)
 	case bzip2.Detect(path):
 		path = bzip2.Deflate(path)
 	case gzip.Detect(path):
