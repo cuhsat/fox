@@ -62,20 +62,21 @@ func Map(m *mmap.MMap) *SMap {
 
 func (s *SMap) Indent() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
-		var b bytes.Buffer
+		var buf bytes.Buffer
+		var err error
 
 		for _, s := range (*s)[c.min:c.max] {
-			b.Reset()
+			buf.Reset()
 
-			err := json.Indent(&b, []byte(s.Str), "", "  ")
+			err = json.Indent(&buf, []byte(s.Str), "", "  ")
 
 			if err != nil {
 				ch <- String{s.Nr, s.Str}
 				continue
 			}
 
-			for l := range bytes.SplitSeq(b.Bytes(), []byte("\n")) {
-				ch <- String{s.Nr, string(l)}
+			for b := range bytes.SplitSeq(buf.Bytes(), []byte("\n")) {
+				ch <- String{s.Nr, string(b)}
 			}
 		}
 	}, len(*s))
