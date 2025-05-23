@@ -7,8 +7,9 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
-	_ "github.com/gdamore/tcell/v2/encoding"
 	"github.com/mattn/go-runewidth"
+
+	_ "github.com/gdamore/tcell/v2/encoding"
 
 	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/fox/ai"
@@ -87,15 +88,17 @@ func New(m mode.Mode) *UI {
 		overlay: widgets.NewOverlay(ctx),
 	}
 
-	if ai.Build && ai.Init() {
-		ui.agent = ai.NewAgent(ctx.Model())
-	}
+	ui.title.Loading()
 
 	root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 	root.SetStyle(themes.Base)
 	root.Sync()
 
 	ui.change(m)
+
+	if ai.Build && ai.Init() {
+		ui.agent = ai.NewAgent(ctx.Model())
+	}
 
 	return &ui
 }

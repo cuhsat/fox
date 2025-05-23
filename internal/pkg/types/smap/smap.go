@@ -62,14 +62,11 @@ func Map(m *mmap.MMap) *SMap {
 func (s *SMap) Indent() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		var buf bytes.Buffer
-		var err error
 
 		for _, s := range (*s)[c.min:c.max] {
 			buf.Reset()
 
-			err = json.Indent(&buf, []byte(s.Str), "", "  ")
-
-			if err != nil {
+			if json.Indent(&buf, []byte(s.Str), "", "  ") != nil {
 				ch <- String{s.Nr, s.Str}
 				continue
 			}
@@ -99,9 +96,9 @@ func (s *SMap) Wrap(w int) *SMap {
 }
 
 func (s *SMap) Grep(b []byte) *SMap {
-	return apply(func(ch chan<- String, c *chunk) {
-		re, _ := regexp.Compile(string(b))
+	re := regexp.MustCompile(string(b))
 
+	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
 			if re.MatchString(s.Str) {
 				ch <- s
@@ -178,7 +175,7 @@ func sort(ch <-chan String) *SMap {
 	s := make(SMap, 0)
 
 	for str := range ch {
-		s = append(s, str) // TODO: Insert already sorted!
+		s = append(s, str)
 	}
 
 	slices.SortStableFunc(s, func(a, b String) int {
