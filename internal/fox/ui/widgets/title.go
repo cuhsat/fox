@@ -23,7 +23,7 @@ func NewTitle(ctx *context.Context) *Title {
 func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	var i int32
 	var n int32
-	var p string = "Loading..."
+	var p string // = "Loading..."
 
 	var heap *heap.Heap
 
