@@ -1,14 +1,17 @@
 package heap
 
 import (
+	"regexp"
+
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type filter struct {
-	pattern string     // filter pattern
-	smap    *smap.SMap // filter string map
-	rmap    *smap.SMap // filter render map
+	pattern string         // filter pattern
+	regex   *regexp.Regexp // filter regex
+	smap    *smap.SMap     // filter string map
+	rmap    *smap.SMap     // filter render map
 }
 
 func (h *Heap) Filter() *Heap {
@@ -52,12 +55,13 @@ func (h *Heap) Filter() *Heap {
 }
 
 func (h *Heap) AddFilter(p string) {
-	s := h.SMap().Grep([]byte(p))
+	r := regexp.MustCompile(p)
+	s := h.SMap().Grep(r)
 
 	h.Lock()
 
 	h.filters = append(h.filters, &filter{
-		p, s, nil,
+		p, r, s, nil,
 	})
 
 	h.Unlock()
