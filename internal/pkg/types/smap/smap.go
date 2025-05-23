@@ -12,8 +12,13 @@ import (
 )
 
 const (
+	HT = 0x09
 	LF = 0x0a
 	CR = 0x0d
+)
+
+const (
+	Tab = "    "
 )
 
 type action func(ch chan<- String, c *chunk)
@@ -21,8 +26,8 @@ type action func(ch chan<- String, c *chunk)
 type SMap []String
 
 type String struct {
-	Nr  int
-	Str string
+	Nr  int    // string nr
+	Str string // string data
 }
 
 type chunk struct {
@@ -44,7 +49,7 @@ func Map(m *mmap.MMap) *SMap {
 		if a == LF || (a == CR && b != LF) {
 			*s = append(*s, String{
 				Nr:  len(*s) + 1,
-				Str: string((*m)[j:i]),
+				Str: exp((*m)[j:i]),
 			})
 
 			j = i + 1
@@ -53,7 +58,7 @@ func Map(m *mmap.MMap) *SMap {
 
 	*s = append(*s, String{
 		Nr:  len(*s) + 1,
-		Str: string((*m)[j:]),
+		Str: exp((*m)[j:]),
 	})
 
 	return s
@@ -95,9 +100,7 @@ func (s *SMap) Wrap(w int) *SMap {
 	}, len(*s))
 }
 
-func (s *SMap) Grep(b []byte) *SMap {
-	re := regexp.MustCompile(string(b))
-
+func (s *SMap) Grep(re *regexp.Regexp) *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
 			if re.MatchString(s.Str) {
@@ -183,4 +186,8 @@ func sort(ch <-chan String) *SMap {
 	})
 
 	return &s
+}
+
+func exp(b []byte) string {
+	return string(bytes.ReplaceAll(b, []byte{HT}, []byte(Tab)))
 }

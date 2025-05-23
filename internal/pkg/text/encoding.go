@@ -6,10 +6,6 @@ import (
 )
 
 const (
-	HT = 0x09
-)
-
-const (
 	LRE = '\u202a'
 	RLE = '\u202b'
 	LRO = '\u202d'
@@ -30,7 +26,6 @@ const (
 	notASCII    = '.'
 	notUnicode  = '·'
 	isDeceptive = '×'
-	isTabulator = '‐'
 )
 
 func ToASCII(s string) string {
@@ -56,8 +51,6 @@ func AsUnicode(r rune) rune {
 	switch r {
 	case LRE, RLE, LRO, RLO, LRI, RLI, FSI, PDF, PDI:
 		return isDeceptive
-	case HT:
-		return isTabulator
 	default:
 		if !unicode.IsPrint(r) {
 			return notUnicode
