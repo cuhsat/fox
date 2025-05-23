@@ -19,7 +19,7 @@ func Init() bool {
 	return false
 }
 
-func NewAgent(model string) *Agent {
+func NewAgent(_ string) *Agent {
 	return nil
 }
 
@@ -31,10 +31,10 @@ func (_ *Agent) Close() {
 	// stub
 }
 
-func (_ *Agent) Prompt(s string, h *heap.Heap) {
+func (_ *Agent) Prompt(_ string, _ *heap.Heap) {
 	// stub
 }
 
-func (_ *Agent) Listen(hi *history.History) {
+func (_ *Agent) Listen(_ *history.History) {
 	// stub
 }

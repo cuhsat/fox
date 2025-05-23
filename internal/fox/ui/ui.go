@@ -88,13 +88,13 @@ func New(m mode.Mode) *UI {
 		overlay: widgets.NewOverlay(ctx),
 	}
 
-	ui.title.Loading() // TODO: render nil hs to show blank loading screen
-
 	root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 	root.SetStyle(themes.Base)
 	root.Sync()
 
 	ui.change(m)
+
+	ui.render(nil)
 
 	if ai.Build && ai.Init() {
 		ui.agent = ai.NewAgent(ctx.Model())
@@ -580,15 +580,19 @@ func (ui *UI) change(m mode.Mode) {
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) {
-	defer ui.root.Show()
+	title := fox.Product
 
-	_, heap := hs.Heap()
+	if hs != nil {
+		_, heap := hs.Heap()
 
-	if heap.Type == types.Stdin {
-		ui.root.Sync() // prevent hiccups
+		if heap.Type == types.Stdin {
+			ui.root.Sync() // prevent hiccups
+		}
+
+		title = fmt.Sprintf("%s - %s", title, heap)
 	}
 
-	ui.root.SetTitle(fmt.Sprintf("%s - %s", fox.Product, heap))
+	ui.root.SetTitle(title)
 	ui.root.SetStyle(themes.Base)
 	ui.root.Clear()
 
@@ -604,4 +608,6 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 	}
 
 	ui.overlay.Render(0, 0, w, h)
+
+	ui.root.Show()
 }

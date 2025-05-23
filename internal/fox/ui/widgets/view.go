@@ -33,9 +33,13 @@ func NewView(ctx *context.Context) *View {
 }
 
 func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-	_, v.heap = hs.Heap()
-
 	h -= 1 // fill all but the least line
+
+	if hs != nil {
+		_, v.heap = hs.Heap()
+	} else {
+		return h
+	}
 
 	if v.ctx.Mode() == mode.Hex {
 		v.hexRender(x, y, w, h)
