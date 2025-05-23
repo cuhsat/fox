@@ -19,6 +19,10 @@ func NewTitle(ctx *context.Context) *Title {
 	}
 }
 
+func (t *Title) Loading() {
+	t.print(0, 0, "Loading...", themes.Base)
+}
+
 func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	i, heap := hs.Heap()
 	n := hs.Size()
