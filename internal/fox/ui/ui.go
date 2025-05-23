@@ -88,7 +88,7 @@ func New(m mode.Mode) *UI {
 		overlay: widgets.NewOverlay(ctx),
 	}
 
-	ui.title.Loading()
+	ui.title.Loading() // TODO: render nil hs to show blank loading screen
 
 	root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 	root.SetStyle(themes.Base)
