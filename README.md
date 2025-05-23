@@ -19,7 +19,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in canonical hex view of files
 * Build-in regular expression filtering
 * Build-in ASCII and Unicode string carving
-* Build-in decompression of: bzip2, gzip, tar, xz, zip, zlib, zstd
+* Build-in decompression of: brotli, bzip2, gzip, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in hash sum reverse lookup in Hashcat notation
 * Build-in RAG agent provided by an Ollama local LLM

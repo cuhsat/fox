@@ -12,13 +12,8 @@ import (
 )
 
 const (
-	HT = 0x09
 	LF = 0x0a
 	CR = 0x0d
-)
-
-const (
-	Tab = "    "
 )
 
 type action func(ch chan<- String, c *chunk)
@@ -49,7 +44,7 @@ func Map(m *mmap.MMap) *SMap {
 		if a == LF || (a == CR && b != LF) {
 			*s = append(*s, String{
 				Nr:  len(*s) + 1,
-				Str: exp((*m)[j:i]),
+				Str: string((*m)[j:i]),
 			})
 
 			j = i + 1
@@ -58,7 +53,7 @@ func Map(m *mmap.MMap) *SMap {
 
 	*s = append(*s, String{
 		Nr:  len(*s) + 1,
-		Str: exp((*m)[j:]),
+		Str: string((*m)[j:]),
 	})
 
 	return s
@@ -186,8 +181,4 @@ func sort(ch <-chan String) *SMap {
 	})
 
 	return &s
-}
-
-func exp(b []byte) string {
-	return string(bytes.ReplaceAll(b, []byte{HT}, []byte(Tab)))
 }

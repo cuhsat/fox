@@ -3,31 +3,29 @@ module github.com/cuhsat/fox
 go 1.24.3
 
 require (
+	github.com/0xrawsec/golang-evtx v1.2.9
 	github.com/BurntSushi/toml v1.5.0
+	github.com/andybalholm/brotli v1.1.1
 	github.com/bmatcuk/doublestar/v4 v4.8.1
 	github.com/edsrzf/mmap-go v1.2.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
+	github.com/ollama/ollama v0.7.0
 	github.com/spf13/pflag v1.0.6
-	github.com/tmc/langchaingo v0.1.13
 	github.com/ulikunitz/xz v0.5.12
 	modernc.org/sqlite v1.37.0
 )
 
 require (
-	github.com/0xrawsec/golang-evtx v1.2.9 // indirect
 	github.com/0xrawsec/golang-utils v1.3.0 // indirect
-	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
-	github.com/ollama/ollama v0.7.0 // indirect
-	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
