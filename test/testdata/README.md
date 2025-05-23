@@ -9,6 +9,9 @@ AMTSO Potentially Unwanted Application Test File
 - https://www.amtso.org/feature-settings-check-potentially-unwanted-applications/
 - https://www.amtso.org/feature-settings-check-cloud-lookups/
 
+SecLists RockYou Leaked Passwords
+- https://github.com/danielmiessler/SecLists/tree/master/Passwords/Leaked-Databases
+
 Windows Events Attack Samples
 - https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES
 
