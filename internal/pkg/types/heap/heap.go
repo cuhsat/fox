@@ -44,12 +44,6 @@ func (h *Heap) SMap() *smap.SMap {
 	return h.last().smap
 }
 
-func (h *Heap) RMap() *smap.SMap {
-	h.RLock()
-	defer h.RUnlock()
-	return h.last().rmap
-}
-
 func (h *Heap) Len() int64 {
 	h.RLock()
 	defer h.RUnlock()
@@ -148,7 +142,7 @@ func (h *Heap) Reload() {
 	// resets filters
 	h.filters = h.filters[:0]
 	h.filters = append(h.filters, &filter{
-		"", nil, h.smap, nil,
+		"", nil, h.smap,
 	})
 
 	h.Unlock()

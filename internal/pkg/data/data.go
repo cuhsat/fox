@@ -1,5 +1,5 @@
 // https://github.com/s0md3v/Bolt/blob/master/db/hashes.json
-package text
+package data
 
 type Hash struct {
 	Regex string

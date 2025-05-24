@@ -11,7 +11,6 @@ type filter struct {
 	pattern string         // filter pattern
 	regex   *regexp.Regexp // filter regex
 	smap    *smap.SMap     // filter string map
-	rmap    *smap.SMap     // filter render map
 }
 
 func (h *Heap) Filter() *Heap {
@@ -61,7 +60,7 @@ func (h *Heap) AddFilter(p string) {
 	h.Lock()
 
 	h.filters = append(h.filters, &filter{
-		p, r, s, nil,
+		p, r, s,
 	})
 
 	h.Unlock()

@@ -11,7 +11,7 @@ import (
 
 type TextBuffer struct {
 	Buffer
-	Width int
+	Count int
 
 	Lines chan TextLine
 	Parts chan TextPart
@@ -32,22 +32,21 @@ func (tl TextLine) String() string {
 }
 
 func Text(ctx *Context) (buf TextBuffer) {
-	buf.Width = text.Dec(ctx.Heap.Count())
+	buf.Count = text.Dec(ctx.Heap.Count())
 
 	if ctx.Line {
-		ctx.W -= buf.Width + 1
+		ctx.W -= buf.Count + 1
 	}
 
-	// use render map cache
-	if ctx.Heap.RMap() == nil {
-		if ctx.Wrap {
-			ctx.Heap.Wrap(ctx.W)
-		} else {
-			ctx.Heap.Render()
-		}
-	}
+	smap := ctx.Heap.SMap()
 
-	buf.SMap = ctx.Heap.RMap()
+	if ctx.Wrap && smap.CanIndent() {
+		buf.SMap = smap.Indent()
+	} else if ctx.Wrap {
+		buf.SMap = smap.Wrap(ctx.W)
+	} else {
+		buf.SMap = smap.Render()
+	}
 
 	buf.W, buf.H = buf.SMap.Size()
 
@@ -74,7 +73,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 			buf.Lines <- TextLine{
 				Line: Line{
-					Nr:  fmt.Sprintf("%0*d", buf.Width, str.Nr),
+					Nr:  fmt.Sprintf("%0*d", buf.Count, str.Nr),
 					Str: s,
 				},
 			}

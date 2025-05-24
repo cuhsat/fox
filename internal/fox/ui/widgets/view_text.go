@@ -65,7 +65,7 @@ func (v *View) textRender(x, y, w, h int) {
 		partY := y + part.Y
 
 		if v.ctx.IsLine() {
-			partX += buf.Width + 1
+			partX += buf.Count + 1
 		}
 
 		// part value
