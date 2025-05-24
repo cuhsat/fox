@@ -56,7 +56,7 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 }
 
 func printFile(ctx *buffer.Context) {
-	if ctx.Heap.Size() == 0 {
+	if ctx.Heap.Len() == 0 {
 		return // ignore empty files
 	}
 
@@ -64,7 +64,7 @@ func printFile(ctx *buffer.Context) {
 }
 
 func printGrep(ctx *buffer.Context) {
-	if ctx.Heap.Size() == 0 {
+	if ctx.Heap.Len() == 0 {
 		return // ignore empty files
 	}
 
@@ -94,8 +94,8 @@ func printHash(ctx *buffer.Context, sum string) {
 
 func printStats(ctx *buffer.Context) {
 	fmt.Printf("%8dL %8dB  %s\n",
-		ctx.Heap.Total(),
-		ctx.Heap.Size(),
+		ctx.Heap.Count(),
+		ctx.Heap.Len(),
 		ctx.Heap.String(),
 	)
 }

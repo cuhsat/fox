@@ -79,6 +79,12 @@ func (h *Heap) DelFilter() {
 	h.Unlock()
 }
 
+func (h *Heap) LastCount() int {
+	h.RLock()
+	defer h.RUnlock()
+	return len(*h.last().smap)
+}
+
 func (h *Heap) last() *filter {
 	h.RLock()
 	defer h.RUnlock()

@@ -59,7 +59,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 
 	if hs != nil {
 		_, heap := hs.Heap()
-		n = heap.Lines()
+		n = heap.LastCount()
 	}
 
 	m := p.fmtMode()

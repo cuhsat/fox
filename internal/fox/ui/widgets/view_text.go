@@ -24,7 +24,7 @@ func (v *View) textRender(x, y, w, h int) {
 	v.smap = buf.SMap
 
 	if v.ctx.IsLine() {
-		w -= text.Dec(v.heap.Total()) + 1
+		w -= text.Dec(v.heap.Count()) + 1
 	}
 
 	// set buffer bounds

@@ -2,7 +2,6 @@ package heap
 
 import (
 	"bytes"
-	"encoding/json"
 	"os"
 	"runtime"
 	"sync"
@@ -49,6 +48,42 @@ func (h *Heap) RMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
 	return h.last().rmap
+}
+
+func (h *Heap) Len() int64 {
+	h.RLock()
+	defer h.RUnlock()
+	return h.size
+}
+
+func (h *Heap) Count() int {
+	h.RLock()
+	defer h.RUnlock()
+	return len(*h.smap)
+}
+
+func (h *Heap) Bytes() []byte {
+	var buf bytes.Buffer
+
+	h.RLock()
+
+	l := h.last()
+
+	for i, s := range *l.smap {
+		_, err := buf.WriteString(s.Str)
+
+		if err != nil {
+			sys.Error(err)
+		}
+
+		if i < len(*l.smap)-1 {
+			buf.WriteByte('\n')
+		}
+	}
+
+	h.RUnlock()
+
+	return buf.Bytes()
 }
 
 func (h *Heap) String() string {
@@ -119,90 +154,6 @@ func (h *Heap) Reload() {
 	h.Unlock()
 
 	runtime.GC()
-}
-
-func (h *Heap) Render() {
-	h.RLock()
-	cached := h.last().rmap != nil
-	h.RUnlock()
-
-	if cached {
-		return // use cache
-	}
-
-	l := h.last()
-
-	h.Lock()
-	l.rmap = l.smap.Render()
-	h.Unlock()
-}
-
-func (h *Heap) Reset() {
-	l := h.last()
-
-	h.Lock()
-	l.rmap = nil
-	h.Unlock()
-}
-
-func (h *Heap) Size() int64 {
-	h.RLock()
-	defer h.RUnlock()
-	return h.size
-}
-
-func (h *Heap) Total() int {
-	h.RLock()
-	defer h.RUnlock()
-	return len(*h.smap)
-}
-
-func (h *Heap) Lines() int {
-	h.RLock()
-	defer h.RUnlock()
-	return len(*h.last().smap)
-}
-
-func (h *Heap) Bytes() []byte {
-	var buf bytes.Buffer
-
-	h.RLock()
-
-	l := h.last()
-
-	for i, s := range *l.smap {
-		_, err := buf.WriteString(s.Str)
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		if i < len(*l.smap)-1 {
-			buf.WriteByte('\n')
-		}
-	}
-
-	h.RUnlock()
-
-	return buf.Bytes()
-}
-
-func (h *Heap) Wrap(w int) {
-	l, s := h.last(), ""
-
-	if len(*l.smap) > 0 {
-		s = (*l.smap)[0].Str
-	}
-
-	h.Lock()
-
-	if len(s) > 0 && json.Valid([]byte(s)) {
-		l.rmap = l.smap.Indent()
-	} else {
-		l.rmap = l.smap.Wrap(w)
-	}
-
-	h.Unlock()
 }
 
 func (h *Heap) ThrowAway() {

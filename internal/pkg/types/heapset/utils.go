@@ -64,7 +64,7 @@ func (hs *HeapSet) Sha3() {
 
 func (hs *HeapSet) Counts() {
 	hs.newBuffer("counts", func(h *heap.Heap) string {
-		return fmt.Sprintf("%8dL %8dB  %s\n", h.Total(), h.Size(), h.String())
+		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
 	})
 }
 
