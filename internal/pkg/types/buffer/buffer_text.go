@@ -32,7 +32,7 @@ func (tl TextLine) String() string {
 }
 
 func Text(ctx *Context) (buf TextBuffer) {
-	buf.Width = text.Dec(ctx.Heap.Total())
+	buf.Width = text.Dec(ctx.Heap.Count())
 
 	if ctx.Line {
 		ctx.W -= buf.Width + 1

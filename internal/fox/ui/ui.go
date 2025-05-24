@@ -187,7 +187,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				pageH := h - 2 // minus title and status
 
 				if ui.ctx.IsLine() {
-					pageW -= text.Dec(heap.Total()) + 1
+					pageW -= text.Dec(heap.Count()) + 1
 				}
 
 				if ev.Key() != tcell.KeyEscape {
