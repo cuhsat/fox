@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"testing"
 
@@ -132,6 +133,33 @@ func BenchmarkWrap(b *testing.B) {
 
 		for b.Loop() {
 			s.Wrap(80)
+		}
+	})
+}
+
+func BenchmarkGrep(b *testing.B) {
+	b.Run("Benchmark Grep", func(b *testing.B) {
+		f, m, err := Testdata("evtx.jsonl")
+
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		defer func(m *mmap.MMap) {
+			_ = m.Unmap()
+		}(m)
+
+		s := Map(m)
+		r := regexp.MustCompile(".*")
+
+		b.ResetTimer()
+
+		for b.Loop() {
+			s.Grep(r)
 		}
 	})
 }

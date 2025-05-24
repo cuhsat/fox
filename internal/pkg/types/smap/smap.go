@@ -148,6 +148,14 @@ func (s *SMap) Size() (w, h int) {
 	return
 }
 
+func (s *SMap) CanIndent() bool {
+	if len(*s) == 0 {
+		return false
+	}
+
+	return json.Valid([]byte((*s)[0].Str))
+}
+
 func chunks(n int) (c []*chunk) {
 	m := min(runtime.GOMAXPROCS(0), n)
 

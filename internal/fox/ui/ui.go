@@ -32,6 +32,7 @@ const (
 
 const (
 	delta = 1 // lines
+	wheel = 5 // lines
 )
 
 const (
@@ -171,13 +172,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				if btns&tcell.ButtonMiddle != 0 {
 					ui.root.GetClipboard()
 				} else if btns&tcell.WheelUp != 0 {
-					ui.view.ScrollUp(delta)
+					ui.view.ScrollUp(wheel)
 				} else if btns&tcell.WheelDown != 0 {
-					ui.view.ScrollDown(delta)
+					ui.view.ScrollDown(wheel)
 				} else if btns&tcell.WheelLeft != 0 {
-					ui.view.ScrollLeft(delta)
+					ui.view.ScrollLeft(wheel)
 				} else if btns&tcell.WheelRight != 0 {
-					ui.root.GetClipboard()
+					ui.view.ScrollRight(wheel)
 				}
 
 			case *tcell.EventKey:
@@ -361,16 +362,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlN:
 					if ui.ctx.Mode() != mode.Hex {
 						ui.ctx.ToggleNumbers()
-						if ui.ctx.IsWrap() {
-							heap.Reset()
-						}
 					}
 
 				case tcell.KeyCtrlW:
 					if ui.ctx.Mode() != mode.Hex {
 						ui.ctx.ToggleWrap()
 						ui.view.Reset()
-						heap.Reset()
 					}
 
 				case tcell.KeyCtrlT:
