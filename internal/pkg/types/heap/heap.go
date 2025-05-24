@@ -121,6 +121,30 @@ func (h *Heap) Reload() {
 	runtime.GC()
 }
 
+func (h *Heap) Render() {
+	h.RLock()
+	cached := h.last().rmap != nil
+	h.RUnlock()
+
+	if cached {
+		return // use cache
+	}
+
+	l := h.last()
+
+	h.Lock()
+	l.rmap = l.smap.Render()
+	h.Unlock()
+}
+
+func (h *Heap) Reset() {
+	l := h.last()
+
+	h.Lock()
+	l.rmap = nil
+	h.Unlock()
+}
+
 func (h *Heap) Size() int64 {
 	h.RLock()
 	defer h.RUnlock()
@@ -164,14 +188,6 @@ func (h *Heap) Bytes() []byte {
 }
 
 func (h *Heap) Wrap(w int) {
-	h.RLock()
-	cached := h.last().rmap != nil
-	h.RUnlock()
-
-	if cached {
-		return // use cache
-	}
-
 	l, s := h.last(), ""
 
 	if len(*l.smap) > 0 {

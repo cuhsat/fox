@@ -58,6 +58,32 @@ func BenchmarkMap(b *testing.B) {
 	})
 }
 
+func BenchmarkRender(b *testing.B) {
+	b.Run("Benchmark Render", func(b *testing.B) {
+		f, m, err := Testdata("evtx.jsonl")
+
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		defer func(m *mmap.MMap) {
+			_ = m.Unmap()
+		}(m)
+
+		s := Map(m)
+
+		b.ResetTimer()
+
+		for b.Loop() {
+			s.Render()
+		}
+	})
+}
+
 func BenchmarkIndent(b *testing.B) {
 	b.Run("Benchmark Indent", func(b *testing.B) {
 		f, m, err := Testdata("evtx.jsonl")

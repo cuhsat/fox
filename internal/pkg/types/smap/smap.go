@@ -6,14 +6,20 @@ import (
 	"regexp"
 	"runtime"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/edsrzf/mmap-go"
 )
 
 const (
+	HT = 0x09
 	LF = 0x0a
 	CR = 0x0d
+)
+
+const (
+	Tab = "    "
 )
 
 type action func(ch chan<- String, c *chunk)
@@ -59,6 +65,14 @@ func Map(m *mmap.MMap) *SMap {
 	return s
 }
 
+func (s *SMap) Render() *SMap {
+	return apply(func(ch chan<- String, c *chunk) {
+		for _, s := range (*s)[c.min:c.max] {
+			ch <- String{Nr: s.Nr, Str: exp(s.Str)}
+		}
+	}, len(*s))
+}
+
 func (s *SMap) Indent() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		var buf bytes.Buffer
@@ -81,16 +95,17 @@ func (s *SMap) Indent() *SMap {
 func (s *SMap) Wrap(w int) *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		var i = 0
+		var l string
 
 		for _, s := range (*s)[c.min:c.max] {
-			i = 0
+			i, l = 0, exp(s.Str)
 
-			for i < len(s.Str)-w {
-				ch <- String{s.Nr, s.Str[i : i+w]}
+			for i < len(l)-w {
+				ch <- String{s.Nr, l[i : i+w]}
 				i += w
 			}
 
-			ch <- String{s.Nr, s.Str[i:]}
+			ch <- String{s.Nr, l[i:]}
 		}
 	}, len(*s))
 }
@@ -181,4 +196,8 @@ func sort(ch <-chan String) *SMap {
 	})
 
 	return &s
+}
+
+func exp(s string) string {
+	return strings.ReplaceAll(s, string(byte(HT)), Tab)
 }

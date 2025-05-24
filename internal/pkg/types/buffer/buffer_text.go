@@ -38,15 +38,16 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.Width + 1
 	}
 
-	if ctx.Wrap && ctx.Heap.RMap() == nil {
-		ctx.Heap.Wrap(ctx.W)
+	// use render map cache
+	if ctx.Heap.RMap() == nil {
+		if ctx.Wrap {
+			ctx.Heap.Wrap(ctx.W)
+		} else {
+			ctx.Heap.Render()
+		}
 	}
 
-	if ctx.Wrap {
-		buf.SMap = ctx.Heap.RMap()
-	} else {
-		buf.SMap = ctx.Heap.SMap()
-	}
+	buf.SMap = ctx.Heap.RMap()
 
 	buf.W, buf.H = buf.SMap.Size()
 
