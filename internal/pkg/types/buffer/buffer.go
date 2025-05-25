@@ -2,10 +2,15 @@ package buffer
 
 import (
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 const (
 	Size = 1024
+)
+
+var (
+	Cache = make(map[string]*smap.SMap, 256)
 )
 
 type Buffer struct {
