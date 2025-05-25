@@ -38,14 +38,24 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.Count + 1
 	}
 
-	smap := ctx.Heap.SMap()
+	fs := *types.GetFilters()
+	id := hash(ctx, fs)
+	ok := false
 
-	if ctx.Wrap && smap.CanIndent() {
-		buf.SMap = smap.Indent()
-	} else if ctx.Wrap {
-		buf.SMap = smap.Wrap(ctx.W)
-	} else {
-		buf.SMap = smap.Render()
+	// error!
+
+	if buf.SMap, ok = Cache[id]; !ok {
+		smap := ctx.Heap.SMap()
+
+		if ctx.Wrap && smap.CanIndent() {
+			buf.SMap = smap.Indent()
+		} else if ctx.Wrap {
+			buf.SMap = smap.Wrap(ctx.W)
+		} else {
+			buf.SMap = smap.Render()
+		}
+
+		Cache[id] = buf.SMap
 	}
 
 	buf.W, buf.H = buf.SMap.Size()
@@ -54,7 +64,6 @@ func Text(ctx *Context) (buf TextBuffer) {
 	buf.Parts = make(chan TextPart, Size)
 
 	var re *regexp.Regexp
-	var fs = *types.GetFilters()
 
 	if len(fs) > 0 {
 		re = regexp.MustCompile(fs[len(fs)-1])
@@ -69,30 +78,41 @@ func Text(ctx *Context) (buf TextBuffer) {
 				return
 			}
 
+			n := fmt.Sprintf("%0*d", buf.Count, str.Nr)
 			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
-			buf.Lines <- TextLine{
-				Line: Line{
-					Nr:  fmt.Sprintf("%0*d", buf.Count, str.Nr),
-					Str: s,
-				},
-			}
+			buf.Lines <- TextLine{Line{n, s}}
 
 			if re == nil {
 				continue
 			}
 
 			for _, i := range re.FindAllStringIndex(s, -1) {
-				buf.Parts <- TextPart{
-					Part: Part{
-						X:   text.Len(s[:i[0]]),
-						Y:   y,
-						Str: s[i[0]:i[1]],
-					},
-				}
+				buf.Parts <- TextPart{Part{
+					text.Len(s[:i[0]]),
+					y,
+					s[i[0]:i[1]],
+				}}
 			}
 		}
 	}()
 
 	return
+}
+
+func hash(ctx *Context, fs types.Filters) string {
+	var f string
+
+	if len(fs) > 0 {
+		f = fs[len(fs)-1]
+	}
+
+	return fmt.Sprintf("%s-%t-%t-%d-%d-%s",
+		ctx.Heap.Path,
+		ctx.Wrap,
+		ctx.Line,
+		ctx.W,
+		ctx.H,
+		f,
+	)
 }
