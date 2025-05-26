@@ -12,6 +12,7 @@ const (
 )
 
 var (
+	// smap render cache
 	Cache = make(map[string]*smap.SMap, 256)
 )
 
@@ -37,6 +38,8 @@ type Context struct {
 	Wrap bool
 	Line bool
 
+	Nr int
+
 	X int
 	Y int
 	W int
@@ -44,12 +47,13 @@ type Context struct {
 }
 
 func (ctx *Context) Hash() string {
-	return fmt.Sprintf("%s-%t-%t-%d-%d-%s",
+	return fmt.Sprintf("%s-%s-%d-%t-%t-%d-%d",
 		ctx.Heap.Path,
+		ctx.Heap.LastFilter().Pattern,
+		ctx.Heap.Len(),
 		ctx.Wrap,
 		ctx.Line,
 		ctx.W,
 		ctx.H,
-		ctx.Heap.LastFilter().Pattern,
 	)
 }

@@ -363,12 +363,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlN:
 					if ui.ctx.Mode() != mode.Hex {
 						ui.ctx.ToggleNumbers()
+						ui.view.Preserve()
 					}
 
 				case tcell.KeyCtrlW:
 					if ui.ctx.Mode() != mode.Hex {
-						ui.view.Reset()
 						ui.ctx.ToggleWrap()
+						ui.view.Preserve()
 					}
 
 				case tcell.KeyCtrlT:
