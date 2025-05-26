@@ -3,18 +3,18 @@ package heap
 import (
 	"regexp"
 
-	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type filter struct {
-	pattern string         // filter pattern
-	regex   *regexp.Regexp // filter regex
+	Pattern string         // filter pattern
+	Regex   *regexp.Regexp // filter regex
 	smap    *smap.SMap     // filter string map
 }
 
 func (h *Heap) Filter() *Heap {
-	fs := *types.GetFilters()
+	fs := *args.GetFilters()
 
 	h.RLock()
 	c := len(h.filters) - 1
@@ -36,7 +36,7 @@ func (h *Heap) Filter() *Heap {
 		}
 
 		h.RLock()
-		p := h.filters[1+i].pattern
+		p := h.filters[1+i].Pattern
 		h.RUnlock()
 
 		// cut heap filters if patterns do not match
@@ -78,14 +78,27 @@ func (h *Heap) DelFilter() {
 	h.Unlock()
 }
 
-func (h *Heap) LastCount() int {
+func (h *Heap) Patterns() []string {
 	h.RLock()
 	defer h.RUnlock()
-	return len(*h.last().smap)
+
+	var r []string
+
+	for _, f := range h.filters[1:] {
+		r = append(r, f.Pattern)
+	}
+
+	return r
 }
 
-func (h *Heap) last() *filter {
+func (h *Heap) LastFilter() *filter {
 	h.RLock()
 	defer h.RUnlock()
 	return h.filters[len(h.filters)-1]
+}
+
+func (h *Heap) LastCount() int {
+	h.RLock()
+	defer h.RUnlock()
+	return len(*h.LastFilter().smap)
 }

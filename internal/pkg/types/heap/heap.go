@@ -8,6 +8,7 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 
+	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
@@ -41,7 +42,7 @@ func (h *Heap) MMap() *mmap.MMap {
 func (h *Heap) SMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return h.last().smap
+	return h.LastFilter().smap
 }
 
 func (h *Heap) Len() int64 {
@@ -61,16 +62,16 @@ func (h *Heap) Bytes() []byte {
 
 	h.RLock()
 
-	l := h.last()
+	f := h.LastFilter()
 
-	for i, s := range *l.smap {
+	for i, s := range *f.smap {
 		_, err := buf.WriteString(s.Str)
 
 		if err != nil {
 			sys.Error(err)
 		}
 
-		if i < len(*l.smap)-1 {
+		if i < len(*f.smap)-1 {
 			buf.WriteByte('\n')
 		}
 	}
@@ -131,7 +132,7 @@ func (h *Heap) Reload() {
 		}
 	}
 
-	l := types.GetLimits()
+	l := args.GetLimits()
 
 	// reduce mmap
 	h.mmap = l.ReduceMMap(h.mmap)

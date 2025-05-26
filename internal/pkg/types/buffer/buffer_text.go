@@ -2,10 +2,8 @@ package buffer
 
 import (
 	"fmt"
-	"regexp"
 
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
@@ -38,24 +36,20 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.Count + 1
 	}
 
-	fs := *types.GetFilters()
-	id := hash(ctx, fs)
-	ok := false
+	buf.SMap = Cache[ctx.Hash()]
 
-	// error!
+	if buf.SMap == nil {
+		buf.SMap = ctx.Heap.SMap()
 
-	if buf.SMap, ok = Cache[id]; !ok {
-		smap := ctx.Heap.SMap()
-
-		if ctx.Wrap && smap.CanIndent() {
-			buf.SMap = smap.Indent()
+		if ctx.Wrap && buf.SMap.CanIndent() {
+			buf.SMap = buf.SMap.Indent()
 		} else if ctx.Wrap {
-			buf.SMap = smap.Wrap(ctx.W)
+			buf.SMap = buf.SMap.Wrap(ctx.W)
 		} else {
-			buf.SMap = smap.Render()
+			buf.SMap = buf.SMap.Render()
 		}
 
-		Cache[id] = buf.SMap
+		Cache[ctx.Hash()] = buf.SMap
 	}
 
 	buf.W, buf.H = buf.SMap.Size()
@@ -63,15 +57,11 @@ func Text(ctx *Context) (buf TextBuffer) {
 	buf.Lines = make(chan TextLine, Size)
 	buf.Parts = make(chan TextPart, Size)
 
-	var re *regexp.Regexp
-
-	if len(fs) > 0 {
-		re = regexp.MustCompile(fs[len(fs)-1])
-	}
-
 	go func() {
 		defer close(buf.Lines)
 		defer close(buf.Parts)
+
+		re := ctx.Heap.LastFilter().Regex
 
 		for y, str := range (*buf.SMap)[ctx.Y:] {
 			if y >= ctx.H {
@@ -98,21 +88,4 @@ func Text(ctx *Context) (buf TextBuffer) {
 	}()
 
 	return
-}
-
-func hash(ctx *Context, fs types.Filters) string {
-	var f string
-
-	if len(fs) > 0 {
-		f = fs[len(fs)-1]
-	}
-
-	return fmt.Sprintf("%s-%t-%t-%d-%d-%s",
-		ctx.Heap.Path,
-		ctx.Wrap,
-		ctx.Line,
-		ctx.W,
-		ctx.H,
-		f,
-	)
 }

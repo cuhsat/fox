@@ -1,4 +1,4 @@
-package types
+package args
 
 import (
 	"github.com/edsrzf/mmap-go"

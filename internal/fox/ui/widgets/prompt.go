@@ -10,7 +10,6 @@ import (
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
 )
@@ -56,14 +55,16 @@ func NewPrompt(ctx *context.Context) *Prompt {
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	var n int
+	var fs []string
 
 	if hs != nil {
 		_, heap := hs.Heap()
 		n = heap.LastCount()
+		fs = heap.Patterns()
 	}
 
 	m := p.fmtMode()
-	i := p.fmtInput()
+	i := p.fmtInput(fs)
 	s := p.fmtStatus(n)
 
 	// render blank line
@@ -209,10 +210,10 @@ func (p *Prompt) fmtMode() string {
 	return fmt.Sprintf(" %s ", p.ctx.Mode())
 }
 
-func (p *Prompt) fmtInput() string {
+func (p *Prompt) fmtInput(fs []string) string {
 	var sb strings.Builder
 
-	for _, f := range *types.GetFilters() {
+	for _, f := range fs {
 		sb.WriteRune(' ')
 		sb.WriteString(f)
 		sb.WriteRune(' ')

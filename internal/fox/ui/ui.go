@@ -16,6 +16,7 @@ import (
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/fox/ui/widgets"
+	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -366,8 +367,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyCtrlW:
 					if ui.ctx.Mode() != mode.Hex {
-						ui.ctx.ToggleWrap()
 						ui.view.Reset()
+						ui.ctx.ToggleWrap()
 					}
 
 				case tcell.KeyCtrlT:
@@ -455,11 +456,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					switch m {
 					case mode.Grep:
-						_ = types.GetFilters().Set(v)
+						_ = args.GetFilters().Set(v)
 						ui.view.Reset()
-						ui.ctx.Background(func() {
-							heap.AddFilter(v)
-						})
+						heap.AddFilter(v)
 						ui.change(mode.Less)
 
 					case mode.Goto:
@@ -500,9 +499,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						} else {
 							ui.change(mode.Default)
 						}
-					} else if len(*types.GetFilters()) > 0 {
+					} else if len(*args.GetFilters()) > 0 {
 						if ui.ctx.Mode() != mode.Hex {
-							types.GetFilters().Pop()
+							args.GetFilters().Pop()
 							ui.view.Reset()
 							heap.DelFilter()
 						}
