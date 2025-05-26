@@ -12,7 +12,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
@@ -118,7 +117,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	bag.w.Start()
 
-	bag.w.WriteFile(h.String(), *types.GetFilters())
+	bag.w.WriteFile(h.String(), h.Patterns())
 	bag.w.WriteUser(usr)
 	bag.w.WriteTime(time.Now(), fi.ModTime())
 	bag.w.WriteHash(sum)

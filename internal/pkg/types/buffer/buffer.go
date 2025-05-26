@@ -1,6 +1,8 @@
 package buffer
 
 import (
+	"fmt"
+
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
@@ -39,4 +41,15 @@ type Context struct {
 	Y int
 	W int
 	H int
+}
+
+func (ctx *Context) Hash() string {
+	return fmt.Sprintf("%s-%t-%t-%d-%d-%s",
+		ctx.Heap.Path,
+		ctx.Wrap,
+		ctx.Line,
+		ctx.W,
+		ctx.H,
+		ctx.Heap.LastFilter().Pattern,
+	)
 }
