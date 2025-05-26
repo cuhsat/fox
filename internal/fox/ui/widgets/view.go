@@ -18,6 +18,8 @@ type View struct {
 
 	deltaX int
 	deltaY int
+
+	presNr int
 }
 
 func NewView(ctx *context.Context) *View {
@@ -29,6 +31,8 @@ func NewView(ctx *context.Context) *View {
 
 		deltaX: 0,
 		deltaY: 0,
+
+		presNr: 0,
 	}
 }
 
@@ -58,6 +62,12 @@ func (v *View) Reset() {
 func (v *View) Goto(s string) {
 	if v.ctx.Mode() != mode.Hex {
 		v.textGoto(s)
+	}
+}
+
+func (v *View) Preserve() {
+	if v.smap != nil {
+		v.presNr = (*v.smap)[v.deltaY].Nr
 	}
 }
 

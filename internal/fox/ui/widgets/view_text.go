@@ -15,6 +15,7 @@ func (v *View) textRender(x, y, w, h int) {
 		Heap: v.heap,
 		Line: v.ctx.IsLine(),
 		Wrap: v.ctx.IsWrap(),
+		Nr:   v.presNr,
 		X:    v.deltaX,
 		Y:    v.deltaY,
 		W:    w,
@@ -30,6 +31,12 @@ func (v *View) textRender(x, y, w, h int) {
 	// set buffer bounds
 	v.lastX = max(buf.W-w, 0)
 	v.lastY = max(buf.H-h, 0)
+
+	// reset preserved nr
+	if v.presNr > 0 {
+		v.presNr = 0
+		v.deltaY = min(buf.Y, v.lastY)
+	}
 
 	// special type of view
 	s := v.heap.Type == types.Prompt
@@ -65,7 +72,7 @@ func (v *View) textRender(x, y, w, h int) {
 		partY := y + part.Y
 
 		if v.ctx.IsLine() {
-			partX += buf.Count + 1
+			partX += buf.N + 1
 		}
 
 		// part value

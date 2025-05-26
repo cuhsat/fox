@@ -9,7 +9,8 @@ import (
 
 type TextBuffer struct {
 	Buffer
-	Count int
+	Y int
+	N int
 
 	Lines chan TextLine
 	Parts chan TextPart
@@ -30,10 +31,10 @@ func (tl TextLine) String() string {
 }
 
 func Text(ctx *Context) (buf TextBuffer) {
-	buf.Count = text.Dec(ctx.Heap.Count())
+	buf.N = text.Dec(ctx.Heap.Count())
 
 	if ctx.Line {
-		ctx.W -= buf.Count + 1
+		ctx.W -= buf.N + 1
 	}
 
 	buf.SMap = Cache[ctx.Hash()]
@@ -52,6 +53,14 @@ func Text(ctx *Context) (buf TextBuffer) {
 		Cache[ctx.Hash()] = buf.SMap
 	}
 
+	buf.Y = ctx.Y
+
+	// find requested line
+	if ctx.Nr > 0 {
+		buf.Y, _ = buf.SMap.Find(ctx.Nr)
+		buf.Y = min(buf.Y, len(*buf.SMap)-ctx.H)
+	}
+
 	buf.W, buf.H = buf.SMap.Size()
 
 	buf.Lines = make(chan TextLine, Size)
@@ -63,12 +72,12 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		re := ctx.Heap.LastFilter().Regex
 
-		for y, str := range (*buf.SMap)[ctx.Y:] {
+		for y, str := range (*buf.SMap)[buf.Y:] {
 			if y >= ctx.H {
 				return
 			}
 
-			n := fmt.Sprintf("%0*d", buf.Count, str.Nr)
+			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
 			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
 			buf.Lines <- TextLine{Line{n, s}}

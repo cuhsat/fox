@@ -96,7 +96,9 @@ func (a *Agent) Prompt(s string, h *heap.Heap) {
 		Messages: a.msgs,
 		Options: map[string]any{
 			"num_ctx":     4096,
-			"temperature": 0.1,
+			"temperature": 0.2,
+			"top_p":       0.5,
+			"top_k":       10,
 			"seed":        82,
 		},
 	}
