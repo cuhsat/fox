@@ -13,26 +13,26 @@ type View struct {
 	heap *heap.Heap
 	smap *smap.SMap
 
+	setNr int
+
 	lastX int
 	lastY int
 
 	deltaX int
 	deltaY int
-
-	presNr int
 }
 
 func NewView(ctx *context.Context) *View {
 	return &View{
 		base: base{ctx},
 
+		setNr: 0,
+
 		lastX: 0,
 		lastY: 0,
 
 		deltaX: 0,
 		deltaY: 0,
-
-		presNr: 0,
 	}
 }
 
@@ -55,6 +55,8 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 }
 
 func (v *View) Reset() {
+	v.setNr = 0
+
 	v.deltaX = 0
 	v.deltaY = 0
 }
@@ -67,7 +69,7 @@ func (v *View) Goto(s string) {
 
 func (v *View) Preserve() {
 	if v.smap != nil {
-		v.presNr = (*v.smap)[v.deltaY].Nr
+		v.setNr = (*v.smap)[v.deltaY].Nr
 	}
 }
 
