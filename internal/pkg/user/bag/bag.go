@@ -16,12 +16,11 @@ import (
 )
 
 const (
-	Text     = "text"
-	Markdown = "markdown"
-	Jsonl    = "jsonl"
-	Json     = "json"
-	Xml      = "xml"
-	Sql      = "sql"
+	Text  = "text"
+	Jsonl = "jsonl"
+	Json  = "json"
+	Xml   = "xml"
+	Sql   = "sql"
 )
 
 const (
@@ -55,9 +54,6 @@ func New(path, key, wt string) *Bag {
 	var e string
 
 	switch strings.ToLower(wt) {
-	case Markdown:
-		w = NewMarkdownWriter()
-		e = ".md"
 	case Jsonl:
 		w = NewJsonWriter(false)
 		e = ".jsonl"

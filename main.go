@@ -76,7 +76,6 @@ func main() {
 	// aliases
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
-	M := flag.BoolP("markdown", "M", false, "export in Markdown format")
 	X := flag.BoolP("xml", "X", false, "export in XML format")
 	S := flag.BoolP("sql", "S", false, "export in SQL format")
 
@@ -144,10 +143,6 @@ func main() {
 		*m = bag.Jsonl
 	}
 
-	if *M {
-		*m = bag.Markdown
-	}
-
 	if *X {
 		*m = bag.Xml
 	}
@@ -164,7 +159,7 @@ func main() {
 
 	if *s > 0 {
 		*p = true
-		om = types.Strings
+		om = types.Carve
 		ov = *s
 	}
 

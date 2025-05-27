@@ -148,6 +148,16 @@ func Exists(path string) bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
+func TempFile() *os.File {
+	f, err := os.CreateTemp("", "fox-*")
+
+	if err != nil {
+		Panic(err)
+	}
+
+	return f
+}
+
 func OpenFile(path string) *os.File {
 	f, err := os.OpenFile(path, os.O_RDONLY, 0400)
 
@@ -158,14 +168,12 @@ func OpenFile(path string) *os.File {
 	return f
 }
 
-func TempFile() *os.File {
-	f, err := os.CreateTemp("", "fox-*")
+func WriteFile(path string, b []byte) {
+	err := os.WriteFile(path, b, 0600)
 
 	if err != nil {
 		Panic(err)
 	}
-
-	return f
 }
 
 func Extract(data string) string {

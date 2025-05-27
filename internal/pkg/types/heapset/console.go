@@ -45,7 +45,7 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 			printHash(&ctx, v.(string))
 		case types.Stats:
 			printStats(&ctx)
-		case types.Strings:
+		case types.Carve:
 			printStrings(&ctx, v.(int))
 		}
 	}
