@@ -5,11 +5,12 @@ type Heap int
 const (
 	Regular Heap = iota
 	Deflate
+	Ignore
 	Stdin
 	Stdout
 	Stderr
-	Plugin
 	Prompt
+	Plugin
 )
 
 type Output int
@@ -20,5 +21,5 @@ const (
 	Hex
 	Hash
 	Stats
-	Strings
+	Carve
 )

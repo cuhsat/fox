@@ -244,7 +244,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 					go pl.Exec(heap.Path, heap.Base, hs.Files(), func(p, b, t string) {
-						hs.OpenFile(p, b, t, types.Stdout)
+						hs.OpenFile(p, b, t, types.Plugin)
 						ui.ctx.Interrupt()
 					})
 
@@ -403,15 +403,31 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					if !bag.Put(heap) {
+					path := bag.Path
+
+					switch heap.Type {
+					case types.Stdin:
+						path = "stdin.txt"
+						sys.WriteFile(path, heap.Bytes())
+
+					case types.Stdout, types.Stderr, types.Prompt:
+						path = heap.Title + ".txt"
+						sys.WriteFile(path, heap.Bytes())
+
+					case types.Regular, types.Deflate, types.Plugin:
+						if !bag.Put(heap) {
+							continue
+						}
+
+					default:
 						continue
 					}
 
-					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
+					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), path))
 
 				case tcell.KeyCtrlB:
 					if sys.Exists(bag.Path) {
-						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Regular)
+						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Ignore)
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}

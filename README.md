@@ -26,7 +26,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in timestamped input and agent history
 * Build-in wc like file content statistics
 * Build-in plugin support for tools like Fox-IT's Dissect
-* Evidence bag formats: Text, Markdown, JSON, JSONL, XML, SQLite
+* Evidence bag formats: Text, JSON, JSONL, XML, SQLite
 * Evidence bag cryptographic signing via HMAC-SHA256
 * Terminal interface supporting a vast amount of terminals
   * With support for copy & bracketed paste
