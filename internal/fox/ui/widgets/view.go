@@ -77,6 +77,14 @@ func (v *View) ScrollStart() {
 	v.deltaY = 0
 }
 
+func (v *View) ScrollLine() {
+	v.Preserve()
+
+	if v.setNr > 0 {
+		v.setNr++
+	}
+}
+
 func (v *View) ScrollEnd() {
 	v.deltaY = v.lastY
 }

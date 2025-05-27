@@ -2,6 +2,7 @@ package heapset
 
 import (
 	"fmt"
+	"os"
 	"slices"
 	"sync"
 	"sync/atomic"
@@ -14,6 +15,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
+)
+
+const (
+	Stdin = "-"
 )
 
 type callback func()
@@ -50,8 +55,12 @@ func New(paths []string) *HeapSet {
 
 	hs.watchPath(sys.Log.Name)
 
+	if sys.IsPiped(os.Stdin) {
+		paths = append(paths, Stdin)
+	}
+
 	for _, path := range paths {
-		if path == "-" {
+		if path == Stdin {
 			hs.loadPipe()
 			break
 		}
@@ -61,7 +70,7 @@ func New(paths []string) *HeapSet {
 
 	if len(paths) == 0 {
 		hs.OpenHelp()
-	} else if hs.Size() == 0 {
+	} else if hs.Len() == 0 {
 		sys.Exit("no files found")
 	}
 
@@ -70,15 +79,15 @@ func New(paths []string) *HeapSet {
 	return &hs
 }
 
-func (hs *HeapSet) Bind(fn1, fn2 callback) {
-	hs.watchFn = fn1
-	hs.errorFn = fn2
-}
-
-func (hs *HeapSet) Size() int32 {
+func (hs *HeapSet) Len() int32 {
 	hs.RLock()
 	defer hs.RUnlock()
 	return int32(len(hs.heaps))
+}
+
+func (hs *HeapSet) Bind(fn1, fn2 callback) {
+	hs.watchFn = fn1
+	hs.errorFn = fn2
 }
 
 func (hs *HeapSet) Files() []string {
@@ -118,7 +127,7 @@ func (hs *HeapSet) OpenLog() {
 	idx, ok := hs.findByPath(sys.Log.Name)
 
 	if !ok {
-		idx = hs.Size()
+		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Log",
@@ -137,7 +146,7 @@ func (hs *HeapSet) OpenHelp() {
 	idx, ok := hs.findByName("Help")
 
 	if !ok {
-		idx = hs.Size()
+		idx = hs.Len()
 
 		p := sys.Extract(fmt.Sprintf(fox.Help, fox.Version))
 
@@ -158,7 +167,7 @@ func (hs *HeapSet) OpenChat(path string) {
 	idx, ok := hs.findByPath(path)
 
 	if !ok {
-		idx = hs.Size()
+		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Chat",
@@ -181,7 +190,7 @@ func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
 	idx, ok := hs.findByPath(path)
 
 	if !ok {
-		idx = hs.Size()
+		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: title,
@@ -200,7 +209,7 @@ func (hs *HeapSet) PrevHeap() *heap.Heap {
 	idx := atomic.AddInt32(hs.index, -1)
 
 	if idx < 0 {
-		atomic.StoreInt32(hs.index, hs.Size()-1)
+		atomic.StoreInt32(hs.index, hs.Len()-1)
 	}
 
 	return hs.load()
@@ -209,7 +218,7 @@ func (hs *HeapSet) PrevHeap() *heap.Heap {
 func (hs *HeapSet) NextHeap() *heap.Heap {
 	idx := atomic.AddInt32(hs.index, 1)
 
-	if idx >= hs.Size() {
+	if idx >= hs.Len() {
 		atomic.StoreInt32(hs.index, 0)
 	}
 
@@ -217,7 +226,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) CloseHeap() *heap.Heap {
-	if hs.Size() == 1 {
+	if hs.Len() == 1 {
 		return nil
 	}
 

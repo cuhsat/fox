@@ -214,7 +214,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					esc = true
 
 				case tcell.KeyTab:
-					ui.view.Reset()
+					if hs.Len() > 1 {
+						ui.view.Reset()
+					}
 
 					if mods&tcell.ModShift != 0 {
 						heap = hs.PrevHeap()
@@ -338,6 +340,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyEnd:
 					ui.view.ScrollEnd()
 
+				case tcell.KeyCtrlCarat:
+					ui.ctx.ChangeTheme(ui.themes.Cycle())
+
+					ui.root.Fill(' ', themes.Base)
+					ui.root.Show()
+					ui.root.SetCursorStyle(widgets.Cursor, themes.Cursor)
+
+					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
+
 				case tcell.KeyCtrlSpace:
 					ui.change(mode.Goto)
 
@@ -373,15 +384,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.view.Preserve()
 					}
 
-				case tcell.KeyCtrlCarat:
-					ui.ctx.ChangeTheme(ui.themes.Cycle())
-
-					ui.root.Fill(' ', themes.Base)
-					ui.root.Show()
-					ui.root.SetCursorStyle(widgets.Cursor, themes.Cursor)
-
-					ui.overlay.SendInfo(fmt.Sprintf("Theme %s", ui.ctx.Theme()))
-
 				case tcell.KeyCtrlV:
 					if ui.ctx.Mode() == mode.Hex {
 						continue
@@ -403,16 +405,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					path := bag.Path
+					p := bag.Path
 
 					switch heap.Type {
 					case types.Stdin:
-						path = "stdin.txt"
-						sys.WriteFile(path, heap.Bytes())
+						p = "fox.txt"
+						sys.WriteFile(p, heap.Bytes())
 
 					case types.Stdout, types.Stderr, types.Prompt:
-						path = heap.Title + ".txt"
-						sys.WriteFile(path, heap.Bytes())
+						p = heap.Title + ".txt"
+						sys.WriteFile(p, heap.Bytes())
 
 					case types.Regular, types.Deflate, types.Plugin:
 						if !bag.Put(heap) {
@@ -423,7 +425,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), path))
+					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), p))
 
 				case tcell.KeyCtrlB:
 					if sys.Exists(bag.Path) {
@@ -463,16 +465,18 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyEnter:
 					v := ui.prompt.ReadLine()
+					m := ui.ctx.Mode()
 
-					if len(v) == 0 {
+					if len(v) == 0 && m != mode.Less {
 						continue
 					}
 
 					hi.AddCommand(v)
 
-					m := ui.ctx.Mode()
-
 					switch m {
+					case mode.Less:
+						ui.view.ScrollLine()
+
 					case mode.Grep:
 						_ = args.GetFilters().Set(v)
 						ui.view.Reset()
