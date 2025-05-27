@@ -68,7 +68,7 @@ func (v *View) Goto(s string) {
 }
 
 func (v *View) Preserve() {
-	if v.smap != nil {
+	if v.smap != nil && len(*v.smap) > 0 {
 		v.setNr = (*v.smap)[v.deltaY].Nr
 	}
 }
