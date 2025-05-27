@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"strings"
 	"time"
 
 	_ "embed"
+
 	_ "modernc.org/sqlite"
 
 	"github.com/cuhsat/fox/api"
@@ -63,14 +65,13 @@ func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
 		sys.Panic(err)
 	}
 
-	if !n {
-		return
-	}
+	// create database from schema
+	if n {
+		_, err = w.db.Exec(api.SqlSchema)
 
-	_, err = w.db.Exec(api.SqlSchema)
-
-	if err != nil {
-		sys.Panic(err)
+		if err != nil {
+			sys.Panic(err)
+		}
 	}
 }
 
@@ -158,26 +159,38 @@ func (w *SqlWriter) WriteLines(ns []int, ss []string) {
 	}
 }
 
-func (w *SqlWriter) insert(q string, v ...any) int64 {
-	f := "?"
+func (w *SqlWriter) insert(table string, v ...any) int64 {
+	query := "INSERT INTO %s VALUES (%s);"
 
-	for range len(v) - 1 {
-		f += ", ?"
-	}
+	return w.execute(fmt.Sprintf(query, table, fields(len(v))), v...)
+}
 
-	res, err := w.db.Exec(fmt.Sprintf("INSERT INTO %s VALUES (%s);", q, f), v...)
+func (w *SqlWriter) execute(query string, v ...any) int64 {
+	res, err := w.db.Exec(query, v...)
 
 	if err != nil {
 		sys.Error(err)
-		return -1
+		return 0
 	}
 
 	id, err := res.LastInsertId()
 
 	if err != nil {
 		sys.Error(err)
-		return -1
+		return 0
 	}
 
 	return id
+}
+
+func fields(n int) string {
+	var sb strings.Builder
+
+	sb.WriteRune('?')
+
+	for range n - 1 {
+		sb.WriteString(", ?")
+	}
+
+	return sb.String()
 }

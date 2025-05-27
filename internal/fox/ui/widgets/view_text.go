@@ -59,7 +59,7 @@ func (v *View) textRender(x, y, w, h int) {
 		// text value
 		if len(line.Str) > 0 {
 			if s && strings.HasPrefix(line.Str, text.Chevron) {
-				v.print(lineX, lineY, line.Str, themes.Subtext0)
+				v.print(lineX, lineY, line.Str, themes.Subtext2)
 			} else {
 				v.print(lineX, lineY, line.Str, themes.Base)
 			}

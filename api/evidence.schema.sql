@@ -1,4 +1,4 @@
--- FORENSIC EXAMINER EVIDENCE BAG
+-- Forensic Examiner Evidence Bag
 CREATE TABLE IF NOT EXISTS evidence (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,

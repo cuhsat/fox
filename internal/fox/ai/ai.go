@@ -44,7 +44,7 @@ var (
 		"temperature": 0.2,
 		"top_p":       0.5,
 		"top_k":       10,
-		"seed":        82,
+		"seed":        8211,
 	}
 )
 
@@ -79,21 +79,29 @@ func NewAgent(model string) *Agent {
 		model = Model
 	}
 
-	a := &Agent{
+	return &Agent{
 		model: model,
 		file:  sys.TempFile(),
 		keep:  &api.Duration{time.Minute * 10},
 		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}
-
-	a.preload()
-
-	return a
 }
 
 func (a *Agent) Path() string {
 	return a.file.Name()
+}
+
+func (a *Agent) Load() {
+	go rag.Chat(
+		context.Background(),
+		&api.ChatRequest{
+			Model:     a.model,
+			KeepAlive: a.keep,
+		},
+		func(_ api.ChatResponse) error {
+			return nil
+		})
 }
 
 func (a *Agent) Close() {
@@ -152,20 +160,6 @@ func (a *Agent) Listen(hi *history.History) {
 			hi.AddSystem(s)
 			buf.Reset()
 		}
-	}
-}
-
-func (a *Agent) preload() {
-	ctx := context.Background()
-	req := &api.ChatRequest{
-		Model:     a.model,
-		KeepAlive: a.keep,
-	}
-
-	if err := rag.Chat(ctx, req, func(_ api.ChatResponse) error {
-		return nil
-	}); err != nil {
-		sys.Error(err)
 	}
 }
 

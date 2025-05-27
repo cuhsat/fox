@@ -100,6 +100,7 @@ func New(m mode.Mode) *UI {
 
 	if ai.Build && ai.Init() {
 		ui.agent = ai.NewAgent(ctx.Model())
+		ui.agent.Load()
 	}
 
 	return &ui
@@ -355,7 +356,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlF:
 					ui.change(mode.Rag)
 
-				case tcell.KeyCtrlE:
+				case tcell.KeyCtrlT:
 					if ui.ctx.Mode() != mode.Hex {
 						ui.ctx.ToggleFollow()
 					}
@@ -372,7 +373,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.view.Preserve()
 					}
 
-				case tcell.KeyCtrlT:
+				case tcell.KeyCtrlCarat:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
 
 					ui.root.Fill(' ', themes.Base)
