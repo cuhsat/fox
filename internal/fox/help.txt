@@ -31,7 +31,7 @@
   Ctrl + Shift + Up    Scroll to start
   Ctrl + Shift + Down  Scroll to end
   Ctrl + Space         Scroll to line [+|-]#
-  Ctrl + ^             Cycle themes
+  Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
   Ctrl + g             Switch to GREP mode
   Ctrl + x             Switch to HEX mode
@@ -55,6 +55,7 @@
   F12                  Show file(s) SHA3
 
   LESS:
+  Enter                Scroll one line down
   Space                Scroll one page down
   Any other key        Switch to GREP mode
 

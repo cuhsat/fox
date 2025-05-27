@@ -30,7 +30,7 @@ func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	if hs != nil {
 		i, heap = hs.Heap()
 		p = heap.String()
-		n = hs.Size()
+		n = hs.Len()
 	}
 
 	var s string
