@@ -1,4 +1,4 @@
-//go:build !no_ai
+//go:build !no_ui && !no_ai
 
 package ai
 
@@ -37,6 +37,17 @@ var (
 	rag *api.Client
 )
 
+var (
+	// conservative options
+	options = map[string]any{
+		"num_ctx":     8192,
+		"temperature": 0.2,
+		"top_p":       0.5,
+		"top_k":       10,
+		"seed":        82,
+	}
+)
+
 type Agent struct {
 	sync.RWMutex
 
@@ -68,13 +79,17 @@ func NewAgent(model string) *Agent {
 		model = Model
 	}
 
-	return &Agent{
+	a := &Agent{
 		model: model,
 		file:  sys.TempFile(),
 		keep:  &api.Duration{time.Minute * 10},
 		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}
+
+	a.preload()
+
+	return a
 }
 
 func (a *Agent) Path() string {
@@ -83,20 +98,6 @@ func (a *Agent) Path() string {
 
 func (a *Agent) Close() {
 	_ = a.file.Close()
-}
-
-func (a *Agent) Preload() {
-	ctx := context.Background()
-	req := &api.ChatRequest{
-		Model:     a.model,
-		KeepAlive: a.keep,
-	}
-
-	if err := rag.Chat(ctx, req, func(_ api.ChatResponse) error {
-		return nil
-	}); err != nil {
-		sys.Error(err)
-	}
 }
 
 func (a *Agent) Prompt(s string, h *heap.Heap) {
@@ -112,13 +113,7 @@ func (a *Agent) Prompt(s string, h *heap.Heap) {
 		Model:     a.model,
 		Messages:  a.msgs,
 		KeepAlive: a.keep,
-		Options: map[string]any{
-			"num_ctx":     8192,
-			"temperature": 0.2,
-			"top_p":       0.5,
-			"top_k":       10,
-			"seed":        82,
-		},
+		Options:   options,
 	}
 
 	a.RUnlock()
@@ -157,6 +152,20 @@ func (a *Agent) Listen(hi *history.History) {
 			hi.AddSystem(s)
 			buf.Reset()
 		}
+	}
+}
+
+func (a *Agent) preload() {
+	ctx := context.Background()
+	req := &api.ChatRequest{
+		Model:     a.model,
+		KeepAlive: a.keep,
+	}
+
+	if err := rag.Chat(ctx, req, func(_ api.ChatResponse) error {
+		return nil
+	}); err != nil {
+		sys.Error(err)
 	}
 }
 

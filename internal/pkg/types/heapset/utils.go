@@ -3,7 +3,6 @@ package heapset
 import (
 	"fmt"
 	"io"
-	"slices"
 	"strings"
 	"sync/atomic"
 
@@ -70,15 +69,14 @@ func (hs *HeapSet) Counts() {
 
 func (hs *HeapSet) Strings() {
 	hs.newBuffer("strings", func(h *heap.Heap) string {
-		ss := make([]string, 0)
+		var sb strings.Builder
 
-		for s := range h.Strings(3) {
-			ss = append(ss, strings.TrimSpace(s.Str))
+		for str := range h.Strings(3) {
+			sb.WriteString(strings.TrimSpace(str.Str))
+			sb.WriteRune('\n')
 		}
 
-		slices.Sort(ss)
-
-		return strings.Join(slices.Compact(ss), "\n")
+		return sb.String()
 	})
 }
 
