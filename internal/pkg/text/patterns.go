@@ -1,12 +1,12 @@
 // https://github.com/s0md3v/Bolt/blob/master/db/hashes.json
-package data
+package text
 
-type Hash struct {
+type Pattern struct {
 	Regex string
 	Names []string
 }
 
-var Hashes = []Hash{
+var Patterns = []Pattern{
 	{
 		Regex: "^[a-f0-9]{4}$",
 		Names: []string{

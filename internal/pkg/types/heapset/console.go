@@ -47,8 +47,6 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 			printStats(&ctx)
 		case types.Strings:
 			printStrings(&ctx, v.(int))
-		case types.Reverse:
-			printReverse(v.(string))
 		}
 	}
 
@@ -104,12 +102,5 @@ func printStrings(ctx *buffer.Context, min int) {
 	fmt.Println(text.Title(ctx.Heap.String(), termW))
 	for s := range ctx.Heap.Strings(min) {
 		fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
-	}
-}
-
-func printReverse(hash string) {
-	fmt.Printf("Hash: %s\n", hash)
-	for s := range text.Reverse(hash) {
-		fmt.Printf("[+]  %s\n", s)
 	}
 }
