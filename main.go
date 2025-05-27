@@ -31,7 +31,6 @@ func main() {
 	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
 	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output hash sum of file")
-	R := flag.StringP("reverse", "R", "", "output hash sum reverse lookup")
 
 	if *s == 0 {
 		flag.Lookup("strings").NoOptDefVal = "3"
@@ -173,12 +172,6 @@ func main() {
 		*p = true
 		om = types.Hash
 		ov = *H
-	}
-
-	if len(*R) > 0 {
-		*p = true
-		om = types.Reverse
-		ov = *R
 	}
 
 	// render mode

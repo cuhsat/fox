@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	_ "embed"
 
@@ -41,6 +42,7 @@ type Agent struct {
 
 	model string        // agent model
 	file  *os.File      // agent file
+	keep  *api.Duration // agent keep alive
 	msgs  []api.Message // agent history
 	ch    chan string   // agent channel
 }
@@ -69,6 +71,7 @@ func NewAgent(model string) *Agent {
 	return &Agent{
 		model: model,
 		file:  sys.TempFile(),
+		keep:  &api.Duration{time.Minute * 10},
 		msgs:  make([]api.Message, 0),
 		ch:    make(chan string, 16),
 	}
@@ -82,6 +85,20 @@ func (a *Agent) Close() {
 	_ = a.file.Close()
 }
 
+func (a *Agent) Preload() {
+	ctx := context.Background()
+	req := &api.ChatRequest{
+		Model:     a.model,
+		KeepAlive: a.keep,
+	}
+
+	if err := rag.Chat(ctx, req, func(_ api.ChatResponse) error {
+		return nil
+	}); err != nil {
+		sys.Error(err)
+	}
+}
+
 func (a *Agent) Prompt(s string, h *heap.Heap) {
 	a.write(fmt.Sprintf("%s %s\n", text.Chevron, s))
 
@@ -92,10 +109,11 @@ func (a *Agent) Prompt(s string, h *heap.Heap) {
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    a.model,
-		Messages: a.msgs,
+		Model:     a.model,
+		Messages:  a.msgs,
+		KeepAlive: a.keep,
 		Options: map[string]any{
-			"num_ctx":     4096,
+			"num_ctx":     8192,
 			"temperature": 0.2,
 			"top_p":       0.5,
 			"top_k":       10,
@@ -144,7 +162,7 @@ func (a *Agent) Listen(hi *history.History) {
 
 func (a *Agent) addHeap(h *heap.Heap) {
 	for _, str := range *h.SMap() {
-		a.addMessage("tool", fmt.Sprintf("[%d] %s", str.Nr, str.Str))
+		a.addMessage("user", fmt.Sprintf("[%d] %s", str.Nr, str.Str))
 	}
 }
 

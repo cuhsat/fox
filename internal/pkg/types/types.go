@@ -19,7 +19,6 @@ const (
 	Grep
 	Hex
 	Hash
-	Reverse
 	Stats
 	Strings
 )
