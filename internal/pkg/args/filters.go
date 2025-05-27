@@ -25,12 +25,14 @@ func (f *Filters) Type() string {
 	return "strings"
 }
 
+// global
 func (f *Filters) Set(p string) error {
 	*f = append(*f, p)
 
 	return nil
 }
 
+// global
 func (f *Filters) Pop() {
 	*f = (*f)[:len(*f)-1]
 }

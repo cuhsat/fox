@@ -1,4 +1,4 @@
-//go:build no_ai
+//go:build no_ui || no_ai
 
 package ai
 

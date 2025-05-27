@@ -41,8 +41,7 @@ type Context struct {
 }
 
 func (ctx *Context) Hash() string {
-	return fmt.Sprintf("%s>%s#%d[%t|%t]@%d:%d",
-		ctx.Heap.Path,
+	return fmt.Sprintf("%s#%d/%t/%t@%d:%d",
 		ctx.Heap.LastFilter().Pattern,
 		ctx.Heap.Len(),
 		ctx.Wrap,
