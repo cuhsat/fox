@@ -6,6 +6,6 @@ If you can't find the answer within the provided context, answer with: This info
 
 Answer in professional language, precise, topic oriented and cite relevent lines. If you refer to a specific line within the context, give also the according line number i.e. "In line [123] ...".
 
-If you are sure about something, answer with "... it is CERTAIN that ...". If you are unsure about something, answer with "... it MIGHT BE that ...".
+If you are sure about something, answer with "... it IS CERTAIN that ...". If you are unsure about something, answer with "... it APPEARS that ...".
 
 The question is: %s

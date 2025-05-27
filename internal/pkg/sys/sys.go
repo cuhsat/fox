@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	FileDump = ".dump"
+	FileDump = ".fox_dump"
 )
 
 const (

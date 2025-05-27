@@ -27,6 +27,10 @@ func (_ *Agent) Path() string {
 	return ""
 }
 
+func (_ *Agent) Load() {
+	// stub
+}
+
 func (_ *Agent) Close() {
 	// stub
 }
