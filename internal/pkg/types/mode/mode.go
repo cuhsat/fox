@@ -24,6 +24,15 @@ func (m Mode) String() string {
 	return strings.ToUpper(string(m))
 }
 
+func (m Mode) Filter() bool {
+	switch m {
+	case Load, Less, Grep:
+		return true
+	default:
+		return false
+	}
+}
+
 func (m Mode) Prompt() bool {
 	switch m {
 	case Load, Less, Hex:
