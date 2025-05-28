@@ -13,6 +13,18 @@ type Queueable interface {
 	Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
 
+type coord struct {
+	X int
+	Y int
+}
+
+type panel struct {
+	X int
+	Y int
+	W int
+	H int
+}
+
 type base struct {
 	ctx *context.Context
 }

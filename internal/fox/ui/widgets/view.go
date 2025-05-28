@@ -10,44 +10,23 @@ import (
 
 type View struct {
 	base
-	cache map[string][2]int
+	cache map[string]coord
 
 	heap *heap.Heap
 	smap *smap.SMap
 
-	setNr int
+	nr int
 
-	lastX int
-	lastY int
-
-	deltaX int
-	deltaY int
-}
-
-type Coord struct {
-	X int
-	Y int
-}
-
-type Are struct {
-	Coord
-	W int
-	H int
+	last  coord
+	delta coord
 }
 
 func NewView(ctx *context.Context) *View {
 	return &View{
-		cache: make(map[string][2]int),
-
-		base: base{ctx},
-
-		setNr: 0,
-
-		lastX: 0,
-		lastY: 0,
-
-		deltaX: 0,
-		deltaY: 0,
+		cache: make(map[string]coord),
+		base:  base{ctx},
+		last:  coord{0, 0},
+		delta: coord{0, 0},
 	}
 }
 
@@ -60,39 +39,39 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 		return h
 	}
 
+	p := &panel{x, y, w, h}
+
 	if v.ctx.Mode() == mode.Hex {
-		v.hexRender(x, y, w, h)
+		v.hexRender(p)
 	} else {
-		v.textRender(x, y, w, h)
+		v.textRender(p)
 	}
 
 	return h
 }
 
 func (v *View) Reset() {
-	v.deltaX = 0
-	v.deltaY = 0
+	v.delta.X = 0
+	v.delta.Y = 0
 
-	v.setNr = 0
+	v.nr = 0
 }
 
 func (v *View) Save(k string) {
-	v.cache[k] = [2]int{
-		v.deltaX,
-		v.deltaY,
+	v.cache[k] = coord{
+		v.delta.X,
+		v.delta.Y,
 	}
 }
 
 func (v *View) Load(k string) {
-	if c, ok := v.cache[k]; ok {
-		v.deltaX = c[0]
-		v.deltaY = c[1]
+	if c, ok := v.cache[k]; !ok {
+		v.delta = coord{0, 0}
 	} else {
-		v.deltaX = 0
-		v.deltaY = 0
+		v.delta = c
 	}
 
-	v.setNr = 0
+	v.nr = 0
 }
 
 func (v *View) Goto(s string) {
@@ -103,7 +82,7 @@ func (v *View) Goto(s string) {
 
 func (v *View) Preserve() {
 	if v.smap != nil && len(*v.smap) > 0 {
-		v.setNr = (*v.smap)[v.deltaY].Nr
+		v.nr = (*v.smap)[v.delta.Y].Nr
 	}
 }
 
@@ -112,41 +91,41 @@ func (v *View) ScrollLine() {
 		return
 	}
 
-	v.setNr = (*v.smap)[v.deltaY].Nr
+	v.nr = (*v.smap)[v.delta.Y].Nr
 
-	for y := v.deltaY; y < len(*v.smap); y++ {
-		if v.setNr < (*v.smap)[y].Nr {
-			v.setNr = (*v.smap)[y].Nr
+	for y := v.delta.Y; y < len(*v.smap); y++ {
+		if v.nr < (*v.smap)[y].Nr {
+			v.nr = (*v.smap)[y].Nr
 			break
 		}
 	}
 }
 
 func (v *View) ScrollStart() {
-	v.deltaY = 0
+	v.delta.Y = 0
 }
 
 func (v *View) ScrollEnd() {
-	v.deltaY = v.lastY
+	v.delta.Y = v.last.Y
 }
 
 func (v *View) ScrollTo(x, y int) {
-	v.deltaX = max(min(x, v.lastX), 0)
-	v.deltaY = max(min(y, v.lastY), 0)
+	v.delta.X = max(min(x, v.last.X), 0)
+	v.delta.Y = max(min(y, v.last.Y), 0)
 }
 
 func (v *View) ScrollUp(delta int) {
-	v.deltaY = max(v.deltaY-delta, 0)
+	v.delta.Y = max(v.delta.Y-delta, 0)
 }
 
 func (v *View) ScrollDown(delta int) {
-	v.deltaY = min(v.deltaY+delta, v.lastY)
+	v.delta.Y = min(v.delta.Y+delta, v.last.Y)
 }
 
 func (v *View) ScrollLeft(delta int) {
-	v.deltaX = max(v.deltaX-delta, 0)
+	v.delta.X = max(v.delta.X-delta, 0)
 }
 
 func (v *View) ScrollRight(delta int) {
-	v.deltaX = min(v.deltaX+delta, v.lastX)
+	v.delta.X = min(v.delta.X+delta, v.last.X)
 }

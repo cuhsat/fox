@@ -20,33 +20,33 @@ func NewTitle(ctx *context.Context) *Title {
 	}
 }
 
-func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
+func (t *Title) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	var i int32
 	var n int32
-	var p string = "Loading…"
+	var s string = "Loading…"
 
 	var heap *heap.Heap
 
 	if hs != nil {
 		i, heap = hs.Heap()
-		p = heap.String()
+		s = heap.String()
 		n = hs.Len()
 	}
 
-	var s string
+	var c string
 
 	if n > 1 {
-		s = fmt.Sprintf(" %d / %d ", i, n)
+		c = fmt.Sprintf(" %d / %d ", i, n)
 	}
 
 	// render blank line
 	t.blank(x, y, w, themes.Surface0)
 
 	// render heap file path
-	t.print(x, y, text.Abl(p, w-(x+text.Len(s)+1)), themes.Surface2)
+	t.print(x, y, text.Abl(s, w-(x+text.Len(c)+1)), themes.Surface2)
 
-	// render heapset index
-	t.print(x+w-text.Len(s), y, s, themes.Surface1)
+	// render heapset index and count
+	t.print(x+w-text.Len(c), y, c, themes.Surface1)
 
 	return 1
 }
