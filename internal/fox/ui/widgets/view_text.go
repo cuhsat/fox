@@ -10,35 +10,35 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
-func (v *View) textRender(x, y, w, h int) {
+func (v *View) textRender(p *panel) {
 	buf := buffer.Text(&buffer.Context{
 		Heap: v.heap,
 		Line: v.ctx.IsLine(),
 		Wrap: v.ctx.IsWrap(),
-		Nr:   v.setNr,
-		X:    v.deltaX,
-		Y:    v.deltaY,
-		W:    w,
-		H:    h,
+		Nr:   v.nr,
+		X:    v.delta.X,
+		Y:    v.delta.Y,
+		W:    p.W,
+		H:    p.H,
 	})
 
 	v.smap = buf.SMap
 
 	if v.ctx.IsLine() {
-		w -= text.Dec(v.heap.Count()) + 1
+		p.W -= text.Dec(v.heap.Count()) + 1
 	}
 
 	// set buffer bounds
-	v.lastX = max(buf.W-w, 0)
-	v.lastY = max(buf.H-h, 0)
+	v.last.X = max(buf.W-p.W, 0)
+	v.last.Y = max(buf.H-p.H, 0)
 
 	// set preserved line
-	if v.setNr > 0 {
-		v.deltaY = min(buf.Y, v.lastY)
+	if v.nr > 0 {
+		v.delta.Y = min(buf.Y, v.last.Y)
 	}
 
 	// reset
-	v.setNr = 0
+	v.nr = 0
 
 	// special type of view
 	s := v.heap.Type == types.Prompt
@@ -47,8 +47,8 @@ func (v *View) textRender(x, y, w, h int) {
 
 	// render lines
 	for line := range buf.Lines {
-		lineX := x
-		lineY := y + i
+		lineX := p.X
+		lineY := p.Y + i
 
 		// line number
 		if v.ctx.IsLine() {
@@ -70,8 +70,8 @@ func (v *View) textRender(x, y, w, h int) {
 
 	// render parts on top
 	for part := range buf.Parts {
-		partX := x + part.X
-		partY := y + part.Y
+		partX := p.X + part.X
+		partY := p.Y + part.Y
 
 		if v.ctx.IsLine() {
 			partX += buf.N + 1
@@ -88,17 +88,17 @@ func (v *View) textGoto(s string) {
 	switch s[0] {
 	case '+':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.deltaY].Nr + i
+		nr = (*v.smap)[v.delta.Y].Nr + i
 
 	case '-':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.deltaY].Nr - i
+		nr = (*v.smap)[v.delta.Y].Nr - i
 
 	default:
 		nr, _ = strconv.Atoi(s)
 	}
 
 	if y, ok := v.smap.Find(nr); ok {
-		v.ScrollTo(v.deltaX, y)
+		v.ScrollTo(v.delta.X, y)
 	}
 }
