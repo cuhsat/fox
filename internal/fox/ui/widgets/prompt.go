@@ -213,11 +213,13 @@ func (p *Prompt) fmtMode() string {
 func (p *Prompt) fmtInput(fs []string) string {
 	var sb strings.Builder
 
-	for _, f := range fs {
-		sb.WriteRune(' ')
-		sb.WriteString(f)
-		sb.WriteRune(' ')
-		sb.WriteRune(grep)
+	if p.ctx.Mode().Filter() {
+		for _, f := range fs {
+			sb.WriteRune(' ')
+			sb.WriteString(f)
+			sb.WriteRune(' ')
+			sb.WriteRune(grep)
+		}
 	}
 
 	if v, ok := p.value.Load().(string); ok {
