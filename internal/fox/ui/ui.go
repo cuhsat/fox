@@ -429,15 +429,18 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyCtrlB:
 					if sys.Exists(bag.Path) {
+						ui.view.Reset()
 						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Ignore)
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}
 
 				case tcell.KeyCtrlH:
+					ui.view.Reset()
 					hs.OpenHelp()
 
 				case tcell.KeyCtrlD:
+					ui.view.Reset()
 					hs.OpenLog()
 
 				case tcell.KeyCtrlQ:

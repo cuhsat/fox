@@ -74,7 +74,7 @@ func (v *View) Preserve() {
 }
 
 func (v *View) ScrollLine() {
-	if v.smap == nil {
+	if v.smap == nil || len(*v.smap) <= 1 {
 		return
 	}
 
