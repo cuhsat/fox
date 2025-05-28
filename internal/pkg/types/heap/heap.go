@@ -8,7 +8,6 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
@@ -155,7 +154,7 @@ func (h *Heap) Reload() {
 		}
 	}
 
-	l := args.GetLimits()
+	l := types.GetLimits()
 
 	// reduce mmap
 	h.mmap = l.ReduceMMap(h.mmap)

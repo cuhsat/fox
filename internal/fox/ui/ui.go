@@ -16,7 +16,6 @@ import (
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/fox/ui/widgets"
-	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -483,7 +482,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.view.ScrollLine()
 
 					case mode.Grep:
-						_ = args.GetFilters().Set(v)
+						_ = types.GetFilters().Set(v)
 						ui.view.Reset()
 						heap.AddFilter(v)
 						ui.change(mode.Less)
@@ -526,9 +525,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						} else {
 							ui.change(mode.Default)
 						}
-					} else if len(*args.GetFilters()) > 0 {
+					} else if len(*types.GetFilters()) > 0 {
 						if ui.ctx.Mode() != mode.Hex {
-							args.GetFilters().Pop()
+							types.GetFilters().Pop()
 							ui.view.Reset()
 							heap.DelFilter()
 						}
