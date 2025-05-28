@@ -74,7 +74,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 		defer close(buf.Lines)
 		defer close(buf.Parts)
 
-		re := ctx.Heap.LastFilter().Regex
+		fs := ctx.Heap.Filters()
 
 		for y, str := range (*buf.SMap)[buf.Y:] {
 			if y >= ctx.H {
@@ -86,16 +86,14 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 			buf.Lines <- TextLine{Line{n, s}}
 
-			if re == nil {
-				continue
-			}
-
-			for _, i := range re.FindAllStringIndex(s, -1) {
-				buf.Parts <- TextPart{Part{
-					text.Len(s[:i[0]]),
-					y,
-					s[i[0]:i[1]],
-				}}
+			for _, f := range fs {
+				for _, i := range f.Regex.FindAllStringIndex(s, -1) {
+					buf.Parts <- TextPart{Part{
+						text.Len(s[:i[0]]),
+						y,
+						s[i[0]:i[1]],
+					}}
+				}
 			}
 		}
 	}()
