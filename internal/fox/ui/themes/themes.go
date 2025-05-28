@@ -207,7 +207,7 @@ func New(name string) *Themes {
 				0x5e81ac, 0x2e3440, // Subtext2 (highlight)
 			},
 
-			"Corporate": {
+			"Corpo": {
 				0x696969, 0xf4f6f8, // Base
 				0x000000, 0xffffff, // Surface0 (line)
 				0x000000, 0xffffff, // Surface1 (pane)
@@ -273,7 +273,7 @@ func New(name string) *Themes {
 			"Monokai",
 			"Darcula",
 			"Nord",
-			"Corporate",
+			"Corpo",
 			"Matrix",
 			"Ansi16",
 			"Monochrome",

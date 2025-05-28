@@ -20,17 +20,17 @@
 #  Monokai
 #  Darcula
 #  Nord
-#  Corporate
+#  Corpo
 #  Matrix
 #  Ansi16
 #  Monochrome
 #
 Theme = "Default"
 
-# ollama model
+# Ollama model
 Model = "Default"
 
-# tail file changes
+# follow file end
 Tail = false
 
 # show line numbers

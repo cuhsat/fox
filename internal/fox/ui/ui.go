@@ -471,14 +471,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					v := ui.prompt.ReadLine()
 					m := ui.ctx.Mode()
 
-					if len(v) == 0 && m != mode.Less {
+					if m.Prompt() && len(v) == 0 {
 						continue
 					}
 
 					hi.AddCommand(v)
 
 					switch m {
-					case mode.Less:
+					case mode.Less, mode.Hex:
 						ui.view.ScrollLine()
 
 					case mode.Grep:

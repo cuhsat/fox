@@ -47,7 +47,7 @@ go install github.com/cuhsat/fox@latest
     * Monokai
     * Darcula
     * Nord
-    * Corporate
+    * Corpo
     * Matrix
     * Ansi16
     * Monochrome

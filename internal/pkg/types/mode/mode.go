@@ -9,6 +9,7 @@ const (
 )
 
 const (
+	Wait = Mode("Wait")
 	Less = Mode("Less")
 	Grep = Mode("Grep")
 	Goto = Mode("Goto")

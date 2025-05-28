@@ -50,7 +50,7 @@ Standard options:
       --version            shows version
 
 Example: print matching lines
-  $ fox -pe "John Doe" ./**/*.jsonl
+  $ fox -pe "John Doe" ./**/*.evtx
 
 Example: print content hashes
   $ fox -pH sha256 example.zip
