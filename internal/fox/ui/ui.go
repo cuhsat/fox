@@ -214,14 +214,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					esc = true
 
 				case tcell.KeyTab:
-					if hs.Len() > 1 {
-						ui.view.Reset()
-					}
+					ui.view.Save(heap.Path)
 
 					if mods&tcell.ModShift != 0 {
 						heap = hs.PrevHeap()
 					} else {
 						heap = hs.NextHeap()
+					}
+
+					if hs.Len() > 1 {
+						ui.view.Load(heap.Path)
 					}
 
 				case tcell.KeyF1:
