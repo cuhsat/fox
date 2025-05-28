@@ -10,6 +10,8 @@ import (
 
 type View struct {
 	base
+	cache map[string][2]int
+
 	heap *heap.Heap
 	smap *smap.SMap
 
@@ -22,8 +24,21 @@ type View struct {
 	deltaY int
 }
 
+type Coord struct {
+	X int
+	Y int
+}
+
+type Are struct {
+	Coord
+	W int
+	H int
+}
+
 func NewView(ctx *context.Context) *View {
 	return &View{
+		cache: make(map[string][2]int),
+
 		base: base{ctx},
 
 		setNr: 0,
@@ -55,10 +70,29 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 }
 
 func (v *View) Reset() {
-	v.setNr = 0
-
 	v.deltaX = 0
 	v.deltaY = 0
+
+	v.setNr = 0
+}
+
+func (v *View) Save(k string) {
+	v.cache[k] = [2]int{
+		v.deltaX,
+		v.deltaY,
+	}
+}
+
+func (v *View) Load(k string) {
+	if c, ok := v.cache[k]; ok {
+		v.deltaX = c[0]
+		v.deltaY = c[1]
+	} else {
+		v.deltaX = 0
+		v.deltaY = 0
+	}
+
+	v.setNr = 0
 }
 
 func (v *View) Goto(s string) {
