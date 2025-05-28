@@ -3,7 +3,7 @@ package heap
 import (
 	"regexp"
 
-	"github.com/cuhsat/fox/internal/pkg/args"
+	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
@@ -14,7 +14,7 @@ type filter struct {
 }
 
 func (h *Heap) Filter() *Heap {
-	fs := *args.GetFilters()
+	fs := *types.GetFilters()
 
 	h.RLock()
 	c := len(h.filters) - 1

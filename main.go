@@ -11,7 +11,6 @@ import (
 	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/fox/ai"
 	"github.com/cuhsat/fox/internal/fox/ui"
-	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
@@ -42,12 +41,12 @@ func main() {
 	}
 
 	// file limits
-	limits := args.GetLimits()
+	limits := types.GetLimits()
 
 	h := flag.BoolP("head", "h", false, "limit head of file by ...")
 	t := flag.BoolP("tail", "t", false, "limit tail of file by ...")
 
-	c := new(args.Counts)
+	c := new(types.Counts)
 
 	flag.IntVarP(&c.Lines, "lines", "n", 0, "number of lines")
 	flag.IntVarP(&c.Bytes, "bytes", "c", 0, "number of bytes")
@@ -61,7 +60,7 @@ func main() {
 	}
 
 	// line filter
-	filters := args.GetFilters()
+	filters := types.GetFilters()
 
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
 

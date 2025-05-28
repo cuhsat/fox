@@ -3,8 +3,8 @@ package buffer
 import (
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/pkg/args"
 	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
 )
 
 type HexBuffer struct {
@@ -27,8 +27,8 @@ func Hex(ctx *Context) (buf HexBuffer) {
 
 	mmap := *ctx.Heap.MMap()
 
-	if args.GetLimits().Tail.Bytes > 0 {
-		tail = max(int(ctx.Heap.Len())-args.GetLimits().Tail.Bytes, 0)
+	if types.GetLimits().Tail.Bytes > 0 {
+		tail = max(int(ctx.Heap.Len())-types.GetLimits().Tail.Bytes, 0)
 	}
 
 	buf.W, buf.H = ctx.W, len(mmap)/16
