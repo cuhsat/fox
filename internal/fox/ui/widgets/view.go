@@ -57,6 +57,12 @@ func (v *View) Reset() {
 	v.nr = 0
 }
 
+func (v *View) Goto(s string) {
+	if v.ctx.Mode() != mode.Hex {
+		v.textGoto(s)
+	}
+}
+
 func (v *View) Save(k string) {
 	v.cache[k] = coord{
 		v.delta.X,
@@ -74,12 +80,6 @@ func (v *View) Load(k string) {
 	v.nr = 0
 }
 
-func (v *View) Goto(s string) {
-	if v.ctx.Mode() != mode.Hex {
-		v.textGoto(s)
-	}
-}
-
 func (v *View) Preserve() {
 	if v.smap != nil && len(*v.smap) > 0 {
 		v.nr = (*v.smap)[v.delta.Y].Nr
@@ -87,6 +87,11 @@ func (v *View) Preserve() {
 }
 
 func (v *View) ScrollLine() {
+	if v.ctx.Mode() == mode.Hex {
+		v.ScrollDown(1)
+		return
+	}
+
 	if v.smap == nil || len(*v.smap) <= 1 {
 		return
 	}

@@ -1,26 +1,11 @@
+ ___ ___  ___ ___ _  _ ___ ___ ___   _____  __   _   __  __ ___ _  _ ___ ___
+| __/ _ \| _ \ __| \| / __|_ _/ __| | __\ \/ /  /_\ |  \/  |_ _| \| | __| _ \
+| _| (_) |   / _|| .' \__ \| | (__  | _| >  <  / _ \| |\/| || || .' | _||   /
+|_| \___/|_|_\___|_|\_|___/___\___| |___/_/\_\/_/ \_\_|  |_|___|_|\_|___|_|_\
 
-                                   ##
-                                   ####
-                                   ######
-                                 ##########
-                              ####  ########
-                             ################
-                                ###### # ####
-                                  #####  ####
-                                ########  ###
-                              ##########  ##
-                            ############
-                           #############  ##########
-                           ##########  ##############
-                          ##       ###################
-                          ############################
-                           ###########################
-                            ################       ##
-                               ########            #
+The Swiss Army Knife for examining text files (%s)
 
-             The Swiss Army Knife for examining text files (%s)
-
-  KEYMAP:
+Keymap:
   Esc (x2)             Exit
   Tab                  Load next file
   Shift + Tab          Load prev file
@@ -30,13 +15,13 @@
   Shift + Right        Scroll page right
   Ctrl + Shift + Up    Scroll to start
   Ctrl + Shift + Down  Scroll to end
-  Ctrl + Space         Scroll to line [+|-]#
+  Ctrl + Space         Scroll to line [+|-]LINE
   Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
   Ctrl + g             Switch to GREP mode
   Ctrl + x             Switch to HEX mode
   Ctrl + f             Switch to FOX mode
-  Ctrl + t             Toggle tail output
+  Ctrl + t             Toggle tail follow
   Ctrl + n             Toggle line numbers
   Ctrl + w             Toggle text wrap
   Ctrl + o             Open file(s)
@@ -54,12 +39,12 @@
   F11                  Show file(s) SHA256
   F12                  Show file(s) SHA3
 
-  LESS:
+Less:
   Enter                Scroll one line down
   Space                Scroll one page down
   Any other key        Switch to GREP mode
 
-  GREP:
+Grep:
   Esc                  Switch to LESS mode
   Enter                Append filter
   Backspace            Remove filter
@@ -70,7 +55,8 @@
   Ctrl + Left          Move cursor to start
   Ctrl + Right         Move cursor to end
   Ctrl + v             Paste from clipboard
-  Any other key        Define regex pattern
+  Any other key        Define RegEx pattern
 
-  HEX:
+Hex:
+  Enter                Scroll one line down
   Space                Scroll one page down
