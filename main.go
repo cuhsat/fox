@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"strings"
 
 	flag "github.com/spf13/pflag"
 
@@ -110,18 +111,17 @@ func main() {
 
 	// features
 	if *v {
-		u, a := "no", "no"
+		var sb strings.Builder
 
-		if ui.Build {
-			u = "yes"
+		if !ui.Build {
+			sb.WriteString("!UI ")
 		}
 
-		if ai.Build {
-			a = "yes"
+		if !ai.Build {
+			sb.WriteString("!AI")
 		}
 
-		fmt.Println(fox.Product, fox.Version)
-		fmt.Printf("Features UI: %s AI: %s\n", u, a)
+		fmt.Println(fox.Product, fox.Version, sb.String())
 		os.Exit(0)
 	}
 

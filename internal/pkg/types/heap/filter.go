@@ -91,6 +91,19 @@ func (h *Heap) Patterns() []string {
 	return r
 }
 
+func (h *Heap) Filters() []*filter {
+	h.RLock()
+	defer h.RUnlock()
+
+	var r []*filter
+
+	for _, f := range h.filters[1:] {
+		r = append(r, f)
+	}
+
+	return r
+}
+
 func (h *Heap) LastFilter() *filter {
 	h.RLock()
 	defer h.RUnlock()
