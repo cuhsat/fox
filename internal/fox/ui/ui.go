@@ -611,7 +611,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 			ui.root.Sync() // prevent hiccups
 		}
 
-		title = fmt.Sprintf("%s - %s", title, heap)
+		title = fmt.Sprintf("%s － %s", title, heap)
 	}
 
 	ui.root.SetTitle(title)

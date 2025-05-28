@@ -73,16 +73,23 @@ func (v *View) Preserve() {
 	}
 }
 
-func (v *View) ScrollStart() {
-	v.deltaY = 0
+func (v *View) ScrollLine() {
+	if v.smap == nil {
+		return
+	}
+
+	v.setNr = (*v.smap)[v.deltaY].Nr
+
+	for y := v.deltaY; y < len(*v.smap); y++ {
+		if v.setNr < (*v.smap)[y].Nr {
+			v.setNr = (*v.smap)[y].Nr
+			break
+		}
+	}
 }
 
-func (v *View) ScrollLine() {
-	v.Preserve()
-
-	if v.setNr > 0 {
-		v.setNr++
-	}
+func (v *View) ScrollStart() {
+	v.deltaY = 0
 }
 
 func (v *View) ScrollEnd() {
