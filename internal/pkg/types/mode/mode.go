@@ -9,7 +9,7 @@ const (
 )
 
 const (
-	Wait = Mode("Wait")
+	Load = Mode("Load")
 	Less = Mode("Less")
 	Grep = Mode("Grep")
 	Goto = Mode("Goto")
@@ -26,7 +26,7 @@ func (m Mode) String() string {
 
 func (m Mode) Prompt() bool {
 	switch m {
-	case Less, Hex:
+	case Load, Less, Hex:
 		return false
 	default:
 		return true

@@ -93,9 +93,9 @@ func New(m mode.Mode) *UI {
 	root.SetStyle(themes.Base)
 	root.Sync()
 
-	ui.change(m)
-
+	ui.change(mode.Load)
 	ui.render(nil)
+	ui.change(m)
 
 	if ai.Build && ai.Init() {
 		ui.agent = ai.NewAgent(ctx.Model())
