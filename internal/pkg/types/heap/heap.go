@@ -27,7 +27,7 @@ type Heap struct {
 
 	cache cache // render cache
 
-	filters []*filter // filters
+	filters []*Filter // filters
 
 	hash Hash     // file hashsums
 	size int64    // file size
@@ -35,6 +35,17 @@ type Heap struct {
 }
 
 type cache map[string]*smap.SMap
+
+func New(title, path, base string, typ types.Heap) *Heap {
+	heap := &Heap{
+		Title: title,
+		Path:  path,
+		Base:  base,
+		Type:  typ,
+	}
+
+	return heap
+}
 
 func (h *Heap) MMap() *mmap.MMap {
 	h.RLock()
@@ -104,6 +115,11 @@ func (h *Heap) String() string {
 func (h *Heap) Ensure() *Heap {
 	if h.file == nil {
 		h.Reload()
+
+		// apply global filters once
+		for _, f := range *types.GetFilters() {
+			h.AddFilter(f)
+		}
 	}
 
 	return h
@@ -164,7 +180,7 @@ func (h *Heap) Reload() {
 
 	// resets filters
 	h.filters = h.filters[:0]
-	h.filters = append(h.filters, &filter{
+	h.filters = append(h.filters, &Filter{
 		"", nil, h.smap,
 	})
 

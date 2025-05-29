@@ -93,7 +93,6 @@ func New(m mode.Mode) *UI {
 	root.SetStyle(themes.Base)
 	root.Sync()
 
-	ui.change(mode.Load)
 	ui.render(nil)
 	ui.change(m)
 
@@ -482,7 +481,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.view.ScrollLine()
 
 					case mode.Grep:
-						_ = types.GetFilters().Set(v)
 						ui.view.Reset()
 						heap.AddFilter(v)
 						ui.change(mode.Less)
@@ -525,9 +523,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						} else {
 							ui.change(mode.Default)
 						}
-					} else if len(*types.GetFilters()) > 0 {
+					} else if len(heap.Patterns()) > 0 {
 						if ui.ctx.Mode() != mode.Hex {
-							types.GetFilters().Pop()
 							ui.view.Reset()
 							heap.DelFilter()
 						}

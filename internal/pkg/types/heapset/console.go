@@ -32,7 +32,7 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 			continue
 		}
 
-		ctx.Heap = h.Ensure().Filter()
+		ctx.Heap = h.Ensure()
 
 		switch op {
 		case types.File:

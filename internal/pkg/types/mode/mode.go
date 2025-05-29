@@ -9,7 +9,6 @@ const (
 )
 
 const (
-	Load = Mode("Load")
 	Less = Mode("Less")
 	Grep = Mode("Grep")
 	Goto = Mode("Goto")
@@ -26,7 +25,7 @@ func (m Mode) String() string {
 
 func (m Mode) Filter() bool {
 	switch m {
-	case Load, Less, Grep:
+	case Less, Grep:
 		return true
 	default:
 		return false
@@ -35,7 +34,7 @@ func (m Mode) Filter() bool {
 
 func (m Mode) Prompt() bool {
 	switch m {
-	case Load, Less, Hex:
+	case Less, Hex:
 		return false
 	default:
 		return true
