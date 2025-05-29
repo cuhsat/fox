@@ -25,7 +25,7 @@ go.work.sum
 .DS_Store
 
 # Error dump
-.dump
+.*dump
 
 # Todo files
 /TODO*
