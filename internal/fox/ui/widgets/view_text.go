@@ -34,7 +34,8 @@ func (v *View) textRender(p *panel) {
 
 	// set preserved line
 	if v.nr > 0 {
-		v.delta.Y = min(buf.Y, v.last.Y)
+		y, _ := v.smap.Find(v.nr)
+		v.delta.Y = min(y, v.last.Y)
 	}
 
 	// reset

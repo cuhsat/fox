@@ -58,7 +58,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 	buf.Y = ctx.Y
 
 	if ctx.Nr > 0 {
-		lastY := len(*buf.SMap) - ctx.H
+		lastY := max(len(*buf.SMap)-ctx.H, 0)
 
 		// find requested line
 		buf.Y, _ = buf.SMap.Find(ctx.Nr)
