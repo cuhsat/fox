@@ -175,7 +175,6 @@ func main() {
 	}
 
 	if len(*filters) > 0 {
-		rm = mode.Grep
 		om = types.Grep
 	}
 

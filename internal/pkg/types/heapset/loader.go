@@ -80,11 +80,12 @@ func (hs *HeapSet) loadPath(path string) {
 func (hs *HeapSet) loadPipe() {
 	pipe := sys.Stdin()
 
-	hs.atomicAdd(&heap.Heap{
-		Path: pipe,
-		Base: pipe,
-		Type: types.Stdin,
-	})
+	hs.atomicAdd(heap.New(
+		"",
+		pipe,
+		pipe,
+		types.Stdin,
+	))
 }
 
 func (hs *HeapSet) loadDir(path string) {
@@ -115,12 +116,12 @@ func (hs *HeapSet) loadZip(path, base string) {
 }
 
 func (hs *HeapSet) loadFile(path, base string) {
-	h := &heap.Heap{
-		Title: base,
-		Path:  path,
-		Base:  base,
-		Type:  types.Regular,
-	}
+	h := heap.New(
+		base,
+		path,
+		base,
+		types.Regular,
+	)
 
 	if path != base {
 		h.Type = types.Deflate
@@ -130,12 +131,12 @@ func (hs *HeapSet) loadFile(path, base string) {
 }
 
 func (hs *HeapSet) loadAuto(path, base, title string) {
-	hs.atomicAdd(&heap.Heap{
-		Title: title,
-		Path:  path,
-		Base:  base,
-		Type:  types.Plugin,
-	})
+	hs.atomicAdd(heap.New(
+		title,
+		path,
+		base,
+		types.Plugin,
+	))
 }
 
 func (hs *HeapSet) loadItem(i *file.Item, base string) {
@@ -144,18 +145,18 @@ func (hs *HeapSet) loadItem(i *file.Item, base string) {
 		i.Path = evtx.Parse(i.Path)
 	}
 
-	hs.atomicAdd(&heap.Heap{
-		Title: filepath.Join(base, i.Name),
-		Path:  i.Path,
-		Base:  i.Path,
-		Type:  types.Deflate,
-	})
+	hs.atomicAdd(heap.New(
+		filepath.Join(base, i.Name),
+		i.Path,
+		i.Path,
+		types.Deflate,
+	))
 }
 
 func (hs *HeapSet) load() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	hs.watchHeap(h.Ensure().Filter())
+	hs.watchHeap(h.Ensure())
 
 	return h
 }
