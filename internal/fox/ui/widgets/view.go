@@ -10,7 +10,7 @@ import (
 
 type View struct {
 	base
-	cache map[string]coord
+	cache map[string]state
 
 	heap *heap.Heap
 	smap *smap.SMap
@@ -21,9 +21,15 @@ type View struct {
 	delta coord
 }
 
+type state struct {
+	nr  int
+	len int
+	pos coord
+}
+
 func NewView(ctx *context.Context) *View {
 	return &View{
-		cache: make(map[string]coord),
+		cache: make(map[string]state),
 		base:  base{ctx},
 		last:  coord{0, 0},
 		delta: coord{0, 0},
@@ -63,27 +69,42 @@ func (v *View) Goto(s string) {
 	}
 }
 
-func (v *View) Save(k string) {
-	v.cache[k] = coord{
-		v.delta.X,
-		v.delta.Y,
-	}
-}
-
-func (v *View) Load(k string) {
-	if c, ok := v.cache[k]; !ok {
-		v.delta = coord{0, 0}
-	} else {
-		v.delta = c
-	}
-
-	v.nr = 0
-}
-
 func (v *View) Preserve() {
 	if v.smap != nil && len(*v.smap) > v.delta.Y {
 		v.nr = (*v.smap)[v.delta.Y].Nr
 	}
+}
+
+func (v *View) SaveState(key string) {
+	if v.smap != nil && len(*v.smap) > v.delta.Y {
+		v.cache[key] = state{
+			nr:  (*v.smap)[v.delta.Y].Nr,
+			len: len(*v.smap),
+			pos: coord{
+				v.delta.X,
+				v.delta.Y,
+			},
+		}
+	}
+}
+
+func (v *View) LoadState(key string) {
+	if v.smap != nil {
+		if s, ok := v.cache[key]; ok {
+			// if s.len != len(*v.smap) {
+			// TODO: way off!
+			// y, _ := v.smap.Find(s.nr)
+			// v.delta.X = 0
+			// v.delta.Y = y
+			// } else {
+			v.delta = s.pos
+			// }
+		} else {
+			v.delta = coord{0, 0}
+		}
+	}
+
+	v.nr = 0
 }
 
 func (v *View) ScrollLine() {
