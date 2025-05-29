@@ -81,7 +81,7 @@ func (v *View) Load(k string) {
 }
 
 func (v *View) Preserve() {
-	if v.smap != nil && len(*v.smap) > 0 {
+	if v.smap != nil && len(*v.smap) > v.delta.Y {
 		v.nr = (*v.smap)[v.delta.Y].Nr
 	}
 }
