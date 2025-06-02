@@ -16,15 +16,15 @@ import (
 )
 
 const (
+	Filename = "evidence"
+)
+
+const (
 	Raw   = "raw"
 	Jsonl = "jsonl"
 	Json  = "json"
 	Xml   = "xml"
 	Sql   = "sql"
-)
-
-const (
-	filename = "EVIDENCE"
 )
 
 const (
@@ -70,10 +70,11 @@ func New(path, key, wt string) *Bag {
 		fallthrough
 	default:
 		w = NewRawWriter()
+		e = ".txt"
 	}
 
 	if len(path) == 0 {
-		path = filename
+		path = Filename
 	}
 
 	if len(e) > 0 {

@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
@@ -17,10 +18,11 @@ const (
 )
 
 const (
-	varBase  = "$BASE"
-	varFile  = "$FILE"
-	varFiles = "$FILES"
-	varInput = "$INPUT"
+	varBase   = "$BASE"
+	varFile   = "$FILE"
+	varFiles  = "$FILES"
+	varInput  = "$INPUT"
+	varParent = "$PARENT"
 )
 
 var (
@@ -52,7 +54,7 @@ func (a *Autostart) Match(p string) bool {
 	return a.re.MatchString(p)
 }
 
-func (a *Autostart) Exec(file, base string, hs []string) (string, string) {
+func (a *Autostart) Execute(file, base string, hs []string) (string, string) {
 	cmds := make([]string, len(a.Commands))
 
 	for _, cmd := range a.Commands {
@@ -63,7 +65,7 @@ func (a *Autostart) Exec(file, base string, hs []string) (string, string) {
 	return sys.Exec(cmds), title(base, a.Name, "")
 }
 
-func (p *Plugin) Exec(file, base string, hs []string, fn Callback) {
+func (p *Plugin) Execute(file, base string, hs []string, fn Callback) {
 	input := ""
 
 	if len(p.Prompt) > 0 {
@@ -80,7 +82,7 @@ func (p *Plugin) Exec(file, base string, hs []string, fn Callback) {
 }
 
 func (ps *Plugins) Automatic() (as []Autostart) {
-	keys := make([]string, 0, len(as))
+	keys := make([]string, 0)
 
 	for k := range ps.Autostarts {
 		keys = append(keys, k)
@@ -142,6 +144,7 @@ func expand(s, file, base, input string, hs []string) string {
 	s = strings.ReplaceAll(s, varFile, file)
 	s = strings.ReplaceAll(s, varFiles, files)
 	s = strings.ReplaceAll(s, varInput, input)
+	s = strings.ReplaceAll(s, varParent, filepath.Dir(file))
 
 	return s
 }

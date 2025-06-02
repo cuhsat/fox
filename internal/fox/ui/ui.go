@@ -236,8 +236,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					go pl.Exec(heap.Path, heap.Base, hs.Files(), func(p, b, t string) {
-						hs.OpenFile(p, b, t, types.Plugin)
+					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(path, base, title string) {
+						hs.OpenFile(path, base, title, types.Plugin)
 						ui.ctx.Interrupt()
 					})
 

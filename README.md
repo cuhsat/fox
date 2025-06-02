@@ -24,7 +24,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in timestamped input history
 * Build-in wc like file content statistics
-* Build-in plugin support for tools like Fox-IT's Dissect
+* Build-in plugin support for Eric Zimmerman's tools or Fox-IT's Dissect
 * Evidence bag formats: Raw, JSON, JSONL, XML, SQLite
 * Evidence bag signing via HMAC-SHA256 passphrase
 * Terminal interface compatible with many terminals

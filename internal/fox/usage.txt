@@ -34,7 +34,7 @@ Line filter:
   -e, --regexp=PATTERN     filter for lines that match pattern
 
 Evidence bag:
-  -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
+  -f, --file=FILE          file name of evidence bag (default: "evidence")
   -m, --mode={raw,json,jsonl,xml,sql}
                            output mode (default: raw)
   -k, --key=KEY            key phrase for signing with HMAC
