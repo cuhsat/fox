@@ -37,9 +37,9 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.N + 1
 	}
 
-	cache, key := ctx.Heap.Cache(), ctx.Hash()
+	smaps, key := ctx.Heap.SMaps(), ctx.Hash()
 
-	buf.SMap = cache[key]
+	buf.SMap = smaps[key]
 
 	if buf.SMap == nil {
 		buf.SMap = ctx.Heap.SMap()
@@ -52,7 +52,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			buf.SMap = buf.SMap.Render()
 		}
 
-		cache[key] = buf.SMap
+		smaps[key] = buf.SMap
 	}
 
 	buf.Y = ctx.Y
@@ -60,7 +60,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 	if ctx.Nr > 0 {
 		lastY := max(len(*buf.SMap)-ctx.H, 0)
 
-		// find requested line
+		// find the requested line
 		buf.Y, _ = buf.SMap.Find(ctx.Nr)
 		buf.Y = min(buf.Y, lastY)
 	}

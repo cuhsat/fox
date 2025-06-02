@@ -14,12 +14,12 @@ type Filter struct {
 
 func (h *Heap) AddFilter(pattern string) {
 	re := regexp.MustCompile(pattern)
-	smap := h.SMap().Grep(re)
+	s := h.SMap().Grep(re)
 
 	h.Lock()
 
 	h.filters = append(h.filters, &Filter{
-		pattern, re, smap,
+		pattern, re, s,
 	})
 
 	h.Unlock()

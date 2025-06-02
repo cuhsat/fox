@@ -541,7 +541,7 @@ func (ui *UI) change(m mode.Mode) {
 	// actual mode
 	ui.prompt.Lock(!m.Prompt())
 
-	// force cursor off
+	// force the cursor off
 	if ui.prompt.Locked() {
 		ui.ctx.Root.HideCursor()
 	}

@@ -8,17 +8,10 @@ import (
 	"strings"
 	"time"
 
-	_ "embed"
-
 	_ "modernc.org/sqlite"
 
 	"github.com/cuhsat/fox/api"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-)
-
-var (
-	// go:embed bag.sql
-	SqlSchema string
 )
 
 type SqlWriter struct {
@@ -57,7 +50,7 @@ func NewSqlWriter() *SqlWriter {
 func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
 	var err error
 
-	f.Close()
+	_ = f.Close()
 
 	w.db, err = sql.Open("sqlite", fmt.Sprintf("file:%s", f.Name()))
 
@@ -65,7 +58,7 @@ func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
 		sys.Panic(err)
 	}
 
-	// create database from schema
+	// create the database from schema
 	if n {
 		_, err = w.db.Exec(api.SqlSchema)
 
@@ -87,12 +80,12 @@ func (w *SqlWriter) Finalize() {
 		return
 	}
 
-	user_id := w.insert(`users (login, name)`,
+	userId := w.insert(`users (login, name)`,
 		w.entry.user.login,
 		w.entry.user.name,
 	)
 
-	file_id := w.insert(`files (path, hash, modified)`,
+	fileId := w.insert(`files (path, hash, modified)`,
 		w.entry.file.path,
 		w.entry.file.hash,
 		w.entry.file.modified,
@@ -100,7 +93,7 @@ func (w *SqlWriter) Finalize() {
 
 	for _, f := range w.entry.file.filters {
 		_ = w.insert(`filters (file_id, nr, value)`,
-			file_id,
+			fileId,
 			f.nr,
 			f.value,
 		)
@@ -108,15 +101,15 @@ func (w *SqlWriter) Finalize() {
 
 	for _, l := range w.entry.file.lines {
 		_ = w.insert(`lines (file_id, nr, value)`,
-			file_id,
+			fileId,
 			l.nr,
 			l.value,
 		)
 	}
 
 	_ = w.insert(`evidence (user_id, file_id, created)`,
-		user_id,
-		file_id,
+		userId,
+		fileId,
 		w.entry.created,
 	)
 

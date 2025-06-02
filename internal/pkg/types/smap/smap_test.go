@@ -18,7 +18,7 @@ func Testdata(name string) (*os.File, *mmap.MMap, error) {
 		return nil, nil, errors.New("error")
 	}
 
-	p := filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", "jsonl", name)
+	p := filepath.Join(filepath.Dir(c), "..", "..", "..", "..", "test", "testdata", "json", name)
 
 	f, err := os.OpenFile(p, os.O_RDONLY, 0400)
 
@@ -37,7 +37,7 @@ func Testdata(name string) (*os.File, *mmap.MMap, error) {
 
 func BenchmarkMap(b *testing.B) {
 	b.Run("Benchmark Map", func(b *testing.B) {
-		f, m, err := Testdata("evtx.jsonl")
+		f, m, err := Testdata("5MB.json")
 
 		if err != nil {
 			b.Fatal(err)
@@ -61,7 +61,7 @@ func BenchmarkMap(b *testing.B) {
 
 func BenchmarkRender(b *testing.B) {
 	b.Run("Benchmark Render", func(b *testing.B) {
-		f, m, err := Testdata("evtx.jsonl")
+		f, m, err := Testdata("5MB.json")
 
 		if err != nil {
 			b.Fatal(err)
@@ -87,7 +87,7 @@ func BenchmarkRender(b *testing.B) {
 
 func BenchmarkIndent(b *testing.B) {
 	b.Run("Benchmark Indent", func(b *testing.B) {
-		f, m, err := Testdata("evtx.jsonl")
+		f, m, err := Testdata("5MB.json")
 
 		if err != nil {
 			b.Fatal(err)
@@ -113,7 +113,7 @@ func BenchmarkIndent(b *testing.B) {
 
 func BenchmarkWrap(b *testing.B) {
 	b.Run("Benchmark Wrap", func(b *testing.B) {
-		f, m, err := Testdata("evtx.jsonl")
+		f, m, err := Testdata("5MB.jsonl")
 
 		if err != nil {
 			b.Fatal(err)
@@ -139,7 +139,7 @@ func BenchmarkWrap(b *testing.B) {
 
 func BenchmarkGrep(b *testing.B) {
 	b.Run("Benchmark Grep", func(b *testing.B) {
-		f, m, err := Testdata("evtx.jsonl")
+		f, m, err := Testdata("5MB.json")
 
 		if err != nil {
 			b.Fatal(err)

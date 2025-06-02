@@ -166,14 +166,6 @@ func OpenFile(path string) *os.File {
 	return f
 }
 
-func WriteFile(path string, b []byte) {
-	err := os.WriteFile(path, b, 0600)
-
-	if err != nil {
-		Panic(err)
-	}
-}
-
 func Extract(data string) string {
 	f := TempFile()
 

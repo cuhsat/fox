@@ -66,7 +66,7 @@ func Hex(ctx *Context) (buf HexBuffer) {
 				l.Hex = fmt.Sprintf("%s%02x", l.Hex, b)
 				l.Str = fmt.Sprintf("%s%c", l.Str, b)
 
-				// make hex gap every 8 bytes
+				// make a hex gap every 8 bytes
 				if (j+1)%8 == 0 {
 					l.Hex += "  "
 				} else {
