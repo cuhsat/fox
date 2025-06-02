@@ -72,7 +72,7 @@ func (h *Heap) carveStr(ch <-chan byte, s chan<- String, m int) {
 				n = 4
 			}
 
-			if n > 1 && n <= utf8.UTFMax {
+			if n > 1 {
 				for i := 1; i < n; i++ {
 					b, ok := <-ch
 					off++

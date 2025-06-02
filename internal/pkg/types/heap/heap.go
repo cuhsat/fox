@@ -25,16 +25,16 @@ type Heap struct {
 	mmap *mmap.MMap // memory map
 	smap *smap.SMap // string map
 
-	cache cache // render cache
+	cache Cache // render cache
 
 	filters []*Filter // filters
 
-	hash Hash     // file hashsums
+	hash Hash     // file hash sums
 	size int64    // file size
 	file *os.File // file handle
 }
 
-type cache map[string]*smap.SMap
+type Cache map[string]*smap.SMap
 
 func New(title, path, base string, typ types.Heap) *Heap {
 	heap := &Heap{
@@ -59,6 +59,12 @@ func (h *Heap) SMap() *smap.SMap {
 	return h.LastFilter().smap
 }
 
+func (h *Heap) SMaps() Cache {
+	h.RLock()
+	defer h.RUnlock()
+	return h.cache
+}
+
 func (h *Heap) Len() int64 {
 	h.RLock()
 	defer h.RUnlock()
@@ -69,12 +75,6 @@ func (h *Heap) Count() int {
 	h.RLock()
 	defer h.RUnlock()
 	return len(*h.smap)
-}
-
-func (h *Heap) Cache() cache {
-	h.RLock()
-	defer h.RUnlock()
-	return h.cache
 }
 
 func (h *Heap) Bytes() []byte {
@@ -154,7 +154,7 @@ func (h *Heap) Reload() {
 		clear(h.cache)
 	}
 
-	h.cache = make(cache, 4)
+	h.cache = make(Cache, 4)
 
 	if h.mmap != nil {
 		_ = h.mmap.Unmap()

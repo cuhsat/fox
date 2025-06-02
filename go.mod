@@ -12,7 +12,6 @@ require (
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
-	github.com/ollama/ollama v0.7.0
 	github.com/spf13/pflag v1.0.6
 	github.com/ulikunitz/xz v0.5.12
 	modernc.org/sqlite v1.37.0

@@ -31,7 +31,7 @@ File limits:
   -c, --bytes=NUMBER       number of bytes (default: 16)
 
 Line filter:
-  -e, --regexp=PATTERN     filter for lines that matches pattern
+  -e, --regexp=PATTERN     filter for lines that match pattern
 
 Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")

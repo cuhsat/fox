@@ -26,13 +26,13 @@ go install github.com/cuhsat/fox@latest
 * Build-in wc like file content statistics
 * Build-in plugin support for tools like Fox-IT's Dissect
 * Evidence bag formats: Raw, JSON, JSONL, XML, SQLite
-* Evidence bag cryptographic signing via HMAC-SHA256
-* Terminal interface supporting a vast amount of terminals
-  * With support for copy & bracketed paste
+* Evidence bag signing via HMAC-SHA256 passphrase
+* Terminal interface compatible with many terminals
+  * With support for copy and bracketed paste
   * With support for mouse scrolling
   * With suspend to shell capability
-  * With configureable color themes
-  * And many popular themes already build-in:
+  * With configurable color themes
+  * ... and many popular themes included:
     * Examiner-Light
     * Examiner-Dark
     * Catppuccin-Latte
