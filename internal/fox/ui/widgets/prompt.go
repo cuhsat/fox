@@ -15,20 +15,15 @@ import (
 )
 
 const (
+	Cursor = tcell.CursorStyleBlinkingBar
+)
+
+const (
 	grep = '❯'
 	tail = 'T'
 	line = 'N'
 	wrap = 'W'
 	off  = '·'
-)
-
-const (
-	cursor1 = tcell.CursorStyleSteadyBar
-	cursor2 = tcell.CursorStyleBlinkingBar
-)
-
-var (
-	Cursor tcell.CursorStyle = cursor1
 )
 
 type Prompt struct {
@@ -100,17 +95,10 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	p.cursorEnd.Store(int32(lv))
 	p.cursorMax.Store(int32(mc))
 
-	if p.ctx.Mode() == mode.Rag {
-		Cursor = cursor2
-	} else {
-		Cursor = cursor1
-	}
-
 	if !p.ctx.Mode().Prompt() || p.Locked() || mc == 0 {
 		p.ctx.Root.HideCursor()
 	} else {
 		p.ctx.Root.ShowCursor(x+xc+c, y)
-		p.ctx.Root.SetCursorStyle(Cursor)
 	}
 
 	return 1

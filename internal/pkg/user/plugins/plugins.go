@@ -27,7 +27,7 @@ var (
 	Input chan string
 )
 
-type Callback func(p, b, t string)
+type Callback func(path, base, title string)
 
 type Plugins struct {
 	Autostarts map[string]Autostart `toml:"Autostart"`
@@ -52,32 +52,31 @@ func (a *Autostart) Match(p string) bool {
 	return a.re.MatchString(p)
 }
 
-func (a *Autostart) Exec(f, b string, hs []string) (string, string) {
+func (a *Autostart) Exec(file, base string, hs []string) (string, string) {
 	cmds := make([]string, len(a.Commands))
 
 	for _, cmd := range a.Commands {
-		cmds = append(cmds, expand(cmd, f, b, "", hs))
+		cmds = append(cmds, expand(cmd, file, base, "", hs))
 
 	}
 
-	return sys.Exec(cmds), title(b, a.Name, "")
+	return sys.Exec(cmds), title(base, a.Name, "")
 }
 
-func (p *Plugin) Exec(f, b string, hs []string, fn Callback) {
-	i := ""
+func (p *Plugin) Exec(file, base string, hs []string, fn Callback) {
+	input := ""
 
 	if len(p.Prompt) > 0 {
-		i = expand(<-Input, f, b, "", hs)
+		input = expand(<-Input, file, base, "", hs)
 	}
 
 	cmds := make([]string, len(p.Commands))
 
 	for _, cmd := range p.Commands {
-		cmds = append(cmds, expand(cmd, f, b, i, hs))
-
+		cmds = append(cmds, expand(cmd, file, base, input, hs))
 	}
 
-	fn(sys.Exec(cmds), b, title(b, p.Name, i))
+	fn(sys.Exec(cmds), base, title(base, p.Name, input))
 }
 
 func (ps *Plugins) Automatic() (as []Autostart) {
@@ -126,23 +125,23 @@ func Close() {
 	close(Input)
 }
 
-func title(b, p, i string) string {
+func title(base, path, input string) string {
 	var s string
 
-	if len(i) > 0 {
-		s = fmt.Sprintf(":%s", i)
+	if len(input) > 0 {
+		s = fmt.Sprintf(":%s", input)
 	}
 
-	return fmt.Sprintf("%s (%s%s)", b, p, s)
+	return fmt.Sprintf("%s (%s%s)", base, path, s)
 }
 
-func expand(s, f, b, i string, hs []string) string {
-	fs := strings.Join(hs, " ")
+func expand(s, file, base, input string, hs []string) string {
+	files := strings.Join(hs, " ")
 
-	s = strings.ReplaceAll(s, varBase, b)
-	s = strings.ReplaceAll(s, varFile, f)
-	s = strings.ReplaceAll(s, varFiles, fs)
-	s = strings.ReplaceAll(s, varInput, i)
+	s = strings.ReplaceAll(s, varBase, base)
+	s = strings.ReplaceAll(s, varFile, file)
+	s = strings.ReplaceAll(s, varFiles, files)
+	s = strings.ReplaceAll(s, varInput, input)
 
 	return s
 }

@@ -1,7 +1,6 @@
 package heapset
 
 import (
-	"fmt"
 	"os"
 	"slices"
 	"sync"
@@ -148,32 +147,13 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		p := sys.Extract(fmt.Sprintf(fox.Help, fox.Version))
+		p := sys.Extract(fox.Help)
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",
 			Path:  p,
 			Base:  p,
 			Type:  types.Stdout,
-		})
-	}
-
-	atomic.StoreInt32(hs.index, idx)
-
-	hs.atomicGet(idx).Reload()
-}
-
-func (hs *HeapSet) OpenChat(path string) {
-	idx, ok := hs.findByPath(path)
-
-	if !ok {
-		idx = hs.Len()
-
-		hs.atomicAdd(&heap.Heap{
-			Title: "Chat",
-			Path:  path,
-			Base:  path,
-			Type:  types.Prompt,
 		})
 	}
 

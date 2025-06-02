@@ -14,7 +14,6 @@ const (
 	Goto = Mode("Goto")
 	Open = Mode("Open")
 	Hex  = Mode("Hex")
-	Rag  = Mode("Fox")
 )
 
 type Mode string

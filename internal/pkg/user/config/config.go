@@ -16,7 +16,6 @@ const (
 
 type Config struct {
 	Theme string `toml:"Theme"`
-	Model string `toml:"Model"`
 	Tail  bool   `toml:"Tail"`
 	Line  bool   `toml:"Line"`
 	Wrap  bool   `toml:"Wrap"`
@@ -42,12 +41,6 @@ func New() *Config {
 
 	if len(t) > 0 {
 		cfg.Theme = t
-	}
-
-	m := os.Getenv("FOX_MODEL")
-
-	if len(m) > 0 {
-		cfg.Model = m
 	}
 
 	return cfg

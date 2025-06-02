@@ -12,7 +12,6 @@ import (
 	_ "github.com/gdamore/tcell/v2/encoding"
 
 	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/fox/ai"
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/fox/ui/widgets"
@@ -45,7 +44,6 @@ type UI struct {
 
 	root tcell.Screen
 
-	agent   *ai.Agent
 	plugins *plugins.Plugins
 	themes  *themes.Themes
 
@@ -96,11 +94,6 @@ func New(m mode.Mode) *UI {
 	ui.render(nil)
 	ui.change(m)
 
-	if ai.Build && ai.Init() {
-		ui.agent = ai.NewAgent(ctx.Model())
-		ui.agent.Load()
-	}
-
 	return &ui
 }
 
@@ -116,10 +109,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
-
-	if ui.agent != nil {
-		go ui.agent.Listen(hi)
-	}
 
 	esc := false
 
@@ -360,14 +349,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlL:
 					ui.change(mode.Less)
 
-				case tcell.KeyCtrlG:
+				case tcell.KeyCtrlF:
 					ui.change(mode.Grep)
 
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
-
-				case tcell.KeyCtrlF:
-					ui.change(mode.Rag)
 
 				case tcell.KeyCtrlT:
 					if ui.ctx.Mode() != mode.Hex {
@@ -407,27 +393,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					p := bag.Path
-
-					switch heap.Type {
-					case types.Stdin:
-						p = "fox.txt"
-						sys.WriteFile(p, heap.Bytes())
-
-					case types.Stdout, types.Stderr, types.Prompt:
-						p = heap.Title + ".txt"
-						sys.WriteFile(p, heap.Bytes())
-
-					case types.Regular, types.Deflate, types.Plugin:
-						if !bag.Put(heap) {
-							continue
-						}
-
-					default:
-						continue
+					if bag.Put(heap) {
+						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
 					}
-
-					ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), p))
 
 				case tcell.KeyCtrlB:
 					if sys.Exists(bag.Path) {
@@ -497,17 +465,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						})
 						ui.change(ui.ctx.Last())
 
-					case mode.Rag:
-						if ui.agent != nil {
-							ui.view.Reset()
-							ui.ctx.Background(func() {
-								ui.prompt.Lock(true)
-								ui.agent.Prompt(v, heap)
-								ui.prompt.Lock(false)
-							})
-							hs.OpenChat(ui.agent.Path())
-						}
-
 					default:
 						plugins.Input <- v
 						ui.change(ui.ctx.Last())
@@ -566,22 +523,12 @@ func (ui *UI) Close() {
 		plugins.Close()
 	}
 
-	if ui.agent != nil {
-		ui.agent.Close()
-	}
-
 	ui.overlay.Close()
 	ui.root.Fini()
 	ui.ctx.Save()
 }
 
 func (ui *UI) change(m mode.Mode) {
-	// check for RAG support
-	if m == mode.Rag && ui.agent == nil {
-		ui.overlay.SendError("RAG agent not available")
-		return
-	}
-
 	if !ui.ctx.SwitchMode(m) {
 		return
 	}

@@ -21,7 +21,6 @@ type Context struct {
 	last mode.Mode
 
 	theme string
-	model string
 
 	tail atomic.Bool
 	line atomic.Bool
@@ -43,9 +42,6 @@ func New(root tcell.Screen) *Context {
 
 		// theme
 		theme: cfg.Theme,
-
-		// model
-		model: cfg.Model,
 	}
 
 	// flags
@@ -72,12 +68,6 @@ func (ctx *Context) Theme() string {
 	ctx.RLock()
 	defer ctx.RUnlock()
 	return ctx.theme
-}
-
-func (ctx *Context) Model() string {
-	ctx.RLock()
-	defer ctx.RUnlock()
-	return ctx.model
 }
 
 func (ctx *Context) IsTail() bool {
@@ -142,7 +132,6 @@ func (ctx *Context) Background(fn func()) {
 
 func (ctx *Context) Save() {
 	ctx.cfg.Theme = ctx.Theme()
-	ctx.cfg.Model = ctx.Model()
 	ctx.cfg.Tail = ctx.IsTail()
 	ctx.cfg.Line = ctx.IsLine()
 	ctx.cfg.Wrap = ctx.IsWrap()

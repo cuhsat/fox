@@ -22,11 +22,10 @@ go install github.com/cuhsat/fox@latest
 * Build-in parser for Windows event log EVTX format
 * Build-in decompression of: brotli, bzip2, gzip, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
-* Build-in RAG agent provided by an Ollama local LLM
-* Build-in timestamped input and agent history
+* Build-in timestamped input history
 * Build-in wc like file content statistics
 * Build-in plugin support for tools like Fox-IT's Dissect
-* Evidence bag formats: Text, JSON, JSONL, XML, SQLite
+* Evidence bag formats: Raw, JSON, JSONL, XML, SQLite
 * Evidence bag cryptographic signing via HMAC-SHA256
 * Terminal interface supporting a vast amount of terminals
   * With support for copy & bracketed paste
@@ -47,7 +46,5 @@ go install github.com/cuhsat/fox@latest
     * Monokai
     * Darcula
     * Nord
-    * Corpo
     * Matrix
-    * Ansi16
     * Monochrome

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	Text  = "text"
+	Raw   = "raw"
 	Jsonl = "jsonl"
 	Json  = "json"
 	Xml   = "xml"
@@ -66,10 +66,10 @@ func New(path, key, wt string) *Bag {
 	case Sql:
 		w = NewSqlWriter()
 		e = ".db"
-	case Text:
+	case Raw:
 		fallthrough
 	default:
-		w = NewTextWriter()
+		w = NewRawWriter()
 	}
 
 	if len(path) == 0 {

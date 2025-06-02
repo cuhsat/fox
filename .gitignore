@@ -13,6 +13,7 @@
 
 # Build directory
 bin/
+!test/testdata/bin
 
 # Go workspace file
 go.work

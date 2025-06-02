@@ -44,7 +44,7 @@ func New() *History {
 	s := bufio.NewScanner(h.file)
 
 	for s.Scan() {
-		t := strings.SplitN(s.Text(), ";user:", 2)
+		t := strings.SplitN(s.Text(), ";", 2)
 
 		if len(t) > 1 {
 			h.lines = append(h.lines, t[1])
@@ -62,7 +62,7 @@ func New() *History {
 	return &h
 }
 
-func (h *History) AddEntry(r, s string) {
+func (h *History) AddCommand(s string) {
 	defer h.Reset()
 
 	// prepare string
@@ -77,7 +77,7 @@ func (h *History) AddEntry(r, s string) {
 		return
 	}
 
-	l := fmt.Sprintf("%10d;%s:%s", time.Now().Unix(), r, s)
+	l := fmt.Sprintf("%10d;%s", time.Now().Unix(), s)
 
 	h.Lock()
 	_, err := fmt.Fprintln(h.file, l)
@@ -86,14 +86,6 @@ func (h *History) AddEntry(r, s string) {
 	if err != nil {
 		sys.Error(err)
 	}
-}
-
-func (h *History) AddSystem(s string) {
-	h.AddEntry("system", s)
-}
-
-func (h *History) AddCommand(s string) {
-	h.AddEntry("user", s)
 }
 
 func (h *History) PrevCommand() string {

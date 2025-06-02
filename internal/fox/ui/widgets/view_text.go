@@ -2,11 +2,9 @@ package widgets
 
 import (
 	"strconv"
-	"strings"
 
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
@@ -41,9 +39,6 @@ func (v *View) textRender(p *panel) {
 	// reset
 	v.nr = 0
 
-	// special type of view
-	s := v.heap.Type == types.Prompt
-
 	i := 0
 
 	// render lines
@@ -59,11 +54,7 @@ func (v *View) textRender(p *panel) {
 
 		// text value
 		if len(line.Str) > 0 {
-			if s && strings.HasPrefix(line.Str, text.Chevron) {
-				v.print(lineX, lineY, line.Str, themes.Subtext2)
-			} else {
-				v.print(lineX, lineY, line.Str, themes.Base)
-			}
+			v.print(lineX, lineY, line.Str, themes.Base)
 		}
 
 		i++
