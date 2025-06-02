@@ -32,7 +32,7 @@ go install github.com/cuhsat/fox@latest
   * With support for mouse scrolling
   * With suspend to shell capability
   * With configurable color themes
-  * ... and many popular themes included:
+  * Popular themes already included:
     * Examiner-Light
     * Examiner-Dark
     * Catppuccin-Latte
