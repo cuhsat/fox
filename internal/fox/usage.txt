@@ -10,7 +10,7 @@ Usage: fox [--print] [--hex] [--counts] [--strings=MIN]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...]
            [--file=FILE] [--key=KEY]
-           [--mode={text,json,jsonl,xml,sql}]
+           [--mode={raw,json,jsonl,xml,sql}]
            [PATH ...]
 
 Positional arguments:
@@ -35,8 +35,8 @@ Line filter:
 
 Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "EVIDENCE")
-  -m, --mode={text,json,jsonl,xml,sql}
-                           output mode (default: text)
+  -m, --mode={raw,json,jsonl,xml,sql}
+                           output mode (default: raw)
   -k, --key=KEY            key phrase for signing with HMAC
 
 Aliases:

@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
-	"strings"
 
 	flag "github.com/spf13/pflag"
 
 	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/fox/ai"
 	"github.com/cuhsat/fox/internal/fox/ui"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -70,7 +68,7 @@ func main() {
 	k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
 
 	if len(*m) == 0 {
-		flag.Lookup("mode").NoOptDefVal = bag.Text
+		flag.Lookup("mode").NoOptDefVal = bag.Raw
 	}
 
 	// aliases
@@ -110,17 +108,14 @@ func main() {
 
 	// features
 	if *v {
-		var sb strings.Builder
+		tags := ""
 
+		// tags=no_ui
 		if !ui.Build {
-			sb.WriteString("!UI ")
+			tags = "(NO UI)"
 		}
 
-		if !ai.Build {
-			sb.WriteString("!AI")
-		}
-
-		fmt.Println(fox.Product, fox.Version, sb.String())
+		fmt.Println(fox.Product, fox.Version, tags)
 		os.Exit(0)
 	}
 

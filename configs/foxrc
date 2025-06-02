@@ -3,7 +3,6 @@
 # available env vars:
 #
 #  FOX_THEME
-#  FOX_MODEL
 #
 # available themes:
 #
@@ -20,15 +19,10 @@
 #  Monokai
 #  Darcula
 #  Nord
-#  Corpo
 #  Matrix
-#  Ansi16
 #  Monochrome
 #
 Theme = "Default"
-
-# Ollama model
-Model = "Default"
 
 # follow file end
 Tail = false
