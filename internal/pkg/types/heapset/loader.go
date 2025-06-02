@@ -68,7 +68,7 @@ func (hs *HeapSet) loadPath(path string) {
 
 	for _, p := range hs.plugins {
 		if p.Match(path) {
-			path, title := p.Exec(path, base, hs.Files())
+			path, title := p.Execute(path, base, hs.Files())
 			hs.loadAuto(path, base, title)
 			return
 		}

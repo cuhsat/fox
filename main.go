@@ -63,7 +63,7 @@ func main() {
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
 
 	// evidence bag
-	f := flag.StringP("file", "f", "EVIDENCE", "file name of evidence bag")
+	f := flag.StringP("file", "f", bag.Filename, "file name of evidence bag")
 	m := flag.StringP("mode", "m", "", "output mode")
 	k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
 

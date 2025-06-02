@@ -28,8 +28,8 @@ go.work.sum
 # Error dump
 .*dump
 
+# Evidence files
+/evidence*
+
 # Todo files
 /TODO*
-
-# Evidence files
-/EVIDENCE*

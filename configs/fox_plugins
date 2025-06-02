@@ -20,6 +20,7 @@ Commands = [
 
 # available variables:
 #
+#  $PARENT  parent of open file
 #  $INPUT   user input value
 #  $FILES   path of open files
 #  $FILE    path of open file
