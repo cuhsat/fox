@@ -70,25 +70,21 @@ func NewXmlWriter() *XmlWriter {
 	}
 }
 
-func (w *XmlWriter) Init(f *os.File, _ bool, t string) {
-	w.file = f
+func (w *XmlWriter) Init(file *os.File, _ bool, title string) {
+	w.file = file
 
-	w.bag = &xmlBag{
-		Title: t,
-	}
+	w.bag = &xmlBag{Title: title}
 
 	buf, err := io.ReadAll(w.file)
 
 	if err != nil {
-		sys.Error(err)
-		return
+		sys.Panic(err)
 	}
 
 	err = xml.Unmarshal(buf, &w.bag)
 
 	if err != nil && err != io.EOF {
-		sys.Error(err)
-		return
+		sys.Panic(err)
 	}
 }
 
@@ -96,7 +92,7 @@ func (w *XmlWriter) Start() {
 	w.entry = new(xmlEvidence)
 }
 
-func (w *XmlWriter) Finalize() {
+func (w *XmlWriter) Flush() {
 	var buf []byte
 	var err error
 
@@ -128,36 +124,38 @@ func (w *XmlWriter) Finalize() {
 	sb.WriteString(xml.Header)
 	sb.Write(buf)
 
-	writeln(w.file, sb.String())
+	_, err = fmt.Fprintln(w.file, sb.String())
+
+	if err != nil {
+		sys.Error(err)
+	}
 }
 
-func (w *XmlWriter) WriteFile(p string, fs []string) {
+func (w *XmlWriter) SetFile(path string, fs []string) {
 	w.entry.Metadata.File = xmlFile{
-		Path: p, Filters: fs,
+		Path: path, Filters: fs,
 	}
 }
 
-func (w *XmlWriter) WriteUser(u *user.User) {
+func (w *XmlWriter) SetUser(usr *user.User) {
 	w.entry.Metadata.User = xmlUser{
-		Login: u.Username, Name: u.Name,
+		Login: usr.Username, Name: usr.Name,
 	}
 }
 
-func (w *XmlWriter) WriteTime(t, f time.Time) {
+func (w *XmlWriter) SetTime(bag, mod time.Time) {
 	w.entry.Metadata.Time = xmlTime{
-		Bagged:   t.UTC().Format(time.RFC3339),
-		Modified: f.UTC().Format(time.RFC3339),
+		Bagged:   bag.UTC().Format(time.RFC3339),
+		Modified: mod.UTC().Format(time.RFC3339),
 	}
 }
 
-func (w *XmlWriter) WriteHash(b []byte) {
-	w.entry.Metadata.Hash = fmt.Sprintf("%x", b)
+func (w *XmlWriter) SetHash(sum []byte) {
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *XmlWriter) WriteLines(ns []int, ss []string) {
-	for i := 0; i < len(ss); i++ {
-		w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{
-			Line: ns[i], Data: ss[i],
-		})
-	}
+func (w *XmlWriter) SetLine(nr int, s string) {
+	w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{
+		Line: nr, Data: s,
+	})
 }

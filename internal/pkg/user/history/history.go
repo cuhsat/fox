@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	filename = ".fox_history"
+	Filename = ".fox_history"
 )
 
 type History struct {
@@ -32,7 +32,7 @@ func New() *History {
 		lines: make([]string, 0),
 	}
 
-	_, p := user.Config(filename)
+	_, p := user.File(Filename)
 
 	h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
@@ -62,7 +62,7 @@ func New() *History {
 	return &h
 }
 
-func (h *History) AddCommand(s string) {
+func (h *History) AddLine(s string) {
 	defer h.Reset()
 
 	// prepare string
@@ -88,7 +88,7 @@ func (h *History) AddCommand(s string) {
 	}
 }
 
-func (h *History) PrevCommand() string {
+func (h *History) PrevLine() string {
 	var d int64 = 0
 
 	if h.index.Load() > 0 {
@@ -98,7 +98,7 @@ func (h *History) PrevCommand() string {
 	return h.get(h.index.Add(d))
 }
 
-func (h *History) NextCommand() string {
+func (h *History) NextLine() string {
 	if h.index.Load() >= h.len()-1 {
 		return ""
 	}

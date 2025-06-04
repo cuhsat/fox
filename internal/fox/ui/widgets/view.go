@@ -22,9 +22,11 @@ type View struct {
 }
 
 type state struct {
-	nr   int
-	pos  coord
 	smap *smap.SMap
+
+	nr int
+
+	delta coord
 }
 
 func NewView(ctx *context.Context) *View {
@@ -78,12 +80,12 @@ func (v *View) Preserve() {
 func (v *View) SaveState(key string) {
 	if v.smap != nil && len(*v.smap) > v.delta.Y {
 		v.cache[key] = state{
-			nr: (*v.smap)[v.delta.Y].Nr,
-			pos: coord{
+			smap: v.smap,
+			nr:   (*v.smap)[v.delta.Y].Nr,
+			delta: coord{
 				v.delta.X,
 				v.delta.Y,
 			},
-			smap: v.smap,
 		}
 	}
 }
@@ -91,19 +93,16 @@ func (v *View) SaveState(key string) {
 func (v *View) LoadState(key string) {
 	if v.smap != nil {
 		if s, ok := v.cache[key]; ok {
-			if len(*s.smap) != len(*v.smap) {
-				y, _ := s.smap.Find(s.nr) // TODO: Bug
-				v.delta.X = 0
-				v.delta.Y = y
+			if len(*s.smap) == len(*v.smap) {
+				v.delta = s.delta
 			} else {
-				v.delta = s.pos
+				v.nr = s.nr
 			}
 		} else {
-			v.delta = coord{0, 0}
+			v.delta.X = 0
+			v.delta.Y = 0
 		}
 	}
-
-	v.nr = 0
 }
 
 func (v *View) ScrollLine() {

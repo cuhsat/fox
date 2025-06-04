@@ -1,5 +1,3 @@
-//go:build !no_ui
-
 package ui
 
 import (
@@ -23,10 +21,6 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/bag"
 	"github.com/cuhsat/fox/internal/pkg/user/history"
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
-)
-
-const (
-	Build = true
 )
 
 const (
@@ -230,7 +224,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					pl, ok := ui.plugins.Plugins[ev.Name()]
+					pl, ok := ui.plugins.Shortcuts[ev.Name()]
 
 					if !ok {
 						continue
@@ -273,7 +267,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyUp:
 					if ui.ctx.Mode().Prompt() {
-						ui.prompt.Enter(hi.PrevCommand())
+						ui.prompt.Enter(hi.PrevLine())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollStart()
 					} else if mods&tcell.ModShift != 0 {
@@ -284,7 +278,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 				case tcell.KeyDown:
 					if ui.ctx.Mode().Prompt() {
-						ui.prompt.Enter(hi.NextCommand())
+						ui.prompt.Enter(hi.NextLine())
 					} else if mods&tcell.ModCtrl != 0 && mods&tcell.ModShift != 0 {
 						ui.view.ScrollEnd()
 					} else if mods&tcell.ModShift != 0 {
@@ -444,7 +438,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					hi.AddCommand(v)
+					hi.AddLine(v)
 
 					switch m {
 					case mode.Less, mode.Hex:

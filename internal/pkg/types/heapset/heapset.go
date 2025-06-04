@@ -24,7 +24,7 @@ type callback func()
 
 type HeapSet struct {
 	sync.RWMutex
-	plugins []plugins.Autostart // autostart plugins
+	plugins []plugins.Plugin // automatic plugins
 
 	watch   *fsnotify.Watcher // file watcher
 	watchFn callback          // file watcher callback
@@ -47,7 +47,7 @@ func New(paths []string) *HeapSet {
 	}
 
 	if ps := plugins.New(); ps != nil {
-		hs.plugins = ps.Automatic()
+		hs.plugins = ps.Auto()
 	}
 
 	go hs.notify()
