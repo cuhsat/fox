@@ -65,6 +65,16 @@ func Map(m *mmap.MMap) *SMap {
 	return s
 }
 
+func (s *SMap) String() string {
+	var sb strings.Builder
+
+	for _, str := range *s {
+		sb.WriteString(str.Str)
+	}
+
+	return sb.String()
+}
+
 func (s *SMap) Render() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {

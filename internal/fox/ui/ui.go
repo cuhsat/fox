@@ -129,7 +129,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				}
 
 			case *tcell.EventClipboard:
-				if ui.ctx.Mode() == mode.Hex {
+				if ui.ctx.Mode().Static() {
 					continue
 				}
 
@@ -350,31 +350,31 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlT:
-					if ui.ctx.Mode() != mode.Hex {
+					if !ui.ctx.Mode().Static() {
 						ui.ctx.ToggleFollow()
 					}
 
 				case tcell.KeyCtrlN:
-					if ui.ctx.Mode() != mode.Hex {
+					if !ui.ctx.Mode().Static() {
 						ui.ctx.ToggleNumbers()
 						ui.view.Preserve()
 					}
 
 				case tcell.KeyCtrlW:
-					if ui.ctx.Mode() != mode.Hex {
+					if !ui.ctx.Mode().Static() {
 						ui.ctx.ToggleWrap()
 						ui.view.Preserve()
 					}
 
 				case tcell.KeyCtrlV:
-					if ui.ctx.Mode() == mode.Hex {
-						continue
+					if !ui.ctx.Mode().Prompt() {
+						ui.change(mode.Csv)
+					} else {
+						ui.root.GetClipboard()
 					}
 
-					ui.root.GetClipboard()
-
 				case tcell.KeyCtrlC:
-					if ui.ctx.Mode() == mode.Hex {
+					if ui.ctx.Mode().Static() {
 						continue
 					}
 
@@ -383,7 +383,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.overlay.SendInfo(fmt.Sprintf("%s copied to clipboard", heap.String()))
 
 				case tcell.KeyCtrlS:
-					if ui.ctx.Mode() == mode.Hex {
+					if ui.ctx.Mode().Static() {
 						continue
 					}
 
@@ -441,7 +441,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					hi.AddLine(v)
 
 					switch m {
-					case mode.Less, mode.Hex:
+					case mode.Less, mode.Csv, mode.Hex:
 						ui.view.ScrollLine()
 
 					case mode.Grep:
@@ -477,7 +477,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 							ui.change(mode.Default)
 						}
 					} else if len(heap.Patterns()) > 0 {
-						if ui.ctx.Mode() != mode.Hex {
+						if !ui.ctx.Mode().Static() {
 							ui.view.Reset()
 							heap.DelFilter()
 						}
@@ -540,7 +540,7 @@ func (ui *UI) change(m mode.Mode) {
 		ui.ctx.Root.HideCursor()
 	}
 
-	if ui.ctx.Last() == mode.Hex || m == mode.Hex {
+	if ui.ctx.Last().Static() || m.Static() {
 		ui.view.Reset()
 	}
 }

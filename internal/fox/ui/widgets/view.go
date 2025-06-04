@@ -49,9 +49,12 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 
 	p := &panel{x, y, w, h}
 
-	if v.ctx.Mode() == mode.Hex {
+	switch v.ctx.Mode() {
+	case mode.Csv:
+		v.csvRender(p)
+	case mode.Hex:
 		v.hexRender(p)
-	} else {
+	default:
 		v.textRender(p)
 	}
 
@@ -66,7 +69,7 @@ func (v *View) Reset() {
 }
 
 func (v *View) Goto(s string) {
-	if v.ctx.Mode() != mode.Hex {
+	if !v.ctx.Mode().Static() {
 		v.textGoto(s)
 	}
 }
@@ -106,7 +109,7 @@ func (v *View) LoadState(key string) {
 }
 
 func (v *View) ScrollLine() {
-	if v.ctx.Mode() == mode.Hex {
+	if v.ctx.Mode().Static() {
 		v.ScrollDown(1)
 		return
 	}

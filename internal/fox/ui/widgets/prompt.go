@@ -68,7 +68,7 @@ func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	// render mode
 	p.print(x, y, m, themes.Surface3)
 
-	if p.ctx.Mode() == mode.Hex {
+	if p.ctx.Mode().Static() {
 		return 1
 	}
 
