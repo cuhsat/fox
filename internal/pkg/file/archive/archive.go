@@ -1,22 +1,32 @@
-package zip
+package archive
 
 import (
-	"archive/zip"
 	"io"
-	"strings"
+
+	"github.com/gen2brain/go-unarr"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 func Detect(path string) bool {
-	return file.HasMagic(path, 0, []byte{
-		0x50, 0x4B, 0x03, 0x04,
+	for _, m := range [][]byte{
+		{0x37, 0x7A, 0xBC, 0xAF, 0x27, 0x1C}, // 7zip
+		{0x52, 0x61, 0x72, 0x21, 0x1A, 0x07}, // rar
+		{0x50, 0x4B, 0x03, 0x04},             // zip
+	} {
+		if file.HasMagic(path, 0, m) {
+			return true
+		}
+	}
+
+	return file.HasMagic(path, 257, []byte{
+		0x75, 0x73, 0x74, 0x61, 0x72, // tar
 	})
 }
 
 func Deflate(path string) (i []*file.Item) {
-	r, err := zip.OpenReader(path)
+	a, err := unarr.NewArchive(path)
 
 	if err != nil {
 		sys.Error(err)
@@ -29,26 +39,25 @@ func Deflate(path string) (i []*file.Item) {
 		return
 	}
 
-	defer r.Close()
+	defer a.Close()
 
-	for _, f := range r.File {
-		if strings.HasSuffix(f.Name, "/") {
-			continue
+	for {
+		err := a.Entry()
+
+		if err == io.EOF {
+			break
 		}
-
-		a, err := f.Open()
 
 		if err != nil {
 			sys.Error(err)
-			continue
+			break
 		}
 
 		t := sys.TempFile()
 
 		_, err = io.Copy(t, a)
 
-		_ = t.Close()
-		_ = a.Close()
+		t.Close()
 
 		if err != nil {
 			sys.Error(err)
@@ -57,7 +66,7 @@ func Deflate(path string) (i []*file.Item) {
 
 		i = append(i, &file.Item{
 			Path: t.Name(),
-			Name: f.Name,
+			Name: a.Name(),
 		})
 	}
 
