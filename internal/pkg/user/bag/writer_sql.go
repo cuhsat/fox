@@ -60,7 +60,7 @@ func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
 
 	// create the database from schema
 	if n {
-		_, err = w.db.Exec(api.SqlSchema)
+		_, err = w.db.Exec(api.SchemaSql)
 
 		if err != nil {
 			sys.Panic(err)

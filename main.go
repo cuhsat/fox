@@ -20,9 +20,9 @@ import (
 
 func main() {
 	// console
-	rm := mode.Default
-	om := types.File
-	var ov any
+	renderMode := mode.Default
+	outputMode := types.File
+	var outputValue any
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
@@ -41,19 +41,19 @@ func main() {
 	// file limits
 	limits := types.GetLimits()
 
-	h := flag.BoolP("head", "h", false, "limit head of file by ...")
-	t := flag.BoolP("tail", "t", false, "limit tail of file by ...")
+	head := flag.BoolP("head", "h", false, "limit head of file by ...")
+	tail := flag.BoolP("tail", "t", false, "limit tail of file by ...")
 
-	c := new(types.Counts)
+	counts := new(types.Counts)
 
-	flag.IntVarP(&c.Lines, "lines", "n", 0, "number of lines")
-	flag.IntVarP(&c.Bytes, "bytes", "c", 0, "number of bytes")
+	flag.IntVarP(&counts.Lines, "lines", "n", 0, "number of lines")
+	flag.IntVarP(&counts.Bytes, "bytes", "c", 0, "number of bytes")
 
-	if c.Lines == 0 {
+	if counts.Lines == 0 {
 		flag.Lookup("lines").NoOptDefVal = "10"
 	}
 
-	if c.Bytes == 0 {
+	if counts.Bytes == 0 {
 		flag.Lookup("bytes").NoOptDefVal = "16"
 	}
 
@@ -78,7 +78,7 @@ func main() {
 	S := flag.BoolP("sql", "S", false, "export in SQL format")
 
 	// standard options
-	v := flag.BoolP("version", "v", false, "shows version")
+	version := flag.BoolP("version", "v", false, "shows version")
 
 	flag.Usage = func() {
 		fmt.Printf(fox.Usage, fox.Version)
@@ -87,10 +87,10 @@ func main() {
 
 	flag.Parse()
 
-	a := flag.Args()
+	args := flag.Args()
 
 	// flag checks
-	if *h && *t {
+	if *head && *tail {
 		sys.Exit("head or tail")
 	}
 
@@ -102,12 +102,12 @@ func main() {
 		sys.Exit("hex or pattern")
 	}
 
-	if *x && c.Lines > 0 {
+	if *x && counts.Lines > 0 {
 		sys.Exit("hex needs bytes")
 	}
 
 	// features
-	if *v {
+	if *version {
 		tags := ""
 
 		// tags=no_ui
@@ -120,12 +120,12 @@ func main() {
 	}
 
 	// file limits
-	if *h {
-		limits.Head = *c
+	if *head {
+		limits.Head = *counts
 	}
 
-	if *t {
-		limits.Tail = *c
+	if *tail {
+		limits.Tail = *counts
 	}
 
 	// evidence bag types
@@ -148,29 +148,29 @@ func main() {
 	// output mode
 	if *w {
 		*p = true
-		om = types.Stats
+		outputMode = types.Stats
 	}
 
 	if *s > 0 {
 		*p = true
-		om = types.Carve
-		ov = *s
+		outputMode = types.Carve
+		outputValue = *s
 	}
 
 	if len(*H) > 0 {
 		*p = true
-		om = types.Hash
-		ov = *H
+		outputMode = types.Hash
+		outputValue = *H
 	}
 
 	// render mode
 	if *x {
-		rm = mode.Hex
-		om = types.Hex
+		renderMode = mode.Hex
+		outputMode = types.Hex
 	}
 
 	if len(*filters) > 0 {
-		om = types.Grep
+		outputMode = types.Grep
 	}
 
 	sys.SetupLogger()
@@ -190,11 +190,11 @@ func main() {
 		*p = true
 	}
 
-	hs := heapset.New(a)
+	hs := heapset.New(args)
 	defer hs.ThrowAway()
 
 	if *p || !ui.Build {
-		hs.Print(om, ov)
+		hs.Print(outputMode, outputValue)
 		return
 	}
 
@@ -204,7 +204,7 @@ func main() {
 	bg := bag.New(*f, *k, *m)
 	defer bg.Close()
 
-	u := ui.New(rm)
+	u := ui.New(renderMode)
 	defer u.Close()
 
 	u.Run(hs, hi, bg)

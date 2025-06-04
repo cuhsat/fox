@@ -16,13 +16,13 @@ func (h *Heap) Strings(min int) <-chan String {
 	ch1 := make(chan byte, 1024)
 	ch2 := make(chan String)
 
-	go h.readMMap(ch1)
-	go h.carveStr(ch1, ch2, min)
+	go h.read(ch1)
+	go h.carve(ch1, ch2, min)
 
 	return ch2
 }
 
-func (h *Heap) readMMap(ch chan<- byte) {
+func (h *Heap) read(ch chan<- byte) {
 	defer close(ch)
 
 	h.RLock()
@@ -34,7 +34,7 @@ func (h *Heap) readMMap(ch chan<- byte) {
 	h.RUnlock()
 }
 
-func (h *Heap) carveStr(ch <-chan byte, s chan<- String, m int) {
+func (h *Heap) carve(ch <-chan byte, s chan<- String, m int) {
 	var rs []rune
 
 	buf := make([]byte, 4)

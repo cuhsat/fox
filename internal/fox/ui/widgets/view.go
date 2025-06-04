@@ -22,9 +22,9 @@ type View struct {
 }
 
 type state struct {
-	nr  int
-	len int
-	pos coord
+	nr   int
+	pos  coord
+	smap *smap.SMap
 }
 
 func NewView(ctx *context.Context) *View {
@@ -78,12 +78,12 @@ func (v *View) Preserve() {
 func (v *View) SaveState(key string) {
 	if v.smap != nil && len(*v.smap) > v.delta.Y {
 		v.cache[key] = state{
-			nr:  (*v.smap)[v.delta.Y].Nr,
-			len: len(*v.smap),
+			nr: (*v.smap)[v.delta.Y].Nr,
 			pos: coord{
 				v.delta.X,
 				v.delta.Y,
 			},
+			smap: v.smap,
 		}
 	}
 }
@@ -91,14 +91,13 @@ func (v *View) SaveState(key string) {
 func (v *View) LoadState(key string) {
 	if v.smap != nil {
 		if s, ok := v.cache[key]; ok {
-			// if s.len != len(*v.smap) {
-			// TODO: way off!
-			// y, _ := v.smap.Find(s.nr)
-			// v.delta.X = 0
-			// v.delta.Y = y
-			// } else {
-			v.delta = s.pos
-			// }
+			if len(*s.smap) != len(*v.smap) {
+				y, _ := s.smap.Find(s.nr) // TODO: Bug
+				v.delta.X = 0
+				v.delta.Y = y
+			} else {
+				v.delta = s.pos
+			}
 		} else {
 			v.delta = coord{0, 0}
 		}

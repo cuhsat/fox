@@ -201,9 +201,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					esc = true
 
 				case tcell.KeyTab:
-					if hs.Len() > 1 {
-						ui.view.SaveState(heap.Path)
+					if hs.Len() <= 1 {
+						continue
 					}
+
+					ui.view.SaveState(heap.Path)
 
 					if mods&tcell.ModShift != 0 {
 						heap = hs.PrevHeap()
@@ -211,9 +213,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						heap = hs.NextHeap()
 					}
 
-					if hs.Len() > 1 {
-						ui.view.LoadState(heap.Path)
-					}
+					ui.view.LoadState(heap.Path)
 
 				case tcell.KeyF1:
 					fallthrough

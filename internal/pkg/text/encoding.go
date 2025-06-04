@@ -22,12 +22,6 @@ const (
 	MaxASCII = 0x7f
 )
 
-const (
-	notASCII    = '.'
-	notUnicode  = '·'
-	isDeceptive = '×'
-)
-
 func ToASCII(s string) string {
 	var sb strings.Builder
 
@@ -40,7 +34,7 @@ func ToASCII(s string) string {
 
 func AsASCII(r rune) rune {
 	if r < MinASCII || r > MaxASCII {
-		return notASCII
+		return '.'
 	}
 
 	return r
@@ -50,10 +44,10 @@ func AsUnicode(r rune) rune {
 	// mitigate CVE-2021-42574
 	switch r {
 	case LRE, RLE, LRO, RLO, LRI, RLI, FSI, PDF, PDI:
-		return isDeceptive
+		return '×'
 	default:
 		if !unicode.IsPrint(r) {
-			return notUnicode
+			return '·'
 		}
 	}
 
