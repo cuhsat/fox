@@ -6,6 +6,8 @@ import (
 	"sync/atomic"
 
 	"github.com/cuhsat/fox/internal/pkg/file"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/7zip"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/rar"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
@@ -53,6 +55,12 @@ func (hs *HeapSet) loadPath(path string) {
 
 	// check for archive
 	switch {
+	case sevenzip.Detect(path):
+		hs.load7Zip(path, base)
+		return
+	case rar.Detect(path):
+		hs.loadRar(path, base)
+		return
 	case tar.Detect(path):
 		hs.loadTar(path, base)
 		return
@@ -77,17 +85,6 @@ func (hs *HeapSet) loadPath(path string) {
 	hs.loadFile(path, base)
 }
 
-func (hs *HeapSet) loadPipe() {
-	pipe := sys.Stdin()
-
-	hs.atomicAdd(heap.New(
-		"",
-		pipe,
-		pipe,
-		types.Stdin,
-	))
-}
-
 func (hs *HeapSet) loadDir(path string) {
 	dir, err := os.ReadDir(path)
 
@@ -100,6 +97,18 @@ func (hs *HeapSet) loadDir(path string) {
 		if !f.IsDir() {
 			hs.loadPath(filepath.Join(path, f.Name()))
 		}
+	}
+}
+
+func (hs *HeapSet) load7Zip(path, base string) {
+	for _, i := range sevenzip.Deflate(path) {
+		hs.loadItem(i, base)
+	}
+}
+
+func (hs *HeapSet) loadRar(path, base string) {
+	for _, i := range rar.Deflate(path) {
+		hs.loadItem(i, base)
 	}
 }
 
@@ -150,6 +159,17 @@ func (hs *HeapSet) loadPlugin(path, base, title string) {
 		path,
 		base,
 		types.Plugin,
+	))
+}
+
+func (hs *HeapSet) loadPipe() {
+	pipe := sys.Stdin()
+
+	hs.atomicAdd(heap.New(
+		"",
+		pipe,
+		pipe,
+		types.Stdin,
 	))
 }
 

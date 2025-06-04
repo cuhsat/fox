@@ -166,9 +166,9 @@ func main() {
 		oMode = types.Grep
 	}
 
-	sys.SetupLogger()
+	sys.Setup()
 
-	_ = os.Remove(sys.FileDump)
+	_ = os.Remove(sys.Dump)
 
 	defer func() {
 		if err := recover(); err != nil {

@@ -113,7 +113,7 @@ func BenchmarkIndent(b *testing.B) {
 
 func BenchmarkWrap(b *testing.B) {
 	b.Run("Benchmark Wrap", func(b *testing.B) {
-		f, m, err := Testdata("5MB.jsonl")
+		f, m, err := Testdata("5MB.json")
 
 		if err != nil {
 			b.Fatal(err)
