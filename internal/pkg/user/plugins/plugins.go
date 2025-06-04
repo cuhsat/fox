@@ -14,15 +14,7 @@ import (
 )
 
 const (
-	filename = ".fox_plugins"
-)
-
-const (
-	varBase   = "$BASE"
-	varFile   = "$FILE"
-	varFiles  = "$FILES"
-	varInput  = "$INPUT"
-	varFolder = "$FOLDER"
+	Filename = ".fox_plugins"
 )
 
 var (
@@ -32,66 +24,71 @@ var (
 type Callback func(path, base, title string)
 
 type Plugins struct {
-	Autostarts map[string]Autostart `toml:"Autostart"`
-	Plugins    map[string]Plugin    `toml:"Plugin"`
+	Automatics map[string]Plugin `toml:"Autostart"`
+	Shortcuts  map[string]Plugin `toml:"Plugin"`
 }
 
-type Autostart struct {
+type Plugin struct {
 	re *regexp.Regexp
 
 	Name     string   `toml:"Name"`
+	Prompt   string   `toml:"Prompt"`
 	Pattern  string   `toml:"Pattern"`
 	Commands []string `toml:"Commands"`
 }
 
-type Plugin struct {
-	Name     string   `toml:"Name"`
-	Prompt   string   `toml:"Prompt"`
-	Commands []string `toml:"Commands"`
+func (p *Plugin) Match(s string) bool {
+	return p.re.MatchString(s)
 }
 
-func (a *Autostart) Match(p string) bool {
-	return a.re.MatchString(p)
-}
-
-func (a *Autostart) Execute(file, base string, hs []string) (string, string) {
-	cmds := make([]string, len(a.Commands))
-
-	for _, cmd := range a.Commands {
-		cmds = append(cmds, expand(cmd, file, base, "", hs))
-
-	}
-
-	return sys.Exec(cmds), title(base, a.Name, "")
-}
-
-func (p *Plugin) Execute(file, base string, hs []string, fn Callback) {
-	input := ""
+func (p *Plugin) Execute(file, base string, hs []string, fn Callback) (string, string) {
+	var input string
+	var title string
 
 	if len(p.Prompt) > 0 {
-		input = expand(<-Input, file, base, "", hs)
+		input = <-Input
 	}
 
-	cmds := make([]string, len(p.Commands))
+	if len(input) > 0 {
+		title = fmt.Sprintf(":%s", input)
+	}
+
+	title = fmt.Sprintf("%s (%s%s)", base, p.Name, title)
+
+	cs := make([]string, len(p.Commands))
 
 	for _, cmd := range p.Commands {
-		cmds = append(cmds, expand(cmd, file, base, input, hs))
+		cmd = strings.ReplaceAll(cmd, "$BASE", base)
+		cmd = strings.ReplaceAll(cmd, "$FILE", file)
+		cmd = strings.ReplaceAll(cmd, "$FILES", strings.Join(hs, " "))
+		cmd = strings.ReplaceAll(cmd, "$INPUT", input)
+		cmd = strings.ReplaceAll(cmd, "$FOLDER", filepath.Dir(file))
+
+		cs = append(cs, cmd)
 	}
 
-	fn(sys.Exec(cmds), base, title(base, p.Name, input))
+	if fn != nil {
+		fn(sys.Exec(cs), base, title)
+	} else {
+		return sys.Exec(cs), title
+	}
+
+	return "", ""
 }
 
-func (ps *Plugins) Automatic() (as []Autostart) {
+func (ps *Plugins) Auto() (as []Plugin) {
 	keys := make([]string, 0)
 
-	for k := range ps.Autostarts {
+	for k := range ps.Automatics {
 		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		as = append(as, ps.Autostarts[k])
+		p := ps.Automatics[k]
+		p.re = regexp.MustCompile(p.Pattern)
+		as = append(as, p)
 	}
 
 	return
@@ -102,9 +99,9 @@ func New() *Plugins {
 
 	ps := new(Plugins)
 
-	is, p := user.Config(filename)
+	ok, p := user.File(Filename)
 
-	if !is {
+	if !ok {
 		return nil
 	}
 
@@ -115,36 +112,9 @@ func New() *Plugins {
 		return nil
 	}
 
-	for k, v := range ps.Autostarts {
-		v.re = regexp.MustCompile(v.Pattern)
-		ps.Autostarts[k] = v
-	}
-
 	return ps
 }
 
 func Close() {
 	close(Input)
-}
-
-func title(base, path, input string) string {
-	var s string
-
-	if len(input) > 0 {
-		s = fmt.Sprintf(":%s", input)
-	}
-
-	return fmt.Sprintf("%s (%s%s)", base, path, s)
-}
-
-func expand(s, file, base, input string, hs []string) string {
-	files := strings.Join(hs, " ")
-
-	s = strings.ReplaceAll(s, varBase, base)
-	s = strings.ReplaceAll(s, varFile, file)
-	s = strings.ReplaceAll(s, varFiles, files)
-	s = strings.ReplaceAll(s, varInput, input)
-	s = strings.ReplaceAll(s, varFolder, filepath.Dir(file))
-
-	return s
 }

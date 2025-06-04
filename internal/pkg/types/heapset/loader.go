@@ -68,8 +68,8 @@ func (hs *HeapSet) loadPath(path string) {
 
 	for _, p := range hs.plugins {
 		if p.Match(path) {
-			path, title := p.Execute(path, base, hs.Files())
-			hs.loadAuto(path, base, title)
+			path, title := p.Execute(path, base, hs.Files(), nil)
+			hs.loadPlugin(path, base, title)
 			return
 		}
 	}
@@ -130,15 +130,6 @@ func (hs *HeapSet) loadFile(path, base string) {
 	hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadAuto(path, base, title string) {
-	hs.atomicAdd(heap.New(
-		title,
-		path,
-		base,
-		types.Plugin,
-	))
-}
-
 func (hs *HeapSet) loadItem(i *file.Item, base string) {
 	// check for parser
 	if evtx.Detect(i.Path) {
@@ -150,6 +141,15 @@ func (hs *HeapSet) loadItem(i *file.Item, base string) {
 		i.Path,
 		i.Path,
 		types.Deflate,
+	))
+}
+
+func (hs *HeapSet) loadPlugin(path, base, title string) {
+	hs.atomicAdd(heap.New(
+		title,
+		path,
+		base,
+		types.Plugin,
 	))
 }
 

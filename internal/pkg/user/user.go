@@ -8,7 +8,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
-func Config(name string) (bool, string) {
+func File(name string) (bool, string) {
 	dir, err := os.UserHomeDir()
 
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	filename = ".fox_themes"
+	Filename = ".fox_themes"
 )
 
 type Themes struct {
@@ -37,7 +37,7 @@ type Style struct {
 func New() *Themes {
 	ts := new(Themes)
 
-	is, p := user.Config(filename)
+	is, p := user.File(Filename)
 
 	if !is {
 		return nil

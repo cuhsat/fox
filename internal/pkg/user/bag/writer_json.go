@@ -60,9 +60,9 @@ func NewJsonWriter(pretty bool) *JsonWriter {
 	}
 }
 
-func (w *JsonWriter) Init(f *os.File, _ bool, t string) {
-	w.file = f
-	w.title = t
+func (w *JsonWriter) Init(file *os.File, _ bool, title string) {
+	w.file = file
+	w.title = title
 }
 
 func (w *JsonWriter) Start() {
@@ -71,7 +71,7 @@ func (w *JsonWriter) Start() {
 	}
 }
 
-func (w *JsonWriter) Finalize() {
+func (w *JsonWriter) Flush() {
 	var buf []byte
 	var err error
 
@@ -86,35 +86,37 @@ func (w *JsonWriter) Finalize() {
 		return
 	}
 
-	writeln(w.file, string(buf))
+	_, err = fmt.Fprintln(w.file, string(buf))
+
+	if err != nil {
+		sys.Error(err)
+	}
 }
 
-func (w *JsonWriter) WriteFile(p string, fs []string) {
+func (w *JsonWriter) SetFile(path string, fs []string) {
 	w.entry.Metadata.File = jsonFile{
-		Path: p, Filters: fs,
+		Path: path, Filters: fs,
 	}
 }
 
-func (w *JsonWriter) WriteUser(u *user.User) {
+func (w *JsonWriter) SetUser(usr *user.User) {
 	w.entry.Metadata.User = jsonUser{
-		Login: u.Username, Name: u.Name,
+		Login: usr.Username, Name: usr.Name,
 	}
 }
 
-func (w *JsonWriter) WriteTime(t, f time.Time) {
+func (w *JsonWriter) SetTime(bag, mod time.Time) {
 	w.entry.Metadata.Time = jsonTime{
-		Bagged: t.UTC(), Modified: f.UTC(),
+		Bagged: bag.UTC(), Modified: mod.UTC(),
 	}
 }
 
-func (w *JsonWriter) WriteHash(b []byte) {
-	w.entry.Metadata.Hash = fmt.Sprintf("%x", b)
+func (w *JsonWriter) SetHash(sum []byte) {
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *JsonWriter) WriteLines(ns []int, ss []string) {
-	for i := 0; i < len(ss); i++ {
-		w.entry.Lines = append(w.entry.Lines, jsonLine{
-			Line: ns[i], Data: ss[i],
-		})
-	}
+func (w *JsonWriter) SetLine(nr int, s string) {
+	w.entry.Lines = append(w.entry.Lines, jsonLine{
+		Line: nr, Data: s,
+	})
 }

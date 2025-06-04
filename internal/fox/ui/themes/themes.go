@@ -47,7 +47,7 @@ func New(name string) *Themes {
 				0xeeeeee, 0xf8340c, // Overlay0 (error)
 				0x333333, 0x88cd0f, // Overlay1 (success)
 				0xcccccc, 0xeeeeee, // Subtext0 (numbers)
-				0xcccccc, 0xeeeeee, // Subtext1 (vrule)
+				0xcccccc, 0xeeeeee, // Subtext1 (vertical)
 				0x111111, 0xeeeeee, // Subtext2 (highlight)
 			},
 
@@ -60,7 +60,7 @@ func New(name string) *Themes {
 				0xeeeeee, 0xf8340c, // Overlay0 (error)
 				0x333333, 0x88cd0f, // Overlay1 (success)
 				0x333333, 0x111111, // Subtext0 (numbers)
-				0x333333, 0x111111, // Subtext1 (vrule)
+				0x333333, 0x111111, // Subtext1 (vertical)
 				0xeeeeee, 0x111111, // Subtext2 (highlight)
 			},
 
@@ -73,7 +73,7 @@ func New(name string) *Themes {
 				0xeff1f5, 0xd20f39, // Overlay0 (error)
 				0xeff1f5, 0x40a02b, // Overlay1 (success)
 				0xacb0be, 0xeff1f5, // Subtext0 (numbers)
-				0xccd0da, 0xeff1f5, // Subtext1 (vrule)
+				0xccd0da, 0xeff1f5, // Subtext1 (vertical)
 				0xd20f39, 0xeff1f5, // Subtext2 (highlight)
 			},
 
@@ -86,7 +86,7 @@ func New(name string) *Themes {
 				0x303446, 0xe78284, // Overlay0 (error)
 				0x303446, 0xa6d189, // Overlay1 (success)
 				0x626880, 0x303446, // Subtext0 (numbers)
-				0x414559, 0x303446, // Subtext1 (vrule)
+				0x414559, 0x303446, // Subtext1 (vertical)
 				0xe78284, 0x303446, // Subtext2 (highlight)
 			},
 
@@ -99,7 +99,7 @@ func New(name string) *Themes {
 				0x24273a, 0xed8796, // Overlay0 (error)
 				0x24273a, 0xa6da95, // Overlay1 (success)
 				0x5b6078, 0x24273a, // Subtext0 (numbers)
-				0x363a4f, 0x24273a, // Subtext1 (vrule)
+				0x363a4f, 0x24273a, // Subtext1 (vertical)
 				0xed8796, 0x24273a, // Subtext2 (highlight)
 			},
 
@@ -112,7 +112,7 @@ func New(name string) *Themes {
 				0x1e1e2e, 0xf38ba8, // Overlay0 (error)
 				0x1e1e2e, 0xa6e3a1, // Overlay1 (success)
 				0x585b70, 0x1e1e2e, // Subtext0 (numbers)
-				0x313244, 0x1e1e2e, // Subtext1 (vrule)
+				0x313244, 0x1e1e2e, // Subtext1 (vertical)
 				0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
 			},
 
@@ -125,7 +125,7 @@ func New(name string) *Themes {
 				0xfdf6e3, 0xdc322f, // Overlay0 (error)
 				0xfdf6e3, 0x859900, // Overlay1 (success)
 				0x93a1a1, 0xfdf6e3, // Subtext0 (numbers)
-				0xeee8d5, 0xfdf6e3, // Subtext1 (vrule)
+				0xeee8d5, 0xfdf6e3, // Subtext1 (vertical)
 				0xb58900, 0xfdf6e3, // Subtext2 (highlight)
 			},
 
@@ -138,7 +138,7 @@ func New(name string) *Themes {
 				0xfdf6e3, 0xdc322f, // Overlay0 (error)
 				0xfdf6e3, 0x859900, // Overlay1 (success)
 				0x586e75, 0x002b36, // Subtext0 (numbers)
-				0x073642, 0x002b36, // Subtext1 (vrule)
+				0x073642, 0x002b36, // Subtext1 (vertical)
 				0xcb4b16, 0x002b36, // Subtext2 (highlight)
 			},
 
@@ -151,7 +151,7 @@ func New(name string) *Themes {
 				0xe7e7e7, 0xff0000, // Overlay0 (error)
 				0xe7e7e7, 0x008000, // Overlay1 (success)
 				0xafafaf, 0xe7e7e7, // Subtext0 (numbers)
-				0xafafaf, 0xe7e7e7, // Subtext1 (vrule)
+				0xafafaf, 0xe7e7e7, // Subtext1 (vertical)
 				0xc72e0f, 0xe7e7e7, // Subtext2 (highlight)
 			},
 
@@ -164,7 +164,7 @@ func New(name string) *Themes {
 				0x1a1a1a, 0xd16969, // Overlay0 (error)
 				0x1a1a1a, 0xb5cea8, // Overlay1 (success)
 				0x626262, 0x282828, // Subtext0 (numbers)
-				0x313131, 0x282828, // Subtext1 (vrule)
+				0x313131, 0x282828, // Subtext1 (vertical)
 				0xd3967d, 0x282828, // Subtext2 (highlight)
 			},
 
@@ -177,7 +177,7 @@ func New(name string) *Themes {
 				0x222327, 0xff6077, // Overlay0 (error)
 				0x222327, 0x85d3f2, // Overlay1 (success)
 				0x595f6f, 0x222327, // Subtext0 (numbers)
-				0x2c2e34, 0x222327, // Subtext1 (vrule)
+				0x2c2e34, 0x222327, // Subtext1 (vertical)
 				0xf39660, 0x222327, // Subtext2 (highlight)
 			},
 
@@ -190,7 +190,7 @@ func New(name string) *Themes {
 				0xeeeeee, 0xf43753, // Overlay0 (error)
 				0xeeeeee, 0x6a8759, // Overlay1 (success)
 				0x555555, 0x2b2b2b, // Subtext0 (numbers)
-				0x555555, 0x2b2b2b, // Subtext1 (vrule)
+				0x555555, 0x2b2b2b, // Subtext1 (vertical)
 				0xf43753, 0x2b2b2b, // Subtext2 (highlight)
 			},
 
@@ -203,7 +203,7 @@ func New(name string) *Themes {
 				0x2e3440, 0xbf616a, // Overlay0 (error)
 				0x2e3440, 0xa3be8c, // Overlay1 (success)
 				0x4c566a, 0x2e3440, // Subtext0 (numbers)
-				0x3b4252, 0x2e3440, // Subtext1 (vrule)
+				0x3b4252, 0x2e3440, // Subtext1 (vertical)
 				0x5e81ac, 0x2e3440, // Subtext2 (highlight)
 			},
 
@@ -216,7 +216,7 @@ func New(name string) *Themes {
 				0x0d0208, 0x00ff41, // Overlay0 (error)
 				0x0d0208, 0x00ff41, // Overlay1 (success)
 				0x003b00, 0x0d0208, // Subtext0 (numbers)
-				0x0d0208, 0x0d0208, // Subtext1 (vrule)
+				0x0d0208, 0x0d0208, // Subtext1 (vertical)
 				0x00ff41, 0x0d0208, // Subtext2 (highlight)
 			},
 
@@ -229,7 +229,7 @@ func New(name string) *Themes {
 				0x000000, 0xffffff, // Overlay0 (error)
 				0x000000, 0xffffff, // Overlay1 (success)
 				0xffffff, 0x000000, // Subtext0 (numbers)
-				0x000000, 0x000000, // Subtext1 (vrule)
+				0x000000, 0x000000, // Subtext1 (vertical)
 				0x000000, 0xffffff, // Subtext2 (highlight)
 			},
 		},

@@ -20,5 +20,5 @@ const (
 	Hex
 	Hash
 	Stats
-	Carve
+	Strings
 )

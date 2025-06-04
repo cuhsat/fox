@@ -27,58 +27,50 @@ const (
 	Sql   = "sql"
 )
 
-const (
-	header = "Forensic Examiner Evidence Bag %s"
-)
-
 type Bag struct {
-	Path string   // file path
+	Path string // file path
+
 	file *os.File // file handle
 	key  string   // key phrase
 	w    writer   // writer
 }
 
 type writer interface {
-	Init(f *os.File, n bool, t string)
+	Init(file *os.File, new bool, title string)
+
 	Start()
-	Finalize()
-	WriteFile(p string, fs []string)
-	WriteUser(u *user.User)
-	WriteTime(t, f time.Time)
-	WriteHash(b []byte)
-	WriteLines(ns []int, ss []string)
+	Flush()
+
+	SetFile(path string, fs []string)
+	SetUser(usr *user.User)
+	SetTime(bag, mod time.Time)
+	SetHash(sum []byte)
+	SetLine(nr int, s string)
 }
 
-func New(path, key, wt string) *Bag {
+func New(path, key, mode string) *Bag {
 	var w writer
-	var e string
-
-	switch strings.ToLower(wt) {
-	case Jsonl:
-		w = NewJsonWriter(false)
-		e = ".jsonl"
-	case Json:
-		w = NewJsonWriter(true)
-		e = ".json"
-	case Xml:
-		w = NewXmlWriter()
-		e = ".xml"
-	case Sql:
-		w = NewSqlWriter()
-		e = ".db"
-	case Raw:
-		fallthrough
-	default:
-		w = NewRawWriter()
-		e = ".txt"
-	}
 
 	if len(path) == 0 {
 		path = Filename
 	}
 
-	if len(e) > 0 {
-		path += e
+	switch strings.ToLower(mode) {
+	case Jsonl:
+		w = NewJsonWriter(false)
+		path += ".jsonl"
+	case Json:
+		w = NewJsonWriter(true)
+		path += ".json"
+	case Xml:
+		w = NewXmlWriter()
+		path += ".xml"
+	case Sql:
+		w = NewSqlWriter()
+		path += ".db"
+	default:
+		w = NewRawWriter()
+		path += ".txt"
 	}
 
 	return &Bag{
@@ -114,26 +106,18 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	bag.w.Start()
 
-	bag.w.WriteFile(h.String(), h.Patterns())
-	bag.w.WriteUser(usr)
-	bag.w.WriteTime(time.Now(), fi.ModTime())
-	bag.w.WriteHash(sum)
+	bag.w.SetFile(h.String(), h.Patterns())
+	bag.w.SetUser(usr)
+	bag.w.SetTime(time.Now(), fi.ModTime())
+	bag.w.SetHash(sum)
 
-	smap := *h.SMap()
-
-	var ns []int
-	var ss []string
-
-	for _, s := range smap {
-		ns = append(ns, s.Nr)
-		ss = append(ss, s.Str)
+	for _, s := range *h.SMap() {
+		bag.w.SetLine(s.Nr, s.Str)
 	}
 
-	bag.w.WriteLines(ns, ss)
+	bag.w.Flush()
 
-	bag.w.Finalize()
-
-	bag.sign()
+	bag.hash()
 
 	return true
 }
@@ -147,7 +131,7 @@ func (bag *Bag) Close() {
 func (bag *Bag) init() bool {
 	var err error
 
-	is := sys.Exists(bag.Path)
+	new := !sys.Exists(bag.Path)
 
 	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
@@ -156,18 +140,18 @@ func (bag *Bag) init() bool {
 		return false
 	}
 
-	bag.w.Init(bag.file, !is, fmt.Sprintf(header, fox.Version))
+	bag.w.Init(bag.file, new, fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version))
 
 	return true
 }
 
-func (bag *Bag) sign() {
-	var imp hash.Hash
+func (bag *Bag) hash() {
+	var algo hash.Hash
 
 	if len(bag.key) > 0 {
-		imp = hmac.New(sha256.New, []byte(bag.key))
+		algo = hmac.New(sha256.New, []byte(bag.key))
 	} else {
-		imp = sha256.New()
+		algo = sha256.New()
 	}
 
 	buf, err := os.ReadFile(bag.Path)
@@ -177,9 +161,9 @@ func (bag *Bag) sign() {
 		return
 	}
 
-	imp.Write(buf)
+	algo.Write(buf)
 
-	sum := fmt.Appendf(nil, "%x", imp.Sum(nil))
+	sum := fmt.Appendf(nil, "%x", algo.Sum(nil))
 
 	err = os.WriteFile(bag.Path+".sha256", sum, 0600)
 
@@ -188,12 +172,4 @@ func (bag *Bag) sign() {
 	}
 
 	return
-}
-
-func writeln(f *os.File, s string) {
-	_, err := fmt.Fprintln(f, s)
-
-	if err != nil {
-		sys.Error(err)
-	}
 }

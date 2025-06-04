@@ -47,19 +47,19 @@ func NewSqlWriter() *SqlWriter {
 	return new(SqlWriter)
 }
 
-func (w *SqlWriter) Init(f *os.File, n bool, _ string) {
+func (w *SqlWriter) Init(file *os.File, new bool, _ string) {
 	var err error
 
-	_ = f.Close()
+	_ = file.Close()
 
-	w.db, err = sql.Open("sqlite", fmt.Sprintf("file:%s", f.Name()))
+	w.db, err = sql.Open("sqlite", fmt.Sprintf("file:%s", file.Name()))
 
 	if err != nil {
 		sys.Panic(err)
 	}
 
 	// create the database from schema
-	if n {
+	if new {
 		_, err = w.db.Exec(api.SchemaSql)
 
 		if err != nil {
@@ -72,7 +72,7 @@ func (w *SqlWriter) Start() {
 	w.entry = new(sqlEvidence)
 }
 
-func (w *SqlWriter) Finalize() {
+func (w *SqlWriter) Flush() {
 	tx, err := w.db.Begin()
 
 	if err != nil {
@@ -120,8 +120,8 @@ func (w *SqlWriter) Finalize() {
 	}
 }
 
-func (w *SqlWriter) WriteFile(p string, fs []string) {
-	w.entry.file.path = p
+func (w *SqlWriter) SetFile(path string, fs []string) {
+	w.entry.file.path = path
 
 	for i, f := range fs {
 		w.entry.file.filters = append(w.entry.file.filters, sqlData{
@@ -130,26 +130,24 @@ func (w *SqlWriter) WriteFile(p string, fs []string) {
 	}
 }
 
-func (w *SqlWriter) WriteUser(u *user.User) {
-	w.entry.user.login = u.Username
-	w.entry.user.name = u.Name
+func (w *SqlWriter) SetUser(usr *user.User) {
+	w.entry.user.login = usr.Username
+	w.entry.user.name = usr.Name
 }
 
-func (w *SqlWriter) WriteTime(t, f time.Time) {
-	w.entry.created = t.UTC()
-	w.entry.file.modified = f.UTC()
+func (w *SqlWriter) SetTime(bag, mod time.Time) {
+	w.entry.created = bag.UTC()
+	w.entry.file.modified = mod.UTC()
 }
 
-func (w *SqlWriter) WriteHash(b []byte) {
-	w.entry.file.hash = fmt.Sprintf("%x", b)
+func (w *SqlWriter) SetHash(sum []byte) {
+	w.entry.file.hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *SqlWriter) WriteLines(ns []int, ss []string) {
-	for i := range ss {
-		w.entry.file.lines = append(w.entry.file.lines, sqlData{
-			nr: ns[i], value: ss[i],
-		})
-	}
+func (w *SqlWriter) SetLine(nr int, s string) {
+	w.entry.file.lines = append(w.entry.file.lines, sqlData{
+		nr: nr, value: s,
+	})
 }
 
 func (w *SqlWriter) insert(table string, v ...any) int64 {

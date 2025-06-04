@@ -10,7 +10,6 @@ go install github.com/cuhsat/fox@latest
 
 # Features
 * Standalone native binary for AMD64 and ARM64
-* Binary size customizable via feature flags
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded files
 * File write access is prohibited

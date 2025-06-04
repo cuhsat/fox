@@ -1,9 +1,12 @@
 package bag
 
 import (
+	"fmt"
 	"os"
 	"os/user"
 	"time"
+
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 type RawWrite struct {
@@ -20,32 +23,22 @@ func (w *RawWrite) Init(f *os.File, _ bool, _ string) {
 	w.file = f
 }
 
-func (w *RawWrite) Start() {
-	//
-}
+func (w *RawWrite) Start() {}
 
-func (w *RawWrite) Finalize() {
-	//
-}
+func (w *RawWrite) Flush() {}
 
-func (w *RawWrite) WriteFile(_ string, _ []string) {
-	//
-}
+func (w *RawWrite) SetFile(_ string, _ []string) {}
 
-func (w *RawWrite) WriteUser(_ *user.User) {
-	//
-}
+func (w *RawWrite) SetUser(_ *user.User) {}
 
-func (w *RawWrite) WriteTime(_, _ time.Time) {
-	//
-}
+func (w *RawWrite) SetTime(_, _ time.Time) {}
 
-func (w *RawWrite) WriteHash(_ []byte) {
-	//
-}
+func (w *RawWrite) SetHash(_ []byte) {}
 
-func (w *RawWrite) WriteLines(_ []int, ss []string) {
-	for i := 0; i < len(ss); i++ {
-		writeln(w.file, ss[i])
+func (w *RawWrite) SetLine(_ int, s string) {
+	_, err := fmt.Fprintln(w.file, s)
+
+	if err != nil {
+		sys.Error(err)
 	}
 }

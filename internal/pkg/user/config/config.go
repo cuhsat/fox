@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	filename = ".foxrc"
+	Filename = ".foxrc"
 )
 
 type Config struct {
@@ -24,7 +24,7 @@ type Config struct {
 func New() *Config {
 	cfg := new(Config)
 
-	is, p := user.Config(filename)
+	is, p := user.File(Filename)
 
 	if !is {
 		return cfg
@@ -36,7 +36,7 @@ func New() *Config {
 		sys.Error(err)
 	}
 
-	// higher ranking variables
+	// higher ranking environment variable
 	t := os.Getenv("FOX_THEME")
 
 	if len(t) > 0 {
@@ -59,7 +59,7 @@ func (cfg *Config) Save() {
 		return
 	}
 
-	_, p := user.Config(filename)
+	_, p := user.File(Filename)
 
 	err = os.WriteFile(p, buf.Bytes(), 0600)
 

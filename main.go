@@ -20,9 +20,9 @@ import (
 
 func main() {
 	// console
-	renderMode := mode.Default
-	outputMode := types.File
-	var outputValue any
+	rMode := mode.Default
+	oMode := types.File
+	var oValue any
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
@@ -108,14 +108,7 @@ func main() {
 
 	// features
 	if *version {
-		tags := ""
-
-		// tags=no_ui
-		if !ui.Build {
-			tags = "(NO UI)"
-		}
-
-		fmt.Println(fox.Product, fox.Version, tags)
+		fmt.Println(fox.Product, fox.Version)
 		os.Exit(0)
 	}
 
@@ -148,29 +141,29 @@ func main() {
 	// output mode
 	if *w {
 		*p = true
-		outputMode = types.Stats
+		oMode = types.Stats
 	}
 
 	if *s > 0 {
 		*p = true
-		outputMode = types.Carve
-		outputValue = *s
+		oMode = types.Strings
+		oValue = *s
 	}
 
 	if len(*H) > 0 {
 		*p = true
-		outputMode = types.Hash
-		outputValue = *H
+		oMode = types.Hash
+		oValue = *H
 	}
 
 	// render mode
 	if *x {
-		renderMode = mode.Hex
-		outputMode = types.Hex
+		rMode = mode.Hex
+		oMode = types.Hex
 	}
 
 	if len(*filters) > 0 {
-		outputMode = types.Grep
+		oMode = types.Grep
 	}
 
 	sys.SetupLogger()
@@ -193,8 +186,8 @@ func main() {
 	hs := heapset.New(args)
 	defer hs.ThrowAway()
 
-	if *p || !ui.Build {
-		hs.Print(outputMode, outputValue)
+	if *p {
+		hs.Print(oMode, oValue)
 		return
 	}
 
@@ -204,7 +197,7 @@ func main() {
 	bg := bag.New(*f, *k, *m)
 	defer bg.Close()
 
-	u := ui.New(renderMode)
+	u := ui.New(rMode)
 	defer u.Close()
 
 	u.Run(hs, hi, bg)
