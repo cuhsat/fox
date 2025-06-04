@@ -14,6 +14,7 @@ const (
 	Goto = Mode("Goto")
 	Open = Mode("Open")
 	Hex  = Mode("Hex")
+	Csv  = Mode("Csv")
 )
 
 type Mode string
@@ -33,9 +34,18 @@ func (m Mode) Filter() bool {
 
 func (m Mode) Prompt() bool {
 	switch m {
-	case Less, Hex:
+	case Less, Hex, Csv:
 		return false
 	default:
 		return true
+	}
+}
+
+func (m Mode) Static() bool {
+	switch m {
+	case Hex, Csv:
+		return true
+	default:
+		return false
 	}
 }

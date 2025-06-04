@@ -18,11 +18,15 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
+func args() {
+	// TODO
+}
+
 func main() {
 	// console
-	rMode := mode.Default
-	oMode := types.File
-	var oValue any
+	var renderMode = mode.Default
+	var outputMode = types.File
+	var outputValue any
 
 	p := flag.BoolP("print", "p", false, "print to console (no UI)")
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
@@ -141,29 +145,29 @@ func main() {
 	// output mode
 	if *w {
 		*p = true
-		oMode = types.Stats
+		outputMode = types.Stats
 	}
 
 	if *s > 0 {
 		*p = true
-		oMode = types.Strings
-		oValue = *s
+		outputMode = types.Strings
+		outputValue = *s
 	}
 
 	if len(*H) > 0 {
 		*p = true
-		oMode = types.Hash
-		oValue = *H
+		outputMode = types.Hash
+		outputValue = *H
 	}
 
 	// render mode
 	if *x {
-		rMode = mode.Hex
-		oMode = types.Hex
+		renderMode = mode.Hex
+		outputMode = types.Hex
 	}
 
 	if len(*filters) > 0 {
-		oMode = types.Grep
+		outputMode = types.Grep
 	}
 
 	sys.Setup()
@@ -187,7 +191,7 @@ func main() {
 	defer hs.ThrowAway()
 
 	if *p {
-		hs.Print(oMode, oValue)
+		hs.Print(outputMode, outputValue)
 		return
 	}
 
@@ -197,7 +201,7 @@ func main() {
 	bg := bag.New(*f, *k, *m)
 	defer bg.Close()
 
-	u := ui.New(rMode)
+	u := ui.New(renderMode)
 	defer u.Close()
 
 	u.Run(hs, hi, bg)

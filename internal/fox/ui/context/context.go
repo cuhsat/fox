@@ -87,8 +87,8 @@ func (ctx *Context) Interrupt() {
 }
 
 func (ctx *Context) SwitchMode(m mode.Mode) bool {
-	// deny goto in hex mode
-	if m == mode.Goto && ctx.Mode() == mode.Hex {
+	// deny goto in static modes
+	if m == mode.Goto && ctx.Mode().Static() {
 		return false
 	}
 
