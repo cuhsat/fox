@@ -19,11 +19,11 @@ go install github.com/cuhsat/fox@latest
 * Build-in regular expression filtering
 * Build-in ASCII and Unicode string carving
 * Build-in parser for Windows event log EVTX format
-* Build-in decompression of: brotli, bzip2, gzip, tar, xz, zip, zlib, zstd
+* Build-in decompression of: 7zip, brotli, bzip2, gzip, rar, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in timestamped input history
 * Build-in wc like file content statistics
-* Build-in plugin support for Eric Zimmerman's tools or Fox-IT's Dissect
+* Build-in plugin support for Fox-IT's Dissect or Eric Zimmerman's tools
 * Evidence bag formats: Raw, JSON, JSONL, XML, SQLite
 * Evidence bag signing via HMAC-SHA256 passphrase
 * Terminal interface compatible with many terminals

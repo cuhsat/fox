@@ -14,7 +14,7 @@ import (
 type util func(h *heap.Heap) string
 
 func (hs *HeapSet) Md5() {
-	hs.newBuffer("md5sum", func(h *heap.Heap) string {
+	hs.newHeap("md5sum", func(h *heap.Heap) string {
 		buf, err := h.Md5()
 
 		if err != nil {
@@ -26,7 +26,7 @@ func (hs *HeapSet) Md5() {
 }
 
 func (hs *HeapSet) Sha1() {
-	hs.newBuffer("sha1sum", func(h *heap.Heap) string {
+	hs.newHeap("sha1sum", func(h *heap.Heap) string {
 		buf, err := h.Sha1()
 
 		if err != nil {
@@ -38,7 +38,7 @@ func (hs *HeapSet) Sha1() {
 }
 
 func (hs *HeapSet) Sha256() {
-	hs.newBuffer("sha256sum", func(h *heap.Heap) string {
+	hs.newHeap("sha256sum", func(h *heap.Heap) string {
 		buf, err := h.Sha256()
 
 		if err != nil {
@@ -50,7 +50,7 @@ func (hs *HeapSet) Sha256() {
 }
 
 func (hs *HeapSet) Sha3() {
-	hs.newBuffer("sha3sum", func(h *heap.Heap) string {
+	hs.newHeap("sha3sum", func(h *heap.Heap) string {
 		buf, err := h.Sha3()
 
 		if err != nil {
@@ -62,13 +62,13 @@ func (hs *HeapSet) Sha3() {
 }
 
 func (hs *HeapSet) Counts() {
-	hs.newBuffer("counts", func(h *heap.Heap) string {
+	hs.newHeap("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
 	})
 }
 
 func (hs *HeapSet) Strings() {
-	hs.newBuffer("strings", func(h *heap.Heap) string {
+	hs.newHeap("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
 		for str := range h.Strings(3) {
@@ -80,19 +80,17 @@ func (hs *HeapSet) Strings() {
 	})
 }
 
-func (hs *HeapSet) newBuffer(t string, fn util) {
+func (hs *HeapSet) newHeap(s string, fn util) {
 	f := sys.Stdout()
 
 	hs.RLock()
 
 	for _, h := range hs.heaps {
-		if h.Type != types.Regular && h.Type != types.Deflate {
+		if !(h.Type == types.Regular || h.Type == types.Deflate) {
 			continue
 		}
 
-		_, err := io.WriteString(f, fn(h.Ensure()))
-
-		if err != nil {
+		if _, err := io.WriteString(f, fn(h.Ensure())); err != nil {
 			sys.Error(err)
 		}
 	}
@@ -101,17 +99,15 @@ func (hs *HeapSet) newBuffer(t string, fn util) {
 
 	_ = f.Close()
 
-	if idx, ok := hs.findByName(t); ok {
+	if idx, ok := hs.findByName(s); ok {
 		h := hs.atomicGet(idx)
-
 		h.Path = f.Name()
-
 		h.Reload()
 
 		atomic.StoreInt32(hs.index, idx)
 	} else {
 		hs.atomicAdd(&heap.Heap{
-			Title: t,
+			Title: s,
 			Path:  f.Name(),
 			Base:  f.Name(),
 			Type:  types.Stdout,

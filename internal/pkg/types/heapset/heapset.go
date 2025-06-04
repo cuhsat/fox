@@ -147,7 +147,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		p := sys.Extract(fox.Help)
+		p := sys.DumpStr(fox.Help)
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",

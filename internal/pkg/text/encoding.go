@@ -35,9 +35,9 @@ func ToASCII(s string) string {
 func AsASCII(r rune) rune {
 	if r < MinASCII || r > MaxASCII {
 		return '.'
+	} else {
+		return r
 	}
-
-	return r
 }
 
 func AsUnicode(r rune) rune {
@@ -48,8 +48,8 @@ func AsUnicode(r rune) rune {
 	default:
 		if !unicode.IsPrint(r) {
 			return '·'
+		} else {
+			return r
 		}
 	}
-
-	return r
 }

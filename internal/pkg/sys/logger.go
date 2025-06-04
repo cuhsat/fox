@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Log *logger // default logger
+	Log *logger // global logger
 )
 
 type logger struct {
@@ -16,7 +16,7 @@ type logger struct {
 	file *os.File // log file handle
 }
 
-func SetupLogger() {
+func Setup() {
 	f := Stderr()
 
 	Log = &logger{

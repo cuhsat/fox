@@ -37,19 +37,6 @@ func (h *Heap) DelFilter() {
 	h.Unlock()
 }
 
-func (h *Heap) Patterns() []string {
-	h.RLock()
-	defer h.RUnlock()
-
-	var ps []string
-
-	for _, f := range h.filters[1:] {
-		ps = append(ps, f.Pattern)
-	}
-
-	return ps
-}
-
 func (h *Heap) Filters() []*Filter {
 	h.RLock()
 	defer h.RUnlock()
@@ -61,6 +48,19 @@ func (h *Heap) Filters() []*Filter {
 	}
 
 	return fs
+}
+
+func (h *Heap) Patterns() []string {
+	h.RLock()
+	defer h.RUnlock()
+
+	var ps []string
+
+	for _, f := range h.filters[1:] {
+		ps = append(ps, f.Pattern)
+	}
+
+	return ps
 }
 
 func (h *Heap) LastCount() int {

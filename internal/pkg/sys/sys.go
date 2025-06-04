@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	FileDump = ".fox_dump"
+	Dump = ".fox_dump"
 )
 
 func Exit(v ...any) {
@@ -26,12 +26,11 @@ func Exec(cmds []string) string {
 	defer f.Close()
 
 	for _, cmd := range cmds {
-		args := text.Split(cmd)
+		args := text.SplitQuoted(cmd)
 
 		if len(args) > 0 {
 			cmd := exec.Command(args[0], args[1:]...)
 			cmd.Stdout = f
-			//cmd.Stderr = f
 
 			if cmd.Run() != nil {
 				break
@@ -56,7 +55,6 @@ func Shell() {
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shell, "-l") // login shell
-
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -111,13 +109,10 @@ func IsPiped(f *os.File) bool {
 
 	if err != nil {
 		Error(err)
-
 		return false
 	}
 
-	is := (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
-
-	return is
+	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
 func Exists(path string) bool {
@@ -146,16 +141,15 @@ func OpenFile(path string) *os.File {
 	return f
 }
 
-func Extract(data string) string {
+func DumpStr(data string) string {
 	f := TempFile()
+	defer f.Close()
 
 	_, err := f.WriteString(data)
 
 	if err != nil {
-		Error(err)
+		Panic(err)
 	}
-
-	_ = f.Close()
 
 	return f.Name()
 }
@@ -163,7 +157,7 @@ func Extract(data string) string {
 func DumpErr(err any, stack any) {
 	s := fmt.Sprintf("%+v\n\n%s", err, stack)
 
-	err = os.WriteFile(FileDump, []byte(s), 0600)
+	err = os.WriteFile(Dump, []byte(s), 0600)
 
 	if err != nil {
 		Exit(err)

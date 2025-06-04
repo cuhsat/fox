@@ -45,7 +45,7 @@ func Title(s string, w int) (r string) {
 	return
 }
 
-func Split(s string) (r []string) {
+func SplitQuoted(s string) (r []string) {
 	n := 0
 
 	for _, s := range strings.FieldsFunc(s, func(r rune) bool {
