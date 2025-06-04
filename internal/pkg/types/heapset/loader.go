@@ -5,11 +5,7 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
-	"github.com/cuhsat/fox/internal/pkg/file"
-	"github.com/cuhsat/fox/internal/pkg/file/archive/7zip"
-	"github.com/cuhsat/fox/internal/pkg/file/archive/rar"
-	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
-	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
+	"github.com/cuhsat/fox/internal/pkg/file/archive"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/gzip"
@@ -54,18 +50,8 @@ func (hs *HeapSet) loadPath(path string) {
 	}
 
 	// check for archive
-	switch {
-	case sevenzip.Detect(path):
-		hs.load7Zip(path, base)
-		return
-	case rar.Detect(path):
-		hs.loadRar(path, base)
-		return
-	case tar.Detect(path):
-		hs.loadTar(path, base)
-		return
-	case zip.Detect(path):
-		hs.loadZip(path, base)
+	if archive.Detect(path) {
+		hs.loadArchive(path, base)
 		return
 	}
 
@@ -100,30 +86,6 @@ func (hs *HeapSet) loadDir(path string) {
 	}
 }
 
-func (hs *HeapSet) load7Zip(path, base string) {
-	for _, i := range sevenzip.Deflate(path) {
-		hs.loadItem(i, base)
-	}
-}
-
-func (hs *HeapSet) loadRar(path, base string) {
-	for _, i := range rar.Deflate(path) {
-		hs.loadItem(i, base)
-	}
-}
-
-func (hs *HeapSet) loadTar(path, base string) {
-	for _, i := range tar.Deflate(path) {
-		hs.loadItem(i, base)
-	}
-}
-
-func (hs *HeapSet) loadZip(path, base string) {
-	for _, i := range zip.Deflate(path) {
-		hs.loadItem(i, base)
-	}
-}
-
 func (hs *HeapSet) loadFile(path, base string) {
 	h := heap.New(
 		base,
@@ -139,18 +101,19 @@ func (hs *HeapSet) loadFile(path, base string) {
 	hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadItem(i *file.Item, base string) {
-	// check for parser
-	if evtx.Detect(i.Path) {
-		i.Path = evtx.Parse(i.Path)
-	}
+func (hs *HeapSet) loadArchive(path, base string) {
+	for _, i := range archive.Deflate(path) {
+		if evtx.Detect(i.Path) {
+			i.Path = evtx.Parse(i.Path)
+		}
 
-	hs.atomicAdd(heap.New(
-		filepath.Join(base, i.Name),
-		i.Path,
-		i.Path,
-		types.Deflate,
-	))
+		hs.atomicAdd(heap.New(
+			filepath.Join(base, i.Name),
+			i.Path,
+			i.Path,
+			types.Deflate,
+		))
+	}
 }
 
 func (hs *HeapSet) loadPlugin(path, base, title string) {
