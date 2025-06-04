@@ -25,7 +25,10 @@ func Abr(s string, w int) string {
 }
 
 func Trim(s string, l, r int) string {
-	return runewidth.Truncate(s[l:], r, "→")
+	s = runewidth.TruncateLeft(s, l, "")
+	s = runewidth.Truncate(s, r, "→")
+
+	return s
 }
 
 func Title(s string, w int) (r string) {

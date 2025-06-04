@@ -6,5 +6,5 @@ import (
 
 var (
 	//go:embed evidence.schema.sql
-	SqlSchema string
+	SchemaSql string
 )

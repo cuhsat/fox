@@ -22,7 +22,7 @@ const (
 	varFile   = "$FILE"
 	varFiles  = "$FILES"
 	varInput  = "$INPUT"
-	varParent = "$PARENT"
+	varFolder = "$FOLDER"
 )
 
 var (
@@ -144,7 +144,7 @@ func expand(s, file, base, input string, hs []string) string {
 	s = strings.ReplaceAll(s, varFile, file)
 	s = strings.ReplaceAll(s, varFiles, files)
 	s = strings.ReplaceAll(s, varInput, input)
-	s = strings.ReplaceAll(s, varParent, filepath.Dir(file))
+	s = strings.ReplaceAll(s, varFolder, filepath.Dir(file))
 
 	return s
 }

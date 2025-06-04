@@ -16,11 +16,6 @@ const (
 	FileDump = ".fox_dump"
 )
 
-const (
-	cmdShell = "CMD.EXE"
-	pshShell = "/bin/sh"
-)
-
 func Exit(v ...any) {
 	_, _ = fmt.Fprintln(os.Stderr, v...)
 	os.Exit(1)
@@ -63,19 +58,19 @@ func Exec(cmds []string) string {
 }
 
 func Shell() {
-	shl := os.Getenv("SHELL")
+	shell := os.Getenv("SHELL")
 
-	if len(shl) == 0 {
+	if len(shell) == 0 {
 		if runtime.GOOS == "windows" {
-			shl = cmdShell
+			shell = "CMD.EXE"
 		} else {
-			shl = pshShell
+			shell = "/bin/sh"
 		}
 	}
 
 	fmt.Println("Type 'exit' to return.")
 
-	cmd := exec.Command(shl, "-l") // login shell
+	cmd := exec.Command(shell, "-l") // login shell
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

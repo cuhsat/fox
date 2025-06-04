@@ -17,7 +17,7 @@ Surface0.Bg = 0x000000
 Surface1.Fg = 0x000000
 Surface1.Bg = 0x000000
 
-# busy indicator and filename
+# filename
 Surface2.Fg = 0x000000
 Surface2.Bg = 0x000000
 
