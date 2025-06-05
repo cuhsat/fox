@@ -9,6 +9,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/gzip"
+	"github.com/cuhsat/fox/internal/pkg/file/compress/lz4"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/xz"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zlib"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zstd"
@@ -41,6 +42,8 @@ func (hs *HeapSet) loadPath(path string) {
 		path = bzip2.Deflate(path)
 	case gzip.Detect(path):
 		path = gzip.Deflate(path)
+	case lz4.Detect(path):
+		path = lz4.Deflate(path)
 	case xz.Detect(path):
 		path = xz.Deflate(path)
 	case zlib.Detect(path):

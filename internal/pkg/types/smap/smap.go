@@ -70,6 +70,7 @@ func (s *SMap) String() string {
 
 	for _, str := range *s {
 		sb.WriteString(str.Str)
+		sb.WriteRune('\n')
 	}
 
 	return sb.String()
