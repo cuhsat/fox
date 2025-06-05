@@ -5,50 +5,74 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
 type CsvBuffer struct {
 	Buffer
 	N int
+	L []int
 
 	Lines chan CsvLine
 }
 
 type CsvLine struct {
 	Line
-	Cells []string
 }
 
 func Csv(ctx *Context) (buf CsvBuffer) {
-	buf.N = text.Dec(ctx.Heap.Count())
-	buf.W, buf.H = ctx.W, ctx.H
+	smap := ctx.Heap.SMap()
 
+	r := csv.NewReader(strings.NewReader(smap.String()))
+
+	cols, err := r.ReadAll()
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	buf.N = text.Dec(ctx.Heap.Count())
+	buf.L = make([]int, len(cols))
 	buf.Lines = make(chan CsvLine, Size)
 
-	smap := ctx.Heap.SMap()
+	// calculate cell max length
+	for _, rows := range cols {
+		for i, row := range rows {
+			buf.L[i] = max(text.Len(row), buf.L[i])
+		}
+	}
+
+	// calculate buffer width
+	for _, w := range buf.L {
+		buf.W += (w + 3)
+	}
+
+	buf.H = len(cols)
 
 	go func() {
 		defer close(buf.Lines)
 
-		r := csv.NewReader(strings.NewReader(smap.String()))
-
-		cols, err := r.ReadAll()
-
-		if err != nil {
-			// TODO
-		}
-
 		for y, rows := range cols[ctx.Y:] {
+			var sb strings.Builder
+
 			if y >= ctx.H {
 				return
 			}
 
-			n := fmt.Sprintf("%0*d", buf.N, y)
+			for i, row := range rows {
+				sb.WriteString(text.PadR(row, buf.L[i]))
+				sb.WriteString("   ")
+			}
+
+			n := fmt.Sprintf("%0*d", buf.N, (*smap)[ctx.Y+y].Nr)
+			s := sb.String()
+
+			s = text.Trim(s, min(ctx.X, text.Len(s)), ctx.W)
 
 			buf.Lines <- CsvLine{
-				Line{n, ""},
-				rows,
+				Line{n, s},
 			}
 		}
 	}()

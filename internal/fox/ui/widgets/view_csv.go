@@ -18,15 +18,13 @@ func (v *View) csvRender(p *panel) {
 		H:    p.H,
 	})
 
-	// v.smap = buf.SMap
-
 	if v.ctx.IsLine() {
 		p.W -= text.Dec(v.heap.Count()) + 1
 	}
 
-	// // set buffer bounds
-	// v.last.X = max(buf.W-p.W, 0)
-	// v.last.Y = max(buf.H-p.H, 0)
+	// set buffer bounds
+	v.last.X = max(buf.W-p.W, 0)
+	v.last.Y = max(buf.H-p.H, 0)
 
 	i := 0
 
@@ -36,16 +34,22 @@ func (v *View) csvRender(p *panel) {
 		lineY := p.Y + i
 
 		// line number
-		if v.ctx.IsLine() {
-			v.print(lineX, lineY, line.Nr, themes.Subtext0)
-			lineX += len(line.Nr) + 1
-		}
+		v.print(lineX, lineY, line.Nr, themes.Subtext0)
+		lineX += len(line.Nr) + 1
 
-		// cells
-		for _, cell := range line.Cells {
-			v.print(lineX, lineY, cell, themes.Base)
+		// render line
+		v.print(lineX, lineY, line.Str, themes.Base)
+		lineX -= v.delta.X
 
-			v.print(lineX, lineY, "│", themes.Subtext1)
+		// render lines on top
+		for l := range buf.L {
+			lineX += (buf.L[l] + 1)
+
+			if buf.L[l] > 0 && lineX > buf.N {
+				v.print(lineX, lineY, "│", themes.Subtext1)
+			}
+
+			lineX += 2
 		}
 
 		i++

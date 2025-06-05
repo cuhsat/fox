@@ -12,8 +12,8 @@ Keymap:
   Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
   Ctrl + f             Switch to GREP mode
-  Ctrl + x             Switch to HEX mode
   Ctrl + v             Switch to CSV mode
+  Ctrl + x             Switch to HEX mode
   Ctrl + t             Toggle tail follow
   Ctrl + n             Toggle line numbers
   Ctrl + w             Toggle text wrap
@@ -32,12 +32,12 @@ Keymap:
   F11                  Show file(s) SHA256
   F12                  Show file(s) SHA3
 
-Less:
+LESS:
   Enter                Scroll one line down
   Space                Scroll one page down
   Any other key        Switch to GREP mode
 
-Grep:
+GREP:
   Esc                  Switch to LESS mode
   Enter                Append filter
   Backspace            Remove filter
@@ -50,6 +50,10 @@ Grep:
   Ctrl + v             Paste from clipboard
   Any other key        Define RegEx pattern
 
-Hex:
+CSV:
+  Enter                Scroll one line down
+  Space                Scroll one page down
+
+HEX:
   Enter                Scroll one line down
   Space                Scroll one page down

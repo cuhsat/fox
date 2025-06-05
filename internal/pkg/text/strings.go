@@ -24,6 +24,14 @@ func Abr(s string, w int) string {
 	return s
 }
 
+func PadL(s string, w int) string {
+	return runewidth.FillLeft(s, w)
+}
+
+func PadR(s string, w int) string {
+	return runewidth.FillRight(s, w)
+}
+
 func Trim(s string, l, r int) string {
 	s = runewidth.TruncateLeft(s, l, "")
 	s = runewidth.Truncate(s, r, "→")
