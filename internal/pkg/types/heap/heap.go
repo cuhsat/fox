@@ -34,7 +34,7 @@ type Heap struct {
 	file *os.File // file handle
 }
 
-type Cache map[string]*smap.SMap
+type Cache map[string]any
 
 func New(title, path, base string, typ types.Heap) *Heap {
 	heap := &Heap{
@@ -59,12 +59,6 @@ func (h *Heap) SMap() *smap.SMap {
 	return h.LastFilter().smap
 }
 
-func (h *Heap) SMaps() Cache {
-	h.RLock()
-	defer h.RUnlock()
-	return h.cache
-}
-
 func (h *Heap) Len() int64 {
 	h.RLock()
 	defer h.RUnlock()
@@ -75,6 +69,12 @@ func (h *Heap) Count() int {
 	h.RLock()
 	defer h.RUnlock()
 	return len(*h.smap)
+}
+
+func (h *Heap) Cache() Cache {
+	h.RLock()
+	defer h.RUnlock()
+	return h.cache
 }
 
 func (h *Heap) Bytes() []byte {
