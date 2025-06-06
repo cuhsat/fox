@@ -40,13 +40,14 @@ type Context struct {
 	H int
 }
 
-func (ctx *Context) Hash() string {
-	return fmt.Sprintf("%s#%d-%t-%t@%d:%d",
+func (ctx *Context) Hash(suffix string) string {
+	return fmt.Sprintf("%s#%d:%t:%t@%d:%d|%s",
 		ctx.Heap.LastFilter().Pattern,
 		ctx.Heap.Len(),
 		ctx.Wrap,
 		ctx.Line,
 		ctx.W,
 		ctx.H,
+		suffix,
 	)
 }

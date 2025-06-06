@@ -37,11 +37,11 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.N + 1
 	}
 
-	smaps, key := ctx.Heap.SMaps(), ctx.Hash()
+	cache, key := ctx.Heap.Cache(), ctx.Hash("text")
 
-	buf.SMap = smaps[key]
-
-	if buf.SMap == nil {
+	if val, ok := cache[key]; ok {
+		buf.SMap = val.(*smap.SMap)
+	} else {
 		buf.SMap = ctx.Heap.SMap()
 
 		if ctx.Wrap && buf.SMap.CanIndent() {
@@ -52,7 +52,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			buf.SMap = buf.SMap.Render()
 		}
 
-		smaps[key] = buf.SMap
+		cache[key] = buf.SMap
 	}
 
 	buf.Y = ctx.Y
