@@ -22,11 +22,10 @@ type CsvLine struct {
 }
 
 func Csv(ctx *Context) (buf CsvBuffer) {
-	smap := ctx.Heap.SMap()
+	sr := strings.NewReader(ctx.Heap.SMap().String())
+	cr := csv.NewReader(sr)
 
-	r := csv.NewReader(strings.NewReader(smap.String()))
-
-	cols, err := r.ReadAll()
+	cols, err := cr.ReadAll()
 
 	if err != nil {
 		sys.Error(err)
@@ -34,10 +33,9 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 	}
 
 	buf.N = text.Dec(ctx.Heap.Count())
-	buf.L = make([]int, len(cols))
-	buf.Lines = make(chan CsvLine, Size)
+	buf.L = make([]int, len(cols[0]))
 
-	// calculate cell max length
+	// calculate row max length
 	for _, rows := range cols {
 		for i, row := range rows {
 			buf.L[i] = max(text.Len(row), buf.L[i])
@@ -45,35 +43,42 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 	}
 
 	// calculate buffer width
-	for _, w := range buf.L {
-		buf.W += (w + 3)
+	for _, l := range buf.L {
+		buf.W += l + 3
 	}
 
+	buf.W -= 2
 	buf.H = len(cols)
+
+	csvLine := func(nr int, ss []string) CsvLine {
+		var sb strings.Builder
+
+		for i, s := range ss {
+			sb.WriteString(text.Padd(s, buf.L[i]))
+			sb.WriteString("   ")
+		}
+
+		s := sb.String()
+
+		return CsvLine{Line{
+			fmt.Sprintf("%0*d", buf.N, nr),
+			text.Trim(s, min(ctx.X, text.Len(s)), ctx.W),
+		}}
+	}
+
+	buf.Lines = make(chan CsvLine, Size)
 
 	go func() {
 		defer close(buf.Lines)
 
-		for y, rows := range cols[ctx.Y:] {
-			var sb strings.Builder
+		buf.Lines <- csvLine(0, cols[0])
 
-			if y >= ctx.H {
+		for y, rows := range cols[ctx.Y+1:] {
+			if y >= ctx.H-1 {
 				return
 			}
 
-			for i, row := range rows {
-				sb.WriteString(text.PadR(row, buf.L[i]))
-				sb.WriteString("   ")
-			}
-
-			n := fmt.Sprintf("%0*d", buf.N, (*smap)[ctx.Y+y].Nr)
-			s := sb.String()
-
-			s = text.Trim(s, min(ctx.X, text.Len(s)), ctx.W)
-
-			buf.Lines <- CsvLine{
-				Line{n, s},
-			}
+			buf.Lines <- csvLine(ctx.Y+1+y, rows)
 		}
 	}()
 

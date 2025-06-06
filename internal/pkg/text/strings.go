@@ -24,11 +24,7 @@ func Abr(s string, w int) string {
 	return s
 }
 
-func PadL(s string, w int) string {
-	return runewidth.FillLeft(s, w)
-}
-
-func PadR(s string, w int) string {
+func Padd(s string, w int) string {
 	return runewidth.FillRight(s, w)
 }
 

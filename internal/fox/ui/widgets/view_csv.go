@@ -37,12 +37,17 @@ func (v *View) csvRender(p *panel) {
 		v.print(lineX, lineY, line.Nr, themes.Subtext0)
 		lineX += len(line.Nr) + 1
 
-		// render line
-		v.print(lineX, lineY, line.Str, themes.Base)
+		// render string
+		if i == 0 {
+			v.print(lineX, lineY, line.Str, themes.Subtext0)
+		} else {
+			v.print(lineX, lineY, line.Str, themes.Base)
+		}
+
 		lineX -= v.delta.X
 
 		// render lines on top
-		for l := range buf.L {
+		for l := range buf.L[:len(buf.L)-1] {
 			lineX += (buf.L[l] + 1)
 
 			if buf.L[l] > 0 && lineX > buf.N {
