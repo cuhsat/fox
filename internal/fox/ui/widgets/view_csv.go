@@ -47,10 +47,10 @@ func (v *View) csvRender(p *panel) {
 		lineX -= v.delta.X
 
 		// render lines on top
-		for l := range buf.CMap.Rows[:len(buf.CMap.Rows)-1] {
-			lineX += (buf.CMap.Rows[l] + 1)
+		for l := range (*buf.CMap.Lens)[:len(*buf.CMap.Lens)-1] {
+			lineX += ((*buf.CMap.Lens)[l] + 1)
 
-			if buf.CMap.Rows[l] > 0 && lineX > buf.N {
+			if (*buf.CMap.Lens)[l] > 0 && lineX > buf.N {
 				v.print(lineX, lineY, "│", themes.Subtext1)
 			}
 
