@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
@@ -47,7 +48,7 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 		cols, err := cr.ReadAll()
 
 		if err != nil {
-			panic(err) // TODO
+			sys.Panic(err)
 		}
 
 		smap := make(smap.SMap, len(cols))
