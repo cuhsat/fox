@@ -23,6 +23,7 @@ require (
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/gen2brain/go-unarr v0.2.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/jfyne/csvd v1.0.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
