@@ -1,9 +1,10 @@
 package buffer
 
 import (
-	"encoding/csv"
 	"fmt"
 	"strings"
+
+	"github.com/jfyne/csvd"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
@@ -26,7 +27,7 @@ type CsvLine struct {
 type CMap struct {
 	SMap *smap.SMap
 
-	Lens *[]int
+	Lens []int
 
 	W int
 	H int
@@ -43,18 +44,27 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 		var sb strings.Builder
 
 		sr := strings.NewReader(ctx.Heap.SMap().String())
-		cr := csv.NewReader(sr)
+
+		cr := csvd.NewReader(sr)
+		cr.FieldsPerRecord = 0
+		cr.TrimLeadingSpace = true
 
 		cols, err := cr.ReadAll()
 
 		if err != nil {
-			sys.Panic(err)
+			sys.Error(err)
 		}
 
-		smap := make(smap.SMap, len(cols))
-		lens := make([]int, len(cols[0]))
+		rows := 0
 
-		buf.CMap = &CMap{&smap, &lens, 0, 0}
+		if len(cols) >= 1 {
+			rows = len(cols[0])
+		}
+
+		lens := make([]int, rows)
+		smap := make(smap.SMap, len(cols))
+
+		buf.CMap = &CMap{&smap, lens, 0, 0}
 
 		// calculate row max length
 		for _, rows := range cols {
@@ -101,6 +111,10 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 
 	go func() {
 		defer close(buf.Lines)
+
+		if len(*buf.CMap.SMap) == 0 {
+			return
+		}
 
 		buf.Lines <- csvLine((*buf.CMap.SMap)[0])
 
