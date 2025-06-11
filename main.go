@@ -18,28 +18,45 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/history"
 )
 
-func args() {
-	// TODO
+type args struct {
+	args []string
+
+	// console
+	print bool
+
+	// evidence bag
+	file string
+	mode string
+	key  string
+
+	render struct {
+		mode mode.Mode
+	}
+
+	output struct {
+		mode  types.Output
+		value any
+	}
 }
 
-func main() {
-	// console
-	var renderMode = mode.Default
-	var outputMode = types.File
-	var outputValue any
+func parse() (a args) {
+	a.render.mode = mode.Default
+	a.output.mode = types.File
 
-	p := flag.BoolP("print", "p", false, "print to console (no UI)")
+	// console
+	flag.BoolVarP(&a.print, "print", "p", false, "print to console (no UI)")
+
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
 	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output hash sum of file")
 
 	if *s == 0 {
-		flag.Lookup("strings").NoOptDefVal = "3"
+		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
 	if len(*H) == 0 {
-		flag.Lookup("hash").NoOptDefVal = heap.Sha256
+		flag.Lookup("hash").NoOptDefVal = heap.Sha256 // default
 	}
 
 	// file limits
@@ -54,11 +71,11 @@ func main() {
 	flag.IntVarP(&counts.Bytes, "bytes", "c", 0, "number of bytes")
 
 	if counts.Lines == 0 {
-		flag.Lookup("lines").NoOptDefVal = "10"
+		flag.Lookup("lines").NoOptDefVal = "10" // default
 	}
 
 	if counts.Bytes == 0 {
-		flag.Lookup("bytes").NoOptDefVal = "16"
+		flag.Lookup("bytes").NoOptDefVal = "16" // default
 	}
 
 	// line filter
@@ -67,22 +84,36 @@ func main() {
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
 
 	// evidence bag
-	f := flag.StringP("file", "f", bag.Filename, "file name of evidence bag")
-	m := flag.StringP("mode", "m", "", "output mode")
-	k := flag.StringP("key", "k", "", "key phrase for signing with HMAC")
+	flag.StringVarP(&a.file, "file", "f", bag.Filename, "file name of evidence bag")
+	flag.StringVarP(&a.mode, "mode", "m", "", "output mode")
+	flag.StringVarP(&a.key, "key", "k", "", "key phrase for signing with HMAC")
 
-	if len(*m) == 0 {
-		flag.Lookup("mode").NoOptDefVal = bag.Raw
+	if len(a.mode) == 0 {
+		flag.Lookup("mode").NoOptDefVal = bag.Raw // default
 	}
 
 	// aliases
-	j := flag.BoolP("json", "j", false, "export in JSON format")
-	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
-	X := flag.BoolP("xml", "X", false, "export in XML format")
-	S := flag.BoolP("sql", "S", false, "export in SQL format")
+	if *flag.BoolP("json", "j", false, "export in JSON format") {
+		a.mode = bag.Json
+	}
+
+	if *flag.BoolP("jsonl", "J", false, "export in JSON Lines format") {
+		a.mode = bag.Jsonl
+	}
+
+	if *flag.BoolP("xml", "X", false, "export in XML format") {
+		a.mode = bag.Xml
+	}
+
+	if *flag.BoolP("sql", "S", false, "export in SQL format") {
+		a.mode = bag.Sql
+	}
 
 	// standard options
-	version := flag.BoolP("version", "v", false, "shows version")
+	if *flag.BoolP("version", "v", false, "shows version") {
+		fmt.Println(fox.Product, fox.Version)
+		os.Exit(0)
+	}
 
 	flag.Usage = func() {
 		fmt.Printf(fox.Usage, fox.Version)
@@ -91,7 +122,7 @@ func main() {
 
 	flag.Parse()
 
-	args := flag.Args()
+	a.args = flag.Args()
 
 	// flag checks
 	if *head && *tail {
@@ -110,12 +141,6 @@ func main() {
 		sys.Exit("hex needs bytes")
 	}
 
-	// features
-	if *version {
-		fmt.Println(fox.Product, fox.Version)
-		os.Exit(0)
-	}
-
 	// file limits
 	if *head {
 		limits.Head = *counts
@@ -125,50 +150,44 @@ func main() {
 		limits.Tail = *counts
 	}
 
-	// evidence bag types
-	if *j {
-		*m = bag.Json
-	}
-
-	if *J {
-		*m = bag.Jsonl
-	}
-
-	if *X {
-		*m = bag.Xml
-	}
-
-	if *S {
-		*m = bag.Sql
+	// stdin piped
+	if sys.IsPiped(os.Stdout) {
+		a.print = true
 	}
 
 	// output mode
 	if *w {
-		*p = true
-		outputMode = types.Stats
+		a.print = true
+		a.output.mode = types.Stats
 	}
 
 	if *s > 0 {
-		*p = true
-		outputMode = types.Strings
-		outputValue = *s
+		a.print = true
+		a.output.mode = types.Strings
+		a.output.value = *s
 	}
 
 	if len(*H) > 0 {
-		*p = true
-		outputMode = types.Hash
-		outputValue = *H
+		a.print = true
+		a.output.mode = types.Hash
+		a.output.value = *H
 	}
 
 	// render mode
 	if *x {
-		renderMode = mode.Hex
-		outputMode = types.Hex
+		a.render.mode = mode.Hex
+		a.output.mode = types.Hex
 	}
 
 	if len(*filters) > 0 {
-		outputMode = types.Grep
+		a.output.mode = types.Grep
 	}
+
+	return
+}
+
+func main() {
+	a := parse()
 
 	sys.Setup()
 
@@ -183,25 +202,21 @@ func main() {
 		sys.Log.Close()
 	}()
 
-	if sys.IsPiped(os.Stdout) {
-		*p = true
-	}
-
-	hs := heapset.New(args)
+	hs := heapset.New(a.args)
 	defer hs.ThrowAway()
 
-	if *p {
-		hs.Print(outputMode, outputValue)
+	if a.print {
+		hs.Print(a.output.mode, a.output.value)
 		return
 	}
 
 	hi := history.New()
 	defer hi.Close()
 
-	bg := bag.New(*f, *k, *m)
+	bg := bag.New(a.file, a.key, a.mode)
 	defer bg.Close()
 
-	u := ui.New(renderMode)
+	u := ui.New(a.render.mode)
 	defer u.Close()
 
 	u.Run(hs, hi, bg)
