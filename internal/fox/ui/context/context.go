@@ -22,6 +22,7 @@ type Context struct {
 
 	theme string
 
+	head atomic.Bool
 	tail atomic.Bool
 	line atomic.Bool
 	wrap atomic.Bool
@@ -45,6 +46,7 @@ func New(root tcell.Screen) *Context {
 	}
 
 	// flags
+	ctx.head.Store(false)
 	ctx.tail.Store(cfg.Tail)
 	ctx.line.Store(cfg.Line)
 	ctx.wrap.Store(cfg.Wrap)
@@ -68,6 +70,10 @@ func (ctx *Context) Theme() string {
 	ctx.RLock()
 	defer ctx.RUnlock()
 	return ctx.theme
+}
+
+func (ctx *Context) IsHead() bool {
+	return ctx.head.Load()
 }
 
 func (ctx *Context) IsTail() bool {
@@ -109,6 +115,10 @@ func (ctx *Context) ChangeTheme(t string) {
 	ctx.Lock()
 	ctx.theme = t
 	ctx.Unlock()
+}
+
+func (ctx *Context) ToggleSticky() {
+	ctx.head.Store(!ctx.head.Load())
 }
 
 func (ctx *Context) ToggleFollow() {
