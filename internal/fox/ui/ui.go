@@ -402,8 +402,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 				case tcell.KeyCtrlH:
-					ui.view.Reset()
-					hs.OpenHelp()
+					if ui.ctx.Mode() == mode.Csv {
+						ui.ctx.ToggleSticky()
+					} else {
+						ui.view.Reset()
+						hs.OpenHelp()
+					}
 
 				case tcell.KeyCtrlD:
 					ui.view.Reset()

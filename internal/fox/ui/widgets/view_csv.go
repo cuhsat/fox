@@ -11,6 +11,7 @@ func (v *View) csvRender(p *panel) {
 		Heap: v.heap,
 		Line: true,
 		Wrap: false,
+		Head: v.ctx.IsHead(),
 		Nr:   v.nr,
 		X:    v.delta.X,
 		Y:    v.delta.Y,
@@ -38,7 +39,7 @@ func (v *View) csvRender(p *panel) {
 		lineX += len(line.Nr) + 1
 
 		// render string
-		if i == 0 {
+		if i == 0 && v.ctx.IsHead() {
 			v.print(lineX, lineY, line.Str, themes.Subtext0)
 		} else {
 			v.print(lineX, lineY, line.Str, themes.Base)

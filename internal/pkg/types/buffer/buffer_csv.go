@@ -116,10 +116,14 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 			return
 		}
 
-		buf.Lines <- csvLine((*buf.CMap.SMap)[0])
+		if ctx.Head {
+			buf.Lines <- csvLine((*buf.CMap.SMap)[0])
+			ctx.Y += 1
+			ctx.H -= 1
+		}
 
-		for y, str := range (*buf.CMap.SMap)[ctx.Y+1:] {
-			if y >= ctx.H-1 {
+		for y, str := range (*buf.CMap.SMap)[ctx.Y:] {
+			if y >= ctx.H {
 				return
 			}
 

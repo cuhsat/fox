@@ -31,6 +31,7 @@ type Context struct {
 
 	Wrap bool
 	Line bool
+	Head bool
 
 	Nr int
 
@@ -41,11 +42,12 @@ type Context struct {
 }
 
 func (ctx *Context) Hash(suffix string) string {
-	return fmt.Sprintf("%s#%d:%t:%t@%d:%d|%s",
+	return fmt.Sprintf("%s#%d:%t:%t:%t@%d:%d|%s",
 		ctx.Heap.LastFilter().Pattern,
 		ctx.Heap.Len(),
 		ctx.Wrap,
 		ctx.Line,
+		ctx.Head,
 		ctx.W,
 		ctx.H,
 		suffix,
