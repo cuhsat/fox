@@ -216,14 +216,38 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					hs.OpenHelp()
 
 				case tcell.KeyF2:
-					fallthrough
+					hs.Counts()
+					ui.change(mode.Default)
+
 				case tcell.KeyF3:
-					fallthrough
+					hs.Strings()
+					ui.change(mode.Default)
+
 				case tcell.KeyF4:
-					fallthrough
+					hs.Md5()
+					ui.change(mode.Default)
+
 				case tcell.KeyF5:
-					fallthrough
+					hs.Sha1()
+					ui.change(mode.Default)
+
 				case tcell.KeyF6:
+					hs.Sha256()
+					ui.change(mode.Default)
+
+				case tcell.KeyF7:
+					hs.Sha3()
+					ui.change(mode.Default)
+
+				case tcell.KeyF8:
+					fallthrough
+				case tcell.KeyF9:
+					fallthrough
+				case tcell.KeyF10:
+					fallthrough
+				case tcell.KeyF11:
+					fallthrough
+				case tcell.KeyF12:
 					if ui.plugins == nil {
 						continue
 					}
@@ -244,30 +268,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					if len(pl.Prompt) > 0 {
 						ui.change(mode.Mode(pl.Prompt))
 					}
-
-				case tcell.KeyF7:
-					hs.Counts()
-					ui.change(mode.Default)
-
-				case tcell.KeyF8:
-					hs.Strings()
-					ui.change(mode.Default)
-
-				case tcell.KeyF9:
-					hs.Md5()
-					ui.change(mode.Default)
-
-				case tcell.KeyF10:
-					hs.Sha1()
-					ui.change(mode.Default)
-
-				case tcell.KeyF11:
-					hs.Sha256()
-					ui.change(mode.Default)
-
-				case tcell.KeyF12:
-					hs.Sha3()
-					ui.change(mode.Default)
 
 				case tcell.KeyUp:
 					if ui.ctx.Mode().Prompt() {

@@ -24,13 +24,13 @@ Keymap:
   Ctrl + c             Copy to clipboard
   Ctrl + z             Suspend to shell
   F1                   Show help message
-  F2 - F6              Execute plugin(s)
-  F7                   Show file(s) counts
-  F8                   Show file(s) strings
-  F9                   Show file(s) MD5
-  F10                  Show file(s) SHA1
-  F11                  Show file(s) SHA256
-  F12                  Show file(s) SHA3
+  F2                   Show file(s) counts
+  F3                   Show file(s) strings
+  F4                   Show file(s) MD5
+  F5                   Show file(s) SHA1
+  F6                   Show file(s) SHA256
+  F7                   Show file(s) SHA3
+  F8 - F12             Execute plugin(s)
 
 LESS:
   Enter                Scroll one line down
