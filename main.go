@@ -39,7 +39,7 @@ type args struct {
 	}
 }
 
-func parse() (a args) {
+func argsParse() (a args) {
 	a.render.mode = mode.Default
 	a.output.mode = types.File
 
@@ -187,11 +187,9 @@ func parse() (a args) {
 }
 
 func main() {
-	a := parse()
+	a := argsParse()
 
 	sys.Setup()
-
-	_ = os.Remove(sys.Dump)
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -202,22 +200,23 @@ func main() {
 		sys.Log.Close()
 	}()
 
+	_ = os.Remove(sys.Dump)
+
 	hs := heapset.New(a.args)
 	defer hs.ThrowAway()
 
 	if a.print {
 		hs.Print(a.output.mode, a.output.value)
-		return
+	} else {
+		hi := history.New()
+		defer hi.Close()
+
+		bg := bag.New(a.file, a.key, a.mode)
+		defer bg.Close()
+
+		fx := ui.New(a.render.mode)
+		defer fx.Close()
+
+		fx.Run(hs, hi, bg)
 	}
-
-	hi := history.New()
-	defer hi.Close()
-
-	bg := bag.New(a.file, a.key, a.mode)
-	defer bg.Close()
-
-	u := ui.New(a.render.mode)
-	defer u.Close()
-
-	u.Run(hs, hi, bg)
 }

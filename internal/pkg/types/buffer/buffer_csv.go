@@ -85,7 +85,7 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 				sb.WriteString("   ")
 			}
 
-			smap[i].Nr = i
+			smap[i].Nr = i + 1
 			smap[i].Str = sb.String()
 
 			sb.Reset()
@@ -100,12 +100,16 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 	buf.W = buf.CMap.W
 	buf.H = buf.CMap.H
 
+	if ctx.Numbers {
+		ctx.W -= buf.N + 1
+	}
+
 	buf.Lines = make(chan CsvLine, Size)
 
 	csvLine := func(str smap.String) CsvLine {
 		return CsvLine{Line{
 			fmt.Sprintf("%0*d", buf.N, str.Nr),
-			text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W),
+			text.TrimCsv(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W),
 		}}
 	}
 
@@ -116,7 +120,7 @@ func Csv(ctx *Context) (buf CsvBuffer) {
 			return
 		}
 
-		if ctx.Head {
+		if ctx.Headers {
 			buf.Lines <- csvLine((*buf.CMap.SMap)[0])
 			ctx.Y += 1
 			ctx.H -= 1

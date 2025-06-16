@@ -19,11 +19,12 @@ const (
 )
 
 const (
-	grep = '❯'
-	tail = 'T'
-	line = 'N'
-	wrap = 'W'
-	off  = '·'
+	filter  = '❯'
+	follow  = 'T'
+	numbers = 'N'
+	headers = 'H'
+	wrap    = 'W'
+	off     = '·'
 )
 
 type Prompt struct {
@@ -49,28 +50,25 @@ func NewPrompt(ctx *context.Context) *Prompt {
 }
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
-	var n int
+	var c1, c2 int
 	var fs []string
 
 	if hs != nil {
 		_, heap := hs.Heap()
-		n = heap.LastCount()
+		c1 = heap.Count()
+		c2 = heap.LastCount()
 		fs = heap.Patterns()
 	}
 
 	m := p.fmtMode()
 	i := p.fmtInput(fs)
-	s := p.fmtStatus(n)
+	s := p.fmtStatus(c1, c2)
 
 	// render blank line
 	p.blank(x, y, w, themes.Surface0)
 
 	// render mode
 	p.print(x, y, m, themes.Surface3)
-
-	if p.ctx.Mode().Static() {
-		return 1
-	}
 
 	lm := text.Len(m)
 	ls := text.Len(s)
@@ -206,7 +204,7 @@ func (p *Prompt) fmtInput(fs []string) string {
 			sb.WriteRune(' ')
 			sb.WriteString(f)
 			sb.WriteRune(' ')
-			sb.WriteRune(grep)
+			sb.WriteRune(filter)
 		}
 	}
 
@@ -220,19 +218,29 @@ func (p *Prompt) fmtInput(fs []string) string {
 	return sb.String()
 }
 
-func (p *Prompt) fmtStatus(n int) string {
+func (p *Prompt) fmtStatus(n, m int) string {
 	var sb strings.Builder
+
+	if n != m {
+		sb.WriteString(fmt.Sprintf(" [%d]", m))
+	}
 
 	sb.WriteString(fmt.Sprintf(" %d ", n))
 
-	if p.ctx.IsTail() {
-		sb.WriteRune(tail)
+	if p.ctx.IsFollow() {
+		sb.WriteRune(follow)
 	} else {
 		sb.WriteRune(off)
 	}
 
-	if p.ctx.IsLine() {
-		sb.WriteRune(line)
+	if p.ctx.IsNumbers() {
+		sb.WriteRune(numbers)
+	} else {
+		sb.WriteRune(off)
+	}
+
+	if p.ctx.IsHeaders() {
+		sb.WriteRune(headers)
 	} else {
 		sb.WriteRune(off)
 	}

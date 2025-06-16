@@ -15,10 +15,11 @@ const (
 )
 
 type Config struct {
-	Theme string `toml:"Theme"`
-	Tail  bool   `toml:"Tail"`
-	Line  bool   `toml:"Line"`
-	Wrap  bool   `toml:"Wrap"`
+	Theme   string `toml:"Theme"`
+	Follow  bool   `toml:"Follow"`
+	Numbers bool   `toml:"Numbers"`
+	Headers bool   `toml:"Headers"`
+	Wrap    bool   `toml:"Wrap"`
 }
 
 func New() *Config {

@@ -25,10 +25,13 @@
 Theme = "Default"
 
 # follow file end
-Tail = false
+Follow = false
 
 # show line numbers
-Line = false
+Numbers = false
+
+# sticky headers
+Headers = false
 
 # wrap text
 Wrap = false

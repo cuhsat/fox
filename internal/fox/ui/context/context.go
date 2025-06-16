@@ -22,10 +22,10 @@ type Context struct {
 
 	theme string
 
-	head atomic.Bool
-	tail atomic.Bool
-	line atomic.Bool
-	wrap atomic.Bool
+	follow  atomic.Bool
+	numbers atomic.Bool
+	headers atomic.Bool
+	wrap    atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
@@ -46,9 +46,9 @@ func New(root tcell.Screen) *Context {
 	}
 
 	// flags
-	ctx.head.Store(false)
-	ctx.tail.Store(cfg.Tail)
-	ctx.line.Store(cfg.Line)
+	ctx.follow.Store(cfg.Follow)
+	ctx.numbers.Store(cfg.Numbers)
+	ctx.headers.Store(cfg.Headers)
 	ctx.wrap.Store(cfg.Wrap)
 
 	return ctx
@@ -72,23 +72,23 @@ func (ctx *Context) Theme() string {
 	return ctx.theme
 }
 
-func (ctx *Context) IsHead() bool {
-	return ctx.head.Load()
+func (ctx *Context) IsFollow() bool {
+	return ctx.follow.Load()
 }
 
-func (ctx *Context) IsTail() bool {
-	return ctx.tail.Load()
+func (ctx *Context) IsNumbers() bool {
+	return ctx.numbers.Load()
 }
 
-func (ctx *Context) IsLine() bool {
-	return ctx.line.Load()
+func (ctx *Context) IsHeaders() bool {
+	return ctx.headers.Load()
 }
 
 func (ctx *Context) IsWrap() bool {
 	return ctx.wrap.Load()
 }
 
-func (ctx *Context) Interrupt() {
+func (ctx *Context) ForceRender() {
 	_ = ctx.Root.PostEvent(tcell.NewEventInterrupt(nil))
 }
 
@@ -117,16 +117,16 @@ func (ctx *Context) ChangeTheme(t string) {
 	ctx.Unlock()
 }
 
-func (ctx *Context) ToggleSticky() {
-	ctx.head.Store(!ctx.head.Load())
-}
-
 func (ctx *Context) ToggleFollow() {
-	ctx.tail.Store(!ctx.tail.Load())
+	ctx.follow.Store(!ctx.follow.Load())
 }
 
 func (ctx *Context) ToggleNumbers() {
-	ctx.line.Store(!ctx.line.Load())
+	ctx.numbers.Store(!ctx.numbers.Load())
+}
+
+func (ctx *Context) ToggleHeaders() {
+	ctx.headers.Store(!ctx.headers.Load())
 }
 
 func (ctx *Context) ToggleWrap() {
@@ -136,14 +136,15 @@ func (ctx *Context) ToggleWrap() {
 func (ctx *Context) Background(fn func()) {
 	go func() {
 		fn()
-		ctx.Interrupt()
+		ctx.ForceRender()
 	}()
 }
 
 func (ctx *Context) Save() {
 	ctx.cfg.Theme = ctx.Theme()
-	ctx.cfg.Tail = ctx.IsTail()
-	ctx.cfg.Line = ctx.IsLine()
+	ctx.cfg.Follow = ctx.IsFollow()
+	ctx.cfg.Numbers = ctx.IsNumbers()
+	ctx.cfg.Headers = ctx.IsHeaders()
 	ctx.cfg.Wrap = ctx.IsWrap()
 	ctx.cfg.Save()
 }

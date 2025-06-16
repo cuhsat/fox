@@ -8,18 +8,18 @@ import (
 
 func (v *View) csvRender(p *panel) {
 	buf := buffer.Csv(&buffer.Context{
-		Heap: v.heap,
-		Line: true,
-		Wrap: false,
-		Head: v.ctx.IsHead(),
-		Nr:   v.nr,
-		X:    v.delta.X,
-		Y:    v.delta.Y,
-		W:    p.W,
-		H:    p.H,
+		Heap:    v.heap,
+		Numbers: true,
+		Headers: v.ctx.IsHeaders(),
+		Wrap:    false,
+		Nr:      v.nr,
+		X:       v.delta.X,
+		Y:       v.delta.Y,
+		W:       p.W,
+		H:       p.H,
 	})
 
-	if v.ctx.IsLine() {
+	if v.ctx.IsNumbers() {
 		p.W -= text.Dec(v.heap.Count()) + 1
 	}
 
@@ -35,12 +35,14 @@ func (v *View) csvRender(p *panel) {
 		lineY := p.Y + i
 
 		// line number
-		v.print(lineX, lineY, line.Nr, themes.Subtext0)
-		lineX += len(line.Nr) + 1
+		if v.ctx.IsNumbers() {
+			v.print(lineX, lineY, line.Nr, themes.Subtext0)
+			lineX += len(line.Nr) + 1
+		}
 
 		// render string
-		if i == 0 && v.ctx.IsHead() {
-			v.print(lineX, lineY, line.Str, themes.Subtext0)
+		if i == 0 && v.ctx.IsHeaders() {
+			v.print(lineX, lineY, line.Str, themes.Subtext2)
 		} else {
 			v.print(lineX, lineY, line.Str, themes.Base)
 		}
