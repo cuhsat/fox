@@ -10,19 +10,19 @@ import (
 
 func (v *View) textRender(p *panel) {
 	buf := buffer.Text(&buffer.Context{
-		Heap: v.heap,
-		Line: v.ctx.IsLine(),
-		Wrap: v.ctx.IsWrap(),
-		Nr:   v.nr,
-		X:    v.delta.X,
-		Y:    v.delta.Y,
-		W:    p.W,
-		H:    p.H,
+		Heap:    v.heap,
+		Numbers: v.ctx.IsNumbers(),
+		Wrap:    v.ctx.IsWrap(),
+		Nr:      v.nr,
+		X:       v.delta.X,
+		Y:       v.delta.Y,
+		W:       p.W,
+		H:       p.H,
 	})
 
 	v.smap = buf.SMap
 
-	if v.ctx.IsLine() {
+	if v.ctx.IsNumbers() {
 		p.W -= text.Dec(v.heap.Count()) + 1
 	}
 
@@ -47,7 +47,7 @@ func (v *View) textRender(p *panel) {
 		lineY := p.Y + i
 
 		// line number
-		if v.ctx.IsLine() {
+		if v.ctx.IsNumbers() {
 			v.print(lineX, lineY, line.Nr, themes.Subtext0)
 			lineX += len(line.Nr) + 1
 		}
@@ -65,7 +65,7 @@ func (v *View) textRender(p *panel) {
 		partX := p.X + part.X
 		partY := p.Y + part.Y
 
-		if v.ctx.IsLine() {
+		if v.ctx.IsNumbers() {
 			partX += buf.N + 1
 		}
 

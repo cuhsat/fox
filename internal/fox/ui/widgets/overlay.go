@@ -59,7 +59,7 @@ func (o *Overlay) Listen() {
 		o.buffer = nil
 		o.m.Unlock()
 
-		o.ctx.Interrupt()
+		o.ctx.ForceRender()
 	}
 }
 

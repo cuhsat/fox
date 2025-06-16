@@ -93,7 +93,7 @@ func New(m mode.Mode) *UI {
 
 func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	hs.Bind(func() {
-		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsTail()))
+		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
 	}, func() {
 		_ = ui.root.PostEvent(tcell.NewEventError(nil))
 	})
@@ -172,7 +172,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				pageW := w - 1 // minus text abbreviation
 				pageH := h - 2 // minus title and status
 
-				if ui.ctx.IsLine() {
+				if ui.ctx.IsNumbers() {
 					pageW -= text.Dec(heap.Count()) + 1
 				}
 
@@ -212,7 +212,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.view.LoadState(heap.Path)
 
 				case tcell.KeyF1:
-					fallthrough
+					ui.view.Reset()
+					hs.OpenHelp()
+
 				case tcell.KeyF2:
 					fallthrough
 				case tcell.KeyF3:
@@ -234,7 +236,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(path, base, title string) {
 						hs.OpenFile(path, base, title, types.Plugin)
-						ui.ctx.Interrupt()
+						ui.ctx.ForceRender()
 					})
 
 					ui.overlay.SendInfo(fmt.Sprintf("%s executed", pl.Name))
@@ -352,21 +354,19 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlT:
-					if !ui.ctx.Mode().Static() {
-						ui.ctx.ToggleFollow()
-					}
+					ui.ctx.ToggleFollow()
 
 				case tcell.KeyCtrlN:
-					if !ui.ctx.Mode().Static() {
-						ui.ctx.ToggleNumbers()
-						ui.view.Preserve()
-					}
+					ui.ctx.ToggleNumbers()
+					ui.view.Preserve()
+
+				case tcell.KeyCtrlH:
+					ui.ctx.ToggleHeaders()
+					ui.view.Preserve()
 
 				case tcell.KeyCtrlW:
-					if !ui.ctx.Mode().Static() {
-						ui.ctx.ToggleWrap()
-						ui.view.Preserve()
-					}
+					ui.ctx.ToggleWrap()
+					ui.view.Preserve()
 
 				case tcell.KeyCtrlV:
 					if !ui.ctx.Mode().Prompt() {
@@ -399,14 +399,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Ignore)
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
-					}
-
-				case tcell.KeyCtrlH:
-					if ui.ctx.Mode() == mode.Csv {
-						ui.ctx.ToggleSticky()
-					} else {
-						ui.view.Reset()
-						hs.OpenHelp()
 					}
 
 				case tcell.KeyCtrlD:

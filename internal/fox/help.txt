@@ -19,12 +19,12 @@ Keymap:
   Ctrl + w             Toggle text wrap
   Ctrl + o             Open file(s)
   Ctrl + q             Close file
-  Ctrl + h             Open help
   Ctrl + b             Open evidence bag
   Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard
   Ctrl + z             Suspend to shell
-  F1 - F6              Execute plugin(s)
+  F1                   Show help message
+  F2 - F6              Execute plugin(s)
   F7                   Show file(s) counts
   F8                   Show file(s) strings
   F9                   Show file(s) MD5
@@ -53,6 +53,7 @@ GREP:
 CSV:
   Enter                Scroll one line down
   Space                Scroll one page down
+  Ctrl + h             Toggle sticky headers
 
 HEX:
   Enter                Scroll one line down

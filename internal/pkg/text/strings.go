@@ -28,14 +28,21 @@ func Padd(s string, w int) string {
 	return runewidth.FillRight(s, w)
 }
 
-func Trim(s string, l, r int) string {
+func TrimCsv(s string, l, r int) string {
+	s = runewidth.TruncateLeft(s, l, "")
+	s = runewidth.Truncate(s, r, "")
+
+	return s
+}
+
+func TrimText(s string, l, r int) string {
 	s = runewidth.TruncateLeft(s, l, "")
 	s = runewidth.Truncate(s, r, "→")
 
 	return s
 }
 
-func Title(s string, w int) (r string) {
+func TextBlock(s string, w int) (r string) {
 	if w < 0 {
 		w = 4 + len(s)
 	}

@@ -33,7 +33,7 @@ func (tl TextLine) String() string {
 func Text(ctx *Context) (buf TextBuffer) {
 	buf.N = text.Dec(ctx.Heap.Count())
 
-	if ctx.Line {
+	if ctx.Numbers {
 		ctx.W -= buf.N + 1
 	}
 
@@ -82,7 +82,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			}
 
 			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
-			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
+			s := text.TrimText(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
 			buf.Lines <- TextLine{Line{n, s}}
 
