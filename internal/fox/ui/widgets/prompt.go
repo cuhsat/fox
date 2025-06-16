@@ -50,19 +50,18 @@ func NewPrompt(ctx *context.Context) *Prompt {
 }
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
-	var c1, c2 int
+	var n int
 	var fs []string
 
 	if hs != nil {
 		_, heap := hs.Heap()
-		c1 = heap.Count()
-		c2 = heap.LastCount()
+		n = heap.LastCount()
 		fs = heap.Patterns()
 	}
 
 	m := p.fmtMode()
 	i := p.fmtInput(fs)
-	s := p.fmtStatus(c1, c2)
+	s := p.fmtStatus(n)
 
 	// render blank line
 	p.blank(x, y, w, themes.Surface0)
@@ -218,12 +217,8 @@ func (p *Prompt) fmtInput(fs []string) string {
 	return sb.String()
 }
 
-func (p *Prompt) fmtStatus(n, m int) string {
+func (p *Prompt) fmtStatus(n int) string {
 	var sb strings.Builder
-
-	if n != m {
-		sb.WriteString(fmt.Sprintf(" [%d]", m))
-	}
 
 	sb.WriteString(fmt.Sprintf(" %d ", n))
 
