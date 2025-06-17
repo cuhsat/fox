@@ -17,8 +17,8 @@ type View struct {
 
 	nr int
 
-	last  coord
-	delta coord
+	last  point
+	delta point
 }
 
 type state struct {
@@ -26,15 +26,15 @@ type state struct {
 
 	nr int
 
-	delta coord
+	delta point
 }
 
 func NewView(ctx *context.Context) *View {
 	return &View{
 		cache: make(map[string]state),
 		base:  base{ctx},
-		last:  coord{0, 0},
-		delta: coord{0, 0},
+		last:  point{0, 0},
+		delta: point{0, 0},
 	}
 }
 
@@ -83,7 +83,7 @@ func (v *View) SaveState(key string) {
 		v.cache[key] = state{
 			smap: v.smap,
 			nr:   (*v.smap)[v.delta.Y].Nr,
-			delta: coord{
+			delta: point{
 				v.delta.X,
 				v.delta.Y,
 			},
