@@ -24,7 +24,6 @@ type Context struct {
 
 	follow  atomic.Bool
 	numbers atomic.Bool
-	headers atomic.Bool
 	wrap    atomic.Bool
 }
 
@@ -48,7 +47,6 @@ func New(root tcell.Screen) *Context {
 	// flags
 	ctx.follow.Store(cfg.Follow)
 	ctx.numbers.Store(cfg.Numbers)
-	ctx.headers.Store(cfg.Headers)
 	ctx.wrap.Store(cfg.Wrap)
 
 	return ctx
@@ -78,10 +76,6 @@ func (ctx *Context) IsFollow() bool {
 
 func (ctx *Context) IsNumbers() bool {
 	return ctx.numbers.Load()
-}
-
-func (ctx *Context) IsHeaders() bool {
-	return ctx.headers.Load()
 }
 
 func (ctx *Context) IsWrap() bool {
@@ -125,10 +119,6 @@ func (ctx *Context) ToggleNumbers() {
 	ctx.numbers.Store(!ctx.numbers.Load())
 }
 
-func (ctx *Context) ToggleHeaders() {
-	ctx.headers.Store(!ctx.headers.Load())
-}
-
 func (ctx *Context) ToggleWrap() {
 	ctx.wrap.Store(!ctx.wrap.Load())
 }
@@ -144,7 +134,6 @@ func (ctx *Context) Save() {
 	ctx.cfg.Theme = ctx.Theme()
 	ctx.cfg.Follow = ctx.IsFollow()
 	ctx.cfg.Numbers = ctx.IsNumbers()
-	ctx.cfg.Headers = ctx.IsHeaders()
 	ctx.cfg.Wrap = ctx.IsWrap()
 	ctx.cfg.Save()
 }

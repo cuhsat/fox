@@ -30,8 +30,5 @@ Follow = false
 # show line numbers
 Numbers = false
 
-# sticky headers
-Headers = false
-
 # wrap text
 Wrap = false

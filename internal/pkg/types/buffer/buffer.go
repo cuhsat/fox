@@ -30,7 +30,6 @@ type Context struct {
 	Heap *heap.Heap
 
 	Numbers bool
-	Headers bool
 	Wrap    bool
 
 	Nr int
@@ -41,14 +40,13 @@ type Context struct {
 	H int
 }
 
-func (ctx *Context) Hash(suffix string) string {
-	return fmt.Sprintf("%s#%d:%t:%t@%d:%d|%s",
+func (ctx *Context) Hash() string {
+	return fmt.Sprintf("%s#%d:%t:%t@%d:%d",
 		ctx.Heap.LastFilter().Pattern,
 		ctx.Heap.Len(),
 		ctx.Numbers,
 		ctx.Wrap,
 		ctx.W,
 		ctx.H,
-		suffix,
 	)
 }

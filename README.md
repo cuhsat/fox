@@ -16,10 +16,11 @@ go install github.com/cuhsat/fox@latest
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in canonical hex view of files
-* Built-in comma-separated value viewer
 * Build-in regular expression filtering
 * Build-in ASCII and Unicode string carving
-* Build-in parser for Windows event log EVTX format
+* Build-in parser for Windows event logs (EVTX format)
+* Build-in sniffer for CSV delimiter formats
+* Build-in formating of CSV, JSON, JSONL data
 * Build-in decompression of: 7zip, brotli, bzip2, gzip, lz4, rar, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in timestamped input history

@@ -74,7 +74,7 @@ func printGrep(ctx *buffer.Context) {
 func printHex(ctx *buffer.Context) {
 	ctx.W = termW
 
-	fmt.Println(text.TextBlock(ctx.Heap.String(), ctx.W))
+	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
 	for l := range buffer.Hex(ctx).Lines {
 		fmt.Println(l)
 	}
@@ -99,7 +99,7 @@ func printStats(ctx *buffer.Context) {
 }
 
 func printStrings(ctx *buffer.Context, min int) {
-	fmt.Println(text.TextBlock(ctx.Heap.String(), termW))
+	fmt.Println(text.Title(ctx.Heap.String(), termW))
 	for s := range ctx.Heap.Strings(min) {
 		fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
 	}

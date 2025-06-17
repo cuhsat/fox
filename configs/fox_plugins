@@ -28,9 +28,9 @@ Commands = [
 #
 # available hotkeys:
 #
-#  F8 - F12
+#  F7 - F12
 #
-[Plugin.F8]
+[Plugin.F7]
 
 # plugin name
 Name = "target-query"
