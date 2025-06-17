@@ -13,6 +13,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/file/compress/xz"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zlib"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/zstd"
+	"github.com/cuhsat/fox/internal/pkg/file/format/csv"
 	"github.com/cuhsat/fox/internal/pkg/file/parser/evtx"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -61,6 +62,11 @@ func (hs *HeapSet) loadPath(path string) {
 	// check for parser
 	if evtx.Detect(path) {
 		path = evtx.Parse(path)
+	}
+
+	// check for format
+	if csv.Detect(path) {
+		path = csv.Format(path)
 	}
 
 	for _, p := range hs.plugins {

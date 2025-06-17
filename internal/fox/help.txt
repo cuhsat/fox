@@ -12,7 +12,6 @@ Keymap:
   Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
   Ctrl + f             Switch to GREP mode
-  Ctrl + v             Switch to CSV mode
   Ctrl + x             Switch to HEX mode
   Ctrl + t             Toggle tail follow
   Ctrl + n             Toggle line numbers
@@ -23,14 +22,14 @@ Keymap:
   Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard
   Ctrl + z             Suspend to shell
-  F1                   Show help message
-  F2                   Show file(s) counts
-  F3                   Show file(s) strings
-  F4                   Show file(s) MD5
-  F5                   Show file(s) SHA1
-  F6                   Show file(s) SHA256
-  F7                   Show file(s) SHA3
-  F8 - F12             Execute plugin(s)
+  Ctrl + h             Show help message
+  F1                   Show file(s) counts
+  F2                   Show file(s) strings
+  F3                   Show file(s) MD5
+  F4                   Show file(s) SHA1
+  F5                   Show file(s) SHA256
+  F6                   Show file(s) SHA3
+  F7 - F12             Execute plugin(s)
 
 LESS:
   Enter                Scroll one line down
@@ -49,11 +48,6 @@ GREP:
   Ctrl + Right         Move cursor to end
   Ctrl + v             Paste from clipboard
   Any other key        Define RegEx pattern
-
-CSV:
-  Enter                Scroll one line down
-  Space                Scroll one page down
-  Ctrl + h             Toggle sticky headers
 
 HEX:
   Enter                Scroll one line down

@@ -212,33 +212,31 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.view.LoadState(heap.Path)
 
 				case tcell.KeyF1:
-					ui.view.Reset()
-					hs.OpenHelp()
-
-				case tcell.KeyF2:
 					hs.Counts()
 					ui.change(mode.Default)
 
-				case tcell.KeyF3:
+				case tcell.KeyF2:
 					hs.Strings()
 					ui.change(mode.Default)
 
-				case tcell.KeyF4:
+				case tcell.KeyF3:
 					hs.Md5()
 					ui.change(mode.Default)
 
-				case tcell.KeyF5:
+				case tcell.KeyF4:
 					hs.Sha1()
 					ui.change(mode.Default)
 
-				case tcell.KeyF6:
+				case tcell.KeyF5:
 					hs.Sha256()
 					ui.change(mode.Default)
 
-				case tcell.KeyF7:
+				case tcell.KeyF6:
 					hs.Sha3()
 					ui.change(mode.Default)
 
+				case tcell.KeyF7:
+					fallthrough
 				case tcell.KeyF8:
 					fallthrough
 				case tcell.KeyF9:
@@ -360,20 +358,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.ctx.ToggleNumbers()
 					ui.view.Preserve()
 
-				case tcell.KeyCtrlH:
-					ui.ctx.ToggleHeaders()
-					ui.view.Preserve()
-
 				case tcell.KeyCtrlW:
 					ui.ctx.ToggleWrap()
 					ui.view.Preserve()
 
 				case tcell.KeyCtrlV:
-					if !ui.ctx.Mode().Prompt() {
-						ui.change(mode.Csv)
-					} else {
-						ui.root.GetClipboard()
-					}
+					ui.root.GetClipboard()
 
 				case tcell.KeyCtrlC:
 					if ui.ctx.Mode().Static() {
@@ -400,6 +390,10 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					} else {
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
 					}
+
+				case tcell.KeyCtrlH:
+					ui.view.Reset()
+					hs.OpenHelp()
 
 				case tcell.KeyCtrlD:
 					ui.view.Reset()
@@ -439,7 +433,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					hi.AddLine(v)
 
 					switch m {
-					case mode.Less, mode.Csv, mode.Hex:
+					case mode.Less, mode.Hex:
 						ui.view.ScrollLine()
 
 					case mode.Grep:

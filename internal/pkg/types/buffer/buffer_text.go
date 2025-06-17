@@ -37,7 +37,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.W -= buf.N + 1
 	}
 
-	cache, key := ctx.Heap.Cache(), ctx.Hash("text")
+	cache, key := ctx.Heap.Cache(), ctx.Hash()
 
 	if val, ok := cache[key]; ok {
 		buf.SMap = val.(*smap.SMap)
@@ -82,7 +82,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			}
 
 			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
-			s := text.TrimText(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
+			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
 			buf.Lines <- TextLine{Line{n, s}}
 

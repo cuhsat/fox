@@ -50,8 +50,6 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 	p := &panel{x, y, w, h}
 
 	switch v.ctx.Mode() {
-	case mode.Csv:
-		v.csvRender(p)
 	case mode.Hex:
 		v.hexRender(p)
 	default:

@@ -18,7 +18,6 @@ type Config struct {
 	Theme   string `toml:"Theme"`
 	Follow  bool   `toml:"Follow"`
 	Numbers bool   `toml:"Numbers"`
-	Headers bool   `toml:"Headers"`
 	Wrap    bool   `toml:"Wrap"`
 }
 

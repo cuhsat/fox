@@ -22,7 +22,6 @@ const (
 	filter  = '❯'
 	follow  = 'T'
 	numbers = 'N'
-	headers = 'H'
 	wrap    = 'W'
 	off     = '·'
 )
@@ -230,12 +229,6 @@ func (p *Prompt) fmtStatus(n int) string {
 
 	if p.ctx.IsNumbers() {
 		sb.WriteRune(numbers)
-	} else {
-		sb.WriteRune(off)
-	}
-
-	if p.ctx.IsHeaders() {
-		sb.WriteRune(headers)
 	} else {
 		sb.WriteRune(off)
 	}
