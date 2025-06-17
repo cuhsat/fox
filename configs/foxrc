@@ -1,34 +1,35 @@
-# Forensic Examiner config (~/.foxrc)
-
-# available env vars:
 #
-#  FOX_THEME
+# ~/.foxrc - Forensic Examiner configuration file
 #
-# available themes:
+# Available environment variables:
 #
-#  Examiner-Light
-#  Examiner-Dark
-#  Catppuccin-Latte
-#  Catppuccin-Frappe
-#  Catppuccin-Macchiato
-#  Catppuccin-Mocha
-#  Solarized-Light
-#  Solarized-Dark
-#  VSCode-Light
-#  VSCode-Dark
-#  Monokai
-#  Darcula
-#  Nord
-#  Matrix
-#  Monochrome
+# FOX_THEME
+#
+# Available theme names:
+#
+# Examiner-Light
+# Examiner-Dark
+# Catppuccin-Latte
+# Catppuccin-Frappe
+# Catppuccin-Macchiato
+# Catppuccin-Mocha
+# Solarized-Light
+# Solarized-Dark
+# VSCode-Light
+# VSCode-Dark
+# Monokai
+# Darcula
+# Nord
+# Matrix
+# Monochrome
 #
 Theme = "Default"
 
-# follow file end
+# Follow file end
 Follow = false
 
-# show line numbers
+# Show line numbers
 Numbers = false
 
-# wrap text
+# Wrap text
 Wrap = false

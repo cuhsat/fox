@@ -36,7 +36,7 @@ type Bag struct {
 }
 
 type writer interface {
-	Init(file *os.File, new bool, title string)
+	Init(file *os.File, old bool, title string)
 
 	Start()
 	Flush()
@@ -131,7 +131,7 @@ func (bag *Bag) Close() {
 func (bag *Bag) init() bool {
 	var err error
 
-	new := !sys.Exists(bag.Path)
+	old := sys.Exists(bag.Path)
 
 	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
@@ -140,7 +140,7 @@ func (bag *Bag) init() bool {
 		return false
 	}
 
-	bag.w.Init(bag.file, new, fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version))
+	bag.w.Init(bag.file, old, fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version))
 
 	return true
 }

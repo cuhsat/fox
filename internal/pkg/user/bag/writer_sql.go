@@ -47,7 +47,7 @@ func NewSqlWriter() *SqlWriter {
 	return new(SqlWriter)
 }
 
-func (w *SqlWriter) Init(file *os.File, new bool, _ string) {
+func (w *SqlWriter) Init(file *os.File, old bool, _ string) {
 	var err error
 
 	_ = file.Close()
@@ -59,7 +59,7 @@ func (w *SqlWriter) Init(file *os.File, new bool, _ string) {
 	}
 
 	// create the database from schema
-	if new {
+	if !old {
 		_, err = w.db.Exec(api.SchemaSql)
 
 		if err != nil {

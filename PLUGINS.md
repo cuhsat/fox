@@ -1,18 +1,30 @@
-# Plugins
+# Fox-IT's Dissect tools
 
-## JLECmd
+## Target-Info
 ```toml
-[Autostart.Jumplists]
-Name = "JLECmd"
-Pattern = '.*\.(automatic|custom)Destination-ms'
+[Autostart.Info]
+Name = "target-info"
+Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 Commands = [
-  'dotnet JLECmd.dll -f "$FILE" --mp --fd',
+  'target-info "$FILE"',
 ]
 ```
 
-## PECmd
+## Target-Query
 ```toml
-[Autostart.Prefetch]
+[Plugin.F7]
+Name = "target-query"
+Prompt = "Query"
+Commands = [
+  'target-query -j -f "$INPUT" "$BASE"',
+]
+```
+
+# Eric Zimmerman's tools
+
+## PECmd (Windows Prefetch files)
+```toml
+[Autostart.PECmd]
 Name = "PECmd"
 Pattern = '.*\.pf'
 Commands = [
@@ -20,11 +32,33 @@ Commands = [
 ]
 ```
 
-## SBECmd
+## JLECmd (Windows Jumplists)
 ```toml
-[Plugin.F1]
+[Autostart.JLECmd]
+Name = "JLECmd"
+Pattern = '.*\.(automatic|custom)Destination-ms'
+Commands = [
+  'dotnet JLECmd.dll -f "$FILE" --mp --fd',
+]
+```
+
+## SBECmd (Windows Shellbags)
+```toml
+[Plugin.F8]
 Name = "SBECmd"
 Commands = [
   'dotnet SBECmd.dll -d "$PARENT"',
+]
+```
+
+# Misc
+
+## objdump (Disassembler)
+```toml
+[Autostart.objdump]
+Name = "objdump"
+Pattern = '.*\.(bin|dll|exe|scr|sys)'
+Commands = [
+  'objdump -D "$FILE"',
 ]
 ```

@@ -13,7 +13,7 @@ type Queueable interface {
 	Render(hs *heapset.HeapSet, x, y, w, h int) int
 }
 
-type coord struct {
+type point struct {
 	X int
 	Y int
 }
