@@ -49,10 +49,6 @@ func (p *Plugin) Execute(file, base string, hs []string, fn Callback) (string, s
 		input = <-Input
 	}
 
-	if len(input) > 0 {
-		title = fmt.Sprintf(":%s", input)
-	}
-
 	title = fmt.Sprintf("%s (%s%s)", base, p.Name, title)
 
 	cs := make([]string, len(p.Commands))

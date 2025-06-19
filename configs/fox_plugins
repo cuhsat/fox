@@ -14,7 +14,7 @@ Name = "target-info"
 # Filepath pattern
 Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
-# Execute command
+# Execute commands
 Commands = [
   'target-info "$FILE"',
 ]
@@ -40,7 +40,7 @@ Name = "target-query"
 # User input prompt
 Prompt = "Query"
 
-# Execute command
+# Execute commands
 Commands = [
   'target-query -j -f "$INPUT" "$BASE"',
 ]
