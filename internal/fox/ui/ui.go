@@ -250,21 +250,22 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					pl, ok := ui.plugins.Shortcuts[ev.Name()]
+					p, ok := ui.plugins.Hotkey[ev.Name()]
 
 					if !ok {
 						continue
 					}
 
-					go pl.Execute(heap.Path, heap.Base, hs.Files(), func(path, base, title string) {
-						hs.OpenFile(path, base, title, types.Plugin)
+					go p.Execute(heap.Path, heap.Base, func(path, base string) {
+						name := fmt.Sprintf("%s (%s)", base, p.Name)
+						hs.OpenFile(path, base, name, types.Plugin)
 						ui.ctx.ForceRender()
 					})
 
-					ui.overlay.SendInfo(fmt.Sprintf("%s executed", pl.Name))
+					ui.overlay.SendInfo(fmt.Sprintf("%s executed", p.Name))
 
-					if len(pl.Prompt) > 0 {
-						ui.change(mode.Mode(pl.Prompt))
+					if len(p.Prompt) > 0 {
+						ui.change(mode.Mode(p.Prompt))
 					}
 
 				case tcell.KeyUp:

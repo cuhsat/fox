@@ -1,10 +1,7 @@
 package plugins
 
 import (
-	"fmt"
-	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -21,11 +18,11 @@ var (
 	Input chan string
 )
 
-type Callback func(path, base, title string)
+type Func func(path, base string)
 
 type Plugins struct {
-	Automatics map[string]Plugin `toml:"Autostart"`
-	Shortcuts  map[string]Plugin `toml:"Plugin"`
+	Autostart map[string]Plugin `toml:"Autostart"`
+	Hotkey    map[string]Plugin `toml:"Hotkey"`
 }
 
 type Plugin struct {
@@ -37,71 +34,18 @@ type Plugin struct {
 	Commands []string `toml:"Commands"`
 }
 
-func (p *Plugin) Match(s string) bool {
-	return p.re.MatchString(s)
-}
-
-func (p *Plugin) Execute(file, base string, hs []string, fn Callback) (string, string) {
-	var input string
-	var title string
-
-	if len(p.Prompt) > 0 {
-		input = <-Input
-	}
-
-	title = fmt.Sprintf("%s (%s%s)", base, p.Name, title)
-
-	cs := make([]string, len(p.Commands))
-
-	for _, cmd := range p.Commands {
-		cmd = strings.ReplaceAll(cmd, "$BASE", base)
-		cmd = strings.ReplaceAll(cmd, "$FILE", file)
-		cmd = strings.ReplaceAll(cmd, "$FILES", strings.Join(hs, " "))
-		cmd = strings.ReplaceAll(cmd, "$INPUT", input)
-		cmd = strings.ReplaceAll(cmd, "$FOLDER", filepath.Dir(file))
-
-		cs = append(cs, cmd)
-	}
-
-	if fn != nil {
-		fn(sys.Exec(cs), base, title)
-	} else {
-		return sys.Exec(cs), title
-	}
-
-	return "", ""
-}
-
-func (ps *Plugins) Auto() (as []Plugin) {
-	keys := make([]string, 0)
-
-	for k := range ps.Automatics {
-		keys = append(keys, k)
-	}
-
-	sort.Strings(keys)
-
-	for _, k := range keys {
-		p := ps.Automatics[k]
-		p.re = regexp.MustCompile(p.Pattern)
-		as = append(as, p)
-	}
-
-	return
-}
-
 func New() *Plugins {
 	Input = make(chan string)
 
 	ps := new(Plugins)
 
-	ok, p := user.File(Filename)
+	ok, path := user.File(Filename)
 
 	if !ok {
 		return nil
 	}
 
-	_, err := toml.DecodeFile(p, &ps)
+	_, err := toml.DecodeFile(path, &ps)
 
 	if err != nil {
 		sys.Error(err)
@@ -113,4 +57,47 @@ func New() *Plugins {
 
 func Close() {
 	close(Input)
+}
+
+func (ps *Plugins) Autostarts() []Plugin {
+	r := make([]Plugin, len(ps.Autostart))
+
+	for key := range ps.Autostart {
+		p := ps.Autostart[key]
+		p.re = regexp.MustCompile(p.Pattern)
+
+		r = append(r, p)
+	}
+
+	return r
+}
+
+func (p *Plugin) Match(s string) bool {
+	if p.re != nil {
+		return p.re.MatchString(s)
+	} else {
+		return false
+	}
+}
+
+func (p *Plugin) Execute(file, base string, fn Func) {
+	var value string
+
+	if len(p.Prompt) > 0 {
+		value = <-Input // blocking call
+	}
+
+	r := strings.NewReplacer(
+		"{{file}}", file,
+		"{{base}}", base,
+		"{{value}}", value,
+	)
+
+	cmds := make([]string, len(p.Commands))
+
+	for _, cmd := range p.Commands {
+		cmds = append(cmds, r.Replace(cmd))
+	}
+
+	fn(sys.Exec(cmds), base)
 }

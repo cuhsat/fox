@@ -1,10 +1,15 @@
 #
 # ~/.fox_plugins - Forensic Examiner plugins file
 #
-# Available variables for automatic plugins:
+# Available hotkeys:
 #
-# $FILE         path of open file
-# $BASE         path of base file
+# F7 - F12
+#
+# Available variables:
+#
+# {{file}}      path of open file
+# {{base}}      path of base file
+# {{value}}     user prompt value (only hotkey)
 #
 [Autostart.Info]
 
@@ -16,23 +21,10 @@ Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
 # Execute commands
 Commands = [
-  'target-info "$FILE"',
+  'target-info "{{file}}"',
 ]
 
-#
-# Available variables for hotkey plugins:
-#
-# $FOLDER       open file folder
-# $INPUT        user input value
-# $FILES        path of open files
-# $FILE         path of open file
-# $BASE         path of base file
-#
-# Available hotkeys:
-#
-# F7 - F12
-#
-[Plugin.F7]
+[Hotkey.F7]
 
 # Plugin name
 Name = "target-query"
@@ -42,5 +34,5 @@ Prompt = "Query"
 
 # Execute commands
 Commands = [
-  'target-query -j -f "$INPUT" "$BASE"',
+  'target-query -j -f "{{value}}" "{{base}}"',
 ]

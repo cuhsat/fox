@@ -1,6 +1,7 @@
 package heapset
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync/atomic"
@@ -69,10 +70,12 @@ func (hs *HeapSet) loadPath(path string) {
 		path = csv.Format(path)
 	}
 
+	// check for plugin
 	for _, p := range hs.plugins {
 		if p.Match(path) {
-			path, title := p.Execute(path, base, hs.Files(), nil)
-			hs.loadPlugin(path, base, title)
+			p.Execute(path, base, func(path, base string) {
+				hs.loadPlugin(path, base, p.Name)
+			})
 			return
 		}
 	}
@@ -125,9 +128,9 @@ func (hs *HeapSet) loadArchive(path, base string) {
 	}
 }
 
-func (hs *HeapSet) loadPlugin(path, base, title string) {
+func (hs *HeapSet) loadPlugin(path, base, name string) {
 	hs.atomicAdd(heap.New(
-		title,
+		fmt.Sprintf("%s (%s)", base, name),
 		path,
 		base,
 		types.Plugin,
@@ -157,7 +160,7 @@ func (hs *HeapSet) unload(h *heap.Heap) {
 	h.ThrowAway()
 
 	// clean up temporary files
-	if h.Type == types.Stdin || h.Type == types.Deflate {
+	if h.Type != types.Regular && h.Type != types.Ignore {
 		_ = os.Remove(h.Path)
 	}
 }

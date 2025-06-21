@@ -2,11 +2,11 @@
 
 ## objdump
 ```toml
-[Autostart.objdump]
+[Autostart.Disassembler]
 Name = "objdump"
 Pattern = '.*\.(bin|dll|exe|scr|sys)'
 Commands = [
-  'objdump -D "$FILE"',
+  'objdump -D "{{file}}"',
 ]
 ```
 
@@ -18,17 +18,17 @@ Commands = [
 Name = "target-info"
 Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 Commands = [
-  'target-info "$FILE"',
+  'target-info "{{file}}"',
 ]
 ```
 
 ## target-query
 ```toml
-[Plugin.F7]
+[Hotkey.F7]
 Name = "target-query"
 Prompt = "Query"
 Commands = [
-  'target-query -j -f "$INPUT" "$BASE"',
+  'target-query -j -f "{{value}}" "{{base}}"',
 ]
 ```
 
@@ -36,29 +36,20 @@ Commands = [
 
 ## PECmd
 ```toml
-[Autostart.PECmd]
+[Autostart.Prefetch]
 Name = "PECmd"
 Pattern = '.*\.pf'
 Commands = [
-  'dotnet PECmd.dll -f "$FILE" --mp',
+  'dotnet PECmd.dll -f "{{file}}" --mp',
 ]
 ```
 
 ## JLECmd
 ```toml
-[Autostart.JLECmd]
+[Autostart.Jumplists]
 Name = "JLECmd"
 Pattern = '.*\.(automatic|custom)Destination-ms'
 Commands = [
-  'dotnet JLECmd.dll -f "$FILE" --mp --fd',
-]
-```
-
-## SBECmd
-```toml
-[Plugin.F8]
-Name = "SBECmd"
-Commands = [
-  'dotnet SBECmd.dll -d "$PARENT"',
+  'dotnet JLECmd.dll -f "{{file}}" --mp --fd',
 ]
 ```
