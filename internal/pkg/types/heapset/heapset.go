@@ -47,7 +47,7 @@ func New(paths []string) *HeapSet {
 	}
 
 	if ps := plugins.New(); ps != nil {
-		hs.plugins = ps.Auto()
+		hs.plugins = ps.Autostarts()
 	}
 
 	go hs.notify()
