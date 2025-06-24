@@ -16,13 +16,17 @@ const (
 	Dump = ".fox_dump"
 )
 
+var (
+	vfs = make(map[string]File, 0)
+)
+
 func Exit(v ...any) {
 	_, _ = fmt.Fprintln(os.Stderr, v...)
 	os.Exit(1)
 }
 
-func Exec(cmds []string) string {
-	f := TempFile()
+func Exec(cmds []string) File {
+	f := TempFile("stdout")
 	defer f.Close()
 
 	for _, cmd := range cmds {
@@ -30,15 +34,18 @@ func Exec(cmds []string) string {
 
 		if len(args) > 0 {
 			cmd := exec.Command(args[0], args[1:]...)
-			cmd.Stdout = f
 
-			if cmd.Run() != nil {
+			out, err := cmd.Output()
+
+			if err == nil {
+				f.Write(out)
+			} else {
 				break
 			}
 		}
 	}
 
-	return f.Name()
+	return f
 }
 
 func Shell() {
@@ -62,14 +69,14 @@ func Shell() {
 	_ = cmd.Run()
 }
 
-func Stdin() string {
+func Stdin() File {
 	if !IsPiped(os.Stdin) {
 		Panic("invalid mode")
 	}
 
-	f := TempFile()
+	f := TempFile("stdin")
 
-	go func(f *os.File) {
+	go func(f File) {
 		r := bufio.NewReader(os.Stdin)
 
 		for {
@@ -93,19 +100,19 @@ func Stdin() string {
 		}
 	}(f)
 
-	return f.Name()
+	return f
 }
 
-func Stdout() *os.File {
-	return TempFile()
+func Stdout() File {
+	return TempFile("stdout")
 }
 
-func Stderr() *os.File {
-	return TempFile()
+func Stderr() File {
+	return TempFile("stderr")
 }
 
-func IsPiped(f *os.File) bool {
-	fi, err := f.Stat()
+func IsPiped(file File) bool {
+	fi, err := file.Stat()
 
 	if err != nil {
 		Error(err)
@@ -115,34 +122,66 @@ func IsPiped(f *os.File) bool {
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func Exists(path string) bool {
-	_, err := os.Stat(path)
+func Exists(name string) bool {
+	if _, ok := vfs[name]; ok {
+		return true
+	}
+
+	_, err := os.Stat(name)
 
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-func TempFile() *os.File {
-	f, err := os.CreateTemp("", "fox-*")
+func Persist(name string) string {
+	f, ok := vfs[name]
+
+	if !ok {
+		return name
+	}
+
+	t, err := os.CreateTemp("", "fox-*")
 
 	if err != nil {
 		Panic(err)
 	}
 
-	return f
-}
-
-func OpenFile(path string) *os.File {
-	f, err := os.OpenFile(path, os.O_RDONLY, 0400)
+	_, err = f.WriteTo(t)
 
 	if err != nil {
 		Panic(err)
 	}
 
+	return t.Name()
+}
+
+func TempFile(name string) File {
+	if f, ok := vfs[name]; ok {
+		return f
+	}
+
+	f := NewFileData(name)
+
+	vfs[f.Name()] = f
+
 	return f
 }
 
-func DumpStr(data string) string {
-	f := TempFile()
+func OpenFile(name string) File {
+	if f, ok := vfs[name]; ok {
+		return f
+	}
+
+	f, err := os.OpenFile(name, os.O_RDONLY, 0400)
+
+	if err != nil {
+		Panic(err)
+	}
+
+	return (File)(f)
+}
+
+func DumpStr(data string) File {
+	f := TempFile("dump")
 	defer f.Close()
 
 	_, err := f.WriteString(data)
@@ -151,7 +190,7 @@ func DumpStr(data string) string {
 		Panic(err)
 	}
 
-	return f.Name()
+	return f
 }
 
 func DumpErr(err any, stack any) {

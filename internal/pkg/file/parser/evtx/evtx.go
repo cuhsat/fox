@@ -26,7 +26,7 @@ func Parse(path string) string {
 		return path
 	}
 
-	t := sys.TempFile()
+	t := sys.TempFile("parse")
 	defer t.Close()
 
 	for e := range f.Events() {

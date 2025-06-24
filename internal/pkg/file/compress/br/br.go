@@ -21,7 +21,7 @@ func Deflate(path string) string {
 
 	r := brotli.NewReader(a)
 
-	t := sys.TempFile()
+	t := sys.TempFile("deflate")
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

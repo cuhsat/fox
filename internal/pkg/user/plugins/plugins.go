@@ -18,7 +18,7 @@ var (
 	Input chan string
 )
 
-type Func func(path, base string)
+type Func func(file sys.File, base string)
 
 type Plugins struct {
 	Autostart map[string]Plugin `toml:"Autostart"`
@@ -88,9 +88,9 @@ func (p *Plugin) Execute(file, base string, fn Func) {
 	}
 
 	r := strings.NewReplacer(
-		"{{file}}", file,
-		"{{base}}", base,
 		"{{value}}", value,
+		"{{file}}", sys.Persist(file),
+		"{{base}}", sys.Persist(base),
 	)
 
 	cmds := make([]string, len(p.Commands))

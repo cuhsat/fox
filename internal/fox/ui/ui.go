@@ -256,9 +256,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					go p.Execute(heap.Path, heap.Base, func(path, base string) {
+					go p.Execute(heap.Path, heap.Base, func(file sys.File, base string) {
 						name := fmt.Sprintf("%s (%s)", base, p.Name)
-						hs.OpenFile(path, base, name, types.Plugin)
+						hs.OpenFile(file.Name(), base, name, types.Plugin)
 						ui.ctx.ForceRender()
 					})
 

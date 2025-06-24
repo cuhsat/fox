@@ -3,7 +3,6 @@ package sys
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 )
 
@@ -12,20 +11,17 @@ var (
 )
 
 type logger struct {
-	Name string   // log file name
-	file *os.File // log file handle
+	file File // log file handle
 }
 
 func Setup() {
-	f := Stderr()
-
-	Log = &logger{
-		Name: f.Name(),
-		file: f,
-	}
-
+	Log = &logger{file: Stderr()}
 	log.SetFlags(0)
 	log.SetOutput(Log)
+}
+
+func (l logger) Name() string {
+	return l.file.Name()
 }
 
 func (l logger) Write(b []byte) (int, error) {
@@ -36,7 +32,6 @@ func (l logger) Write(b []byte) (int, error) {
 
 func (l logger) Close() {
 	_ = l.file.Close()
-	_ = os.Remove(l.Name)
 }
 
 func Error(v ...any) {

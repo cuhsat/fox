@@ -11,15 +11,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
-func (hs *HeapSet) watchHeap(h *heap.Heap) {
-	hs.watchPath(h.Path)
-}
-
-func (hs *HeapSet) watchPath(path string) {
-	err := hs.watch.Add(filepath.Dir(path))
-
-	if err != nil {
-		sys.Error(err)
+func (hs *HeapSet) Notify(file sys.File) {
+	hs.watch.Events <- fsnotify.Event{
+		Name: file.Name(),
+		Op:   fsnotify.Write,
 	}
 }
 
@@ -38,7 +33,7 @@ func (hs *HeapSet) notify() {
 				continue
 			}
 
-			if ev.Name == sys.Log.Name {
+			if ev.Name == sys.Log.Name() {
 				if hs.errorFn != nil {
 					hs.errorFn() // bound callback
 				}
@@ -66,5 +61,17 @@ func (hs *HeapSet) notify() {
 
 			hs.RUnlock()
 		}
+	}
+}
+
+func (hs *HeapSet) watchHeap(h *heap.Heap) {
+	hs.watchPath(h.Path)
+}
+
+func (hs *HeapSet) watchPath(path string) {
+	err := hs.watch.Add(filepath.Dir(path))
+
+	if err != nil {
+		sys.Error(err)
 	}
 }
