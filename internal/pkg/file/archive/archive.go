@@ -53,7 +53,7 @@ func Deflate(path string) (i []*file.Item) {
 			break
 		}
 
-		t := sys.TempFile()
+		t := sys.TempFile("deflate")
 
 		_, err = io.Copy(t, a)
 

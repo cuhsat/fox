@@ -73,8 +73,8 @@ func (hs *HeapSet) loadPath(path string) {
 	// check for plugin
 	for _, p := range hs.plugins {
 		if p.Match(path) {
-			p.Execute(path, base, func(path, base string) {
-				hs.loadPlugin(path, base, p.Name)
+			p.Execute(path, base, func(file sys.File, base string) {
+				hs.loadPlugin(file.Name(), base, p.Name)
 			})
 			return
 		}
@@ -138,7 +138,7 @@ func (hs *HeapSet) loadPlugin(path, base, name string) {
 }
 
 func (hs *HeapSet) loadPipe() {
-	pipe := sys.Stdin()
+	pipe := sys.Stdin().Name()
 
 	hs.atomicAdd(heap.New(
 		"",
@@ -154,13 +154,4 @@ func (hs *HeapSet) load() *heap.Heap {
 	hs.watchHeap(h.Ensure())
 
 	return h
-}
-
-func (hs *HeapSet) unload(h *heap.Heap) {
-	h.ThrowAway()
-
-	// clean up temporary files
-	if h.Type != types.Regular && h.Type != types.Ignore {
-		_ = os.Remove(h.Path)
-	}
 }

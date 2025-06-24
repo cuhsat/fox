@@ -31,7 +31,7 @@ type Heap struct {
 
 	hash Hash     // file hash sums
 	size int64    // file size
-	file *os.File // file handle
+	file sys.File // file handle
 }
 
 type Cache map[string]any
@@ -163,11 +163,26 @@ func (h *Heap) Reload() {
 	if h.size == 0 {
 		h.mmap = new(mmap.MMap) // empty files will cause issues
 	} else {
-		m, err := mmap.Map(h.file, mmap.RDONLY, 0)
+		var m mmap.MMap
 
-		if h.mmap = &m; err != nil {
-			sys.Error(err)
+		switch f := h.file.(type) {
+
+		// regular file
+		case *os.File:
+			m, err = mmap.Map(f, mmap.RDONLY, 0)
+
+			if err != nil {
+				sys.Error(err)
+			}
+
+		// virtual file
+		case *sys.FileData:
+			m = make(mmap.MMap, h.size)
+
+			copy(m, f.Bytes())
 		}
+
+		h.mmap = &m
 	}
 
 	l := types.GetLimits()

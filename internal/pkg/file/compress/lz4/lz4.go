@@ -21,7 +21,7 @@ func Deflate(path string) string {
 
 	r := lz4.NewReader(a)
 
-	t := sys.TempFile()
+	t := sys.TempFile("deflate")
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

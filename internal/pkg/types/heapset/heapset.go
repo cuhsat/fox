@@ -52,7 +52,7 @@ func New(paths []string) *HeapSet {
 
 	go hs.notify()
 
-	hs.watchPath(sys.Log.Name)
+	// hs.watchPath(sys.Log) // TODO
 
 	if sys.IsPiped(os.Stdin) {
 		paths = append(paths, Stdin)
@@ -123,15 +123,15 @@ func (hs *HeapSet) Open(path string) {
 }
 
 func (hs *HeapSet) OpenLog() {
-	idx, ok := hs.findByPath(sys.Log.Name)
+	idx, ok := hs.findByPath(sys.Log.Name())
 
 	if !ok {
 		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Log",
-			Path:  sys.Log.Name,
-			Base:  sys.Log.Name,
+			Path:  sys.Log.Name(),
+			Base:  sys.Log.Name(),
 			Type:  types.Stderr,
 		})
 	}
@@ -147,7 +147,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		p := sys.DumpStr(fox.Help)
+		p := sys.DumpStr(fox.Help).Name()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",
@@ -215,7 +215,8 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 	h := hs.atomicGet(idx)
 
 	hs.atomicDel(idx)
-	hs.unload(h)
+
+	h.ThrowAway()
 
 	atomic.AddInt32(hs.index, -1)
 
@@ -228,7 +229,7 @@ func (hs *HeapSet) ThrowAway() {
 	hs.Lock()
 
 	for _, h := range hs.heaps {
-		hs.unload(h)
+		h.ThrowAway()
 	}
 
 	hs.heaps = hs.heaps[:0]

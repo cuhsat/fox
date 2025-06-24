@@ -8,7 +8,6 @@ import (
 	"errors"
 	"hash"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -77,7 +76,7 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 
 	f := sys.OpenFile(h.Base)
 
-	defer func(f *os.File) {
+	defer func(f sys.File) {
 		_ = f.Close()
 	}(f)
 
