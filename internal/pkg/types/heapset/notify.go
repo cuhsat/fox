@@ -8,34 +8,45 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
-func (hs *HeapSet) Notify(file sys.File) {
-	hs.watch.Events <- fsnotify.Event{
-		Name: file.Name(),
-		Op:   fsnotify.Write,
+func (hs *HeapSet) watch(name string) {
+	f := sys.Mapped(name)
+
+	switch f.(type) {
+
+	// regular file
+	case nil:
+		err := hs.watcher.Add(filepath.Dir(name))
+
+		if err != nil {
+			sys.Error(err)
+		}
+
+	// virtual file
+	case *sys.FileData:
+		f.(*sys.FileData).Watch(hs.watcher.Events)
 	}
 }
 
 func (hs *HeapSet) notify() {
 	for {
 		select {
-		case err, ok := <-hs.watch.Errors:
+		case err, ok := <-hs.watcher.Errors:
 			if !ok {
 				continue
 			}
 
 			sys.Error(err)
 
-		case ev, ok := <-hs.watch.Events:
+		case ev, ok := <-hs.watcher.Events:
 			if !ok || !ev.Has(fsnotify.Write) {
 				continue
 			}
 
 			if ev.Name == sys.Log.Name() {
-				if hs.errorFn != nil {
-					hs.errorFn() // bound callback
+				if hs.fnError != nil {
+					hs.fnError() // bound callback
 				}
 
 				continue
@@ -52,8 +63,8 @@ func (hs *HeapSet) notify() {
 
 				idx := int(atomic.LoadInt32(hs.index))
 
-				if hs.watchFn != nil && idx == i {
-					hs.watchFn() // bound callback
+				if hs.fnWatch != nil && idx == i {
+					hs.fnWatch() // bound callback
 				}
 
 				break
@@ -61,17 +72,5 @@ func (hs *HeapSet) notify() {
 
 			hs.RUnlock()
 		}
-	}
-}
-
-func (hs *HeapSet) watchHeap(h *heap.Heap) {
-	hs.watchPath(h.Path)
-}
-
-func (hs *HeapSet) watchPath(path string) {
-	err := hs.watch.Add(filepath.Dir(path))
-
-	if err != nil {
-		sys.Error(err)
 	}
 }
