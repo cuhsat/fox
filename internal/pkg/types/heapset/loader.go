@@ -151,7 +151,7 @@ func (hs *HeapSet) loadPipe() {
 func (hs *HeapSet) load() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	hs.watchHeap(h.Ensure())
+	hs.watch(h.Ensure().Path)
 
 	return h
 }

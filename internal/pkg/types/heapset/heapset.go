@@ -26,9 +26,10 @@ type HeapSet struct {
 	sync.RWMutex
 	plugins []plugins.Plugin // automatic plugins
 
-	watch   *fsnotify.Watcher // file watcher
-	watchFn callback          // file watcher callback
-	errorFn callback          // error callback
+	watcher *fsnotify.Watcher // file watcher
+
+	fnWatch callback // watcher callback
+	fnError callback // error callback
 
 	heaps []*heap.Heap // set heaps
 	index *int32       // set index
@@ -42,8 +43,8 @@ func New(paths []string) *HeapSet {
 	}
 
 	hs := HeapSet{
-		watch: w,
-		index: new(int32),
+		watcher: w,
+		index:   new(int32),
 	}
 
 	if ps := plugins.New(); ps != nil {
@@ -52,7 +53,7 @@ func New(paths []string) *HeapSet {
 
 	go hs.notify()
 
-	// hs.watchPath(sys.Log) // TODO
+	hs.watch(sys.Log.Name())
 
 	if sys.IsPiped(os.Stdin) {
 		paths = append(paths, Stdin)
@@ -85,8 +86,8 @@ func (hs *HeapSet) Len() int32 {
 }
 
 func (hs *HeapSet) Bind(fn1, fn2 callback) {
-	hs.watchFn = fn1
-	hs.errorFn = fn2
+	hs.fnWatch = fn1
+	hs.fnError = fn2
 }
 
 func (hs *HeapSet) Files() []string {
@@ -224,7 +225,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) ThrowAway() {
-	_ = hs.watch.Close()
+	_ = hs.watcher.Close()
 
 	hs.Lock()
 

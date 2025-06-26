@@ -122,8 +122,12 @@ func IsPiped(file File) bool {
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
+func Mapped(name string) File {
+	return vfs[name]
+}
+
 func Exists(name string) bool {
-	if _, ok := vfs[name]; ok {
+	if Mapped(name) != nil {
 		return true
 	}
 
@@ -133,9 +137,9 @@ func Exists(name string) bool {
 }
 
 func Persist(name string) string {
-	f, ok := vfs[name]
+	f := Mapped(name)
 
-	if !ok {
+	if f == nil {
 		return name
 	}
 
@@ -155,11 +159,13 @@ func Persist(name string) string {
 }
 
 func TempFile(name string) File {
-	if f, ok := vfs[name]; ok {
+	f := Mapped(name)
+
+	if f != nil {
 		return f
 	}
 
-	f := NewFileData(name)
+	f = NewFileData(name)
 
 	vfs[f.Name()] = f
 
@@ -167,7 +173,9 @@ func TempFile(name string) File {
 }
 
 func OpenFile(name string) File {
-	if f, ok := vfs[name]; ok {
+	f := Mapped(name)
+
+	if f != nil {
 		return f
 	}
 

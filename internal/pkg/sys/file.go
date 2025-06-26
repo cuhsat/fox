@@ -8,6 +8,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 type File interface {
@@ -32,6 +34,7 @@ type FileData struct {
 	name string
 	buf  []byte
 	idx  atomic.Int64
+	evt  chan fsnotify.Event
 }
 
 type FileInfo struct {
@@ -43,7 +46,7 @@ var (
 )
 
 func NewFileData(name string) *FileData {
-	return &FileData{name: fmt.Sprintf("fox:%s", name)}
+	return &FileData{name: fmt.Sprintf("fox://%s", name)}
 }
 
 func NewFileInfo(fd *FileData) *FileInfo {
@@ -54,6 +57,12 @@ func (fd *FileData) Bytes() []byte {
 	fd.RLock()
 	defer fd.RUnlock()
 	return fd.buf
+}
+
+func (fd *FileData) Watch(ch chan fsnotify.Event) {
+	fd.Lock()
+	fd.evt = ch
+	defer fd.Unlock()
 }
 
 func (fd *FileData) Close() error {
@@ -143,12 +152,14 @@ func (fd *FileData) Truncate(size int64) error {
 
 	case size <= int64(len(fd.buf)):
 		fd.buf = fd.buf[:size]
-		return nil
 
 	default:
 		fd.buf = append(fd.buf, make([]byte, int(size)-len(fd.buf))...)
-		return nil
 	}
+
+	fd.Notify()
+
+	return nil
 }
 
 func (fd *FileData) Write(b []byte) (n int, err error) {
@@ -175,6 +186,8 @@ func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
 
 	fd.buf = append(fd.buf, b[n:]...)
 
+	fd.Notify()
+
 	return len(b), nil
 }
 
@@ -186,6 +199,15 @@ func (fd *FileData) WriteTo(w io.Writer) (n int64, err error) {
 
 func (fd *FileData) WriteString(s string) (n int, err error) {
 	return fd.Write([]byte(s))
+}
+
+func (fd *FileData) Notify() {
+	if fd.evt != nil {
+		fd.evt <- fsnotify.Event{
+			Name: fd.name,
+			Op:   fsnotify.Write,
+		}
+	}
 }
 
 func (fi *FileInfo) Name() string {
