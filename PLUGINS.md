@@ -32,6 +32,16 @@ Commands = [
 ]
 ```
 
+## target-shell
+```toml
+[Hotkey.F8]
+Name = "target-shell"
+Prompt = "Shell"
+Commands = [
+  'target-shell -c="{{value}}" "{{base}}"',
+]
+```
+
 # Eric Zimmerman's tools
 
 ## PECmd

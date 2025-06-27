@@ -35,10 +35,10 @@ func Exec(cmds []string) File {
 		if len(args) > 0 {
 			cmd := exec.Command(args[0], args[1:]...)
 
-			out, err := cmd.Output()
+			out, err := cmd.CombinedOutput()
 
 			if err == nil {
-				f.Write(out)
+				f.WriteString(text.UnEscape(string(out)))
 			} else {
 				break
 			}

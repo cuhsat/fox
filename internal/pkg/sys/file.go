@@ -157,7 +157,7 @@ func (fd *FileData) Truncate(size int64) error {
 		fd.buf = append(fd.buf, make([]byte, int(size)-len(fd.buf))...)
 	}
 
-	fd.Notify()
+	fd.notify()
 
 	return nil
 }
@@ -186,7 +186,7 @@ func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
 
 	fd.buf = append(fd.buf, b[n:]...)
 
-	fd.Notify()
+	fd.notify()
 
 	return len(b), nil
 }
@@ -201,7 +201,7 @@ func (fd *FileData) WriteString(s string) (n int, err error) {
 	return fd.Write([]byte(s))
 }
 
-func (fd *FileData) Notify() {
+func (fd *FileData) notify() {
 	if fd.evt != nil {
 		fd.evt <- fsnotify.Event{
 			Name: fd.name,
