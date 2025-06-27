@@ -12,6 +12,7 @@ go install github.com/cuhsat/fox@latest
 * Standalone native binary for AMD64 and ARM64
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
+* Path pattern matching and globbing
 * File write access is prohibited
 * In-memory virtual filesystem
 * Unicode multi-byte support
