@@ -15,6 +15,10 @@ func (hs *HeapSet) watch(name string) {
 
 	switch f.(type) {
 
+	// virtual file
+	case *sys.FileData:
+		f.(*sys.FileData).Watch(hs.watcher.Events)
+
 	// regular file
 	case nil:
 		err := hs.watcher.Add(filepath.Dir(name))
@@ -22,10 +26,6 @@ func (hs *HeapSet) watch(name string) {
 		if err != nil {
 			sys.Error(err)
 		}
-
-	// virtual file
-	case *sys.FileData:
-		f.(*sys.FileData).Watch(hs.watcher.Events)
 	}
 }
 
