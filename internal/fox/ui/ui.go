@@ -39,9 +39,9 @@ type UI struct {
 
 	root tcell.Screen
 
-	plugins *plugins.Plugins
-	themes  *themes.Themes
-	rag     *ai.Rag
+	examiner *ai.Examiner
+	plugins  *plugins.Plugins
+	themes   *themes.Themes
 
 	title   *widgets.Title
 	view    *widgets.View
@@ -90,9 +90,8 @@ func New(m mode.Mode) *UI {
 	ui.render(nil)
 	ui.change(m)
 
-	if ai.Init() {
-		ui.rag = ai.NewRag("mistral")
-		ui.rag.Load()
+	if ai.Init(ctx.Model()) {
+		ui.examiner = ai.NewExaminer()
 	}
 
 	return &ui
@@ -111,8 +110,8 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
 
-	if ui.rag != nil {
-		go ui.rag.Listen(hi)
+	if ui.examiner != nil {
+		go ui.examiner.Listen(hi)
 	}
 
 	esc := false
@@ -364,7 +363,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Hex)
 
 				case tcell.KeyCtrlE:
-					ui.change(mode.Rag)
+					ui.change(mode.Fox)
 
 				case tcell.KeyCtrlT:
 					ui.ctx.ToggleFollow()
@@ -466,15 +465,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						})
 						ui.change(ui.ctx.Last())
 
-					case mode.Rag:
-						if ui.rag != nil {
+					case mode.Fox:
+						if ui.examiner != nil {
 							ui.view.Reset()
 							ui.ctx.Background(func() {
 								ui.prompt.Lock(true)
-								ui.rag.Prompt(v, heap)
+								ui.examiner.Prompt(v, heap)
 								ui.prompt.Lock(false)
 							})
-							hs.OpenRag(ui.rag.Path())
+							hs.OpenChat(ui.examiner.Path())
 						}
 
 					default:
@@ -541,9 +540,9 @@ func (ui *UI) Close() {
 }
 
 func (ui *UI) change(m mode.Mode) {
-	// check for RAG support
-	if m == mode.Rag && ui.rag == nil {
-		ui.overlay.SendError("RAG not available")
+	// check for examiner support
+	if m == mode.Fox && ui.examiner == nil {
+		ui.overlay.SendError("Examiner not available")
 		return
 	}
 

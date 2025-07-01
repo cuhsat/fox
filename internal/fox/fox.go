@@ -12,6 +12,9 @@ var (
 	//go:embed version.txt
 	Version string
 
+	//go:embed prompt.txt
+	Prompt string
+
 	//go:embed usage.txt
 	Usage string
 
