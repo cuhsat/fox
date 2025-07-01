@@ -3,8 +3,16 @@
 #
 # Available environment variables:
 #
+# FOX_MODEL
 # FOX_THEME
 #
+
+# Available model names:
+#
+# Every LLM that Ollama supports
+#
+Model = "Default"
+
 # Available theme names:
 #
 # Examiner-Light

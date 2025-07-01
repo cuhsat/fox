@@ -20,6 +20,7 @@ type Context struct {
 	mode mode.Mode
 	last mode.Mode
 
+	model string
 	theme string
 
 	follow  atomic.Bool
@@ -39,6 +40,9 @@ func New(root tcell.Screen) *Context {
 		// modes
 		mode: mode.Default,
 		last: mode.Default,
+
+		// model
+		model: cfg.Model,
 
 		// theme
 		theme: cfg.Theme,
@@ -62,6 +66,12 @@ func (ctx *Context) Last() mode.Mode {
 	ctx.RLock()
 	defer ctx.RUnlock()
 	return ctx.last
+}
+
+func (ctx *Context) Model() string {
+	ctx.RLock()
+	defer ctx.RUnlock()
+	return ctx.model
 }
 
 func (ctx *Context) Theme() string {
@@ -131,6 +141,7 @@ func (ctx *Context) Background(fn func()) {
 }
 
 func (ctx *Context) Save() {
+	ctx.cfg.Model = ctx.Model()
 	ctx.cfg.Theme = ctx.Theme()
 	ctx.cfg.Follow = ctx.IsFollow()
 	ctx.cfg.Numbers = ctx.IsNumbers()

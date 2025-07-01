@@ -15,6 +15,7 @@ const (
 )
 
 type Config struct {
+	Model   string `toml:"Model"`
 	Theme   string `toml:"Theme"`
 	Follow  bool   `toml:"Follow"`
 	Numbers bool   `toml:"Numbers"`
@@ -36,7 +37,13 @@ func New() *Config {
 		sys.Error(err)
 	}
 
-	// higher ranking environment variable
+	// higher ranking environment variables
+	m := os.Getenv("FOX_MODEL")
+
+	if len(m) > 0 {
+		cfg.Model = m
+	}
+
 	t := os.Getenv("FOX_THEME")
 
 	if len(t) > 0 {
