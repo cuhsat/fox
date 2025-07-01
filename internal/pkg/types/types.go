@@ -9,6 +9,7 @@ const (
 	Stdin
 	Stdout
 	Stderr
+	Prompt
 	Plugin
 )
 

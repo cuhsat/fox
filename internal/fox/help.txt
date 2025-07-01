@@ -18,6 +18,7 @@ Keymap:
   Ctrl + w             Toggle text wrap
   Ctrl + o             Open file(s)
   Ctrl + q             Close file
+  Ctrl + e             Auto examine file
   Ctrl + b             Open evidence bag
   Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard

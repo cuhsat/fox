@@ -67,7 +67,7 @@ func New(path, key, mode string) *Bag {
 		path += ".xml"
 	case Sql:
 		w = NewSqlWriter()
-		path += ".db"
+		path += ".sqlite3"
 	default:
 		w = NewRawWriter()
 		path += ".txt"

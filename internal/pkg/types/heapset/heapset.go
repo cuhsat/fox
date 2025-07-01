@@ -142,6 +142,25 @@ func (hs *HeapSet) OpenLog() {
 	hs.atomicGet(idx).Reload()
 }
 
+func (hs *HeapSet) OpenRag(path string) {
+	idx, ok := hs.findByPath(path)
+
+	if !ok {
+		idx = hs.Len()
+
+		hs.atomicAdd(&heap.Heap{
+			Title: "Forensic Examiner",
+			Path:  path,
+			Base:  path,
+			Type:  types.Prompt,
+		})
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.atomicGet(idx).Reload()
+}
+
 func (hs *HeapSet) OpenHelp() {
 	idx, ok := hs.findByName("Help")
 

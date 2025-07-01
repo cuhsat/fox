@@ -2,10 +2,13 @@ package widgets
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/buffer"
+	"github.com/gdamore/tcell/v2"
 )
 
 func (v *View) textRender(p *panel) {
@@ -42,6 +45,8 @@ func (v *View) textRender(p *panel) {
 	i := 0
 
 	// render lines
+	var color tcell.Style
+
 	for line := range buf.Lines {
 		lineX := p.X
 		lineY := p.Y + i
@@ -54,7 +59,13 @@ func (v *View) textRender(p *panel) {
 
 		// text value
 		if len(line.Str) > 0 {
-			v.print(lineX, lineY, line.Str, themes.Base)
+			if v.heap.Type == types.Prompt && strings.HasPrefix(line.Str, text.User) {
+				color = themes.Subtext2
+			} else {
+				color = themes.Base
+			}
+
+			v.print(lineX, lineY, line.Str, color)
 		}
 
 		i++
