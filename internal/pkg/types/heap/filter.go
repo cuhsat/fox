@@ -12,9 +12,32 @@ type Filter struct {
 	smap    *smap.SMap     // filter string map
 }
 
-func (h *Heap) AddFilter(pattern string) {
+func (h *Heap) AddFilter(pattern string, before, after int) {
 	re := regexp.MustCompile(pattern)
 	s := h.SMap().Grep(re)
+
+	// add global context lines
+	if before+after > 0 {
+		o := h.SMap()
+		n := len(*o)
+		r := make(smap.SMap, 0, n)
+
+		// TODO: Distinct lines
+
+		for _, l := range *s {
+			for _, b := range (*o)[max((l.Nr-1)-before, 0) : l.Nr-1] {
+				r = append(r, b)
+			}
+
+			r = append(r, l)
+
+			for _, a := range (*o)[l.Nr:min(l.Nr+after, n)] {
+				r = append(r, a)
+			}
+		}
+
+		s = &r
+	}
 
 	h.Lock()
 

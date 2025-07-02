@@ -449,7 +449,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 					case mode.Grep:
 						ui.view.Reset()
-						heap.AddFilter(v)
+						heap.AddFilter(v, 0, 0)
 						ui.change(mode.Less)
 
 					case mode.Goto:

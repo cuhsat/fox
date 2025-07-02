@@ -82,8 +82,8 @@ func argsParse() (a args) {
 	filters := types.GetFilters()
 
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
-	// B := flag.IntP("before", "B", 0, "number of lines leading context before match")
-	// A := flag.IntP("after", "A", 0, "number of lines trailing context after match")
+	flag.IntVarP(&filters.Before, "before", "B", 0, "number of lines leading context before match")
+	flag.IntVarP(&filters.After, "after", "A", 0, "number of lines trailing context after match")
 
 	// evidence bag
 	flag.StringVarP(&a.file, "file", "f", bag.Filename, "file name of evidence bag")
@@ -95,27 +95,13 @@ func argsParse() (a args) {
 	}
 
 	// aliases
-	if *flag.BoolP("json", "j", false, "export in JSON format") {
-		a.mode = bag.Json
-	}
-
-	if *flag.BoolP("jsonl", "J", false, "export in JSON Lines format") {
-		a.mode = bag.Jsonl
-	}
-
-	if *flag.BoolP("xml", "X", false, "export in XML format") {
-		a.mode = bag.Xml
-	}
-
-	if *flag.BoolP("sql", "S", false, "export in SQL format") {
-		a.mode = bag.Sql
-	}
+	j := flag.BoolP("json", "j", false, "export in JSON format")
+	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
+	X := flag.BoolP("xml", "X", false, "export in XML format")
+	S := flag.BoolP("sql", "S", false, "export in SQL format")
 
 	// standard options
-	if *flag.BoolP("version", "v", false, "shows version") {
-		fmt.Println(fox.Product, fox.Version)
-		os.Exit(0)
-	}
+	v := flag.BoolP("version", "v", false, "shows version")
 
 	flag.Usage = func() {
 		fmt.Printf(fox.Usage, fox.Version)
@@ -123,6 +109,11 @@ func argsParse() (a args) {
 	}
 
 	flag.Parse()
+
+	if *v {
+		fmt.Println(fox.Product, fox.Version)
+		os.Exit(0)
+	}
 
 	a.args = flag.Args()
 
@@ -135,7 +126,7 @@ func argsParse() (a args) {
 		sys.Exit("hex or sum")
 	}
 
-	if *x && len(*filters) > 0 {
+	if *x && len(filters.Patterns) > 0 {
 		sys.Exit("hex or pattern")
 	}
 
@@ -155,6 +146,23 @@ func argsParse() (a args) {
 	// stdin piped
 	if sys.IsPiped(os.Stdout) {
 		a.print = true
+	}
+
+	// aliases
+	if *j {
+		a.mode = bag.Json
+	}
+
+	if *J {
+		a.mode = bag.Jsonl
+	}
+
+	if *X {
+		a.mode = bag.Xml
+	}
+
+	if *S {
+		a.mode = bag.Sql
 	}
 
 	// output mode
@@ -181,7 +189,7 @@ func argsParse() (a args) {
 		a.output.mode = types.Hex
 	}
 
-	if len(*filters) > 0 {
+	if len(filters.Patterns) > 0 {
 		a.output.mode = types.Grep
 	}
 
