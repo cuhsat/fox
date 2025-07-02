@@ -6,10 +6,9 @@
 # FOX_MODEL
 # FOX_THEME
 #
-
 # Available model names:
 #
-# Every LLM that Ollama supports
+# https://ollama.com/library
 #
 Model = "Default"
 

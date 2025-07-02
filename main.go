@@ -82,6 +82,8 @@ func argsParse() (a args) {
 	filters := types.GetFilters()
 
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
+	// B := flag.IntP("before", "B", 0, "number of lines leading context before match")
+	// A := flag.IntP("after", "A", 0, "number of lines trailing context after match")
 
 	// evidence bag
 	flag.StringVarP(&a.file, "file", "f", bag.Filename, "file name of evidence bag")

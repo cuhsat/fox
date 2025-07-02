@@ -3,47 +3,52 @@ package ai
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/ollama/ollama/api"
-
-	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 const (
-	Default = "mistral"
+	Default = "" // disabled
 )
 
 var (
-	client *api.Client
+	Client *api.Client
 )
 
 var (
-	model string
+	Model = Default
+	Alive = &api.Duration{Duration: time.Minute * 10}
 )
 
-func Init(model string) bool {
-	var err error
+func Init(model string) {
+	Model = model
 
 	if len(model) == 0 || strings.ToLower(model) == "default" {
-		model = Default
+		return
 	}
 
-	client, err = api.ClientFromEnvironment()
+	llm, err := api.ClientFromEnvironment()
 
 	if err != nil {
-		sys.Error(err)
+		return
 	}
 
-	// preload model
-	go client.Chat(
-		context.Background(),
-		&api.ChatRequest{
-			Model: model,
-			// KeepAlive: ,
-		},
-		func(_ api.ChatResponse) error {
-			return nil
-		})
+	// preload model in the background
+	go func(*api.Client) {
+		if llm.Chat(context.Background(), &api.ChatRequest{
+			Model:     Model,
+			KeepAlive: Alive,
+		}, null) == nil {
+			Client = llm
+		}
+	}(llm)
+}
 
-	return err == nil
+func IsInit() bool {
+	return Client != nil
+}
+
+func null(_ api.ChatResponse) error {
+	return nil
 }

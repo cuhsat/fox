@@ -164,7 +164,7 @@ func (hs *HeapSet) OpenHelp() {
 }
 
 func (hs *HeapSet) OpenChat(path string) {
-	idx, ok := hs.findByPath(path)
+	idx, ok := hs.findByName("Forensic Examiner")
 
 	if !ok {
 		idx = hs.Len()
@@ -179,7 +179,7 @@ func (hs *HeapSet) OpenChat(path string) {
 
 	atomic.StoreInt32(hs.index, idx)
 
-	hs.atomicGet(idx).Reload()
+	hs.load()
 }
 
 func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {

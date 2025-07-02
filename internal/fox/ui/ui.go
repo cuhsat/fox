@@ -11,6 +11,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/fox/ai"
+	"github.com/cuhsat/fox/internal/fox/ai/examiner"
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/fox/ui/widgets"
@@ -39,9 +40,9 @@ type UI struct {
 
 	root tcell.Screen
 
-	examiner *ai.Examiner
-	plugins  *plugins.Plugins
 	themes   *themes.Themes
+	plugins  *plugins.Plugins
+	examiner *examiner.Examiner
 
 	title   *widgets.Title
 	view    *widgets.View
@@ -74,8 +75,9 @@ func New(m mode.Mode) *UI {
 
 		root: root,
 
-		plugins: plugins.New(),
-		themes:  themes.New(ctx.Theme()),
+		themes:   themes.New(ctx.Theme()),
+		plugins:  plugins.New(),
+		examiner: examiner.New(),
 
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
@@ -90,9 +92,7 @@ func New(m mode.Mode) *UI {
 	ui.render(nil)
 	ui.change(m)
 
-	if ai.Init(ctx.Model()) {
-		ui.examiner = ai.NewExaminer()
-	}
+	ai.Init(ctx.Model())
 
 	return &ui
 }
@@ -109,10 +109,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
-
-	if ui.examiner != nil {
-		go ui.examiner.Listen(hi)
-	}
+	go ui.examiner.Listen()
 
 	esc := false
 
@@ -466,15 +463,14 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.change(ui.ctx.Last())
 
 					case mode.Fox:
-						if ui.examiner != nil {
-							ui.view.Reset()
-							ui.ctx.Background(func() {
-								ui.prompt.Lock(true)
-								ui.examiner.Prompt(v, heap)
-								ui.prompt.Lock(false)
-							})
-							hs.OpenChat(ui.examiner.Path())
-						}
+						ui.view.Reset()
+						ui.examiner.User(v)
+						ui.ctx.Background(func() {
+							ui.prompt.Lock(true)
+							ui.examiner.Query(v, heap)
+							ui.prompt.Lock(false)
+						})
+						hs.OpenChat(ui.examiner.File.Name())
 
 					default:
 						plugins.Input <- v
@@ -541,8 +537,8 @@ func (ui *UI) Close() {
 
 func (ui *UI) change(m mode.Mode) {
 	// check for examiner support
-	if m == mode.Fox && ui.examiner == nil {
-		ui.overlay.SendError("Examiner not available")
+	if m == mode.Fox && !ai.IsInit() {
+		ui.overlay.SendError("Examiner is not available")
 		return
 	}
 
