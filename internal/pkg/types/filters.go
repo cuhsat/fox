@@ -4,7 +4,11 @@ import (
 	"fmt"
 )
 
-type Filters []string
+type Filters struct {
+	Patterns []string // patterns
+	Before   int      // lines before
+	After    int      // lines after
+}
 
 // singleton
 var filters *Filters = nil
@@ -18,7 +22,7 @@ func GetFilters() *Filters {
 }
 
 func (f *Filters) String() string {
-	return fmt.Sprintf("%v", *f)
+	return fmt.Sprintf("%v", f.Patterns)
 }
 
 func (f *Filters) Type() string {
@@ -27,12 +31,12 @@ func (f *Filters) Type() string {
 
 // Set global filter
 func (f *Filters) Set(p string) error {
-	*f = append(*f, p)
+	f.Patterns = append(f.Patterns, p)
 
 	return nil
 }
 
 // Pop global filter
 func (f *Filters) Pop() {
-	*f = (*f)[:len(*f)-1]
+	f.Patterns = f.Patterns[:len(f.Patterns)-1]
 }
