@@ -12,13 +12,13 @@ Keymap:
   Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
   Ctrl + f             Switch to GREP mode
+  Ctrl + e             Switch to FOX mode
   Ctrl + x             Switch to HEX mode
   Ctrl + t             Toggle tail follow
   Ctrl + n             Toggle line numbers
   Ctrl + w             Toggle text wrap
   Ctrl + o             Open file(s)
   Ctrl + q             Close file
-  Ctrl + e             Auto examine file
   Ctrl + b             Open evidence bag
   Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard
@@ -49,6 +49,18 @@ GREP:
   Ctrl + Right         Move cursor to end
   Ctrl + v             Paste from clipboard
   Any other key        Define RegEx pattern
+
+FOX:
+  Esc                  Switch to LESS mode
+  Enter                Query prompt
+  Up                   Prev value in history
+  Down                 Next value in history
+  Left                 Move cursor left
+  Right                Move cursor right
+  Ctrl + Left          Move cursor to start
+  Ctrl + Right         Move cursor to end
+  Ctrl + v             Paste from clipboard
+  Any other key        Define LLM prompt
 
 HEX:
   Enter                Scroll one line down

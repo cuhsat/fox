@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Default = "Examiner-Dark"
+	Default = "Monochrome"
 )
 
 var (

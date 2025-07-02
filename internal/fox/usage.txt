@@ -8,7 +8,7 @@ The Swiss Army Knife for examining text files (%s)
 Usage: fox [--print] [--hex] [--counts] [--strings=MIN]
            [--hash={md5|sha1|sha256|sha3|sha3-224|sha3-256|sha3-384|sha3-512}]
            [--head|tail] [--lines|bytes=NUMBER]
-           [--regexp=PATTERN ...]
+           [--regexp=PATTERN ...] [--before|after=NUMBER]
            [--file=FILE] [--key=KEY]
            [--mode={raw,json,jsonl,xml,sql}]
            [PATH ...]
@@ -32,6 +32,8 @@ File limits:
 
 Line filter:
   -e, --regexp=PATTERN     filter for lines that match pattern
+  -B, --before=NUMBER      number of lines leading context before match
+  -A, --after=NUMBER       number of lines trailing context after match
 
 Evidence bag:
   -f, --file=FILE          file name of evidence bag (default: "evidence")
