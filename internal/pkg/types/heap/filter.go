@@ -12,31 +12,13 @@ type Filter struct {
 	smap    *smap.SMap     // filter string map
 }
 
-func (h *Heap) AddFilter(pattern string, before, after int) {
+func (h *Heap) AddFilter(pattern string, b, a int) {
 	re := regexp.MustCompile(pattern)
 	s := h.SMap().Grep(re)
 
-	// add global context lines
-	if before+after > 0 {
-		o := h.SMap()
-		n := len(*o)
-		r := make(smap.SMap, 0, n)
-
-		// TODO: Distinct lines
-
-		for _, l := range *s {
-			for _, b := range (*o)[max((l.Nr-1)-before, 0) : l.Nr-1] {
-				r = append(r, b)
-			}
-
-			r = append(r, l)
-
-			for _, a := range (*o)[l.Nr:min(l.Nr+after, n)] {
-				r = append(r, a)
-			}
-		}
-
-		s = &r
+	// add global context
+	if b+a > 0 {
+		s = h.context(s, b, a)
 	}
 
 	h.Lock()
@@ -96,4 +78,33 @@ func (h *Heap) LastFilter() *Filter {
 	h.RLock()
 	defer h.RUnlock()
 	return h.filters[len(h.filters)-1]
+}
+
+func (h *Heap) context(s *smap.SMap, b, a int) *smap.SMap {
+	o := h.SMap()
+	r := make(smap.SMap, 0, len(*o))
+
+	var n int
+
+	for _, l := range *s {
+		for _, b := range (*o)[max((l.Nr-1)-b, 0) : l.Nr-1] {
+			if b.Nr > n {
+				r = append(r, b)
+			}
+		}
+
+		if l.Nr > n {
+			r = append(r, l)
+		}
+
+		for _, a := range (*o)[l.Nr:min(l.Nr+a, len(*o))] {
+			if a.Nr > n {
+				r = append(r, a)
+			}
+		}
+
+		n = r[len(r)-1].Nr
+	}
+
+	return &r
 }
