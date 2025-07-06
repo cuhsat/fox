@@ -3,6 +3,7 @@ package ai
 import (
 	"context"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ollama/ollama/api"
@@ -13,12 +14,13 @@ const (
 )
 
 var (
-	Client *api.Client
+	Model = Default
+	Alive = &api.Duration{Duration: time.Minute * 10}
 )
 
 var (
-	Model = Default
-	Alive = &api.Duration{Duration: time.Minute * 10}
+	mutex  sync.RWMutex
+	client *api.Client
 )
 
 func Init(model string) {
@@ -40,13 +42,23 @@ func Init(model string) {
 			Model:     Model,
 			KeepAlive: Alive,
 		}, null) == nil {
-			Client = llm
+			mutex.Lock()
+			client = llm
+			mutex.Unlock()
 		}
 	}(llm)
 }
 
 func IsInit() bool {
-	return Client != nil
+	mutex.RLock()
+	defer mutex.RUnlock()
+	return client != nil
+}
+
+func GetClient() *api.Client {
+	mutex.RLock()
+	defer mutex.RUnlock()
+	return client
 }
 
 func null(_ api.ChatResponse) error {

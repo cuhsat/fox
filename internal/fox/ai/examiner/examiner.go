@@ -72,7 +72,7 @@ func (e *Examiner) Query(s string, h *heap.Heap) {
 		},
 	}
 
-	if err := ai.Client.Chat(ctx, req, func(cr api.ChatResponse) error {
+	if err := ai.GetClient().Chat(ctx, req, func(cr api.ChatResponse) error {
 		if s := cr.Message.Content; len(s) > 0 {
 			e.ch <- s
 		} else {
