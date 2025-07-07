@@ -23,6 +23,7 @@ type args struct {
 
 	// console
 	print bool
+	dir   string
 
 	// evidence bag
 	file string
@@ -51,12 +52,18 @@ func argsParse() (a args) {
 	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output hash sum of file")
 
+	flag.StringVarP(&a.dir, "output", "o", "", "output all files to folder")
+
 	if *s == 0 {
 		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = heap.Sha256 // default
+	}
+
+	if len(a.dir) == 0 {
+		flag.Lookup("output").NoOptDefVal = "out" // default
 	}
 
 	// file limits
@@ -217,6 +224,8 @@ func main() {
 
 	if a.print {
 		hs.Print(a.output.mode, a.output.value)
+	} else if len(a.dir) > 0 {
+		hs.Output(a.dir)
 	} else {
 		hi := history.New()
 		defer hi.Close()

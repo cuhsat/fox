@@ -3,6 +3,8 @@ package heapset
 import (
 	"fmt"
 	"math"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -14,6 +16,28 @@ import (
 const (
 	termW = 78 // default terminal width
 )
+
+func (hs *HeapSet) Output(dir string) {
+	err := os.MkdirAll(dir, 0400)
+
+	if err != nil {
+		sys.Exit(err)
+	}
+
+	hs.RLock()
+
+	for _, h := range hs.heaps {
+		p := filepath.Join(dir, h.String())
+
+		err = os.WriteFile(p, h.Bytes(), 0600)
+
+		if err != nil {
+			sys.Exit(err)
+		}
+	}
+
+	hs.RUnlock()
+}
 
 func (hs *HeapSet) Print(op types.Output, v any) {
 	ctx := buffer.Context{
