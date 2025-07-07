@@ -22,6 +22,8 @@ import (
 )
 
 func (hs *HeapSet) loadPath(path string) {
+	base := path
+
 	fi, err := os.Stat(path)
 
 	if err != nil {
@@ -34,50 +36,16 @@ func (hs *HeapSet) loadPath(path string) {
 		return
 	}
 
-	base := path
+	path = hs.deflate(path, base)
 
-	// check for compression
-	switch {
-	case br.Detect(path):
-		path = br.Deflate(path)
-	case bzip2.Detect(path):
-		path = bzip2.Deflate(path)
-	case gzip.Detect(path):
-		path = gzip.Deflate(path)
-	case lz4.Detect(path):
-		path = lz4.Deflate(path)
-	case xz.Detect(path):
-		path = xz.Deflate(path)
-	case zlib.Detect(path):
-		path = zlib.Deflate(path)
-	case zstd.Detect(path):
-		path = zstd.Deflate(path)
-	}
-
-	// check for archive
-	if archive.Detect(path) {
-		hs.loadArchive(path, base)
+	if len(path) == 0 {
 		return
 	}
 
-	// check for parser
-	if evtx.Detect(path) {
-		path = evtx.Parse(path)
-	}
+	path = hs.process(path, base)
 
-	// check for format
-	if csv.Detect(path) {
-		path = csv.Format(path)
-	}
-
-	// check for plugin
-	for _, p := range hs.plugins {
-		if p.Match(path) {
-			p.Execute(path, base, func(file sys.File, base string) {
-				hs.loadPlugin(file.Name(), base, p.Name)
-			})
-			return
-		}
+	if len(path) == 0 {
+		return
 	}
 
 	hs.loadFile(path, base)
@@ -115,8 +83,16 @@ func (hs *HeapSet) loadFile(path, base string) {
 
 func (hs *HeapSet) loadArchive(path, base string) {
 	for _, i := range archive.Deflate(path) {
-		if evtx.Detect(i.Path) {
-			i.Path = evtx.Parse(i.Path)
+		i.Path = hs.deflate(i.Path, base)
+
+		if len(i.Path) == 0 {
+			return
+		}
+
+		i.Path = hs.process(i.Path, base)
+
+		if len(i.Path) == 0 {
+			return
 		}
 
 		hs.atomicAdd(heap.New(
@@ -154,4 +130,56 @@ func (hs *HeapSet) load() *heap.Heap {
 	hs.watch(h.Ensure().Path)
 
 	return h
+}
+
+func (hs *HeapSet) deflate(path, base string) string {
+	// check for compression
+	switch {
+	case br.Detect(path):
+		path = br.Deflate(path)
+	case bzip2.Detect(path):
+		path = bzip2.Deflate(path)
+	case gzip.Detect(path):
+		path = gzip.Deflate(path)
+	case lz4.Detect(path):
+		path = lz4.Deflate(path)
+	case xz.Detect(path):
+		path = xz.Deflate(path)
+	case zlib.Detect(path):
+		path = zlib.Deflate(path)
+	case zstd.Detect(path):
+		path = zstd.Deflate(path)
+	}
+
+	// check for archive
+	if archive.Detect(path) {
+		hs.loadArchive(path, base)
+		return ""
+	}
+
+	return path
+}
+
+func (hs *HeapSet) process(path, base string) string {
+	// check for parser
+	if evtx.Detect(path) {
+		path = evtx.Parse(path)
+	}
+
+	// check for format
+	if csv.Detect(path) {
+		path = csv.Format(path)
+	}
+
+	// check for plugin
+	for _, p := range hs.plugins {
+		if p.Match(path) {
+			p.Execute(path, base, func(file sys.File, base string) {
+				hs.loadPlugin(file.Name(), base, p.Name)
+			})
+			return ""
+		}
+	}
+
+	return path
 }

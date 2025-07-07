@@ -16,7 +16,6 @@ type File interface {
 	io.Closer
 	io.Reader
 	io.ReaderAt
-	io.ReaderFrom
 	io.Seeker
 	io.Writer
 	io.WriterAt
@@ -101,12 +100,6 @@ func (fd *FileData) ReadAt(b []byte, off int64) (n int, err error) {
 	}
 
 	return n, nil
-}
-
-func (fd *FileData) ReadFrom(r io.Reader) (n int64, err error) {
-	i, err := r.Read(fd.buf)
-
-	return int64(i), err
 }
 
 func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
