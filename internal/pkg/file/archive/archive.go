@@ -1,6 +1,7 @@
 package archive
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/gen2brain/go-unarr"
@@ -53,7 +54,7 @@ func Deflate(path string) (i []*file.Item) {
 			break
 		}
 
-		t := sys.TempFile("deflate")
+		t := sys.TempFile(fmt.Sprintf("%s/%s", path, a.Name()))
 
 		_, err = io.Copy(t, a)
 

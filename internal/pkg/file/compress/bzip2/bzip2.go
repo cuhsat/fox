@@ -20,7 +20,7 @@ func Deflate(path string) string {
 
 	r := bzip2.NewReader(a)
 
-	t := sys.TempFile("deflate")
+	t := sys.TempFile(path)
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

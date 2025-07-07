@@ -28,7 +28,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	t := sys.TempFile("deflate")
+	t := sys.TempFile(path)
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

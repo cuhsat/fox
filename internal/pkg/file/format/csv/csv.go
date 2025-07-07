@@ -18,7 +18,7 @@ func Format(path string) string {
 	f := sys.OpenFile(path)
 	defer f.Close()
 
-	t := sys.TempFile("format")
+	t := sys.TempFile(path)
 	defer t.Close()
 
 	r := csvd.NewReader(f)
