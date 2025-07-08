@@ -98,7 +98,7 @@ func (hs *HeapSet) loadArchive(path, base string) {
 		hs.atomicAdd(heap.New(
 			filepath.Join(base, i.Name),
 			i.Path,
-			i.Path,
+			base,
 			types.Deflate,
 		))
 	}
