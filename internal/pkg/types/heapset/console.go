@@ -18,16 +18,18 @@ const (
 )
 
 func (hs *HeapSet) Output(dir string) {
-	err := os.MkdirAll(dir, 0400)
+	hs.RLock()
+
+	err := os.MkdirAll(dir, 0700)
 
 	if err != nil {
 		sys.Exit(err)
 	}
 
-	hs.RLock()
-
 	for _, h := range hs.heaps {
-		p := filepath.Join(dir, h.String())
+		p := filepath.Base(h.Path)
+
+		p = filepath.Join(dir, p)
 
 		err = os.WriteFile(p, h.Bytes(), 0600)
 
