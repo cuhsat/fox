@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
+	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/file/archive"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
@@ -172,11 +173,16 @@ func (hs *HeapSet) process(path, base string) string {
 	}
 
 	// check for plugin
-	for _, p := range hs.plugins {
-		if p.Match(path) {
+	if !arg.GetArgs().Opt.Skip {
+		for _, p := range hs.plugins {
+			if !p.Match(path) {
+				continue
+			}
+
 			p.Execute(path, base, func(file sys.File, base string) {
 				hs.loadPlugin(file.Name(), base, p.Name)
 			})
+
 			return ""
 		}
 	}

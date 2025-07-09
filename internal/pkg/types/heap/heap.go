@@ -8,6 +8,7 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 
+	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
@@ -36,12 +37,12 @@ type Heap struct {
 
 type Cache map[string]any
 
-func New(title, path, base string, typ types.Heap) *Heap {
+func New(title, path, base string, ht types.Heap) *Heap {
 	heap := &Heap{
 		Title: title,
 		Path:  path,
 		Base:  base,
-		Type:  typ,
+		Type:  ht,
 	}
 
 	return heap
@@ -80,9 +81,9 @@ func (h *Heap) Cache() Cache {
 func (h *Heap) Bytes() []byte {
 	var buf bytes.Buffer
 
-	h.RLock()
-
 	f := h.LastFilter()
+
+	h.RLock()
 
 	for i, s := range *f.smap {
 		_, err := buf.WriteString(s.Str)
@@ -116,7 +117,7 @@ func (h *Heap) Ensure() *Heap {
 	if h.file == nil {
 		h.Reload()
 
-		fs := types.GetFilters()
+		fs := arg.GetFilters()
 
 		// apply global filters once
 		for _, f := range fs.Patterns {
@@ -187,7 +188,7 @@ func (h *Heap) Reload() {
 		h.mmap = &m
 	}
 
-	l := types.GetLimits()
+	l := arg.GetLimits()
 
 	// reduce mmap
 	h.mmap = l.ReduceMMap(h.mmap)

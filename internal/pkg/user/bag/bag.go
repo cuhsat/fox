@@ -11,20 +11,9 @@ import (
 	"time"
 
 	"github.com/cuhsat/fox/internal/fox"
+	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
-)
-
-const (
-	Filename = "evidence"
-)
-
-const (
-	Raw   = "raw"
-	Jsonl = "jsonl"
-	Json  = "json"
-	Xml   = "xml"
-	Sql   = "sql"
 )
 
 type Bag struct {
@@ -48,35 +37,35 @@ type writer interface {
 	SetLine(nr int, s string)
 }
 
-func New(path, key, mode string) *Bag {
+func New(args arg.ArgsBag) *Bag {
 	var w writer
 
-	if len(path) == 0 {
-		path = Filename
+	if len(args.Path) == 0 {
+		args.Path = arg.Bag
 	}
 
-	switch strings.ToLower(mode) {
-	case Jsonl:
+	switch strings.ToLower(args.Mode) {
+	case arg.Jsonl:
 		w = NewJsonWriter(false)
-		path += ".jsonl"
-	case Json:
+		args.Path += ".jsonl"
+	case arg.Json:
 		w = NewJsonWriter(true)
-		path += ".json"
-	case Xml:
+		args.Path += ".json"
+	case arg.Xml:
 		w = NewXmlWriter()
-		path += ".xml"
-	case Sql:
+		args.Path += ".xml"
+	case arg.Sql:
 		w = NewSqlWriter()
-		path += ".sqlite3"
+		args.Path += ".sqlite3"
 	default:
 		w = NewRawWriter()
-		path += ".txt"
+		args.Path += ".txt"
 	}
 
 	return &Bag{
-		Path: path,
+		Path: args.Path,
+		key:  args.Key,
 		file: nil,
-		key:  key,
 		w:    w,
 	}
 }

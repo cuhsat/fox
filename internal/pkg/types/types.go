@@ -1,5 +1,16 @@
 package types
 
+type Print int
+
+const (
+	File Print = iota
+	Grep
+	Hex
+	Hash
+	Stats
+	Strings
+)
+
 type Heap int
 
 const (
@@ -11,15 +22,4 @@ const (
 	Stderr
 	Prompt
 	Plugin
-)
-
-type Output int
-
-const (
-	File Output = iota
-	Grep
-	Hex
-	Hash
-	Stats
-	Strings
 )
