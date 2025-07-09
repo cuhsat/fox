@@ -15,6 +15,7 @@ import (
 	"github.com/cuhsat/fox/internal/fox/ui/context"
 	"github.com/cuhsat/fox/internal/fox/ui/themes"
 	"github.com/cuhsat/fox/internal/fox/ui/widgets"
+	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -50,7 +51,7 @@ type UI struct {
 	overlay *widgets.Overlay
 }
 
-func New(m mode.Mode) *UI {
+func New(args arg.ArgsUI) *UI {
 	runewidth.CreateLUT()
 
 	root, err := tcell.NewScreen()
@@ -90,7 +91,7 @@ func New(m mode.Mode) *UI {
 	root.Sync()
 
 	ui.render(nil)
-	ui.change(m)
+	ui.change(args.Mode)
 
 	ai.Init(ctx.Model())
 

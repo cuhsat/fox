@@ -6,8 +6,8 @@ If you can't find the answer within the provided context, answer with: "This inf
 
 If you are sure about something, answer with "... it IS CERTAIN that ...". If you are unsure about something, answer with "... it APPEARS that ...".
 
-Context:
+Question:
 %s
 
-Question:
+Context:
 %s

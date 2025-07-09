@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -17,31 +18,39 @@ const (
 	termW = 78 // default terminal width
 )
 
-func (hs *HeapSet) Output(dir string) {
-	hs.RLock()
-
+func (hs *HeapSet) Write(dir string) {
 	err := os.MkdirAll(dir, 0700)
 
 	if err != nil {
 		sys.Exit(err)
 	}
 
+	n := 0
+
+	hs.RLock()
+
 	for _, h := range hs.heaps {
-		p := filepath.Base(h.Path)
+		p := filepath.Dir(h.Base)
 
 		p = filepath.Join(dir, p)
 
-		err = os.WriteFile(p, h.Bytes(), 0600)
+		fmt.Printf("Write %s...\n", p)
 
-		if err != nil {
-			sys.Exit(err)
-		}
+		// err = os.WriteFile(p, h.Ensure().Bytes(), 0600)
+
+		// if err != nil {
+		// 	sys.Exit(err)
+		// }
+
+		n++
 	}
 
 	hs.RUnlock()
+
+	fmt.Printf("Total %d file(s) written\n", n)
 }
 
-func (hs *HeapSet) Print(op types.Output, v any) {
+func (hs *HeapSet) Print(args arg.ArgsPrint) {
 	ctx := buffer.Context{
 		Numbers: true,
 		Wrap:    false,
@@ -60,7 +69,7 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 
 		ctx.Heap = h.Ensure()
 
-		switch op {
+		switch args.Mode {
 		case types.File:
 			printFile(&ctx)
 		case types.Grep:
@@ -68,11 +77,11 @@ func (hs *HeapSet) Print(op types.Output, v any) {
 		case types.Hex:
 			printHex(&ctx)
 		case types.Hash:
-			printHash(&ctx, v.(string))
+			printHash(&ctx, args.Value.(string))
 		case types.Stats:
 			printStats(&ctx)
 		case types.Strings:
-			printStrings(&ctx, v.(int))
+			printStrings(&ctx, args.Value.(int))
 		}
 	}
 

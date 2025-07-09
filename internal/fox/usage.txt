@@ -11,6 +11,7 @@ Usage: fox [--print] [--hex] [--counts] [--strings=MIN]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...] [--before|after=NUMBER]
            [--file=FILE] [--key=KEY] [--mode={raw,json,jsonl,xml,sql}]
+           [--skip]
            [PATH ...]
 
 Positional arguments:
@@ -41,6 +42,9 @@ Evidence bag:
   -m, --mode={raw,json,jsonl,xml,sql}
                            output mode (default: raw)
   -k, --key=KEY            key phrase for signing with HMAC
+
+Plugins:
+  -a, --skip               skip all automatic plugins
 
 Aliases:
   -j, --json               short for --mode=json

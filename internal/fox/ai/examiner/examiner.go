@@ -56,7 +56,7 @@ func (e *Examiner) Query(s string, h *heap.Heap) {
 
 	e.hi = append(e.hi, api.Message{
 		Role:    "user",
-		Content: fmt.Sprintf(fox.Prompt, sb.String(), s),
+		Content: fmt.Sprintf(fox.Prompt, s, sb.String()),
 	})
 
 	ctx := context.Background()
