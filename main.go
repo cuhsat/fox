@@ -34,8 +34,8 @@ func main() {
 
 	if args.Print.Active {
 		hs.Print(args.Print)
-	} else if len(args.Dir) > 0 {
-		hs.Write(args.Dir)
+	} else if args.Deflate {
+		hs.Deflate()
 	} else {
 		hi := history.New()
 		defer hi.Close()

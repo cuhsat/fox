@@ -19,7 +19,7 @@ const (
 
 const (
 	MinASCII = 0x20
-	MaxASCII = 0x7f
+	MaxASCII = 0x7e
 )
 
 func ToASCII(s string) string {
