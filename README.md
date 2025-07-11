@@ -1,12 +1,12 @@
-![](assets/title.png "Forensic Examiner")
+![](assets/fox.png "Forensic Examiner")
 
 The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc** and common decompression and cryptographic hash algorithms into one performant standalone binary.
 
 ```console
-go install github.com/cuhsat/fox@latest
+go install github.com/hiforensics/fox@latest
 ```
 
-![](assets/screen.png "Screenshot")
+![](assets/demo.png "Demo")
 
 # Features
 * Standalone native binary for AMD64 and ARM64

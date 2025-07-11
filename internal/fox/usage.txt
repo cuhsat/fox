@@ -54,7 +54,7 @@ Aliases:
 
 Standard options:
       --help               shows this message
-      --version            shows version
+      --version            shows the version
 
 Example: print matching lines
   $ fox -pe "John Doe" ./**/*.evtx

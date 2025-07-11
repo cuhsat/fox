@@ -22,7 +22,7 @@ go.work.sum
 # IDEs
 .idea/
 
-# Mac crap
+# MacOS crap
 .DS_Store
 
 # Error dump
@@ -33,3 +33,6 @@ go.work.sum
 
 # Todo files
 /TODO*
+
+# Output dir
+/out
