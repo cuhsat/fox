@@ -28,7 +28,8 @@ const (
 
 type Args struct {
 	Args []string
-	Dir  string
+
+	Deflate bool
 
 	Print ArgsPrint
 	Bag   ArgsBag
@@ -79,15 +80,13 @@ func NewArgs() *Args {
 func parse() *Args {
 	args := NewArgs()
 
-	// console output
+	// console print
 	flag.BoolVarP(&args.Print.Active, "print", "p", false, "print to console (no UI)")
 
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
 	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output hash sum of file")
-
-	flag.StringVarP(&args.Dir, "output", "o", "", "output all files to folder")
 
 	if *s == 0 {
 		flag.Lookup("strings").NoOptDefVal = "3" // default
@@ -97,9 +96,8 @@ func parse() *Args {
 		flag.Lookup("hash").NoOptDefVal = "sha256" // default
 	}
 
-	if len(args.Dir) == 0 {
-		flag.Lookup("output").NoOptDefVal = "out" // default
-	}
+	// deflate file
+	d := flag.BoolP("deflate", "d", false, "deflate all files from archive")
 
 	// file limits
 	limits := GetLimits()
@@ -181,8 +179,12 @@ func parse() *Args {
 		sys.Exit("hex needs bytes")
 	}
 
-	if *&args.Print.Active && len(args.Dir) > 0 {
-		sys.Exit("print or output")
+	if *d && args.Print.Active {
+		sys.Exit("deflate or print")
+	}
+
+	if *d && len(filters.Patterns) > 0 {
+		sys.Exit("deflate or pattern")
 	}
 
 	// file limits
@@ -209,6 +211,11 @@ func parse() *Args {
 
 	if *S {
 		args.Bag.Mode = Sql
+	}
+
+	// deflate file
+	if *d {
+		args.Deflate = true
 	}
 
 	// output mode

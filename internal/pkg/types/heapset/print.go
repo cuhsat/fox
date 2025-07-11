@@ -18,13 +18,17 @@ const (
 	termW = 78 // default terminal width
 )
 
-func (hs *HeapSet) Write(dir string) {
+func (hs *HeapSet) Deflate() {
 	hs.RLock()
 
 	for _, h := range hs.heaps {
-		p := h.Title
+		b := filepath.Base(h.Base)
+
+		dir := b[0 : len(b)-len(filepath.Ext(b))]
 
 		// convert to relative path
+		p := h.Title
+
 		if h.Type == types.Deflate {
 			p = p[len(h.Base)+1:]
 		} else {
@@ -44,9 +48,9 @@ func (hs *HeapSet) Write(dir string) {
 
 		p = filepath.Join(dir, p)
 
-		fmt.Printf("Write %s\n", p)
+		fmt.Printf("Deflate %s\n", p)
 
-		err := os.WriteFile(p, h.Ensure().Bytes(), 0600)
+		err := os.WriteFile(p, *h.Ensure().MMap(), 0600)
 
 		if err != nil {
 			sys.Exit(err)
