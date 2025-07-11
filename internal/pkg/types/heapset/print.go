@@ -19,35 +19,43 @@ const (
 )
 
 func (hs *HeapSet) Write(dir string) {
-	err := os.MkdirAll(dir, 0700)
-
-	if err != nil {
-		sys.Exit(err)
-	}
-
-	n := 0
-
 	hs.RLock()
 
 	for _, h := range hs.heaps {
-		p := filepath.Dir(h.Base)
+		p := h.Title
+
+		// convert to relative path
+		if h.Type == types.Deflate {
+			p = p[len(h.Base)+1:]
+		} else {
+			p = filepath.Base(p)
+		}
+
+		// create (sub)folders
+		if d := filepath.Dir(p); len(d) > 0 {
+			d = filepath.Join(dir, d)
+
+			err := os.MkdirAll(d, 0700)
+
+			if err != nil {
+				sys.Exit(err)
+			}
+		}
 
 		p = filepath.Join(dir, p)
 
-		fmt.Printf("Write %s...\n", p)
+		fmt.Printf("Write %s\n", p)
 
-		// err = os.WriteFile(p, h.Ensure().Bytes(), 0600)
+		err := os.WriteFile(p, h.Ensure().Bytes(), 0600)
 
-		// if err != nil {
-		// 	sys.Exit(err)
-		// }
-
-		n++
+		if err != nil {
+			sys.Exit(err)
+		}
 	}
 
 	hs.RUnlock()
 
-	fmt.Printf("Total %d file(s) written\n", n)
+	fmt.Printf("%d file(s) written\n", hs.Len())
 }
 
 func (hs *HeapSet) Print(args arg.ArgsPrint) {
