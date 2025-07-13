@@ -30,7 +30,7 @@ func Deflate(path string) (i []*file.Item) {
 	a, err := unarr.NewArchive(path)
 
 	if err != nil {
-		sys.Error(err)
+		sys.Exit(err)
 
 		i = append(i, &file.Item{
 			Path: path,
@@ -50,20 +50,24 @@ func Deflate(path string) (i []*file.Item) {
 		}
 
 		if err != nil {
-			sys.Error(err)
-			break
+			sys.Exit(err)
+		}
+
+		b, err := a.ReadAll()
+
+		if err != nil {
+			sys.Exit(err)
 		}
 
 		t := sys.TempFile(fmt.Sprintf("%s/%s", path, a.Name()))
 
-		_, err = io.Copy(t, a)
-
-		t.Close()
+		_, err = t.Write(b)
 
 		if err != nil {
-			sys.Error(err)
-			continue
+			sys.Exit(err)
 		}
+
+		_ = t.Close()
 
 		i = append(i, &file.Item{
 			Path: t.Name(),
