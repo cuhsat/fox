@@ -18,7 +18,7 @@ const (
 	termW = 78 // default terminal width
 )
 
-func (hs *HeapSet) Deflate() {
+func (hs *HeapSet) Deflate(path string) {
 	hs.RLock()
 
 	for _, h := range hs.heaps {
@@ -37,7 +37,7 @@ func (hs *HeapSet) Deflate() {
 
 		// create (sub)folders
 		if d := filepath.Dir(p); len(d) > 0 {
-			d = filepath.Join(dir, d)
+			d = filepath.Join(path, dir, d)
 
 			err := os.MkdirAll(d, 0700)
 
@@ -46,7 +46,7 @@ func (hs *HeapSet) Deflate() {
 			}
 		}
 
-		p = filepath.Join(dir, p)
+		p = filepath.Join(path, dir, p)
 
 		fmt.Printf("Deflate %s\n", p)
 

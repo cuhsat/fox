@@ -29,7 +29,7 @@ const (
 type Args struct {
 	Args []string
 
-	Deflate bool
+	Deflate string
 
 	Print ArgsPrint
 	Bag   ArgsBag
@@ -97,7 +97,11 @@ func parse() *Args {
 	}
 
 	// deflate file
-	d := flag.BoolP("deflate", "d", false, "deflate all files from archive")
+	d := flag.StringP("deflate", "d", "", "deflate all files from archive")
+
+	if len(*d) == 0 {
+		flag.Lookup("deflate").NoOptDefVal = "out" // default
+	}
 
 	// file limits
 	limits := GetLimits()
@@ -179,11 +183,11 @@ func parse() *Args {
 		sys.Exit("hex needs bytes")
 	}
 
-	if *d && args.Print.Active {
+	if len(*d) > 0 && args.Print.Active {
 		sys.Exit("deflate or print")
 	}
 
-	if *d && len(filters.Patterns) > 0 {
+	if len(*d) > 0 && len(filters.Patterns) > 0 {
 		sys.Exit("deflate or pattern")
 	}
 
@@ -214,8 +218,8 @@ func parse() *Args {
 	}
 
 	// deflate file
-	if *d {
-		args.Deflate = true
+	if len(*d) > 0 {
+		args.Deflate = *d
 	}
 
 	// output mode

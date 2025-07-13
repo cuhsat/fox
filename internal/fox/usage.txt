@@ -25,7 +25,7 @@ Console:
   -H, --hash={md5,sha1,sha256,sha3,sha3-224,sha3-256,sha3-384,sha3-512}
                            output hash sum of file (default: sha256)
 Deflate:
-  -d, --deflate            deflate all files from archive
+  -d, --deflate=FOLDER     deflate all files from archive (default: out)
 
 File limits:
   -h, --head               limit head of file by ...
