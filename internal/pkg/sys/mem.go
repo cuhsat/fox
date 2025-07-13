@@ -16,6 +16,7 @@ type File interface {
 	io.Closer
 	io.Reader
 	io.ReaderAt
+	io.ReaderFrom
 	io.Seeker
 	io.Writer
 	io.WriterAt
@@ -32,7 +33,7 @@ type FileData struct {
 
 	name string
 	buf  []byte
-	idx  atomic.Int64
+	pos  atomic.Int64
 	evt  chan fsnotify.Event
 }
 
@@ -65,7 +66,7 @@ func (fd *FileData) Watch(ch chan fsnotify.Event) {
 }
 
 func (fd *FileData) Close() error {
-	fd.idx.Store(0)
+	fd.pos.Store(0)
 	return nil
 }
 
@@ -74,9 +75,9 @@ func (fd *FileData) Name() string {
 }
 
 func (fd *FileData) Read(b []byte) (n int, err error) {
-	n, err = fd.ReadAt(b, int64(fd.idx.Load()))
+	n, err = fd.ReadAt(b, int64(fd.pos.Load()))
 
-	fd.idx.Add(int64(n))
+	fd.pos.Add(int64(n))
 
 	return
 }
@@ -102,6 +103,18 @@ func (fd *FileData) ReadAt(b []byte, off int64) (n int, err error) {
 	return n, nil
 }
 
+func (fd *FileData) ReadFrom(r io.Reader) (n int64, err error) {
+	b, err := io.ReadAll(r)
+
+	if err != nil {
+		return 0, err
+	}
+
+	i, err := fd.Write(b)
+
+	return int64(i), err
+}
+
 func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
 	fd.RLock()
 	defer fd.RUnlock()
@@ -113,7 +126,7 @@ func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
 		abs = offset
 
 	case io.SeekCurrent:
-		abs = fd.idx.Load() + offset
+		abs = fd.pos.Load() + offset
 
 	case io.SeekEnd:
 		abs = int64(len(fd.buf)) + offset
@@ -126,7 +139,7 @@ func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
 		return 0, ErrorInvalidOffset
 	}
 
-	fd.idx.Store(abs)
+	fd.pos.Store(abs)
 
 	return abs, nil
 }
@@ -156,9 +169,9 @@ func (fd *FileData) Truncate(size int64) error {
 }
 
 func (fd *FileData) Write(b []byte) (n int, err error) {
-	n, err = fd.WriteAt(b, fd.idx.Load())
+	n, err = fd.WriteAt(b, fd.pos.Load())
 
-	fd.idx.Add(int64(n))
+	fd.pos.Add(int64(n))
 
 	return
 }
@@ -185,6 +198,9 @@ func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
 }
 
 func (fd *FileData) WriteTo(w io.Writer) (n int64, err error) {
+	fd.RLock()
+	defer fd.RUnlock()
+
 	i, err := w.Write(fd.buf)
 
 	return int64(i), err
