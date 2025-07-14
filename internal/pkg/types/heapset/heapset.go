@@ -1,6 +1,7 @@
 package heapset
 
 import (
+	"fmt"
 	"os"
 	"slices"
 	"sync"
@@ -148,7 +149,8 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		p := sys.DumpStr(fox.Help).Name()
+		s := fmt.Sprintf(fox.Help, fox.Version)
+		p := sys.DumpStr(s).Name()
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",

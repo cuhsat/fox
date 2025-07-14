@@ -25,7 +25,8 @@ func (v *View) textRender(p *panel) {
 
 	v.smap = buf.SMap
 
-	fullW := p.W
+	// set line width
+	maxW := p.W
 
 	if v.ctx.IsNumbers() {
 		p.W -= text.Dec(v.heap.Count()) + 1
@@ -44,19 +45,21 @@ func (v *View) textRender(p *panel) {
 	// reset
 	v.nr = 0
 
-	grp, cnt, i := 0, 1, 0
-
 	// render lines
 	var color tcell.Style
+
+	sep, grp, n, i := 0, 0, 1, 0
 
 	for line := range buf.Lines {
 		lineX := p.X
 		lineY := p.Y + i
 
 		// context separators
-		if grp != line.Grp && cnt > 1 {
-			v.print(0, lineY, strings.Repeat("―", fullW), themes.Subtext1)
-			cnt, i = 0, i+1
+		if grp != line.Grp && n > 1 {
+			v.print(0, lineY, strings.Repeat("―", maxW), themes.Subtext1)
+			n = 0
+			i++
+			sep++
 			lineY++
 		}
 
@@ -77,22 +80,28 @@ func (v *View) textRender(p *panel) {
 			v.print(lineX, lineY, line.Str, color)
 		}
 
-		grp, cnt, i = line.Grp, cnt+1, i+1
+		grp = line.Grp
+
+		n++
+		i++
 	}
 
-	grp, cnt, i = 0, 1, 0
+	// calculate for groups
+	v.last.Y += sep
+
+	grp, n, i = 0, 1, 0
 
 	// render parts on top
 	for part := range buf.Parts {
 		partX := p.X + part.X
 		partY := p.Y + part.Y + i
 
-		if grp != part.Grp && cnt > 1 {
-			cnt, i = 1, i+1
+		if grp != part.Grp && n > 1 {
+			n, i = 1, i+1
 			partY++
 		}
 
-		grp, cnt = part.Grp, cnt+1
+		grp, n = part.Grp, n+1
 
 		if v.ctx.IsNumbers() {
 			partX += buf.N + 1
