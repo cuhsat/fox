@@ -25,6 +25,8 @@ func (v *View) textRender(p *panel) {
 
 	v.smap = buf.SMap
 
+	fullW := p.W
+
 	if v.ctx.IsNumbers() {
 		p.W -= text.Dec(v.heap.Count()) + 1
 	}
@@ -42,7 +44,7 @@ func (v *View) textRender(p *panel) {
 	// reset
 	v.nr = 0
 
-	i := 0
+	grp, cnt, i := 0, 1, 0
 
 	// render lines
 	var color tcell.Style
@@ -50,6 +52,13 @@ func (v *View) textRender(p *panel) {
 	for line := range buf.Lines {
 		lineX := p.X
 		lineY := p.Y + i
+
+		// context separators
+		if grp != line.Grp && cnt > 1 {
+			v.print(0, lineY, strings.Repeat("―", fullW), themes.Subtext1)
+			cnt, i = 0, i+1
+			lineY++
+		}
 
 		// line number
 		if v.ctx.IsNumbers() {
@@ -68,20 +77,29 @@ func (v *View) textRender(p *panel) {
 			v.print(lineX, lineY, line.Str, color)
 		}
 
-		i++
+		grp, cnt, i = line.Grp, cnt+1, i+1
 	}
+
+	grp, cnt, i = 0, 1, 0
 
 	// render parts on top
 	for part := range buf.Parts {
 		partX := p.X + part.X
-		partY := p.Y + part.Y
+		partY := p.Y + part.Y + i
+
+		if grp != part.Grp && cnt > 1 {
+			cnt, i = 1, i+1
+			partY++
+		}
+
+		grp, cnt = part.Grp, cnt+1
 
 		if v.ctx.IsNumbers() {
 			partX += buf.N + 1
 		}
 
 		// part value
-		v.print(partX, partY, part.Str, themes.Subtext2)
+		// v.print(partX, partY, part.Str, themes.Subtext2)
 	}
 }
 

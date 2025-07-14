@@ -84,13 +84,14 @@ func Text(ctx *Context) (buf TextBuffer) {
 			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
 			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
-			buf.Lines <- TextLine{Line{n, s}}
+			buf.Lines <- TextLine{Line{n, str.Grp, s}}
 
 			for _, f := range fs {
 				for _, i := range f.Regex.FindAllStringIndex(s, -1) {
 					buf.Parts <- TextPart{Part{
 						text.Len(s[:i[0]]),
-						y,
+						y, // TODO: calculate y here
+						str.Grp,
 						s[i[0]:i[1]],
 					}}
 				}

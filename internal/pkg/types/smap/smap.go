@@ -28,6 +28,7 @@ type SMap []String
 
 type String struct {
 	Nr  int    // string nr
+	Grp int    // string group
 	Str string // string data
 }
 
@@ -65,6 +66,10 @@ func Map(m *mmap.MMap) *SMap {
 	return s
 }
 
+func (s *SMap) Groups() int {
+	return (*s)[len(*s)-1].Grp
+}
+
 func (s *SMap) String() string {
 	var sb strings.Builder
 
@@ -79,7 +84,7 @@ func (s *SMap) String() string {
 func (s *SMap) Render() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
-			ch <- String{Nr: s.Nr, Str: exp(s.Str)}
+			ch <- String{s.Nr, s.Grp, exp(s.Str)}
 		}
 	}, len(*s))
 }
@@ -92,12 +97,12 @@ func (s *SMap) Indent() *SMap {
 			buf.Reset()
 
 			if json.Indent(&buf, []byte(s.Str), "", "  ") != nil {
-				ch <- String{s.Nr, s.Str}
+				ch <- String{s.Nr, s.Grp, s.Str}
 				continue
 			}
 
 			for b := range bytes.SplitSeq(buf.Bytes(), []byte("\n")) {
-				ch <- String{s.Nr, string(b)}
+				ch <- String{s.Nr, s.Grp, string(b)}
 			}
 		}
 	}, len(*s))
@@ -112,11 +117,11 @@ func (s *SMap) Wrap(w int) *SMap {
 			i, l = 0, exp(s.Str)
 
 			for i < len(l)-w {
-				ch <- String{s.Nr, l[i : i+w]}
+				ch <- String{s.Nr, s.Grp, l[i : i+w]}
 				i += w
 			}
 
-			ch <- String{s.Nr, l[i:]}
+			ch <- String{s.Nr, s.Grp, l[i:]}
 		}
 	}, len(*s))
 }
@@ -211,7 +216,11 @@ func sort(ch <-chan String) *SMap {
 	}
 
 	slices.SortStableFunc(s, func(a, b String) int {
-		return a.Nr - b.Nr
+		if a.Grp != b.Grp {
+			return a.Grp - b.Grp
+		} else {
+			return a.Nr - b.Nr
+		}
 	})
 
 	return &s
