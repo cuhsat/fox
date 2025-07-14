@@ -84,14 +84,14 @@ func (v *View) textRender(p *panel) {
 	// render parts on top
 	for part := range buf.Parts {
 		partX := p.X + part.X
-		// partY := p.Y + part.Y
+		partY := p.Y + part.Y
 
 		if v.ctx.IsNumbers() {
 			partX += buf.N + 1
 		}
 
 		// part value
-		// v.print(partX, partY, part.Str, themes.Subtext2)
+		v.print(partX, partY, part.Str, themes.Subtext2)
 	}
 }
 

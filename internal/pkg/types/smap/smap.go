@@ -66,10 +66,6 @@ func Map(m *mmap.MMap) *SMap {
 	return s
 }
 
-func (s *SMap) Groups() int {
-	return (*s)[len(*s)-1].Grp
-}
-
 func (s *SMap) String() string {
 	var sb strings.Builder
 
