@@ -84,26 +84,19 @@ func (h *Heap) context(s *smap.SMap, b, a int) *smap.SMap {
 	o := h.SMap()
 	r := make(smap.SMap, 0, len(*o))
 
-	var n int
-
-	for _, l := range *s {
-		for _, b := range (*o)[max((l.Nr-1)-b, 0) : l.Nr-1] {
-			if b.Nr > n {
-				r = append(r, b)
-			}
+	for grp, str := range *s {
+		for _, b := range (*o)[max((str.Nr-1)-b, 0) : str.Nr-1] {
+			b.Grp = grp + 1
+			r = append(r, b)
 		}
 
-		if l.Nr > n {
-			r = append(r, l)
-		}
+		str.Grp = grp + 1
+		r = append(r, str)
 
-		for _, a := range (*o)[l.Nr:min(l.Nr+a, len(*o))] {
-			if a.Nr > n {
-				r = append(r, a)
-			}
+		for _, a := range (*o)[str.Nr:min(str.Nr+a, len(*o))] {
+			a.Grp = grp + 1
+			r = append(r, a)
 		}
-
-		n = r[len(r)-1].Nr
 	}
 
 	return &r

@@ -17,12 +17,14 @@ type Buffer struct {
 
 type Line struct {
 	Nr  string
+	Grp int
 	Str string
 }
 
 type Part struct {
 	X   int
 	Y   int
+	Grp int
 	Str string
 }
 
