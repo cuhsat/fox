@@ -45,22 +45,22 @@ func (v *View) textRender(p *panel) {
 	// reset
 	v.nr = 0
 
+	i := 0
+
 	// render lines
 	var color tcell.Style
-
-	sep, grp, n, i := 0, 0, 1, 0
 
 	for line := range buf.Lines {
 		lineX := p.X
 		lineY := p.Y + i
 
+		i++
+
 		// context separators
-		if grp != line.Grp && n > 1 {
+		if line.Nr == "--" {
 			v.print(0, lineY, strings.Repeat("―", maxW), themes.Subtext1)
-			n = 0
-			i++
-			sep++
-			lineY++
+			v.last.Y++
+			continue
 		}
 
 		// line number
@@ -79,29 +79,12 @@ func (v *View) textRender(p *panel) {
 
 			v.print(lineX, lineY, line.Str, color)
 		}
-
-		grp = line.Grp
-
-		n++
-		i++
 	}
-
-	// calculate for groups
-	v.last.Y += sep
-
-	grp, n, i = 0, 1, 0
 
 	// render parts on top
 	for part := range buf.Parts {
 		partX := p.X + part.X
-		partY := p.Y + part.Y + i
-
-		if grp != part.Grp && n > 1 {
-			n, i = 1, i+1
-			partY++
-		}
-
-		grp, n = part.Grp, n+1
+		// partY := p.Y + part.Y
 
 		if v.ctx.IsNumbers() {
 			partX += buf.N + 1
