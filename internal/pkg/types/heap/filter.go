@@ -10,6 +10,13 @@ type Filter struct {
 	Pattern string         // filter pattern
 	Regex   *regexp.Regexp // filter regex
 	smap    *smap.SMap     // filter string map
+	ctx     context        // filter context
+}
+
+type context struct {
+	smap *smap.SMap // context source
+	b    int        // context before
+	a    int        // context after
 }
 
 func (h *Heap) AddFilter(pattern string, b, a int) {
@@ -17,14 +24,16 @@ func (h *Heap) AddFilter(pattern string, b, a int) {
 	s := h.SMap().Grep(re)
 
 	// add global context
+	ctx := context{s, b, a}
+
 	if b+a > 0 {
-		s = h.context(s, b, a)
+		s = h.appendCtx(s, ctx)
 	}
 
 	h.Lock()
 
 	h.filters = append(h.filters, &Filter{
-		pattern, re, s,
+		pattern, re, s, ctx,
 	})
 
 	h.Unlock()
@@ -80,12 +89,42 @@ func (h *Heap) LastFilter() *Filter {
 	return h.filters[len(h.filters)-1]
 }
 
-func (h *Heap) context(s *smap.SMap, b, a int) *smap.SMap {
+func (h *Heap) IncreaseCtx() bool {
+	last := h.LastFilter()
+
+	if last.ctx.smap == nil {
+		return false // not filtered
+	}
+
+	// increase context
+	ctx := context{
+		last.ctx.smap,
+		last.ctx.b + 1,
+		last.ctx.a + 1,
+	}
+
+	s := h.appendCtx(last.ctx.smap, ctx)
+
+	h.Lock()
+
+	last.ctx = ctx
+	last.smap = s
+
+	h.Unlock()
+
+	return true
+}
+
+func (h *Heap) DecreaseCtx() bool {
+	return true // TODO
+}
+
+func (h *Heap) appendCtx(s *smap.SMap, ctx context) *smap.SMap {
 	o := h.SMap()
 	r := make(smap.SMap, 0, len(*o))
 
 	for grp, str := range *s {
-		for _, b := range (*o)[max((str.Nr-1)-b, 0) : str.Nr-1] {
+		for _, b := range (*o)[max((str.Nr-1)-ctx.b, 0) : str.Nr-1] {
 			b.Grp = grp + 1
 			r = append(r, b)
 		}
@@ -93,7 +132,7 @@ func (h *Heap) context(s *smap.SMap, b, a int) *smap.SMap {
 		str.Grp = grp + 1
 		r = append(r, str)
 
-		for _, a := range (*o)[str.Nr:min(str.Nr+a, len(*o))] {
+		for _, a := range (*o)[str.Nr:min(str.Nr+ctx.a, len(*o))] {
 			a.Grp = grp + 1
 			r = append(r, a)
 		}

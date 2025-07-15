@@ -374,6 +374,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.ctx.ToggleWrap()
 					ui.view.Preserve()
 
+				case tcell.KeyCtrlJ:
+					if heap.DecreaseCtx() {
+						ui.view.Reset()
+					}
+
+				case tcell.KeyCtrlK:
+					if heap.IncreaseCtx() {
+						ui.view.Reset()
+					}
+
 				case tcell.KeyCtrlV:
 					ui.root.GetClipboard()
 
@@ -478,7 +488,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						ui.change(ui.ctx.Last())
 					}
 
-				case tcell.KeyDelete, tcell.KeyCtrlK:
+				case tcell.KeyDelete:
 					ui.prompt.DelRune(false)
 
 				case tcell.KeyBackspace2:

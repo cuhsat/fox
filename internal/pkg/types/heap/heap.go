@@ -199,7 +199,7 @@ func (h *Heap) Reload() {
 	// resets filters
 	h.filters = h.filters[:0]
 	h.filters = append(h.filters, &Filter{
-		"", nil, h.smap,
+		"", nil, h.smap, context{},
 	})
 
 	h.Unlock()
