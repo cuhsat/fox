@@ -46,7 +46,7 @@ func (v *View) textRender(p *panel) {
 	v.nr = 0
 
 	i := 0
-	l := len(buf.Lines)
+	// l := len(buf.Lines)
 
 	// render lines
 	var color tcell.Style
@@ -61,9 +61,9 @@ func (v *View) textRender(p *panel) {
 		if line.Nr == "--" {
 			v.print(lineX, lineY, strings.Repeat("―", maxW), themes.Subtext1)
 
-			if v.last.Y < l {
-				v.last.Y++
-			}
+			// if v.last.Y < l {
+			v.last.Y++
+			// }
 
 			continue
 		}

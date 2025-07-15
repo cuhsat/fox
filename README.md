@@ -17,8 +17,10 @@ go install github.com/hiforensics/fox@latest
 * In-memory virtual filesystem
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)
+* Build-in scroll past end ability
 * Build-in canonical hex view of files
 * Build-in regular expression filtering
+* Build-in dynamic finding context window
 * Build-in ASCII and Unicode string carving
 * Build-in parser for Windows event log EVTX files
 * Build-in sniffer for CSV delimiter formats
