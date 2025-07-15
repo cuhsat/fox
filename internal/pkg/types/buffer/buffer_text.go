@@ -11,6 +11,7 @@ type TextBuffer struct {
 	Buffer
 	Y int
 	N int
+	S int
 
 	Lines chan TextLine
 	Parts chan TextPart
@@ -76,7 +77,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		fs := ctx.Heap.Filters()
 
-		sep, grp, g := 0, 0, 1
+		grp, num := 0, 1
 
 		for y, str := range (*buf.SMap)[buf.Y:] {
 			if y >= ctx.H {
@@ -84,10 +85,10 @@ func Text(ctx *Context) (buf TextBuffer) {
 			}
 
 			// insert context separator
-			if grp != str.Grp && g > 1 {
+			if grp != str.Grp && num > 1 {
 				buf.Lines <- TextLine{Line{"--", str.Grp, ""}}
-				sep++
-				g = 1
+				buf.S++
+				num = 1
 			}
 
 			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
@@ -99,7 +100,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 				for _, i := range f.Regex.FindAllStringIndex(s, -1) {
 					buf.Parts <- TextPart{Part{
 						text.Len(s[:i[0]]),
-						y + sep,
+						y + buf.S,
 						str.Grp,
 						s[i[0]:i[1]],
 					}}
@@ -107,7 +108,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			}
 
 			grp = str.Grp
-			g++
+			num++
 		}
 	}()
 
