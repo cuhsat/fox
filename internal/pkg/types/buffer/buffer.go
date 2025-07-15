@@ -43,8 +43,10 @@ type Context struct {
 }
 
 func (ctx *Context) Hash() string {
-	return fmt.Sprintf("%s#%d:%t:%t@%d:%d",
+	return fmt.Sprintf("%s[%d:%d]#%d:%t:%t@%d:%d",
 		ctx.Heap.LastFilter().Pattern,
+		ctx.Heap.LastFilter().Context.B,
+		ctx.Heap.LastFilter().Context.A,
 		ctx.Heap.Len(),
 		ctx.Numbers,
 		ctx.Wrap,

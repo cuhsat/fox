@@ -8,15 +8,15 @@ import (
 
 type Filter struct {
 	Pattern string         // filter pattern
+	Context context        // filter context
 	Regex   *regexp.Regexp // filter regex
 	smap    *smap.SMap     // filter string map
-	ctx     context        // filter context
 }
 
 type context struct {
+	B    int        // context before
+	A    int        // context after
 	smap *smap.SMap // context source
-	b    int        // context before
-	a    int        // context after
 }
 
 func (h *Heap) AddFilter(pattern string, b, a int) {
@@ -24,16 +24,16 @@ func (h *Heap) AddFilter(pattern string, b, a int) {
 	s := h.SMap().Grep(re)
 
 	// add global context
-	ctx := context{s, b, a}
+	ctx := context{b, a, s}
 
 	if b+a > 0 {
-		s = h.appendCtx(s, ctx)
+		s = h.addContext(s, ctx)
 	}
 
 	h.Lock()
 
 	h.filters = append(h.filters, &Filter{
-		pattern, re, s, ctx,
+		pattern, ctx, re, s,
 	})
 
 	h.Unlock()
@@ -89,25 +89,25 @@ func (h *Heap) LastFilter() *Filter {
 	return h.filters[len(h.filters)-1]
 }
 
-func (h *Heap) IncreaseCtx() bool {
+func (h *Heap) IncContext() bool {
 	last := h.LastFilter()
 
-	if last.ctx.smap == nil {
+	if last.Context.smap == nil {
 		return false // not filtered
 	}
 
 	// increase context
 	ctx := context{
-		last.ctx.smap,
-		last.ctx.b + 1,
-		last.ctx.a + 1,
+		min(last.Context.B+1, len(*h.filters[0].smap)),
+		min(last.Context.A+1, len(*h.filters[0].smap)),
+		last.Context.smap,
 	}
 
-	s := h.appendCtx(last.ctx.smap, ctx)
+	s := h.addContext(last.Context.smap, ctx)
 
 	h.Lock()
 
-	last.ctx = ctx
+	last.Context = ctx
 	last.smap = s
 
 	h.Unlock()
@@ -115,16 +115,41 @@ func (h *Heap) IncreaseCtx() bool {
 	return true
 }
 
-func (h *Heap) DecreaseCtx() bool {
-	return true // TODO
+func (h *Heap) DecContext() bool {
+	last := h.LastFilter()
+
+	if last.Context.smap == nil {
+		return false // not filtered
+	}
+
+	// decrease context
+	ctx := context{
+		max(last.Context.B-1, 0),
+		max(last.Context.A-1, 0),
+		last.Context.smap,
+	}
+
+	s := h.addContext(last.Context.smap, ctx)
+
+	h.Lock()
+
+	last.Context = ctx
+	last.smap = s
+
+	h.Unlock()
+
+	return true
 }
 
-func (h *Heap) appendCtx(s *smap.SMap, ctx context) *smap.SMap {
-	o := h.SMap()
+func (h *Heap) addContext(s *smap.SMap, ctx context) *smap.SMap {
+	h.RLock()
+	o := h.filters[max(len(h.filters)-2, 0)].smap
+	h.RUnlock()
+
 	r := make(smap.SMap, 0, len(*o))
 
 	for grp, str := range *s {
-		for _, b := range (*o)[max((str.Nr-1)-ctx.b, 0) : str.Nr-1] {
+		for _, b := range (*o)[max((str.Nr-1)-ctx.B, 0) : str.Nr-1] {
 			b.Grp = grp + 1
 			r = append(r, b)
 		}
@@ -132,7 +157,7 @@ func (h *Heap) appendCtx(s *smap.SMap, ctx context) *smap.SMap {
 		str.Grp = grp + 1
 		r = append(r, str)
 
-		for _, a := range (*o)[str.Nr:min(str.Nr+ctx.a, len(*o))] {
+		for _, a := range (*o)[str.Nr:min(str.Nr+ctx.A, len(*o))] {
 			a.Grp = grp + 1
 			r = append(r, a)
 		}

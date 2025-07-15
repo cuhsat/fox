@@ -144,7 +144,7 @@ func (v *View) ScrollUp(delta int) {
 }
 
 func (v *View) ScrollDown(delta int) {
-	v.delta.Y = min(v.delta.Y+delta, v.last.Y)
+	v.delta.Y = min(v.delta.Y+delta, len(*v.smap)-1)
 }
 
 func (v *View) ScrollLeft(delta int) {
