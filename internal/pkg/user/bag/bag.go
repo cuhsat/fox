@@ -100,8 +100,8 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 	bag.w.SetTime(time.Now(), fi.ModTime())
 	bag.w.SetHash(sum)
 
-	for _, s := range *h.SMap() {
-		bag.w.SetLine(s.Nr, s.Str)
+	for _, str := range *h.FMap() {
+		bag.w.SetLine(str.Nr, str.Str)
 	}
 
 	bag.w.Flush()

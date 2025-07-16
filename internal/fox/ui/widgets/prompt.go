@@ -49,18 +49,18 @@ func NewPrompt(ctx *context.Context) *Prompt {
 }
 
 func (p *Prompt) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
-	var n int
+	var fl, fc int
 	var fs []string
 
 	if hs != nil {
 		_, heap := hs.Heap()
-		n = heap.LastCount()
+		fl, fc = heap.LastCount()
 		fs = heap.Patterns()
 	}
 
 	m := p.fmtMode()
 	i := p.fmtInput(fs)
-	s := p.fmtStatus(n)
+	s := p.fmtStatus(fl, fc)
 
 	// render blank line
 	p.blank(x, y, w, themes.Surface0)
@@ -221,10 +221,14 @@ func (p *Prompt) fmtInput(fs []string) string {
 	return sb.String()
 }
 
-func (p *Prompt) fmtStatus(n int) string {
+func (p *Prompt) fmtStatus(n, m int) string {
 	var sb strings.Builder
 
-	sb.WriteString(fmt.Sprintf(" %d ", n))
+	if m > 0 {
+		sb.WriteString(fmt.Sprintf(" %d × %d ", n, m))
+	} else {
+		sb.WriteString(fmt.Sprintf(" %d ", n))
+	}
 
 	if p.ctx.IsFollow() {
 		sb.WriteRune(follow)

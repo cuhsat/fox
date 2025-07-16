@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/cuhsat/fox/internal/fox"
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
@@ -59,6 +60,7 @@ func Shell() {
 		}
 	}
 
+	fmt.Println(fox.Product, fox.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shell, "-l") // login shell

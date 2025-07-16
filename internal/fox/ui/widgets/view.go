@@ -13,7 +13,7 @@ type View struct {
 	cache map[string]state
 
 	heap *heap.Heap
-	smap *smap.SMap
+	fmap *smap.SMap
 
 	nr int
 
@@ -22,7 +22,7 @@ type View struct {
 }
 
 type state struct {
-	smap *smap.SMap
+	fmap *smap.SMap
 
 	nr int
 
@@ -73,16 +73,16 @@ func (v *View) Goto(s string) {
 }
 
 func (v *View) Preserve() {
-	if v.smap != nil && len(*v.smap) > v.delta.Y {
-		v.nr = (*v.smap)[v.delta.Y].Nr
+	if v.fmap != nil && len(*v.fmap) > v.delta.Y {
+		v.nr = (*v.fmap)[v.delta.Y].Nr
 	}
 }
 
 func (v *View) SaveState(key string) {
-	if v.smap != nil && len(*v.smap) > v.delta.Y {
+	if v.fmap != nil && len(*v.fmap) > v.delta.Y {
 		v.cache[key] = state{
-			smap: v.smap,
-			nr:   (*v.smap)[v.delta.Y].Nr,
+			fmap: v.fmap,
+			nr:   (*v.fmap)[v.delta.Y].Nr,
 			delta: point{
 				v.delta.X,
 				v.delta.Y,
@@ -92,9 +92,9 @@ func (v *View) SaveState(key string) {
 }
 
 func (v *View) LoadState(key string) {
-	if v.smap != nil {
+	if v.fmap != nil {
 		if s, ok := v.cache[key]; ok {
-			if len(*s.smap) == len(*v.smap) {
+			if len(*s.fmap) == len(*v.fmap) {
 				v.delta = s.delta
 			} else {
 				v.nr = s.nr
@@ -112,15 +112,15 @@ func (v *View) ScrollLine() {
 		return
 	}
 
-	if v.smap == nil || len(*v.smap) <= 1 {
+	if v.fmap == nil || len(*v.fmap) <= 1 {
 		return
 	}
 
-	v.nr = (*v.smap)[v.delta.Y].Nr
+	v.nr = (*v.fmap)[v.delta.Y].Nr
 
-	for y := v.delta.Y; y < len(*v.smap); y++ {
-		if v.nr < (*v.smap)[y].Nr {
-			v.nr = (*v.smap)[y].Nr
+	for y := v.delta.Y; y < len(*v.fmap); y++ {
+		if v.nr < (*v.fmap)[y].Nr {
+			v.nr = (*v.fmap)[y].Nr
 			break
 		}
 	}

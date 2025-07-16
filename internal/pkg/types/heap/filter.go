@@ -10,32 +10,39 @@ type Filter struct {
 	Pattern string         // filter pattern
 	Context Context        // filter context
 	Regex   *regexp.Regexp // filter regex
-	smap    *smap.SMap     // filter string map
+	fmap    *smap.SMap     // filter string map
 }
 
 type Context struct {
 	B    int        // context before
 	A    int        // context after
-	smap *smap.SMap // context source
+	base *smap.SMap // context base map
 }
 
 func (h *Heap) AddFilter(pattern string, b, a int) {
 	re := regexp.MustCompile(pattern)
-	s := h.SMap().Grep(re)
+
+	fmap := h.FMap()
+	last := h.LastFilter()
+
+	// use only the base of the context
+	if last.Context.base != nil {
+		fmap = last.Context.base
+	}
+
+	fmap = fmap.Grep(re)
 
 	// add global context
-	ctx := Context{b, a, s}
+	ctx := Context{b, a, fmap}
 
 	if b+a > 0 {
-		s = h.addContext(s, ctx)
+		fmap = h.addContext(fmap, ctx)
 	}
 
 	h.Lock()
-
 	h.filters = append(h.filters, &Filter{
-		pattern, ctx, re, s,
+		pattern, ctx, re, fmap,
 	})
-
 	h.Unlock()
 }
 
@@ -77,10 +84,17 @@ func (h *Heap) Patterns() []string {
 	return ps
 }
 
-func (h *Heap) LastCount() int {
+func (h *Heap) LastCount() (int, int) {
 	h.RLock()
 	defer h.RUnlock()
-	return len(*h.LastFilter().smap)
+	last := h.LastFilter()
+	fmap := last.fmap
+
+	if last.Context.base != nil {
+		fmap = last.Context.base
+	}
+
+	return len(*fmap), (last.Context.B + last.Context.A) / 2
 }
 
 func (h *Heap) LastFilter() *Filter {
@@ -95,79 +109,49 @@ func (h *Heap) HasContext() bool {
 	return last.Context.B+last.Context.A > 0
 }
 
-func (h *Heap) IncContext() bool {
+func (h *Heap) ModContext(delta int) bool {
 	last := h.LastFilter()
 
-	if last.Context.smap == nil {
+	if last.Context.base == nil {
 		return false // not filtered
 	}
 
-	// increase context
+	// modify current context
 	ctx := Context{
-		min(last.Context.B+1, len(*h.filters[0].smap)),
-		min(last.Context.A+1, len(*h.filters[0].smap)),
-		last.Context.smap,
+		min(max(last.Context.B+delta, 0), len(*h.filters[0].fmap)),
+		min(max(last.Context.A+delta, 0), len(*h.filters[0].fmap)),
+		last.Context.base,
 	}
 
-	s := h.addContext(last.Context.smap, ctx)
+	// readd current context
+	fmap := h.addContext(last.Context.base, ctx)
 
 	h.Lock()
-
 	last.Context = ctx
-	last.smap = s
-
-	h.Unlock()
-
-	return true
-}
-
-func (h *Heap) DecContext() bool {
-	last := h.LastFilter()
-
-	if last.Context.smap == nil {
-		return false // not filtered
-	}
-
-	// decrease context
-	ctx := Context{
-		max(last.Context.B-1, 0),
-		max(last.Context.A-1, 0),
-		last.Context.smap,
-	}
-
-	s := h.addContext(last.Context.smap, ctx)
-
-	h.Lock()
-
-	last.Context = ctx
-	last.smap = s
-
+	last.fmap = fmap
 	h.Unlock()
 
 	return true
 }
 
 func (h *Heap) addContext(s *smap.SMap, ctx Context) *smap.SMap {
-	h.RLock()
-	o := h.filters[max(len(h.filters)-2, 0)].smap
-	h.RUnlock()
-
-	r := make(smap.SMap, 0, len(*o))
+	base := h.SMap()
+	fmap := make(smap.SMap, 0, len(*base))
 
 	for grp, str := range *s {
-		for _, b := range (*o)[max((str.Nr-1)-ctx.B, 0) : str.Nr-1] {
+		for _, b := range (*base)[max((str.Nr-1)-ctx.B, 0) : str.Nr-1] {
 			b.Grp = grp + 1
-			r = append(r, b)
+			fmap = append(fmap, b)
 		}
 
 		str.Grp = grp + 1
-		r = append(r, str)
+		fmap = append(fmap, str)
 
-		for _, a := range (*o)[str.Nr:min(str.Nr+ctx.A, len(*o))] {
+		for _, a := range (*base)[str.Nr:min(str.Nr+ctx.A, len(*base))] {
 			a.Grp = grp + 1
-			r = append(r, a)
+			fmap = append(fmap, a)
 		}
 	}
 
-	return &r
+	return &fmap
 }
