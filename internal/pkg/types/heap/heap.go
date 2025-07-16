@@ -57,7 +57,13 @@ func (h *Heap) MMap() *mmap.MMap {
 func (h *Heap) SMap() *smap.SMap {
 	h.RLock()
 	defer h.RUnlock()
-	return h.LastFilter().smap
+	return h.smap
+}
+
+func (h *Heap) FMap() *smap.SMap {
+	h.RLock()
+	defer h.RUnlock()
+	return h.LastFilter().fmap
 }
 
 func (h *Heap) Len() int64 {
@@ -81,18 +87,18 @@ func (h *Heap) Cache() Cache {
 func (h *Heap) Bytes() []byte {
 	var buf bytes.Buffer
 
-	f := h.LastFilter()
+	fmap := h.FMap()
 
 	h.RLock()
 
-	for i, s := range *f.smap {
+	for i, s := range *fmap {
 		_, err := buf.WriteString(s.Str)
 
 		if err != nil {
 			sys.Error(err)
 		}
 
-		if i < len(*f.smap)-1 {
+		if i < len(*fmap)-1 {
 			buf.WriteByte('\n')
 		}
 	}

@@ -24,7 +24,7 @@ func (v *View) textRender(p *panel) {
 		H:       p.H,
 	})
 
-	v.smap = buf.SMap
+	v.fmap = buf.FMap
 
 	// set line width
 	maxW := p.W
@@ -39,7 +39,7 @@ func (v *View) textRender(p *panel) {
 
 	// set preserved line
 	if v.nr > 0 {
-		y, _ := v.smap.Find(v.nr)
+		y, _ := v.fmap.Find(v.nr)
 		v.delta.Y = min(y, v.last.Y)
 	}
 
@@ -102,17 +102,17 @@ func (v *View) textGoto(s string) {
 	switch s[0] {
 	case '+':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.delta.Y].Nr + i
+		nr = (*v.fmap)[v.delta.Y].Nr + i
 
 	case '-':
 		i, _ := strconv.Atoi(s[1:])
-		nr = (*v.smap)[v.delta.Y].Nr - i
+		nr = (*v.fmap)[v.delta.Y].Nr - i
 
 	default:
 		nr, _ = strconv.Atoi(s)
 	}
 
-	if y, ok := v.smap.Find(nr); ok {
+	if y, ok := v.fmap.Find(nr); ok {
 		v.ScrollTo(v.delta.X, y)
 	}
 }

@@ -50,7 +50,7 @@ func (e *Examiner) Query(s string, h *heap.Heap) {
 
 	var sb strings.Builder
 
-	for _, str := range *e.heap.SMap() {
+	for _, str := range *e.heap.FMap() {
 		sb.WriteString(fmt.Sprintf("Line %d: %s\n", str.Nr, str.Str))
 	}
 

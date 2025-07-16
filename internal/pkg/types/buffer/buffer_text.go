@@ -16,7 +16,7 @@ type TextBuffer struct {
 	Lines chan TextLine
 	Parts chan TextPart
 
-	SMap *smap.SMap
+	FMap *smap.SMap
 }
 
 type TextLine struct {
@@ -41,32 +41,32 @@ func Text(ctx *Context) (buf TextBuffer) {
 	cache, key := ctx.Heap.Cache(), ctx.Hash()
 
 	if val, ok := cache[key]; ok {
-		buf.SMap = val.(*smap.SMap)
+		buf.FMap = val.(*smap.SMap)
 	} else {
-		buf.SMap = ctx.Heap.SMap()
+		buf.FMap = ctx.Heap.FMap()
 
-		if ctx.Wrap && buf.SMap.CanIndent() {
-			buf.SMap = buf.SMap.Indent()
+		if ctx.Wrap && buf.FMap.CanIndent() {
+			buf.FMap = buf.FMap.Indent()
 		} else if ctx.Wrap {
-			buf.SMap = buf.SMap.Wrap(ctx.W)
+			buf.FMap = buf.FMap.Wrap(ctx.W)
 		} else {
-			buf.SMap = buf.SMap.Render()
+			buf.FMap = buf.FMap.Render()
 		}
 
-		cache[key] = buf.SMap
+		cache[key] = buf.FMap
 	}
 
 	buf.Y = ctx.Y
 
 	if ctx.Nr > 0 {
-		lastY := max(len(*buf.SMap)-1, 0)
+		lastY := max(len(*buf.FMap)-1, 0)
 
 		// find the requested line
-		buf.Y, _ = buf.SMap.Find(ctx.Nr)
+		buf.Y, _ = buf.FMap.Find(ctx.Nr)
 		buf.Y = min(buf.Y, lastY)
 	}
 
-	buf.W, buf.H = buf.SMap.Size()
+	buf.W, buf.H = buf.FMap.Size()
 
 	buf.Lines = make(chan TextLine, Size)
 	buf.Parts = make(chan TextPart, Size)
@@ -79,7 +79,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		grp, num := 0, 1
 
-		for y, str := range (*buf.SMap)[buf.Y:] {
+		for y, str := range (*buf.FMap)[buf.Y:] {
 			if y >= ctx.H {
 				return
 			}

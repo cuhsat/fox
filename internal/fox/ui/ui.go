@@ -165,19 +165,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				if btns&tcell.ButtonMiddle != 0 {
 					ui.root.GetClipboard()
 				} else if btns&tcell.WheelUp != 0 {
-					switch ui.ctx.Mode() {
-					case mode.Grep:
-						heap.DecContext()
-					default:
-						ui.view.ScrollUp(wheel)
-					}
+					ui.view.ScrollUp(wheel)
 				} else if btns&tcell.WheelDown != 0 {
-					switch ui.ctx.Mode() {
-					case mode.Grep:
-						heap.IncContext()
-					default:
-						ui.view.ScrollDown(wheel)
-					}
+					ui.view.ScrollDown(wheel)
 				} else if btns&tcell.WheelLeft != 0 {
 					ui.view.ScrollLeft(wheel)
 				} else if btns&tcell.WheelRight != 0 {
@@ -385,12 +375,12 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.view.Preserve()
 
 				case tcell.KeyCtrlJ:
-					if heap.DecContext() {
+					if heap.ModContext(-1) {
 						ui.view.Reset()
 					}
 
 				case tcell.KeyCtrlK:
-					if heap.IncContext() {
+					if heap.ModContext(+1) {
 						ui.view.Reset()
 					}
 
