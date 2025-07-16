@@ -107,7 +107,7 @@ func (v *View) LoadState(key string) {
 }
 
 func (v *View) ScrollLine() {
-	if v.ctx.Mode().Static() {
+	if v.ctx.Mode().Static() || v.heap.HasContext() {
 		v.ScrollDown(1)
 		return
 	}
@@ -144,7 +144,7 @@ func (v *View) ScrollUp(delta int) {
 }
 
 func (v *View) ScrollDown(delta int) {
-	v.delta.Y = min(v.delta.Y+delta, len(*v.smap)-1)
+	v.delta.Y = min(v.delta.Y+delta, v.last.Y)
 }
 
 func (v *View) ScrollLeft(delta int) {

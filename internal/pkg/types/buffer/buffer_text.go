@@ -59,7 +59,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 	buf.Y = ctx.Y
 
 	if ctx.Nr > 0 {
-		lastY := max(len(*buf.SMap)-ctx.H, 0)
+		lastY := max(len(*buf.SMap)-1, 0)
 
 		// find the requested line
 		buf.Y, _ = buf.SMap.Find(ctx.Nr)
@@ -85,7 +85,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			}
 
 			// insert context separator
-			if grp != str.Grp && num > 1 {
+			if ctx.Context && grp != str.Grp && num > 1 {
 				buf.Lines <- TextLine{Line{"--", str.Grp, ""}}
 				buf.S++
 				num = 1

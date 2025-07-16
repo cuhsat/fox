@@ -8,12 +8,12 @@ import (
 
 type Filter struct {
 	Pattern string         // filter pattern
-	Context context        // filter context
+	Context Context        // filter context
 	Regex   *regexp.Regexp // filter regex
 	smap    *smap.SMap     // filter string map
 }
 
-type context struct {
+type Context struct {
 	B    int        // context before
 	A    int        // context after
 	smap *smap.SMap // context source
@@ -24,7 +24,7 @@ func (h *Heap) AddFilter(pattern string, b, a int) {
 	s := h.SMap().Grep(re)
 
 	// add global context
-	ctx := context{b, a, s}
+	ctx := Context{b, a, s}
 
 	if b+a > 0 {
 		s = h.addContext(s, ctx)
@@ -89,6 +89,12 @@ func (h *Heap) LastFilter() *Filter {
 	return h.filters[len(h.filters)-1]
 }
 
+func (h *Heap) HasContext() bool {
+	last := h.LastFilter()
+
+	return last.Context.B+last.Context.A > 0
+}
+
 func (h *Heap) IncContext() bool {
 	last := h.LastFilter()
 
@@ -97,7 +103,7 @@ func (h *Heap) IncContext() bool {
 	}
 
 	// increase context
-	ctx := context{
+	ctx := Context{
 		min(last.Context.B+1, len(*h.filters[0].smap)),
 		min(last.Context.A+1, len(*h.filters[0].smap)),
 		last.Context.smap,
@@ -123,7 +129,7 @@ func (h *Heap) DecContext() bool {
 	}
 
 	// decrease context
-	ctx := context{
+	ctx := Context{
 		max(last.Context.B-1, 0),
 		max(last.Context.A-1, 0),
 		last.Context.smap,
@@ -141,7 +147,7 @@ func (h *Heap) DecContext() bool {
 	return true
 }
 
-func (h *Heap) addContext(s *smap.SMap, ctx context) *smap.SMap {
+func (h *Heap) addContext(s *smap.SMap, ctx Context) *smap.SMap {
 	h.RLock()
 	o := h.filters[max(len(h.filters)-2, 0)].smap
 	h.RUnlock()
