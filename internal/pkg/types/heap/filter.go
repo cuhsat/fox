@@ -149,7 +149,7 @@ func (h *Heap) addContext(s *smap.SMap, ctx Context) *smap.SMap {
 			fmap = append(fmap, b)
 		}
 
-		str.Grp = grp + 1 // TODO: Race Conditions
+		str.Grp = grp + 1
 		fmap = append(fmap, str)
 
 		for _, a := range (*base)[str.Nr:min(str.Nr+ctx.A, len(*base))] {
