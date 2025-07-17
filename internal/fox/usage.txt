@@ -5,8 +5,9 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Usage: fox [--print] [--hex] [--counts] [--strings=MIN]
+Usage: fox [--print] [--hex] [--counts]
            [--hash={md5|sha1|sha256|sha3|sha3-224|sha3-256|sha3-384|sha3-512}]
+           [--strings=MINIMUM]
            [--deflate=FOLDER]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...] [--before|after=NUMBER]
@@ -25,7 +26,7 @@ Console:
                            output hash sum of file (default: sha256)
 
 Strings:
-  -s, --strings=MIN        carve ASCII and Unicode strings (default: 3)
+  -s, --strings=MINIMUM    carve ASCII and Unicode strings (default: 3)
 
 Deflate:
   -d, --deflate=FOLDER     deflate all files from archive (default: out)
