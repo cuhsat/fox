@@ -44,7 +44,7 @@ func Format(path string) string {
 
 	var sb strings.Builder
 
-	// prepad all rows
+	// pad all rows
 	for _, rows := range cols {
 		for i, row := range rows {
 			sb.WriteString(text.Pad(row, ls[i]+1))

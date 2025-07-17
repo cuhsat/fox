@@ -12,12 +12,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
 )
 
-// defaults
 const (
 	Bag = "evidence"
 )
 
-// options
 const (
 	Raw   = "raw"
 	Json  = "json"

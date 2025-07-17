@@ -75,7 +75,7 @@ func (fd *FileData) Name() string {
 }
 
 func (fd *FileData) Read(b []byte) (n int, err error) {
-	n, err = fd.ReadAt(b, int64(fd.pos.Load()))
+	n, err = fd.ReadAt(b, fd.pos.Load())
 
 	fd.pos.Add(int64(n))
 
@@ -185,7 +185,7 @@ func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	if off > int64(len(fd.buf)) {
-		fd.Truncate(off)
+		_ = fd.Truncate(off)
 	}
 
 	n = copy(fd.buf[off:], b)
