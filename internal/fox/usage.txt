@@ -21,9 +21,12 @@ Console:
   -p, --print              print to console (no UI)
   -x, --hex                output file in hex / start in HEX mode
   -w, --counts             output file line and byte counts
-  -s, --strings=MIN        output file ASCII and Unicode strings (default: 3)
   -H, --hash={md5,sha1,sha256,sha3,sha3-224,sha3-256,sha3-384,sha3-512}
                            output hash sum of file (default: sha256)
+
+Strings:
+  -s, --strings=MIN        carve ASCII and Unicode strings (default: 3)
+
 Deflate:
   -d, --deflate=FOLDER     deflate all files from archive (default: out)
 
