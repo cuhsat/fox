@@ -113,12 +113,12 @@ func printGrep(ctx *buffer.Context) {
 		return // ignore empty files
 	}
 
-	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
+	fmt.Println(text.Title(ctx.Heap.String(), termW))
 	for l := range buffer.Text(ctx).Lines {
 		if l.Nr == "--" {
 			fmt.Println("--")
 		} else {
-			fmt.Printf("%s: %s\n", l.Nr, l)
+			fmt.Printf("%s:%s\n", l.Nr, l)
 		}
 	}
 }
