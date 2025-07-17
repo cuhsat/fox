@@ -35,6 +35,7 @@ File limits:
 
 Line filter:
   -e, --regexp=PATTERN     filter for lines that match pattern
+  -C, --context=NUMBER     number of lines surrounding context of match
   -B, --before=NUMBER      number of lines leading context before match
   -A, --after=NUMBER       number of lines trailing context after match
 
