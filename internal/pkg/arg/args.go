@@ -124,6 +124,9 @@ func parse() *Args {
 	filters := GetFilters()
 
 	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
+
+	C := flag.IntP("context", "C", 0, "number of lines surrounding context of match")
+
 	flag.IntVarP(&filters.Before, "before", "B", 0, "number of lines leading context before match")
 	flag.IntVarP(&filters.After, "after", "A", 0, "number of lines trailing context after match")
 
@@ -196,6 +199,12 @@ func parse() *Args {
 
 	if *tail {
 		limits.Tail = *counts
+	}
+
+	// line filter
+	if *C > 0 {
+		filters.Before = *C
+		filters.After = *C
 	}
 
 	// aliases
