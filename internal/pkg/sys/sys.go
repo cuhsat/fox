@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	vfs = make(map[string]File, 0)
+	vfs = make(map[string]File)
 )
 
 func Exit(v ...any) {
@@ -39,7 +39,7 @@ func Exec(cmds []string) File {
 			out, err := cmd.CombinedOutput()
 
 			if err == nil {
-				f.WriteString(text.UnEscape(string(out)))
+				_, _ = f.WriteString(text.UnEscape(string(out)))
 			} else {
 				break
 			}
@@ -187,7 +187,7 @@ func OpenFile(name string) File {
 		Panic(err)
 	}
 
-	return (File)(f)
+	return f
 }
 
 func DumpStr(data string) File {

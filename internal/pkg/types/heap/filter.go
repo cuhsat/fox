@@ -40,9 +40,11 @@ func (h *Heap) AddFilter(pattern string, b, a int) {
 	}
 
 	h.Lock()
+
 	h.filters = append(h.filters, &Filter{
 		pattern, ctx, re, fmap,
 	})
+
 	h.Unlock()
 }
 
@@ -87,6 +89,7 @@ func (h *Heap) Patterns() []string {
 func (h *Heap) LastCount() (int, int) {
 	h.RLock()
 	defer h.RUnlock()
+
 	last := h.LastFilter()
 	fmap := last.fmap
 
@@ -116,10 +119,12 @@ func (h *Heap) ModContext(delta int) bool {
 		return false // not filtered
 	}
 
+	m := len(*h.SMap())
+
 	// modify current context
 	ctx := Context{
-		min(max(last.Context.B+delta, 0), len(*h.filters[0].fmap)),
-		min(max(last.Context.A+delta, 0), len(*h.filters[0].fmap)),
+		min(max(last.Context.B+delta, 0), m),
+		min(max(last.Context.A+delta, 0), m),
 		last.Context.base,
 	}
 
@@ -144,7 +149,7 @@ func (h *Heap) addContext(s *smap.SMap, ctx Context) *smap.SMap {
 			fmap = append(fmap, b)
 		}
 
-		str.Grp = grp + 1
+		str.Grp = grp + 1 // TODO: Race Conditions
 		fmap = append(fmap, str)
 
 		for _, a := range (*base)[str.Nr:min(str.Nr+ctx.A, len(*base))] {

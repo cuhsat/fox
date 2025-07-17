@@ -36,7 +36,7 @@ func New() *Examiner {
 }
 
 func (e *Examiner) User(s string) {
-	e.File.WriteString(fmt.Sprintf("%s %s\n", text.User, s))
+	_, _ = e.File.WriteString(fmt.Sprintf("%s %s\n", text.User, s))
 }
 
 func (e *Examiner) Query(s string, h *heap.Heap) {
@@ -95,9 +95,9 @@ func (e *Examiner) Listen() {
 		}
 
 		// response chunk
-		e.File.WriteString(s)
+		_, _ = e.File.WriteString(s)
 
 		// response end
-		t = (s == "\n\n")
+		t = s == "\n\n"
 	}
 }
