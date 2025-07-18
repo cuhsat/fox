@@ -48,6 +48,8 @@ func (v *View) textRender(p *panel) {
 
 	i := 0
 
+	ai := v.heap.Type == types.Prompt
+
 	// render lines
 	var color tcell.Style
 
@@ -58,7 +60,7 @@ func (v *View) textRender(p *panel) {
 		i++
 
 		// context separators
-		if line.Nr == "--" {
+		if (ai && line.Str == "--") || line.Nr == "--" {
 			v.print(lineX, lineY, strings.Repeat("―", maxW), themes.Subtext1)
 			continue
 		}
@@ -71,7 +73,7 @@ func (v *View) textRender(p *panel) {
 
 		// text value
 		if len(line.Str) > 0 {
-			if v.heap.Type == types.Prompt && strings.HasPrefix(line.Str, text.User) {
+			if ai && strings.HasPrefix(line.Str, text.User) {
 				color = themes.Subtext2
 			} else {
 				color = themes.Base

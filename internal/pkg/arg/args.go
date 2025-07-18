@@ -46,6 +46,7 @@ type ArgsBag struct {
 	Path string
 	Mode string
 	Key  string
+	Url  string
 }
 
 type ArgsOpt struct {
@@ -136,13 +137,15 @@ func parse() *Args {
 	// evidence bag
 	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "file name of evidence bag")
 	flag.StringVarP(&args.Bag.Mode, "mode", "m", "", "output mode")
-	flag.StringVarP(&args.Bag.Key, "key", "k", "", "key phrase for signing with HMAC")
+	flag.StringVarP(&args.Bag.Key, "key", "k", "", "key phrase for bag signing with HMAC")
+	flag.StringVarP(&args.Bag.Url, "url", "u", "", "send evidence bag data to URL")
 
 	if len(args.Bag.Mode) == 0 {
-		flag.Lookup("mode").NoOptDefVal = Raw // default
+		flag.Lookup("mode").NoOptDefVal = Text // default
 	}
 
 	// aliases
+	R := flag.BoolP("raw", "R", false, "export in RAW format")
 	T := flag.BoolP("text", "T", false, "export in TEXT format")
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
@@ -212,6 +215,10 @@ func parse() *Args {
 	}
 
 	// aliases
+	if *R {
+		args.Bag.Mode = Raw
+	}
+
 	if *T {
 		args.Bag.Mode = Text
 	}
