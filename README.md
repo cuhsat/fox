@@ -31,7 +31,7 @@ go install github.com/hiforensics/fox@latest
 * Build-in timestamped input history
 * Build-in analyzing using Ollama supported LLMs like DeepSeek-R1 or Mistral
 * Configurable plugin support for i.e. Fox-IT's Dissect tools
-* Evidence bag formats: Raw, JSON, JSONL, XML, SQLite
+* Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite
 * Evidence bag signing via HMAC-SHA256 passphrase
 * Terminal interface compatible with many terminals
   * With support for copy and bracketed paste

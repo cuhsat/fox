@@ -45,6 +45,9 @@ func New(args arg.ArgsBag) *Bag {
 	}
 
 	switch strings.ToLower(args.Mode) {
+	case arg.Text:
+		w = NewTextWriter()
+		args.Path += ".bag"
 	case arg.Jsonl:
 		w = NewJsonWriter(false)
 		args.Path += ".jsonl"

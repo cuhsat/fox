@@ -18,6 +18,7 @@ const (
 
 const (
 	Raw   = "raw"
+	Text  = "text"
 	Json  = "json"
 	Jsonl = "jsonl"
 	Xml   = "xml"
@@ -83,15 +84,17 @@ func parse() *Args {
 
 	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
 	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
-	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
 	H := flag.StringP("hash", "H", "", "output hash sum of file")
-
-	if *s == 0 {
-		flag.Lookup("strings").NoOptDefVal = "3" // default
-	}
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = "sha256" // default
+	}
+
+	// carve strings
+	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
+
+	if *s == 0 {
+		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
 	// deflate file
@@ -140,6 +143,7 @@ func parse() *Args {
 	}
 
 	// aliases
+	T := flag.BoolP("text", "T", false, "export in TEXT format")
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
 	X := flag.BoolP("xml", "X", false, "export in XML format")
@@ -208,6 +212,10 @@ func parse() *Args {
 	}
 
 	// aliases
+	if *T {
+		args.Bag.Mode = Text
+	}
+
 	if *j {
 		args.Bag.Mode = Json
 	}
