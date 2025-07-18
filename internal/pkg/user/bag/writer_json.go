@@ -36,6 +36,7 @@ type jsonMetadata struct {
 
 type jsonFile struct {
 	Path    string   `json:"path"`
+	Size    int64    `json:"size"`
 	Filters []string `json:"filters"`
 }
 
@@ -50,7 +51,8 @@ type jsonTime struct {
 }
 
 type jsonLine struct {
-	Line int    `json:"line"`
+	Nr   int    `json:"nr"`
+	Grp  int    `json:"grp"`
 	Data string `json:"data"`
 }
 
@@ -93,9 +95,9 @@ func (w *JsonWriter) Flush() {
 	}
 }
 
-func (w *JsonWriter) SetFile(path string, fs []string) {
+func (w *JsonWriter) SetFile(path string, size int64, fs []string) {
 	w.entry.Metadata.File = jsonFile{
-		Path: path, Filters: fs,
+		Path: path, Size: size, Filters: fs,
 	}
 }
 
@@ -115,8 +117,8 @@ func (w *JsonWriter) SetHash(sum []byte) {
 	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *JsonWriter) SetLine(nr int, s string) {
+func (w *JsonWriter) SetLine(nr, grp int, s string) {
 	w.entry.Lines = append(w.entry.Lines, jsonLine{
-		Line: nr, Data: s,
+		Nr: nr, Grp: grp, Data: s,
 	})
 }

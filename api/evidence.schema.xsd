@@ -16,6 +16,7 @@
                       <xs:complexType>
                         <xs:sequence>
                           <xs:element name="path" type="xs:string"/>
+                          <xs:element name="size" type="xs:positiveInteger"/>
                           <xs:sequence>
                             <xs:element name="filter" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
                           </xs:sequence>
@@ -45,11 +46,12 @@
               <xs:element name="lines">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="data" maxOccurs="unbounded">
+                    <xs:element name="line" maxOccurs="unbounded">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
-                            <xs:attribute name="line" type="xs:positiveInteger"/>
+                            <xs:attribute name="nr" type="xs:positiveInteger"/>
+                            <xs:attribute name="grp" type="xs:positiveInteger"/>
                           </xs:extension>
                         </xs:simpleContent>
                       </xs:complexType>

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS files (
     id INTEGER PRIMARY KEY,
     path TEXT NOT NULL,
+    size INTEGER NOT NULL,
     hash TEXT NOT NULL,
     modified INTEGER NOT NULL
 );
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS lines (
     id INTEGER PRIMARY KEY,
     file_id INTEGER NOT NULL,
     nr INTEGER NOT NULL,
+    grp INTEGER NOT NULL,
     value TEXT NOT NULL,
     FOREIGN KEY (file_id) REFERENCES files (id)
 );

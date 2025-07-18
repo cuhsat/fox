@@ -1,3 +1,127 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9d4133bd76246680bc7bac363edf11649b23e1c7ea440e32e752eff15f6a774f
-size 2865
+{
+  "$id": "https://github.com/cuhsat/fox/api/evidence.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence Bag",
+  "description": "Forensic Examiner Evidence Bag",
+  "type": "object",
+  "properties": {
+    "_comment": {
+      "description": "Static program information",
+      "type": "string"
+    },
+    "metadata": {
+      "description": "Evidence metadata",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "Examined file details",
+          "type": "object",
+          "properties": {
+            "path": {
+              "description": "File path and archive identifier",
+              "type": "string"
+            },
+            "size": {
+              "description": "File size in bytes",
+              "type": "number"
+            },
+            "filters": {
+              "description": "Applied content filters",
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "path",
+            "size",
+            "filters"
+          ]
+        },
+        "user": {
+          "description": "Logged in user details",
+          "type": "object",
+          "properties": {
+            "login": {
+              "description": "User login",
+              "type": "string"
+            },
+            "name": {
+              "description": "User full name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "login",
+            "name"
+          ]
+        },
+        "time": {
+          "description": "Evidence saving timestamp",
+          "type": "object",
+          "properties": {
+            "bagged": {
+              "description": "ISO 3338 formated UTC time of bag saving",
+              "type": "string"
+            },
+            "modified": {
+              "description": "ISO 3338 formated UTC time of last file modification",
+              "type": "string"
+            }
+          },
+          "required": [
+            "bagged",
+            "modified"
+          ]
+        },
+        "hash": {
+          "description": "SHA256 hash of the original (compressed) file",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "user",
+        "time",
+        "hash"
+      ]
+    },
+    "lines": {
+      "description": "Saved evidence data",
+      "type": "array",
+      "properties": {
+        "items": {
+          "type": "object",
+          "properties": {
+            "nr": {
+              "description": "Line number",
+              "type": "number"
+            },
+            "grp": {
+              "description": "Line group",
+              "type": "number"
+            },
+            "data": {
+              "description": "Line content",
+              "type": "string"
+            }
+          },
+          "required": [
+            "nr",
+            "grp",
+            "data"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "_comment",
+    "metadata",
+    "lines"
+  ]
+}
