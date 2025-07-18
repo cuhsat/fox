@@ -36,7 +36,7 @@ func New() *Examiner {
 }
 
 func (e *Examiner) User(s string) {
-	_, _ = e.File.WriteString(fmt.Sprintf("%s %s\n", text.User, s))
+	_, _ = e.File.WriteString(fmt.Sprintf("%s %s\n\n", text.User, s))
 }
 
 func (e *Examiner) Query(s string, h *heap.Heap) {
