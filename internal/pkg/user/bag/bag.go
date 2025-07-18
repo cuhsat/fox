@@ -30,11 +30,11 @@ type writer interface {
 	Start()
 	Flush()
 
-	SetFile(path string, fs []string)
+	SetFile(path string, size int64, fs []string)
 	SetUser(usr *user.User)
 	SetTime(bag, mod time.Time)
 	SetHash(sum []byte)
-	SetLine(nr int, s string)
+	SetLine(nr, grp int, s string)
 }
 
 func New(args arg.ArgsBag) *Bag {
@@ -95,13 +95,13 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	bag.w.Start()
 
-	bag.w.SetFile(h.String(), h.Patterns())
+	bag.w.SetFile(h.String(), h.Len(), h.Patterns())
 	bag.w.SetUser(usr)
 	bag.w.SetTime(time.Now(), fi.ModTime())
 	bag.w.SetHash(sum)
 
 	for _, str := range *h.FMap() {
-		bag.w.SetLine(str.Nr, str.Str)
+		bag.w.SetLine(str.Nr, str.Grp, str.Str)
 	}
 
 	bag.w.Flush()

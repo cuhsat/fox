@@ -42,6 +42,7 @@ type xmlMetadata struct {
 
 type xmlFile struct {
 	Path    string   `xml:"path"`
+	Size    int64    `xml:"size"`
 	Filters []string `xml:"filter"`
 }
 
@@ -56,11 +57,12 @@ type xmlTime struct {
 }
 
 type xmlLines struct {
-	Line []xmlLine `xml:"data"`
+	Line []xmlLine `xml:"line"`
 }
 
 type xmlLine struct {
-	Line int    `xml:"line,attr"`
+	Nr   int    `xml:"nr,attr"`
+	Grp  int    `xml:"grp,attr"`
 	Data string `xml:",cdata"`
 }
 
@@ -131,9 +133,9 @@ func (w *XmlWriter) Flush() {
 	}
 }
 
-func (w *XmlWriter) SetFile(path string, fs []string) {
+func (w *XmlWriter) SetFile(path string, size int64, fs []string) {
 	w.entry.Metadata.File = xmlFile{
-		Path: path, Filters: fs,
+		Path: path, Size: size, Filters: fs,
 	}
 }
 
@@ -154,8 +156,8 @@ func (w *XmlWriter) SetHash(sum []byte) {
 	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *XmlWriter) SetLine(nr int, s string) {
+func (w *XmlWriter) SetLine(nr, grp int, s string) {
 	w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{
-		Line: nr, Data: s,
+		Nr: nr, Grp: grp, Data: s,
 	})
 }

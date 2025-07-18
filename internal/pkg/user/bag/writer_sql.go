@@ -31,15 +31,22 @@ type sqlEvidence struct {
 	// file metadata
 	file struct {
 		path     string
+		size     int64
 		hash     string
 		modified time.Time
-		filters  []sqlData
-		lines    []sqlData
+		filters  []sqlFilter
+		lines    []sqlLine
 	}
 }
 
-type sqlData struct {
+type sqlFilter struct {
 	nr    int
+	value string
+}
+
+type sqlLine struct {
+	nr    int
+	grp   int
 	value string
 }
 
@@ -85,8 +92,9 @@ func (w *SqlWriter) Flush() {
 		w.entry.user.name,
 	)
 
-	fileId := w.insert(`files (path, hash, modified)`,
+	fileId := w.insert(`files (path, size, hash, modified)`,
 		w.entry.file.path,
+		w.entry.file.size,
 		w.entry.file.hash,
 		w.entry.file.modified,
 	)
@@ -100,9 +108,10 @@ func (w *SqlWriter) Flush() {
 	}
 
 	for _, l := range w.entry.file.lines {
-		_ = w.insert(`lines (file_id, nr, value)`,
+		_ = w.insert(`lines (file_id, nr, grp, value)`,
 			fileId,
 			l.nr,
+			l.grp,
 			l.value,
 		)
 	}
@@ -120,11 +129,12 @@ func (w *SqlWriter) Flush() {
 	}
 }
 
-func (w *SqlWriter) SetFile(path string, fs []string) {
+func (w *SqlWriter) SetFile(path string, size int64, fs []string) {
 	w.entry.file.path = path
+	w.entry.file.size = size
 
 	for i, f := range fs {
-		w.entry.file.filters = append(w.entry.file.filters, sqlData{
+		w.entry.file.filters = append(w.entry.file.filters, sqlFilter{
 			nr: i, value: f,
 		})
 	}
@@ -144,9 +154,9 @@ func (w *SqlWriter) SetHash(sum []byte) {
 	w.entry.file.hash = fmt.Sprintf("%x", sum)
 }
 
-func (w *SqlWriter) SetLine(nr int, s string) {
-	w.entry.file.lines = append(w.entry.file.lines, sqlData{
-		nr: nr, value: s,
+func (w *SqlWriter) SetLine(nr, grp int, s string) {
+	w.entry.file.lines = append(w.entry.file.lines, sqlLine{
+		nr: nr, grp: grp, value: s,
 	})
 }
 
