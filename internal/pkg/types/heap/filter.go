@@ -103,7 +103,7 @@ func (h *Heap) LastCount() (int, int) {
 func (h *Heap) LastFilter() *Filter {
 	h.RLock()
 	defer h.RUnlock()
-	return h.filters[len(h.filters)-1]
+	return h.filters[max(len(h.filters)-1, 0)]
 }
 
 func (h *Heap) HasContext() bool {

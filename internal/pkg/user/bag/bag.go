@@ -21,6 +21,7 @@ type Bag struct {
 
 	file *os.File // file handle
 	key  string   // key phrase
+	url  string   // url address
 	w    writer   // writer
 }
 
@@ -45,9 +46,12 @@ func New(args arg.ArgsBag) *Bag {
 	}
 
 	switch strings.ToLower(args.Mode) {
-	case arg.Text:
-		w = NewTextWriter()
-		args.Path += ".bag"
+	case arg.Ecs:
+		w = NewEcsWriter(args.Url)
+		args.Path = ""
+	case arg.Sql:
+		w = NewSqlWriter()
+		args.Path += ".sqlite3"
 	case arg.Jsonl:
 		w = NewJsonWriter(false)
 		args.Path += ".jsonl"
@@ -57,9 +61,9 @@ func New(args arg.ArgsBag) *Bag {
 	case arg.Xml:
 		w = NewXmlWriter()
 		args.Path += ".xml"
-	case arg.Sql:
-		w = NewSqlWriter()
-		args.Path += ".sqlite3"
+	case arg.Text:
+		w = NewTextWriter()
+		args.Path += ".bag"
 	default:
 		w = NewRawWriter()
 		args.Path += ".txt"
@@ -68,8 +72,17 @@ func New(args arg.ArgsBag) *Bag {
 	return &Bag{
 		Path: args.Path,
 		key:  args.Key,
+		url:  args.Url,
 		file: nil,
 		w:    w,
+	}
+}
+
+func (bag *Bag) String() string {
+	if len(bag.url) > 0 {
+		return bag.url
+	} else {
+		return bag.Path
 	}
 }
 
@@ -115,21 +128,24 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 }
 
 func (bag *Bag) Close() {
-	if bag.file == nil {
+	if bag.file != nil {
 		_ = bag.file.Close()
 	}
 }
 
 func (bag *Bag) init() bool {
 	var err error
+	var old bool
 
-	old := sys.Exists(bag.Path)
+	if len(bag.Path) > 0 {
+		old = sys.Exists(bag.Path)
 
-	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+		bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
-	if err != nil {
-		sys.Error(err)
-		return false
+		if err != nil {
+			sys.Error(err)
+			return false
+		}
 	}
 
 	bag.w.Init(bag.file, old, fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version))
@@ -139,6 +155,10 @@ func (bag *Bag) init() bool {
 
 func (bag *Bag) hash() {
 	var algo hash.Hash
+
+	if len(bag.Path) == 0 {
+		return
+	}
 
 	if len(bag.key) > 0 {
 		algo = hmac.New(sha256.New, []byte(bag.key))

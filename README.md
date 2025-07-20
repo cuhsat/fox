@@ -6,7 +6,7 @@ The Swiss Army Knife for examining text files. Combining the power of **cat**, *
 go install github.com/hiforensics/fox@latest
 ```
 
-![](assets/demo.png "Demo")
+![](assets/live.png "Live")
 
 # Features
 * Standalone native binary for AMD64 and ARM64
@@ -33,6 +33,7 @@ go install github.com/hiforensics/fox@latest
 * Configurable plugin support for i.e. Fox-IT's Dissect tools
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite
 * Evidence bag signing via HMAC-SHA256 passphrase
+* Evidence streaming to server in ECS 9.0 format
 * Terminal interface compatible with many terminals
   * With support for copy and bracketed paste
   * With support for mouse scrolling
