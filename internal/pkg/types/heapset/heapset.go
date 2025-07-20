@@ -91,22 +91,6 @@ func (hs *HeapSet) Bind(fn1, fn2 callback) {
 	hs.fnError = fn2
 }
 
-func (hs *HeapSet) Files() []string {
-	hs.RLock()
-
-	fs := make([]string, 0, len(hs.heaps))
-
-	for _, h := range hs.heaps {
-		if h.Type == types.Regular {
-			fs = append(fs, h.Path)
-		}
-	}
-
-	hs.RUnlock()
-
-	return fs
-}
-
 func (hs *HeapSet) Heap() (int32, *heap.Heap) {
 	idx := atomic.LoadInt32(hs.index)
 	return idx + 1, hs.atomicGet(idx)
@@ -229,7 +213,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 
 func (hs *HeapSet) CloseHeap() *heap.Heap {
 	if hs.Len() == 1 {
-		return nil
+		return nil // close program
 	}
 
 	idx := atomic.LoadInt32(hs.index)
@@ -243,6 +227,49 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 	atomic.AddInt32(hs.index, -1)
 
 	return hs.NextHeap()
+}
+
+func (hs *HeapSet) Aggregate() {
+	f := sys.TempFile("Aggregated")
+
+	hs.RLock()
+
+	var heaps []*heap.Heap
+
+	for _, h := range hs.heaps {
+		switch h.Type {
+		case types.Deflate:
+			fallthrough
+
+		case types.Regular:
+			f.Write(h.Ensure().Bytes())
+			f.WriteString("\n")
+
+			h.ThrowAway()
+
+		default:
+			heaps = append(heaps, h)
+		}
+	}
+
+	hs.RUnlock()
+
+	hs.Lock()
+
+	hs.heaps = append(heaps, &heap.Heap{
+		Title: "Aggregated",
+		Path:  f.Name(),
+		Base:  f.Name(),
+		Type:  types.Ignore,
+	})
+
+	hs.Unlock()
+
+	idx := hs.Len() - 1
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.atomicGet(idx).Reload()
 }
 
 func (hs *HeapSet) ThrowAway() {

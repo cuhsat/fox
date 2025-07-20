@@ -60,7 +60,7 @@ func (v *View) textRender(p *panel) {
 		i++
 
 		// context separators
-		if (ai && line.Str == "--") || line.Nr == "--" {
+		if line.Nr == "--" {
 			v.print(lineX, lineY, strings.Repeat("―", maxW), themes.Subtext1)
 			continue
 		}

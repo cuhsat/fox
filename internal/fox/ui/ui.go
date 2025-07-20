@@ -387,6 +387,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlV:
 					ui.root.GetClipboard()
 
+				case tcell.KeyCtrlA:
+					if ui.ctx.Mode().Static() {
+						continue
+					}
+
+					hs.Aggregate()
+
+					ui.overlay.SendInfo("All open files aggregated")
+
 				case tcell.KeyCtrlC:
 					if ui.ctx.Mode().Static() {
 						continue
@@ -402,7 +411,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 					if bag.Put(heap) {
-						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
+						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.String()))
 					}
 
 				case tcell.KeyCtrlB:

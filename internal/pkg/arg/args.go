@@ -23,6 +23,7 @@ const (
 	Jsonl = "jsonl"
 	Xml   = "xml"
 	Sql   = "sql"
+	Ecs   = "ecs"
 )
 
 type Args struct {
@@ -138,7 +139,7 @@ func parse() *Args {
 	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "file name of evidence bag")
 	flag.StringVarP(&args.Bag.Mode, "mode", "m", "", "output mode")
 	flag.StringVarP(&args.Bag.Key, "key", "k", "", "key phrase for bag signing with HMAC")
-	flag.StringVarP(&args.Bag.Url, "url", "u", "", "send evidence bag data to URL")
+	flag.StringVarP(&args.Bag.Url, "url", "u", "", "url to send evidence in ECS format")
 
 	if len(args.Bag.Mode) == 0 {
 		flag.Lookup("mode").NoOptDefVal = Text // default
@@ -212,6 +213,11 @@ func parse() *Args {
 	if *C > 0 {
 		filters.Before = *C
 		filters.After = *C
+	}
+
+	// evidence bag
+	if len(args.Bag.Url) > 0 {
+		args.Bag.Mode = Ecs
 	}
 
 	// aliases

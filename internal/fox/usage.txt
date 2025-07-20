@@ -11,8 +11,8 @@ Usage: fox [--print] [--hex] [--counts]
            [--deflate=FOLDER]
            [--head|tail] [--lines|bytes=NUMBER]
            [--regexp=PATTERN ...] [--before|after=NUMBER]
-           [--file=FILE] [--key=KEY] [--mode={raw,text,json,jsonl,xml,sql}]
-           [--url=URL]
+           [--file=FILE] [--mode={raw,text,json,jsonl,xml,sql}]
+           [--key=KEY] [--url=URL]
            [--skip]
            [PATH ...]
 
@@ -49,7 +49,7 @@ Evidence bag:
   -m, --mode={raw,text,json,jsonl,xml,sql}
                            output mode (default: text)
   -k, --key=KEY            key phrase for bag signing with HMAC
-  -u, --url=URL            send evidence bag data to URL
+  -u, --url=URL            url to send evidence in ECS format
 
 Plugins:
   -a, --skip               skip all automatic plugins

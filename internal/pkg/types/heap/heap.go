@@ -1,7 +1,6 @@
 package heap
 
 import (
-	"bytes"
 	"os"
 	"runtime"
 	"sync"
@@ -85,27 +84,7 @@ func (h *Heap) Cache() Cache {
 }
 
 func (h *Heap) Bytes() []byte {
-	var buf bytes.Buffer
-
-	fmap := h.FMap()
-
-	h.RLock()
-
-	for i, s := range *fmap {
-		_, err := buf.WriteString(s.Str)
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		if i < len(*fmap)-1 {
-			buf.WriteByte('\n')
-		}
-	}
-
-	h.RUnlock()
-
-	return buf.Bytes()
+	return []byte(h.FMap().String())
 }
 
 func (h *Heap) String() string {
