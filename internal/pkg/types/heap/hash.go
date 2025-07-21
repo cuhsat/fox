@@ -11,9 +11,13 @@ import (
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+
+	"github.com/glaslos/ssdeep"
+	"github.com/glaslos/tlsh"
 )
 
 const (
+	// crypto hashes
 	Md5      = "md5"
 	Sha1     = "sha1"
 	Sha256   = "sha256"
@@ -22,6 +26,10 @@ const (
 	Sha3_256 = "sha3-256"
 	Sha3_384 = "sha3-384"
 	Sha3_512 = "sha3-512"
+
+	// fuzzy hashes
+	Ssdeep = "ssdeep"
+	Tlsh   = "tlsh"
 )
 
 type Hash map[string][]byte
@@ -40,6 +48,14 @@ func (h *Heap) Sha256() ([]byte, error) {
 
 func (h *Heap) Sha3() ([]byte, error) {
 	return h.HashSum(Sha3)
+}
+
+func (h *Heap) Ssdeep() ([]byte, error) {
+	return h.HashSum(Ssdeep)
+}
+
+func (h *Heap) Tlsh() ([]byte, error) {
+	return h.HashSum(Tlsh)
 }
 
 func (h *Heap) HashSum(algo string) ([]byte, error) {
@@ -70,6 +86,10 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 		imp = sha3.New384()
 	case Sha3_512:
 		imp = sha3.New512()
+	case Ssdeep:
+		imp = ssdeep.New()
+	case Tlsh:
+		imp = tlsh.New()
 	default:
 		return nil, errors.New("hash not supported")
 	}
