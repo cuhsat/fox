@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/user"
 	"strings"
 	"time"
 
@@ -29,35 +28,29 @@ type xmlBag struct {
 }
 
 type xmlEvidence struct {
-	Metadata xmlMetadata `xml:"metadata"`
-	Lines    xmlLines    `xml:"lines"`
-}
+	Metadata struct {
+		File struct {
+			Path    string   `xml:"path"`
+			Size    int64    `xml:"size"`
+			Filters []string `xml:"filter"`
+		} `xml:"file"`
 
-type xmlMetadata struct {
-	File xmlFile `xml:"file"`
-	User xmlUser `xml:"user"`
-	Time xmlTime `xml:"time"`
-	Hash string  `xml:"hash"`
-}
+		User struct {
+			Login string `xml:"login"`
+			Name  string `xml:"name"`
+		} `xml:"user"`
 
-type xmlFile struct {
-	Path    string   `xml:"path"`
-	Size    int64    `xml:"size"`
-	Filters []string `xml:"filter"`
-}
+		Time struct {
+			Bagged   string `xml:"bagged"`
+			Modified string `xml:"modified"`
+		} `xml:"time"`
 
-type xmlUser struct {
-	Login string `xml:"login"`
-	Name  string `xml:"name"`
-}
+		Hash string `xml:"hash"`
+	} `xml:"metadata"`
 
-type xmlTime struct {
-	Bagged   string `xml:"bagged"`
-	Modified string `xml:"modified"`
-}
-
-type xmlLines struct {
-	Line []xmlLine `xml:"line"`
+	Lines struct {
+		Line []xmlLine `xml:"line"`
+	} `xml:"lines"`
 }
 
 type xmlLine struct {
@@ -133,31 +126,20 @@ func (w *XmlWriter) Flush() {
 	}
 }
 
-func (w *XmlWriter) SetFile(path string, size int64, fs []string) {
-	w.entry.Metadata.File = xmlFile{
-		Path: path, Size: size, Filters: fs,
-	}
+func (w *XmlWriter) WriteMeta(meta meta) {
+	w.entry.Metadata.File.Path = meta.path
+	w.entry.Metadata.File.Size = meta.size
+	w.entry.Metadata.File.Filters = meta.filters
+
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", meta.hash)
+
+	w.entry.Metadata.Time.Bagged = meta.bagged.UTC().Format(time.RFC3339)
+	w.entry.Metadata.Time.Modified = meta.modified.UTC().Format(time.RFC3339)
+
+	w.entry.Metadata.User.Login = meta.user.Username
+	w.entry.Metadata.User.Name = meta.user.Name
 }
 
-func (w *XmlWriter) SetUser(usr *user.User) {
-	w.entry.Metadata.User = xmlUser{
-		Login: usr.Username, Name: usr.Name,
-	}
-}
-
-func (w *XmlWriter) SetTime(bag, mod time.Time) {
-	w.entry.Metadata.Time = xmlTime{
-		Bagged:   bag.UTC().Format(time.RFC3339),
-		Modified: mod.UTC().Format(time.RFC3339),
-	}
-}
-
-func (w *XmlWriter) SetHash(sum []byte) {
-	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
-}
-
-func (w *XmlWriter) SetLine(nr, grp int, s string) {
-	w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{
-		Nr: nr, Grp: grp, Data: s,
-	})
+func (w *XmlWriter) WriteLine(nr, grp int, s string) {
+	w.entry.Lines.Line = append(w.entry.Lines.Line, xmlLine{nr, grp, s})
 }

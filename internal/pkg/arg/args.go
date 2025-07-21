@@ -17,13 +17,12 @@ const (
 )
 
 const (
-	Raw   = "raw"
-	Text  = "text"
-	Json  = "json"
-	Jsonl = "jsonl"
-	Xml   = "xml"
-	Sql   = "sql"
-	Ecs   = "ecs"
+	Raw    = "raw"
+	Text   = "text"
+	Json   = "json"
+	Jsonl  = "jsonl"
+	Xml    = "xml"
+	Sqlite = "sqlite"
 )
 
 type Args struct {
@@ -151,7 +150,7 @@ func parse() *Args {
 	j := flag.BoolP("json", "j", false, "export in JSON format")
 	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
 	X := flag.BoolP("xml", "X", false, "export in XML format")
-	S := flag.BoolP("sql", "S", false, "export in SQL format")
+	S := flag.BoolP("sqlite", "S", false, "export in SQLite3 format")
 
 	// plugins
 	flag.BoolVarP(&args.Opt.Skip, "skip", "a", false, "skip all automatic plugins")
@@ -215,11 +214,6 @@ func parse() *Args {
 		filters.After = *C
 	}
 
-	// evidence bag
-	if len(args.Bag.Url) > 0 {
-		args.Bag.Mode = Ecs
-	}
-
 	// aliases
 	if *R {
 		args.Bag.Mode = Raw
@@ -242,7 +236,7 @@ func parse() *Args {
 	}
 
 	if *S {
-		args.Bag.Mode = Sql
+		args.Bag.Mode = Sqlite
 	}
 
 	// deflate file

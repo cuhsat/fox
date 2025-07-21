@@ -1,7 +1,11 @@
 package user
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"errors"
+	"fmt"
+	"hash"
 	"os"
 	"path/filepath"
 
@@ -28,4 +32,37 @@ func File(name string) (bool, string) {
 	}
 
 	return true, path
+}
+
+func Sign(path, key string) {
+	var algo hash.Hash
+
+	if len(path) == 0 {
+		return
+	}
+
+	if len(key) > 0 {
+		algo = hmac.New(sha256.New, []byte(key))
+	} else {
+		algo = sha256.New()
+	}
+
+	buf, err := os.ReadFile(path)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	algo.Write(buf)
+
+	sum := fmt.Appendf(nil, "%x", algo.Sum(nil))
+
+	err = os.WriteFile(path+".sha256", sum, 0600)
+
+	if err != nil {
+		sys.Error(err)
+	}
+
+	return
 }

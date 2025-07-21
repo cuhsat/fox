@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"os/user"
 	"strings"
 	"time"
 
@@ -14,7 +13,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
-type SqlWriter struct {
+type SqliteWriter struct {
 	db    *sql.DB      // sql database
 	entry *sqlEvidence // current entry
 }
@@ -22,39 +21,34 @@ type SqlWriter struct {
 type sqlEvidence struct {
 	created time.Time
 
-	// user metadata
-	user struct {
-		login string
-		name  string
-	}
-
 	// file metadata
 	file struct {
 		path     string
 		size     int64
 		hash     string
 		modified time.Time
-		filters  []sqlFilter
-		lines    []sqlLine
+		filters  []sqlValue
+		lines    []sqlValue
+	}
+
+	// user metadata
+	user struct {
+		login string
+		name  string
 	}
 }
 
-type sqlFilter struct {
-	nr    int
-	value string
-}
-
-type sqlLine struct {
+type sqlValue struct {
 	nr    int
 	grp   int
 	value string
 }
 
-func NewSqlWriter() *SqlWriter {
-	return new(SqlWriter)
+func NewSqliteWriter() *SqliteWriter {
+	return new(SqliteWriter)
 }
 
-func (w *SqlWriter) Init(file *os.File, old bool, _ string) {
+func (w *SqliteWriter) Init(file *os.File, old bool, _ string) {
 	var err error
 
 	_ = file.Close()
@@ -75,11 +69,11 @@ func (w *SqlWriter) Init(file *os.File, old bool, _ string) {
 	}
 }
 
-func (w *SqlWriter) Start() {
+func (w *SqliteWriter) Start() {
 	w.entry = new(sqlEvidence)
 }
 
-func (w *SqlWriter) Flush() {
+func (w *SqliteWriter) Flush() {
 	tx, err := w.db.Begin()
 
 	if err != nil {
@@ -129,44 +123,36 @@ func (w *SqlWriter) Flush() {
 	}
 }
 
-func (w *SqlWriter) SetFile(path string, size int64, fs []string) {
-	w.entry.file.path = path
-	w.entry.file.size = size
+func (w *SqliteWriter) WriteMeta(meta meta) {
+	w.entry.created = meta.bagged.UTC()
 
-	for i, f := range fs {
-		w.entry.file.filters = append(w.entry.file.filters, sqlFilter{
+	w.entry.file.path = meta.path
+	w.entry.file.size = meta.size
+	w.entry.file.modified = meta.modified.UTC()
+	w.entry.file.hash = fmt.Sprintf("%x", meta.hash)
+
+	for i, f := range meta.filters {
+		w.entry.file.filters = append(w.entry.file.filters, sqlValue{
 			nr: i, value: f,
 		})
 	}
+
+	w.entry.user.login = meta.user.Username
+	w.entry.user.name = meta.user.Name
+
 }
 
-func (w *SqlWriter) SetUser(usr *user.User) {
-	w.entry.user.login = usr.Username
-	w.entry.user.name = usr.Name
+func (w *SqliteWriter) WriteLine(nr, grp int, s string) {
+	w.entry.file.lines = append(w.entry.file.lines, sqlValue{nr, grp, s})
 }
 
-func (w *SqlWriter) SetTime(bag, mod time.Time) {
-	w.entry.created = bag.UTC()
-	w.entry.file.modified = mod.UTC()
-}
-
-func (w *SqlWriter) SetHash(sum []byte) {
-	w.entry.file.hash = fmt.Sprintf("%x", sum)
-}
-
-func (w *SqlWriter) SetLine(nr, grp int, s string) {
-	w.entry.file.lines = append(w.entry.file.lines, sqlLine{
-		nr: nr, grp: grp, value: s,
-	})
-}
-
-func (w *SqlWriter) insert(table string, v ...any) int64 {
+func (w *SqliteWriter) insert(table string, v ...any) int64 {
 	query := "INSERT INTO %s VALUES (%s);"
 
 	return w.execute(fmt.Sprintf(query, table, fields(len(v))), v...)
 }
 
-func (w *SqlWriter) execute(query string, v ...any) int64 {
+func (w *SqliteWriter) execute(query string, v ...any) int64 {
 	res, err := w.db.Exec(query, v...)
 
 	if err != nil {

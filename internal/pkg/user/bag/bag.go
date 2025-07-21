@@ -1,12 +1,9 @@
 package bag
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"fmt"
-	"hash"
 	"os"
-	"os/user"
+	usr "os/user"
 	"strings"
 	"time"
 
@@ -14,6 +11,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type Bag struct {
@@ -22,7 +20,7 @@ type Bag struct {
 	file *os.File // file handle
 	key  string   // key phrase
 	url  string   // url address
-	w    writer   // writer
+	ws   []writer // writers
 }
 
 type writer interface {
@@ -31,42 +29,50 @@ type writer interface {
 	Start()
 	Flush()
 
-	SetFile(path string, size int64, fs []string)
-	SetUser(usr *user.User)
-	SetTime(bag, mod time.Time)
-	SetHash(sum []byte)
-	SetLine(nr, grp int, s string)
+	WriteMeta(meta meta)
+	WriteLine(nr, grp int, s string)
+}
+
+type meta struct {
+	user     *usr.User
+	path     string
+	size     int64
+	hash     []byte
+	filters  []string
+	bagged   time.Time
+	modified time.Time
 }
 
 func New(args arg.ArgsBag) *Bag {
-	var w writer
+	var ws []writer
 
 	if len(args.Path) == 0 {
 		args.Path = arg.Bag
 	}
 
 	switch strings.ToLower(args.Mode) {
-	case arg.Ecs:
-		w = NewEcsWriter(args.Url)
-		args.Path = ""
-	case arg.Sql:
-		w = NewSqlWriter()
+	case arg.Sqlite:
+		ws = append(ws, NewSqliteWriter())
 		args.Path += ".sqlite3"
 	case arg.Jsonl:
-		w = NewJsonWriter(false)
+		ws = append(ws, NewJsonWriter(false))
 		args.Path += ".jsonl"
 	case arg.Json:
-		w = NewJsonWriter(true)
+		ws = append(ws, NewJsonWriter(true))
 		args.Path += ".json"
 	case arg.Xml:
-		w = NewXmlWriter()
+		ws = append(ws, NewXmlWriter())
 		args.Path += ".xml"
 	case arg.Text:
-		w = NewTextWriter()
+		ws = append(ws, NewTextWriter())
 		args.Path += ".bag"
 	default:
-		w = NewRawWriter()
+		ws = append(ws, NewRawWriter())
 		args.Path += ".txt"
+	}
+
+	if len(args.Url) > 0 {
+		ws = append(ws, NewEcsWriter(args.Url))
 	}
 
 	return &Bag{
@@ -74,15 +80,7 @@ func New(args arg.ArgsBag) *Bag {
 		key:  args.Key,
 		url:  args.Url,
 		file: nil,
-		w:    w,
-	}
-}
-
-func (bag *Bag) String() string {
-	if len(bag.url) > 0 {
-		return bag.url
-	} else {
-		return bag.Path
+		ws:   ws,
 	}
 }
 
@@ -91,7 +89,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		return false
 	}
 
-	usr, err := user.Current()
+	usr, err := usr.Current()
 
 	if err != nil {
 		sys.Error(err)
@@ -109,20 +107,27 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
-	bag.w.Start()
+	for _, w := range bag.ws {
+		w.Start()
 
-	bag.w.SetFile(h.String(), h.Len(), h.Patterns())
-	bag.w.SetUser(usr)
-	bag.w.SetTime(time.Now(), fi.ModTime())
-	bag.w.SetHash(sum)
+		w.WriteMeta(meta{
+			user:     usr,
+			path:     h.String(),
+			size:     h.Len(),
+			hash:     sum,
+			filters:  h.Patterns(),
+			bagged:   time.Now(),
+			modified: fi.ModTime(),
+		})
 
-	for _, str := range *h.FMap() {
-		bag.w.SetLine(str.Nr, str.Grp, str.Str)
+		for _, str := range *h.FMap() {
+			w.WriteLine(str.Nr, str.Grp, str.Str)
+		}
+
+		w.Flush()
 	}
 
-	bag.w.Flush()
-
-	bag.hash()
+	user.Sign(bag.Path, bag.key)
 
 	return true
 }
@@ -135,53 +140,21 @@ func (bag *Bag) Close() {
 
 func (bag *Bag) init() bool {
 	var err error
-	var old bool
 
-	if len(bag.Path) > 0 {
-		old = sys.Exists(bag.Path)
+	old := sys.Exists(bag.Path)
 
-		bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
-		if err != nil {
-			sys.Error(err)
-			return false
-		}
+	if err != nil {
+		sys.Error(err)
+		return false
 	}
 
-	bag.w.Init(bag.file, old, fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version))
+	title := fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version)
+
+	for _, w := range bag.ws {
+		w.Init(bag.file, old, title)
+	}
 
 	return true
-}
-
-func (bag *Bag) hash() {
-	var algo hash.Hash
-
-	if len(bag.Path) == 0 {
-		return
-	}
-
-	if len(bag.key) > 0 {
-		algo = hmac.New(sha256.New, []byte(bag.key))
-	} else {
-		algo = sha256.New()
-	}
-
-	buf, err := os.ReadFile(bag.Path)
-
-	if err != nil {
-		sys.Error(err)
-		return
-	}
-
-	algo.Write(buf)
-
-	sum := fmt.Appendf(nil, "%x", algo.Sum(nil))
-
-	err = os.WriteFile(bag.Path+".sha256", sum, 0600)
-
-	if err != nil {
-		sys.Error(err)
-	}
-
-	return
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
 	"time"
@@ -96,28 +95,21 @@ func (w *EcsWriter) Flush() {
 	}
 }
 
-func (w *EcsWriter) SetFile(path string, size int64, fs []string) {
-	w.entry.Labels["filters"] = strings.Join(fs, " > ")
+func (w *EcsWriter) WriteMeta(meta meta) {
+	w.entry.Labels["filters"] = strings.Join(meta.filters, " > ")
 
-	w.entry.File.Name = filepath.Base(path)
-	w.entry.File.Path = path
-	w.entry.File.Size = size
+	w.entry.Timestamp = meta.bagged.UTC()
+
+	w.entry.File.Name = filepath.Base(meta.path)
+	w.entry.File.Path = meta.path
+	w.entry.File.Size = meta.size
+	w.entry.File.Mtime = meta.modified.UTC()
+	w.entry.File.Hash.Sha256 = fmt.Sprintf("%x", meta.hash)
+
+	w.entry.User.Name = meta.user.Username
+	w.entry.User.FullName = meta.user.Name
 }
 
-func (w *EcsWriter) SetUser(usr *user.User) {
-	w.entry.User.Name = usr.Username
-	w.entry.User.FullName = usr.Name
-}
-
-func (w *EcsWriter) SetTime(bag, mod time.Time) {
-	w.entry.Timestamp = bag.UTC()
-	w.entry.File.Mtime = mod.UTC()
-}
-
-func (w *EcsWriter) SetHash(sum []byte) {
-	w.entry.File.Hash.Sha256 = fmt.Sprintf("%x", sum)
-}
-
-func (w *EcsWriter) SetLine(nr, grp int, s string) {
+func (w *EcsWriter) WriteLine(nr, grp int, s string) {
 	w.entry.Message += fmt.Sprintf("%d:%d: %s\n", nr, grp, s)
 }

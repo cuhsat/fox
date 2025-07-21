@@ -3,7 +3,7 @@ package bag
 import (
 	"fmt"
 	"os"
-	"os/user"
+	"strings"
 	"time"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -49,42 +49,38 @@ func (w *TextWrite) Flush() {
 	}
 }
 
-func (w *TextWrite) SetFile(path string, size int64, fs []string) {
-	_, err := fmt.Fprintf(w.file, "File: %s (%d bytes)\n", path, size)
+func (w *TextWrite) WriteMeta(meta meta) {
+	f := strings.Join(meta.filters, " > ")
+
+	_, err := fmt.Fprintf(w.file, "File: %s %s (%d bytes)\n", meta.path, f, meta.size)
 
 	if err != nil {
 		sys.Error(err)
 	}
-}
 
-func (w *TextWrite) SetUser(usr *user.User) {
-	_, err := fmt.Fprintf(w.file, "User: %s (%s)\n", usr.Username, usr.Name)
+	_, err = fmt.Fprintf(w.file, "User: %s (%s)\n", meta.user.Username, meta.user.Name)
 
 	if err != nil {
 		sys.Error(err)
 	}
-}
 
-func (w *TextWrite) SetTime(bag, mod time.Time) {
-	_, err := fmt.Fprintf(w.file, "Time: %s / %s\n",
-		bag.UTC().Format(time.RFC3339),
-		mod.UTC().Format(time.RFC3339),
+	_, err = fmt.Fprintf(w.file, "Time: %s / %s\n",
+		meta.bagged.UTC().Format(time.RFC3339),
+		meta.modified.UTC().Format(time.RFC3339),
 	)
 
 	if err != nil {
 		sys.Error(err)
 	}
-}
 
-func (w *TextWrite) SetHash(sum []byte) {
-	_, err := fmt.Fprintf(w.file, "Hash: %x\n\n", sum)
+	_, err = fmt.Fprintf(w.file, "Hash: %x\n\n", meta.hash)
 
 	if err != nil {
 		sys.Error(err)
 	}
 }
 
-func (w *TextWrite) SetLine(nr, grp int, s string) {
+func (w *TextWrite) WriteLine(nr, grp int, s string) {
 	_, err := fmt.Fprintf(w.file, "%d:%d:%s\n", nr, grp, s)
 
 	if err != nil {

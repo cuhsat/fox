@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/user"
 	"time"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -22,32 +21,29 @@ type JsonWriter struct {
 }
 
 type jsonEvidence struct {
-	Title    string       `json:"_comment"`
-	Metadata jsonMetadata `json:"metadata"`
-	Lines    []jsonLine   `json:"lines"`
-}
+	Title string `json:"_comment"`
 
-type jsonMetadata struct {
-	File jsonFile `json:"file"`
-	User jsonUser `json:"user"`
-	Time jsonTime `json:"time"`
-	Hash string   `json:"hash"`
-}
+	Metadata struct {
+		File struct {
+			Path    string   `json:"path"`
+			Size    int64    `json:"size"`
+			Filters []string `json:"filters"`
+		} `json:"file"`
 
-type jsonFile struct {
-	Path    string   `json:"path"`
-	Size    int64    `json:"size"`
-	Filters []string `json:"filters"`
-}
+		User struct {
+			Login string `json:"login"`
+			Name  string `json:"name"`
+		} `json:"user"`
 
-type jsonUser struct {
-	Login string `json:"login"`
-	Name  string `json:"name"`
-}
+		Time struct {
+			Bagged   time.Time `json:"bagged"`
+			Modified time.Time `json:"modified"`
+		} `json:"time"`
 
-type jsonTime struct {
-	Bagged   time.Time `json:"bagged"`
-	Modified time.Time `json:"modified"`
+		Hash string `json:"hash"`
+	} `json:"metadata"`
+
+	Lines []jsonLine `json:"lines"`
 }
 
 type jsonLine struct {
@@ -95,30 +91,20 @@ func (w *JsonWriter) Flush() {
 	}
 }
 
-func (w *JsonWriter) SetFile(path string, size int64, fs []string) {
-	w.entry.Metadata.File = jsonFile{
-		Path: path, Size: size, Filters: fs,
-	}
+func (w *JsonWriter) WriteMeta(meta meta) {
+	w.entry.Metadata.File.Path = meta.path
+	w.entry.Metadata.File.Size = meta.size
+	w.entry.Metadata.File.Filters = meta.filters
+
+	w.entry.Metadata.Hash = fmt.Sprintf("%x", meta.hash)
+
+	w.entry.Metadata.Time.Bagged = meta.bagged.UTC()
+	w.entry.Metadata.Time.Modified = meta.modified.UTC()
+
+	w.entry.Metadata.User.Login = meta.user.Username
+	w.entry.Metadata.User.Name = meta.user.Name
 }
 
-func (w *JsonWriter) SetUser(usr *user.User) {
-	w.entry.Metadata.User = jsonUser{
-		Login: usr.Username, Name: usr.Name,
-	}
-}
-
-func (w *JsonWriter) SetTime(bag, mod time.Time) {
-	w.entry.Metadata.Time = jsonTime{
-		Bagged: bag.UTC(), Modified: mod.UTC(),
-	}
-}
-
-func (w *JsonWriter) SetHash(sum []byte) {
-	w.entry.Metadata.Hash = fmt.Sprintf("%x", sum)
-}
-
-func (w *JsonWriter) SetLine(nr, grp int, s string) {
-	w.entry.Lines = append(w.entry.Lines, jsonLine{
-		Nr: nr, Grp: grp, Data: s,
-	})
+func (w *JsonWriter) WriteLine(nr, grp int, s string) {
+	w.entry.Lines = append(w.entry.Lines, jsonLine{nr, grp, s})
 }
