@@ -19,6 +19,8 @@ require (
 
 require (
 	github.com/frankban/quicktest v1.14.6 // indirect
+	github.com/glaslos/ssdeep v0.4.0 // indirect
+	github.com/glaslos/tlsh v0.3.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 )
 

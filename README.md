@@ -27,6 +27,7 @@ go install github.com/hiforensics/fox@latest
 * Build-in formating of CSV, JSON, JSONL data
 * Build-in decompression of: 7zip, brotli, bzip2, gzip, lz4, rar, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
+* Build-in similarity hashes: SSDEEP, TLSH
 * Build-in wc like file content statistics
 * Build-in timestamped input history
 * Build-in analyzing using Ollama supported LLMs like DeepSeek-R1 or Mistral
