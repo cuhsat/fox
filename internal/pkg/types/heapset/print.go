@@ -132,14 +132,19 @@ func printHex(ctx *buffer.Context) {
 	}
 }
 
-func printHash(ctx *buffer.Context, sum string) {
-	buf, err := ctx.Heap.HashSum(sum)
+func printHash(ctx *buffer.Context, algo string) {
+	buf, err := ctx.Heap.HashSum(algo)
 
 	if err != nil {
 		sys.Exit(err)
 	}
 
-	fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
+	switch strings.ToLower(algo) {
+	case "sdhash":
+		fmt.Printf("%s  %s\n", buf[:len(buf)-1], ctx.Heap.String())
+	default:
+		fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
+	}
 }
 
 func printStats(ctx *buffer.Context) {

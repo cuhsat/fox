@@ -12,15 +12,17 @@ Positional arguments:
 
 Console:
   -p, --print              print to console (no UI)
-  -x, --hex                output file in hex / start in HEX mode
   -w, --counts             output file line and byte counts
-  -H, --hash=ALGORITHM     output hash sum of file (default: SHA256)
+  -x, --hex                output file in hex / start in HEX mode
+
+Hashes:
+  -H, --hash=ALGORITHM     output hash sum of files (default: SHA256)
 
   cryptographic hashes:
     MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
 
   similarity hashes:
-    SSDEEP, TLSH
+    SDHASH, SSDEEP, TLSH
 
 Strings:
   -s, --strings=MINIMUM    carve ASCII and Unicode strings (default: 3)
