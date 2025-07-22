@@ -25,7 +25,7 @@ go install github.com/hiforensics/fox@latest
 * Build-in parser for Windows event log EVTX files
 * Build-in sniffer for CSV delimiter formats
 * Build-in formating of CSV, JSON, JSONL data
-* Build-in decompression of: brotli, bzip2, gzip, lz4, tar, xz, zip, zlib, zstd
+* Build-in decompression of: brotli, bzip2, gzip, lz4, rar, tar, xz, zip, zlib, zstd
 * Build-in cryptographic hashes: MD5, SHA1, SHA256, SHA3, SHA3-XXX
 * Build-in fuzzy hashes: SDHASH, SSDEEP, TLSH
 * Build-in wc like file content statistics
