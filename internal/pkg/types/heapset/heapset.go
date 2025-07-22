@@ -242,8 +242,8 @@ func (hs *HeapSet) Aggregate() {
 			fallthrough
 
 		case types.Regular:
-			f.Write(h.Ensure().Bytes())
-			f.WriteString("\n")
+			_, _ = f.Write(h.Ensure().Bytes())
+			_, _ = f.WriteString("\n")
 
 			h.ThrowAway()
 
