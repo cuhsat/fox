@@ -7,9 +7,12 @@ require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/andybalholm/brotli v1.1.1
 	github.com/bmatcuk/doublestar/v4 v4.8.1
+	github.com/eciavatta/sdhash v0.0.0-20210117153940-a7b55306eeff
 	github.com/edsrzf/mmap-go v1.2.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gdamore/tcell/v2 v2.8.1
+	github.com/glaslos/ssdeep v0.4.0
+	github.com/glaslos/tlsh v0.3.0
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/spf13/pflag v1.0.6
@@ -18,10 +21,7 @@ require (
 )
 
 require (
-	github.com/eciavatta/sdhash v0.0.0-20210117153940-a7b55306eeff // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/glaslos/ssdeep v0.4.0 // indirect
-	github.com/glaslos/tlsh v0.3.0 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 )
