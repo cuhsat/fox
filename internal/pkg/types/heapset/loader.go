@@ -7,7 +7,9 @@ import (
 	"sync/atomic"
 
 	"github.com/cuhsat/fox/internal/pkg/arg"
-	"github.com/cuhsat/fox/internal/pkg/file/archive"
+	"github.com/cuhsat/fox/internal/pkg/file"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/bzip2"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/gzip"
@@ -82,8 +84,8 @@ func (hs *HeapSet) loadFile(path, base string) {
 	hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadArchive(path, base string) {
-	for _, i := range archive.Deflate(path) {
+func (hs *HeapSet) loadArchive(fn file.Deflate, path, base string) {
+	for _, i := range fn(path) {
 		i.Path = hs.deflate(i.Path, base)
 
 		if len(i.Path) == 0 {
@@ -153,8 +155,12 @@ func (hs *HeapSet) deflate(path, base string) string {
 	}
 
 	// check for archive
-	if archive.Detect(path) {
-		hs.loadArchive(path, base)
+	switch {
+	case tar.Detect(path):
+		hs.loadArchive(tar.Deflate, path, base)
+		return ""
+	case zip.Detect(path):
+		hs.loadArchive(zip.Deflate, path, base)
 		return ""
 	}
 
