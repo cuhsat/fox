@@ -1,6 +1,6 @@
  ___ ___  ___ ___ _  _ ___ ___ ___   _____  __   _   __  __ ___ _  _ ___ ___
 | __/ _ \| _ \ __| \| / __|_ _/ __| | __\ \/ /  /_\ |  \/  |_ _| \| | __| _ \
-| _| (_) |   / _|| .' \__ \| | (__  | _| >  <  / _ \| |\/| || || .' | _||   /
+| _| (_) |   / _||  ' \__ \| | (__  | _| >  <  / _ \| |\/| || ||  ' | _||   /
 |_| \___/|_|_\___|_|\_|___/___\___| |___/_/\_\/_/ \_\_|  |_|___|_|\_|___|_|_\
 
 The Swiss Army Knife for examining text files (%s)
@@ -10,25 +10,27 @@ Usage: fox [PARAMETER(S) ...] [PATH(S) ...]
 Positional arguments:
   PATH(S) to open or '-' for STDIN (default: open UI and show Help)
 
-Console:
+Print:
   -p, --print              print to console (no UI)
-  -w, --counts             output file line and byte counts
-  -x, --hex                output file in hex / start in HEX mode
+  -w, --counts             print file line and byte counts
+  -x, --hex                print file in hex or start in HEX mode
+      --no-file            don't print filenames
+      --no-line            don't print line numbers
+
+Deflate:
+  -d, --deflate=FOLDER     deflate all files from archive (default: out)
+
+Strings:
+  -s, --strings=MINIMUM    print ASCII and Unicode strings (default: 3)
 
 Hashes:
-  -H, --hash=ALGORITHM     output hash sum of files (default: SHA256)
+  -H, --hash=ALGORITHM     print hash sum of files (default: SHA256)
 
   cryptographic hashes:
     MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
 
-  similarity hashes:
+  fuzzy hashes:
     SDHASH, SSDEEP, TLSH
-
-Strings:
-  -s, --strings=MINIMUM    carve ASCII and Unicode strings (default: 3)
-
-Deflate:
-  -d, --deflate=FOLDER     deflate all files from archive (default: out)
 
 File limits:
   -h, --head               limit head of file by ...
@@ -43,11 +45,14 @@ Line filter:
   -A, --after=NUMBER       number of lines trailing context after match
 
 Evidence bag:
-  -f, --file=FILE          file name of evidence bag (default: "evidence")
-  -m, --mode={raw,text,json,jsonl,xml,sqlite}
-                           output mode (default: text)
-  -k, --key=KEY            key phrase for bag signing with HMAC
-  -u, --url=URL            url to send evidence in ECS format
+  -f, --file=FILE          evidence bag file name (default: "evidence")
+  -m, --mode=MODE          evidence bag file mode (default: Text)
+
+  bag modes:
+    Raw, Text, JSON, JSONL, XML, SQLite
+
+  -k, --key=KEY            key phrase for evidence bag signing with HMAC
+  -u, --url=URL            url to also send evidence data in ECS format
 
 Plugins:
   -a, --skip               skip all automatic plugins
@@ -59,10 +64,6 @@ Aliases:
   -J, --jsonl              short for --mode=jsonl
   -S, --sqlite             short for --mode=sqlite
   -X, --xml                short for --mode=xml
-
-Display options:
-      --no-names           don't print filenames
-      --no-numbers         don't print line numbers
 
 Standard options:
       --help               shows this message

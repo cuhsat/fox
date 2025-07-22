@@ -37,11 +37,11 @@ type Args struct {
 }
 
 type ArgsPrint struct {
-	Active    bool
-	NoNames   bool
-	NoNumbers bool
-	Mode      types.Print
-	Value     any
+	Active bool
+	NoFile bool
+	NoLine bool
+	Mode   types.Print
+	Value  any
 }
 
 type ArgsBag struct {
@@ -83,25 +83,27 @@ func parse() *Args {
 	args := NewArgs()
 
 	// console print
-	flag.BoolVarP(&args.Print.Active, "print", "p", false, "print to console (no UI)")
+	flag.BoolVarP(&args.Print.Active, "print", "p", false, "")
+	flag.BoolVarP(&args.Print.NoFile, "no-file", "", false, "")
+	flag.BoolVarP(&args.Print.NoLine, "no-line", "", false, "")
 
-	x := flag.BoolP("hex", "x", false, "output file in hex / start in HEX mode")
-	w := flag.BoolP("counts", "w", false, "output file line and byte counts")
-	H := flag.StringP("hash", "H", "", "output hash sum of file")
+	x := flag.BoolP("hex", "x", false, "")
+	w := flag.BoolP("counts", "w", false, "")
+	H := flag.StringP("hash", "H", "", "")
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = "sha256" // default
 	}
 
 	// carve strings
-	s := flag.IntP("strings", "s", 0, "output file ASCII and Unicode strings")
+	s := flag.IntP("strings", "s", 0, "")
 
 	if *s == 0 {
 		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
 	// deflate file
-	d := flag.StringP("deflate", "d", "", "deflate all files from archive")
+	d := flag.StringP("deflate", "d", "", "")
 
 	if len(*d) == 0 {
 		flag.Lookup("deflate").NoOptDefVal = "out" // default
@@ -110,13 +112,13 @@ func parse() *Args {
 	// file limits
 	limits := GetLimits()
 
-	head := flag.BoolP("head", "h", false, "limit head of file by ...")
-	tail := flag.BoolP("tail", "t", false, "limit tail of file by ...")
+	head := flag.BoolP("head", "h", false, "")
+	tail := flag.BoolP("tail", "t", false, "")
 
 	counts := new(Counts)
 
-	flag.IntVarP(&counts.Lines, "lines", "n", 0, "number of lines")
-	flag.IntVarP(&counts.Bytes, "bytes", "c", 0, "number of bytes")
+	flag.IntVarP(&counts.Lines, "lines", "n", 0, "")
+	flag.IntVarP(&counts.Bytes, "bytes", "c", 0, "")
 
 	if counts.Lines == 0 {
 		flag.Lookup("lines").NoOptDefVal = "10" // default
@@ -129,42 +131,38 @@ func parse() *Args {
 	// line filter
 	filters := GetFilters()
 
-	flag.VarP(filters, "regexp", "e", "filter for lines that matches pattern")
+	flag.VarP(filters, "regexp", "e", "")
 
-	C := flag.IntP("context", "C", 0, "number of lines surrounding context of match")
+	C := flag.IntP("context", "C", 0, "")
 
-	flag.IntVarP(&filters.Before, "before", "B", 0, "number of lines leading context before match")
-	flag.IntVarP(&filters.After, "after", "A", 0, "number of lines trailing context after match")
+	flag.IntVarP(&filters.Before, "before", "B", 0, "")
+	flag.IntVarP(&filters.After, "after", "A", 0, "")
 
 	// evidence bag
-	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "file name of evidence bag")
-	flag.StringVarP(&args.Bag.Mode, "mode", "m", "", "output mode")
-	flag.StringVarP(&args.Bag.Key, "key", "k", "", "key phrase for bag signing with HMAC")
-	flag.StringVarP(&args.Bag.Url, "url", "u", "", "url to send evidence in ECS format")
+	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "")
+	flag.StringVarP(&args.Bag.Mode, "mode", "m", "", "")
+	flag.StringVarP(&args.Bag.Key, "key", "k", "", "")
+	flag.StringVarP(&args.Bag.Url, "url", "u", "", "")
 
 	if len(args.Bag.Mode) == 0 {
 		flag.Lookup("mode").NoOptDefVal = Text // default
 	}
 
 	// aliases
-	R := flag.BoolP("raw", "R", false, "export in RAW format")
-	T := flag.BoolP("text", "T", false, "export in TEXT format")
-	j := flag.BoolP("json", "j", false, "export in JSON format")
-	J := flag.BoolP("jsonl", "J", false, "export in JSON Lines format")
-	X := flag.BoolP("xml", "X", false, "export in XML format")
-	S := flag.BoolP("sqlite", "S", false, "export in SQLite3 format")
+	R := flag.BoolP("raw", "R", false, "")
+	T := flag.BoolP("text", "T", false, "")
+	j := flag.BoolP("json", "j", false, "")
+	J := flag.BoolP("jsonl", "J", false, "")
+	X := flag.BoolP("xml", "X", false, "")
+	S := flag.BoolP("sqlite", "S", false, "")
 
 	// plugins
-	flag.BoolVarP(&args.Opt.Skip, "skip", "a", false, "skip all automatic plugins")
-
-	// display options
-	flag.BoolVarP(&args.Print.NoNames, "no-names", "", false, "don't print filenames")
-	flag.BoolVarP(&args.Print.NoNumbers, "no-numbers", "", false, "don't print line numbers")
+	flag.BoolVarP(&args.Opt.Skip, "skip", "a", false, "")
 
 	// standard options
-	v := flag.BoolP("version", "v", false, "shows version")
+	v := flag.BoolP("version", "v", false, "")
 
-	// show help
+	// show usage
 	flag.Usage = func() {
 		fmt.Printf(fox.Usage, fox.Version)
 		os.Exit(0)
