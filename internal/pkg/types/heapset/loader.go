@@ -8,6 +8,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/arg"
 	"github.com/cuhsat/fox/internal/pkg/file"
+	"github.com/cuhsat/fox/internal/pkg/file/archive/rar"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/tar"
 	"github.com/cuhsat/fox/internal/pkg/file/archive/zip"
 	"github.com/cuhsat/fox/internal/pkg/file/compress/br"
@@ -156,6 +157,9 @@ func (hs *HeapSet) deflate(path, base string) string {
 
 	// check for archive
 	switch {
+	case rar.Detect(path):
+		hs.loadArchive(rar.Deflate, path, base)
+		return ""
 	case tar.Detect(path):
 		hs.loadArchive(tar.Deflate, path, base)
 		return ""

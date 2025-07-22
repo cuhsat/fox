@@ -22,6 +22,7 @@ require (
 
 require (
 	github.com/frankban/quicktest v1.14.6 // indirect
+	github.com/nwaples/rardecode v1.1.3 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 )
