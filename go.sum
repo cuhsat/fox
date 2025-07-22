@@ -30,8 +30,6 @@ github.com/gdamore/encoding v1.0.1 h1:YzKZckdBL6jVt2Gc+5p82qhrGiqMdG/eNs6Wy0u3Uh
 github.com/gdamore/encoding v1.0.1/go.mod h1:0Z0cMFinngz9kS1QfMjCP8TY7em3bZYeeklsSDPivEo=
 github.com/gdamore/tcell/v2 v2.8.1 h1:KPNxyqclpWpWQlPLx6Xui1pMk8S+7+R37h3g07997NU=
 github.com/gdamore/tcell/v2 v2.8.1/go.mod h1:bj8ori1BG3OYMjmb3IklZVWfZUJ1UBQt9JXrOCOhGWw=
-github.com/gen2brain/go-unarr v0.2.4 h1:Iu2kqtGfkLBSQoTFwMkSCmp0g3GrEM/XMVWzo9TQr/Y=
-github.com/gen2brain/go-unarr v0.2.4/go.mod h1:0kdy3HtjKBcEaewifXZguHCvt4qD9V8iJCx4FPEOWT8=
 github.com/glaslos/ssdeep v0.4.0 h1:w9PtY1HpXbWLYgrL/rvAVkj2ZAMOtDxoGKcBHcUFCLs=
 github.com/glaslos/ssdeep v0.4.0/go.mod h1:il4NniltMO8eBtU7dqoN+HVJ02gXxbpbUfkcyUvNtG0=
 github.com/glaslos/tlsh v0.3.0 h1:fG6WAKNmIOsIH57X5B0lnNGCdLHM2dLs+M/pOlRjHRA=

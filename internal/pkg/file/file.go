@@ -12,6 +12,8 @@ type Item struct {
 	Name string
 }
 
+type Deflate func(string) []*Item
+
 func HasMagic(p string, o int, m []byte) bool {
 	buf := make([]byte, o+len(m))
 
