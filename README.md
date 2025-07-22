@@ -56,6 +56,3 @@ go install github.com/hiforensics/fox@latest
     * Nord
     * Matrix
     * Monochrome
-
----
-Made by [Hinterland Forensics](https://github.com/hiforensics)
