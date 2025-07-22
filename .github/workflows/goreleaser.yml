@@ -1,7 +1,7 @@
-name: goreleaser
+name: Release
 
 on:
-  push:
+  push
 
 permissions:
   contents: write
