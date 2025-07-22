@@ -2,6 +2,7 @@ package sys
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -34,15 +35,17 @@ func Exec(cmds []string) File {
 		args := text.SplitQuoted(cmd)
 
 		if len(args) > 0 {
+			var stdout, stderr bytes.Buffer
+
 			cmd := exec.Command(args[0], args[1:]...)
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
 
-			out, err := cmd.CombinedOutput()
-
-			if err == nil {
-				_, _ = f.WriteString(text.UnEscape(string(out)))
-			} else {
+			if cmd.Run() != nil {
 				break
 			}
+
+			_, _ = f.WriteString(text.UnEscape(stdout.String()))
 		}
 	}
 

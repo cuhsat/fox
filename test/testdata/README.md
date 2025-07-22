@@ -1,3 +1,6 @@
+NIST Computer Forensic Reference Data Sets
+- https://cfreds.nist.gov/all/NIST/HackingCase
+
 EICAR Anti-Virus Test File
 - https://www.eicar.org/download-anti-malware-testfile/
 

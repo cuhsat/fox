@@ -1,2 +1,4 @@
+*.E01 filter=lfs diff=lfs merge=lfs -text
+*.E02 filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
