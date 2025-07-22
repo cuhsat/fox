@@ -19,6 +19,8 @@ const (
 )
 
 func (hs *HeapSet) Deflate(path string) {
+	args := arg.GetArgs()
+
 	hs.RLock()
 
 	for _, h := range hs.heaps {
@@ -48,7 +50,9 @@ func (hs *HeapSet) Deflate(path string) {
 
 		p = filepath.Join(path, dir, p)
 
-		fmt.Printf("Deflate %s\n", p)
+		if !args.Print.NoNames {
+			fmt.Printf("Deflate %s\n", p)
+		}
 
 		err := os.WriteFile(p, *h.Ensure().MMap(), 0600)
 
@@ -113,7 +117,10 @@ func printGrep(ctx *buffer.Context) {
 		return // ignore empty files
 	}
 
-	fmt.Println(text.Title(ctx.Heap.String(), termW))
+	if !arg.GetArgs().Print.NoNames {
+		fmt.Println(text.Title(ctx.Heap.String(), termW))
+	}
+
 	for l := range buffer.Text(ctx).Lines {
 		if l.Nr == "--" {
 			fmt.Println("--")
@@ -126,7 +133,10 @@ func printGrep(ctx *buffer.Context) {
 func printHex(ctx *buffer.Context) {
 	ctx.W = termW
 
-	fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
+	if !arg.GetArgs().Print.NoNames {
+		fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
+	}
+
 	for l := range buffer.Hex(ctx).Lines {
 		fmt.Println(l)
 	}
@@ -156,7 +166,10 @@ func printStats(ctx *buffer.Context) {
 }
 
 func printStrings(ctx *buffer.Context, min int) {
-	fmt.Println(text.Title(ctx.Heap.String(), termW))
+	if !arg.GetArgs().Print.NoNames {
+		fmt.Println(text.Title(ctx.Heap.String(), termW))
+	}
+
 	for s := range ctx.Heap.Strings(min) {
 		fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
 	}

@@ -60,6 +60,10 @@ Aliases:
   -S, --sqlite             short for --mode=sqlite
   -X, --xml                short for --mode=xml
 
+Display options:
+      --no-names           don't print filenames
+      --no-numbers         don't print line numbers
+
 Standard options:
       --help               shows this message
       --version            shows the version

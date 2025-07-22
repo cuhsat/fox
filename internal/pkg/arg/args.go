@@ -37,9 +37,11 @@ type Args struct {
 }
 
 type ArgsPrint struct {
-	Active bool
-	Mode   types.Print
-	Value  any
+	Active    bool
+	NoNames   bool
+	NoNumbers bool
+	Mode      types.Print
+	Value     any
 }
 
 type ArgsBag struct {
@@ -154,6 +156,10 @@ func parse() *Args {
 
 	// plugins
 	flag.BoolVarP(&args.Opt.Skip, "skip", "a", false, "skip all automatic plugins")
+
+	// display options
+	flag.BoolVarP(&args.Print.NoNames, "no-names", "", false, "don't print filenames")
+	flag.BoolVarP(&args.Print.NoNumbers, "no-numbers", "", false, "don't print line numbers")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "shows version")
