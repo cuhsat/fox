@@ -146,7 +146,7 @@ func (sd *SDHash) Size() int {
 	return int(sd.s.Size())
 }
 
-func (sd *SDHash) Sum(b []byte) []byte {
+func (sd *SDHash) Sum(_ []byte) []byte {
 	sd.s = sd.f.Compute()
 
 	return []byte(strings.TrimRight(sd.s.String(), "\n"))

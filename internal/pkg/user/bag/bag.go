@@ -89,13 +89,13 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		return false
 	}
 
-	usr, err := usr.Current()
+	u, err := usr.Current()
 
 	if err != nil {
 		sys.Error(err)
 	}
 
-	sum, err := h.Sha256()
+	s, err := h.Sha256()
 
 	if err != nil {
 		sys.Error(err)
@@ -111,10 +111,10 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		w.Start()
 
 		w.WriteMeta(meta{
-			user:     usr,
+			user:     u,
 			path:     h.String(),
 			size:     h.Len(),
-			hash:     sum,
+			hash:     s,
 			filters:  h.Patterns(),
 			bagged:   time.Now(),
 			modified: fi.ModTime(),
