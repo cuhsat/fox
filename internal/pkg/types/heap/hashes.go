@@ -129,33 +129,33 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 }
 
 type SDHash struct {
-	sf   sdhash.SdbfFactory
-	sdbf sdhash.Sdbf
+	f sdhash.SdbfFactory
+	s sdhash.Sdbf
 }
 
-func (s *SDHash) Reset() {
-	s.sf = nil
-	s.sdbf = nil
+func (sd *SDHash) Reset() {
+	sd.f = nil
+	sd.s = nil
 }
 
-func (s *SDHash) BlockSize() int {
+func (sd *SDHash) BlockSize() int {
 	return sdhash.BlockSize
 }
 
-func (s *SDHash) Size() int {
-	return int(s.sdbf.Size())
+func (sd *SDHash) Size() int {
+	return int(sd.s.Size())
 }
 
-func (s *SDHash) Sum(b []byte) []byte {
-	s.sdbf = s.sf.Compute()
+func (sd *SDHash) Sum(b []byte) []byte {
+	sd.s = sd.f.Compute()
 
-	return []byte(s.sdbf.String())
+	return []byte(strings.TrimRight(sd.s.String(), "\n"))
 }
 
-func (s *SDHash) Write(b []byte) (int, error) {
+func (sd *SDHash) Write(b []byte) (int, error) {
 	var err error
 
-	s.sf, err = sdhash.CreateSdbfFromBytes(b)
+	sd.f, err = sdhash.CreateSdbfFromBytes(b)
 
 	return len(b), err
 }

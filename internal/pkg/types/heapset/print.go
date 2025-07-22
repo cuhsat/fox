@@ -50,7 +50,7 @@ func (hs *HeapSet) Deflate(path string) {
 
 		p = filepath.Join(path, dir, p)
 
-		if !args.Print.NoNames {
+		if !args.Print.NoFile {
 			fmt.Printf("Deflate %s\n", p)
 		}
 
@@ -68,6 +68,7 @@ func (hs *HeapSet) Deflate(path string) {
 
 func (hs *HeapSet) Print(args arg.ArgsPrint) {
 	ctx := buffer.Context{
+		Context: true,
 		Numbers: true,
 		Wrap:    false,
 		X:       0,
@@ -117,15 +118,23 @@ func printGrep(ctx *buffer.Context) {
 		return // ignore empty files
 	}
 
-	if !arg.GetArgs().Print.NoNames {
+	a := arg.GetArgs().Print
+
+	if !a.NoFile {
 		fmt.Println(text.Title(ctx.Heap.String(), termW))
 	}
 
 	for l := range buffer.Text(ctx).Lines {
 		if l.Nr == "--" {
-			fmt.Println("--")
+			if !a.NoLine {
+				fmt.Println("--")
+			}
 		} else {
-			fmt.Printf("%s:%s\n", l.Nr, l)
+			if !a.NoLine {
+				fmt.Printf("%s:%s\n", l.Nr, l)
+			} else {
+				fmt.Println(l)
+			}
 		}
 	}
 }
@@ -133,7 +142,7 @@ func printGrep(ctx *buffer.Context) {
 func printHex(ctx *buffer.Context) {
 	ctx.W = termW
 
-	if !arg.GetArgs().Print.NoNames {
+	if !arg.GetArgs().Print.NoFile {
 		fmt.Println(text.Title(ctx.Heap.String(), ctx.W))
 	}
 
@@ -143,17 +152,17 @@ func printHex(ctx *buffer.Context) {
 }
 
 func printHash(ctx *buffer.Context, algo string) {
-	buf, err := ctx.Heap.HashSum(algo)
+	sum, err := ctx.Heap.HashSum(algo)
 
 	if err != nil {
 		sys.Exit(err)
 	}
 
 	switch strings.ToLower(algo) {
-	case "sdhash":
-		fmt.Printf("%s  %s\n", buf[:len(buf)-1], ctx.Heap.String())
+	case "sdhash": // string results
+		fmt.Printf("%s  %s\n", sum, ctx.Heap.String())
 	default:
-		fmt.Printf("%x  %s\n", buf, ctx.Heap.String())
+		fmt.Printf("%x  %s\n", sum, ctx.Heap.String())
 	}
 }
 
@@ -165,12 +174,18 @@ func printStats(ctx *buffer.Context) {
 	)
 }
 
-func printStrings(ctx *buffer.Context, min int) {
-	if !arg.GetArgs().Print.NoNames {
+func printStrings(ctx *buffer.Context, n int) {
+	a := arg.GetArgs().Print
+
+	if !a.NoFile {
 		fmt.Println(text.Title(ctx.Heap.String(), termW))
 	}
 
-	for s := range ctx.Heap.Strings(min) {
-		fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
+	for s := range ctx.Heap.Strings(n) {
+		if !a.NoLine {
+			fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
+		} else {
+			fmt.Println(strings.TrimSpace(s.Str))
+		}
 	}
 }

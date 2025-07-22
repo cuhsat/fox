@@ -12,12 +12,12 @@ type String struct {
 	Str string
 }
 
-func (h *Heap) Strings(min int) <-chan String {
+func (h *Heap) Strings(n int) <-chan String {
 	bc := make(chan byte, 1024)
 	sc := make(chan String)
 
 	go h.readMMap(bc)
-	go h.carve(bc, sc, min)
+	go h.carve(bc, sc, n)
 
 	return sc
 }
@@ -34,16 +34,16 @@ func (h *Heap) readMMap(ch chan<- byte) {
 	h.RUnlock()
 }
 
-func (h *Heap) carve(ch <-chan byte, s chan<- String, m int) {
+func (h *Heap) carve(ch <-chan byte, s chan<- String, n int) {
 	var rs []rune
 
 	buf := make([]byte, 4)
 	off := 0
 
-	flush := func(m int) {
-		if len(rs) >= m {
+	flush := func(n int) {
+		if len(rs) >= n {
 			s <- String{
-				Off: off - (len(rs) + 1),
+				Off: max(off-(len(rs)+1), 0),
 				Str: string(rs),
 			}
 		}
@@ -52,7 +52,7 @@ func (h *Heap) carve(ch <-chan byte, s chan<- String, m int) {
 	}
 
 	defer close(s)
-	defer flush(m)
+	defer flush(n)
 
 	for b := range ch {
 		buf[0] = b
@@ -62,7 +62,7 @@ func (h *Heap) carve(ch <-chan byte, s chan<- String, m int) {
 			if b >= text.MinASCII && b <= text.MaxASCII {
 				rs = append(rs, rune(b))
 			} else {
-				flush(m)
+				flush(n)
 			}
 		} else {
 			l := 1
@@ -97,7 +97,7 @@ func (h *Heap) carve(ch <-chan byte, s chan<- String, m int) {
 			if r != utf8.RuneError && unicode.IsPrint(r) {
 				rs = append(rs, r)
 			} else {
-				flush(m)
+				flush(n)
 			}
 		}
 	}
