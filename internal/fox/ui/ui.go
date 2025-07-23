@@ -411,7 +411,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 					if bag.Put(heap) {
-						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.Path))
+						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.String()))
 					}
 
 				case tcell.KeyCtrlB:
