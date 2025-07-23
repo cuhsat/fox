@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	usr "os/user"
-	"strings"
 	"time"
 
 	"github.com/cuhsat/fox/internal/fox"
@@ -15,7 +14,8 @@ import (
 )
 
 type Bag struct {
-	Path string // file path
+	Path string // bag path
+	Mode string // bag mode
 
 	file *os.File // file handle
 	key  string   // key phrase
@@ -50,20 +50,21 @@ func New(args arg.ArgsBag) *Bag {
 		args.Path = arg.Bag
 	}
 
-	switch strings.ToLower(args.Mode) {
-	case arg.Sqlite:
+	switch args.Mode {
+	case arg.BagNone:
+	case arg.BagSqlite:
 		ws = append(ws, NewSqliteWriter())
 		args.Path += ".sqlite3"
-	case arg.Jsonl:
+	case arg.BagJsonl:
 		ws = append(ws, NewJsonWriter(false))
 		args.Path += ".jsonl"
-	case arg.Json:
+	case arg.BagJson:
 		ws = append(ws, NewJsonWriter(true))
 		args.Path += ".json"
-	case arg.Xml:
+	case arg.BagXml:
 		ws = append(ws, NewXmlWriter())
 		args.Path += ".xml"
-	case arg.Text:
+	case arg.BagText:
 		ws = append(ws, NewTextWriter())
 		args.Path += ".bag"
 	default:
@@ -77,6 +78,7 @@ func New(args arg.ArgsBag) *Bag {
 
 	return &Bag{
 		Path: args.Path,
+		Mode: args.Mode,
 		key:  args.Key,
 		url:  args.Url,
 		file: nil,
@@ -84,10 +86,16 @@ func New(args arg.ArgsBag) *Bag {
 	}
 }
 
-func (bag *Bag) Put(h *heap.Heap) bool {
-	if bag.file == nil && !bag.init() {
-		return false
+func (bag *Bag) String() string {
+	if bag.file != nil {
+		return bag.Path
+	} else {
+		return bag.url
 	}
+}
+
+func (bag *Bag) Put(h *heap.Heap) bool {
+	bag.init()
 
 	u, err := usr.Current()
 
@@ -127,9 +135,11 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		w.Flush()
 	}
 
-	user.Sign(bag.Path, bag.key)
+	if bag.file != nil {
+		user.Sign(bag.Path, bag.key)
+	}
 
-	return true
+	return len(bag.ws) > 0
 }
 
 func (bag *Bag) Close() {
@@ -138,16 +148,18 @@ func (bag *Bag) Close() {
 	}
 }
 
-func (bag *Bag) init() bool {
-	var err error
-
+func (bag *Bag) init() {
 	old := sys.Exists(bag.Path)
 
-	bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	if bag.Mode != arg.BagNone {
+		var err error
 
-	if err != nil {
-		sys.Error(err)
-		return false
+		bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+
+		if err != nil {
+			sys.Error(err)
+			return
+		}
 	}
 
 	title := fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version)
@@ -155,6 +167,4 @@ func (bag *Bag) init() bool {
 	for _, w := range bag.ws {
 		w.Init(bag.file, old, title)
 	}
-
-	return true
 }

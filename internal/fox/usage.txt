@@ -49,10 +49,11 @@ Evidence bag:
   -m, --mode=MODE          evidence bag file mode (default: Text)
 
   bag modes:
-    Raw, Text, JSON, JSONL, XML, SQLite
+    None, Raw, Text, JSON, JSONL, XML, SQLite
 
   -k, --key=KEY            key phrase for evidence bag signing with HMAC
   -u, --url=URL            url to also send evidence data in ECS format
+      --no-bag             don't write an evidence bag
 
 Plugins:
   -a, --skip               skip all automatic plugins

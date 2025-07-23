@@ -3,6 +3,7 @@ package arg
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	flag "github.com/spf13/pflag"
 
@@ -17,12 +18,13 @@ const (
 )
 
 const (
-	Raw    = "raw"
-	Text   = "text"
-	Json   = "json"
-	Jsonl  = "jsonl"
-	Xml    = "xml"
-	Sqlite = "sqlite"
+	BagNone   = "none"
+	BagRaw    = "raw"
+	BagText   = "text"
+	BagJson   = "json"
+	BagJsonl  = "jsonl"
+	BagXml    = "xml"
+	BagSqlite = "sqlite"
 )
 
 type Args struct {
@@ -144,8 +146,10 @@ func parse() *Args {
 	flag.StringVarP(&args.Bag.Key, "key", "k", "", "")
 	flag.StringVarP(&args.Bag.Url, "url", "u", "", "")
 
+	N := flag.BoolP("no-bag", "", false, "")
+
 	if len(args.Bag.Mode) == 0 {
-		flag.Lookup("mode").NoOptDefVal = Text // default
+		flag.Lookup("mode").NoOptDefVal = BagText // default
 	}
 
 	// aliases
@@ -219,28 +223,36 @@ func parse() *Args {
 	}
 
 	// aliases
+	if *N {
+		args.Bag.Mode = BagNone
+	}
+
 	if *R {
-		args.Bag.Mode = Raw
+		args.Bag.Mode = BagRaw
 	}
 
 	if *T {
-		args.Bag.Mode = Text
+		args.Bag.Mode = BagText
 	}
 
 	if *j {
-		args.Bag.Mode = Json
+		args.Bag.Mode = BagJson
 	}
 
 	if *J {
-		args.Bag.Mode = Jsonl
+		args.Bag.Mode = BagJsonl
 	}
 
 	if *X {
-		args.Bag.Mode = Xml
+		args.Bag.Mode = BagXml
 	}
 
 	if *S {
-		args.Bag.Mode = Sqlite
+		args.Bag.Mode = BagSqlite
+	}
+
+	if len(args.Bag.Mode) > 0 {
+		args.Bag.Mode = strings.ToLower(args.Bag.Mode)
 	}
 
 	// deflate file
