@@ -8,7 +8,7 @@ go install github.com/hiforensics/fox@latest
 
 ![](assets/live.png "Live")
 
-# Features
+## Features
 * Standalone native binary for AMD64 and ARM64
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
@@ -56,3 +56,6 @@ go install github.com/hiforensics/fox@latest
     * Nord
     * Matrix
     * Monochrome
+
+## License
+Released under the [GPL-3.0](LICENSE.md).
