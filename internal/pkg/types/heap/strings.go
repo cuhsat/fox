@@ -4,7 +4,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
 type String struct {

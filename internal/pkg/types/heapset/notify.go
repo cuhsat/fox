@@ -7,7 +7,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 func (hs *HeapSet) watch(name string) {

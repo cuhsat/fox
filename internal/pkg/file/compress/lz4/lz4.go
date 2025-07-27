@@ -5,8 +5,8 @@ import (
 
 	"github.com/pierrec/lz4"
 
-	"github.com/cuhsat/fox/internal/pkg/file"
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/file"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 func Detect(path string) bool {

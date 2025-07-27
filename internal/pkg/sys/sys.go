@@ -10,8 +10,8 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
 const (

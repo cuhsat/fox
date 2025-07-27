@@ -6,11 +6,11 @@ import (
 	usr "os/user"
 	"time"
 
-	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/pkg/arg"
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/heap"
-	"github.com/cuhsat/fox/internal/pkg/user"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/heap"
+	"github.com/hiforensics/fox/internal/pkg/user"
 )
 
 type Bag struct {

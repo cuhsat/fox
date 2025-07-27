@@ -9,8 +9,8 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/cuhsat/fox/api"
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/api"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 type SqliteWriter struct {

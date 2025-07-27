@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 type EcsWriter struct {

@@ -3,11 +3,11 @@ package widgets
 import (
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/fox/ui/context"
-	"github.com/cuhsat/fox/internal/fox/ui/themes"
-	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types/heap"
-	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/hiforensics/fox/internal/fox/ui/context"
+	"github.com/hiforensics/fox/internal/fox/ui/themes"
+	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/types/heap"
+	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
 type Title struct {

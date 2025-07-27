@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 func File(name string) (bool, string) {

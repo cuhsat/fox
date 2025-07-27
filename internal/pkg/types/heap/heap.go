@@ -7,10 +7,10 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/cuhsat/fox/internal/pkg/arg"
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/smap"
+	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/smap"
 )
 
 type Heap struct {

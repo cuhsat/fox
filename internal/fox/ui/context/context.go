@@ -6,8 +6,8 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/cuhsat/fox/internal/pkg/types/mode"
-	"github.com/cuhsat/fox/internal/pkg/user/config"
+	"github.com/hiforensics/fox/internal/pkg/types/mode"
+	"github.com/hiforensics/fox/internal/pkg/user/config"
 )
 
 type Context struct {

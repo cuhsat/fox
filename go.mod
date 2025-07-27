@@ -1,6 +1,8 @@
-module github.com/cuhsat/fox
+module github.com/hiforensics/fox
 
-go 1.24.3
+go 1.24.0
+
+toolchain go1.24.5
 
 require (
 	github.com/0xrawsec/golang-evtx v1.2.9
@@ -15,6 +17,7 @@ require (
 	github.com/glaslos/tlsh v0.3.0
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
+	github.com/nwaples/rardecode v1.1.3
 	github.com/spf13/pflag v1.0.6
 	github.com/ulikunitz/xz v0.5.12
 	modernc.org/sqlite v1.37.1
@@ -22,7 +25,6 @@ require (
 
 require (
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/nwaples/rardecode v1.1.3 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 )

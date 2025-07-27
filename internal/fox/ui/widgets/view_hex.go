@@ -1,8 +1,8 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fox/internal/fox/ui/themes"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
+	"github.com/hiforensics/fox/internal/fox/ui/themes"
+	"github.com/hiforensics/fox/internal/pkg/types/buffer"
 )
 
 const (

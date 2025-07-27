@@ -4,9 +4,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/mattn/go-runewidth"
 
-	"github.com/cuhsat/fox/internal/fox/ui/context"
-	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/hiforensics/fox/internal/fox/ui/context"
+	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
 type Queueable interface {

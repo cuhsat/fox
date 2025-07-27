@@ -7,8 +7,8 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/cuhsat/fox/internal/fox/ui/context"
-	"github.com/cuhsat/fox/internal/fox/ui/themes"
+	"github.com/hiforensics/fox/internal/fox/ui/context"
+	"github.com/hiforensics/fox/internal/fox/ui/themes"
 )
 
 const (

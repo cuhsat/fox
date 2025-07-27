@@ -7,10 +7,10 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/mode"
 )
 
 const (

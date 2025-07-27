@@ -3,7 +3,7 @@ package buffer
 import (
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
 const (

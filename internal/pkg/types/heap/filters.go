@@ -3,7 +3,7 @@ package heap
 import (
 	"regexp"
 
-	"github.com/cuhsat/fox/internal/pkg/types/smap"
+	"github.com/hiforensics/fox/internal/pkg/types/smap"
 )
 
 type Filter struct {

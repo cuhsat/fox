@@ -6,8 +6,8 @@ import (
 
 	"github.com/jfyne/csvd"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
 func Detect(path string) bool {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/nwaples/rardecode"
 
-	"github.com/cuhsat/fox/internal/pkg/file"
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/file"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 func Detect(path string) bool {

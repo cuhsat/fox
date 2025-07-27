@@ -9,12 +9,12 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"github.com/cuhsat/fox/internal/fox"
-	"github.com/cuhsat/fox/internal/fox/ai"
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/fox/ai"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
 type Examiner struct {

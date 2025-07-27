@@ -3,8 +3,8 @@ package evtx
 import (
 	"github.com/0xrawsec/golang-evtx/evtx"
 
-	"github.com/cuhsat/fox/internal/pkg/file"
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/file"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 const (

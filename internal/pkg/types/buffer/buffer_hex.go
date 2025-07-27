@@ -3,8 +3,8 @@ package buffer
 import (
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/pkg/arg"
-	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
 type HexBuffer struct {

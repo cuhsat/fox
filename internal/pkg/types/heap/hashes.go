@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 
 	"github.com/eciavatta/sdhash"
 	"github.com/glaslos/ssdeep"

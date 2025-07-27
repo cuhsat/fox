@@ -4,11 +4,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/fox/ui/themes"
-	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 	"github.com/gdamore/tcell/v2"
+	"github.com/hiforensics/fox/internal/fox/ui/themes"
+	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/buffer"
 )
 
 func (v *View) textRender(p *panel) {

@@ -5,12 +5,12 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/cuhsat/fox/internal/fox/ui"
-	"github.com/cuhsat/fox/internal/pkg/arg"
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/heapset"
-	"github.com/cuhsat/fox/internal/pkg/user/bag"
-	"github.com/cuhsat/fox/internal/pkg/user/history"
+	"github.com/hiforensics/fox/internal/fox/ui"
+	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/heapset"
+	"github.com/hiforensics/fox/internal/pkg/user/bag"
+	"github.com/hiforensics/fox/internal/pkg/user/history"
 )
 
 func main() {
