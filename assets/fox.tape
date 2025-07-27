@@ -4,6 +4,7 @@ Output fox.gif
 Set TypingSpeed 250ms
 Set LoopOffset 1
 Set Padding 2
+Set Margin 2
 
 Type "fox README.md"
 
