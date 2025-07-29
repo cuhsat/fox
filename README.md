@@ -2,11 +2,13 @@
 
 The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc** and many decompression and hash algorithms into one performant standalone binary.
 
+![](assets/fox.gif "Demo")
+
+## Install
+
 ```console
 go install github.com/hiforensics/fox@latest
 ```
-
-![](assets/fox.gif "Demo")
 
 ## Features
 * Standalone native binary for AMD64 and ARM64
