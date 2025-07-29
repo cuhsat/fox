@@ -1,30 +1,21 @@
-#Output fox.gif
-#Output fox.mp4
-Output fox.webm
+Output fox.gif
 
-#Set FontFamily "SauceCodePro Nerd Font Mono"
-Set TypingSpeed 250ms
-Set Framerate 60
-Set LoopOffset 1
+Set CursorBlink false
+Set TypingSpeed 150ms
 Set Padding 2
 Set Margin 2
 
-Type "fox README.md"
+Type "cd .. && go run main.go README.md -S" Enter
 
-Hide
-Backspace 13
-Type "cd .." Enter
-Type "go run main.go README.md" Enter
-Show Sleep 2s
+Tab Sleep 3s
 
-Tab Sleep 2s
+Ctrl+F Type "Build-in" Enter Sleep 3s
 
-Ctrl+X Enter Sleep 5s
+Ctrl+F Type "hash" Enter Sleep 3s
 
-Ctrl+F Type "Build-in" Enter Sleep 2s
+Ctrl+K Sleep 3s
+Ctrl+K Sleep 3s
 
-Ctrl+F Type "hash" Enter Sleep 2s
+Ctrl+E Type "analyse this" Enter Sleep 18s
 
-Ctrl+K Sleep 2s
-
-Ctrl+E Type "analyse this" Enter Sleep 25s
+Ctrl+S Enter Sleep 3s

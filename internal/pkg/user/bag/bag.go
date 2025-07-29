@@ -109,10 +109,16 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
-	fi, err := os.Stat(h.Path)
+	t := time.Time.UTC(time.Now())
 
-	if err != nil {
-		sys.Error(err)
+	if sys.Mapped(h.Path) == nil {
+		fi, err := os.Stat(h.Path)
+
+		if err != nil {
+			sys.Error(err)
+		} else {
+			t = fi.ModTime()
+		}
 	}
 
 	for _, w := range bag.ws {
@@ -125,7 +131,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 			hash:     s,
 			filters:  h.Patterns(),
 			bagged:   time.Now(),
-			modified: fi.ModTime(),
+			modified: t,
 		})
 
 		for _, str := range *h.FMap() {

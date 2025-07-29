@@ -6,7 +6,7 @@ The Swiss Army Knife for examining text files. Combining the power of **cat**, *
 go install github.com/hiforensics/fox@latest
 ```
 
-![](assets/fox.webm "Demo")
+![](assets/fox.gif "Demo")
 
 ## Features
 * Standalone native binary for AMD64 and ARM64
