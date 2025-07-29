@@ -9,6 +9,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/pkg/arg"
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/user"
 )
@@ -111,7 +112,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	t := time.Time.UTC(time.Now())
 
-	if sys.Mapped(h.Path) == nil {
+	if file.Open(h.Path) == nil {
 		fi, err := os.Stat(h.Path)
 
 		if err != nil {

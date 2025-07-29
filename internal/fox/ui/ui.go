@@ -19,6 +19,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
 	"github.com/hiforensics/fox/internal/pkg/user/bag"
@@ -264,9 +265,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					go p.Execute(heap.Path, heap.Base, func(file sys.File, base string) {
+					go p.Execute(heap.Path, heap.Base, func(f file.File, base string) {
 						name := fmt.Sprintf("%s (%s)", base, p.Name)
-						hs.OpenFile(file.Name(), base, name, types.Plugin)
+						hs.OpenFile(f.Name(), base, name, types.Plugin)
 						ui.ctx.ForceRender()
 					})
 

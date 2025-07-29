@@ -12,23 +12,20 @@ import (
 
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 )
 
 const (
 	Dump = ".fox_dump"
 )
 
-var (
-	vfs = make(map[string]File)
-)
-
 func Exit(v ...any) {
-	_, _ = fmt.Fprintln(os.Stderr, v...)
+	Print(v...)
 	os.Exit(1)
 }
 
-func Exec(cmds []string) File {
-	f := TempFile("stdout")
+func Exec(cmds []string) file.File {
+	f := file.New("stdout")
 	defer f.Close()
 
 	for _, cmd := range cmds {
@@ -74,14 +71,14 @@ func Shell() {
 	_ = cmd.Run()
 }
 
-func Stdin() File {
-	if !IsPiped(os.Stdin) {
-		Panic("invalid mode")
+func Stdin() file.File {
+	if !Piped(os.Stdin) {
+		Panic("Device mode is invalid")
 	}
 
-	f := TempFile("stdin")
+	f := file.New("stdin")
 
-	go func(f File) {
+	go func(f file.File) {
 		r := bufio.NewReader(os.Stdin)
 
 		for {
@@ -108,15 +105,15 @@ func Stdin() File {
 	return f
 }
 
-func Stdout() File {
-	return TempFile("stdout")
+func Stdout() file.File {
+	return file.New("stdout")
 }
 
-func Stderr() File {
-	return TempFile("stderr")
+func Stderr() file.File {
+	return file.New("stderr")
 }
 
-func IsPiped(file File) bool {
+func Piped(file file.File) bool {
 	fi, err := file.Stat()
 
 	if err != nil {
@@ -127,12 +124,25 @@ func IsPiped(file File) bool {
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func Mapped(name string) File {
-	return vfs[name]
+func Open(name string) file.File {
+	f := file.Open(name)
+
+	if f != nil {
+		return f // virtual file
+	}
+
+	f, err := os.OpenFile(name, os.O_RDONLY, 0400)
+
+	if err == nil {
+		return f // physical file
+	}
+
+	Panic(err)
+	return nil
 }
 
 func Exists(name string) bool {
-	if Mapped(name) != nil {
+	if file.Open(name) != nil {
 		return true
 	}
 
@@ -142,10 +152,10 @@ func Exists(name string) bool {
 }
 
 func Persist(name string) string {
-	f := Mapped(name)
+	f := file.Open(name)
 
 	if f == nil {
-		return name
+		return name // already persistet
 	}
 
 	t, err := os.CreateTemp("", "fox-*")
@@ -163,38 +173,8 @@ func Persist(name string) string {
 	return t.Name()
 }
 
-func TempFile(name string) File {
-	f := Mapped(name)
-
-	if f != nil {
-		return f
-	}
-
-	f = NewFileData(name)
-
-	vfs[f.Name()] = f
-
-	return f
-}
-
-func OpenFile(name string) File {
-	f := Mapped(name)
-
-	if f != nil {
-		return f
-	}
-
-	f, err := os.OpenFile(name, os.O_RDONLY, 0400)
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return f
-}
-
-func DumpStr(data string) File {
-	f := TempFile("dump")
+func DumpStr(data string) file.File {
+	f := file.New("dump")
 	defer f.Close()
 
 	_, err := f.WriteString(data)

@@ -13,6 +13,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/user/plugins"
 )
@@ -56,7 +57,7 @@ func New(paths []string) *HeapSet {
 
 	hs.watch(sys.Log.Name())
 
-	if sys.IsPiped(os.Stdin) {
+	if sys.Piped(os.Stdin) {
 		paths = append(paths, Stdin)
 	}
 
@@ -150,13 +151,13 @@ func (hs *HeapSet) OpenHelp() {
 }
 
 func (hs *HeapSet) OpenChat(path string) {
-	idx, ok := hs.findByName("Forensic Examiner")
+	idx, ok := hs.findByName("Examiner")
 
 	if !ok {
 		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
-			Title: "Forensic Examiner",
+			Title: "Examiner",
 			Path:  path,
 			Base:  path,
 			Type:  types.Prompt,
@@ -230,7 +231,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) Aggregate() {
-	f := sys.TempFile("Aggregated")
+	f := file.New("Aggregated")
 
 	hs.RLock()
 

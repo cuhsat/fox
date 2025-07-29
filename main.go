@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"runtime/debug"
 
@@ -20,8 +19,8 @@ func main() {
 
 	defer func() {
 		if err := recover(); err != nil {
-			_, _ = fmt.Fprintln(os.Stderr, err)
 			sys.DumpErr(err, debug.Stack())
+			sys.Print(err)
 		}
 
 		sys.Log.Close()

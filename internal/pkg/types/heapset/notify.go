@@ -8,16 +8,15 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 )
 
 func (hs *HeapSet) watch(name string) {
-	f := sys.Mapped(name)
-
-	switch f.(type) {
+	switch f := file.Open(name); f.(type) {
 
 	// virtual file
-	case *sys.FileData:
-		f.(*sys.FileData).Watch(hs.watcher.Events)
+	case *file.FileData:
+		f.(*file.FileData).Watch(hs.watcher.Events)
 
 	// regular file
 	case nil:

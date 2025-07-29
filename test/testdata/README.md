@@ -7,8 +7,8 @@ EICAR Anti-Virus Test File
 Historic Sample CSV datasets
 - https://www.tablab.app/csv/sample
 
-Windows Events Attack Samples
-- https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES
+Microsoft Developer Virtual Machines
+- https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/
 
 Microsoft Edge JSON Dummy Data
 - https://microsoftedge.github.io/Demos/json-dummy-data/

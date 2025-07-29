@@ -14,11 +14,12 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
 type Examiner struct {
-	File sys.File // examiner chat file
+	File file.File // examiner chat file
 
 	heap *heap.Heap // buffered heap
 
@@ -28,7 +29,7 @@ type Examiner struct {
 
 func New() *Examiner {
 	return &Examiner{
-		File: sys.TempFile("Examiner"),
+		File: file.New("Examiner"),
 
 		hi: make([]api.Message, 0),
 		ch: make(chan string, 16),

@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 
 	"github.com/eciavatta/sdhash"
 	"github.com/glaslos/ssdeep"
@@ -101,9 +102,9 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 
 	imp.Reset()
 
-	f := sys.OpenFile(h.Base)
+	f := sys.Open(h.Base)
 
-	defer func(f sys.File) {
+	defer func(f file.File) {
 		_ = f.Close()
 	}(f)
 

@@ -7,21 +7,22 @@ import (
 	"sync/atomic"
 
 	"github.com/hiforensics/fox/internal/pkg/arg"
-	"github.com/hiforensics/fox/internal/pkg/file"
-	"github.com/hiforensics/fox/internal/pkg/file/archive/rar"
-	"github.com/hiforensics/fox/internal/pkg/file/archive/tar"
-	"github.com/hiforensics/fox/internal/pkg/file/archive/zip"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/br"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/bzip2"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/gzip"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/lz4"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/xz"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/zlib"
-	"github.com/hiforensics/fox/internal/pkg/file/compress/zstd"
-	"github.com/hiforensics/fox/internal/pkg/file/format/csv"
-	"github.com/hiforensics/fox/internal/pkg/file/parser/evtx"
+	"github.com/hiforensics/fox/internal/pkg/files"
+	"github.com/hiforensics/fox/internal/pkg/files/archive/rar"
+	"github.com/hiforensics/fox/internal/pkg/files/archive/tar"
+	"github.com/hiforensics/fox/internal/pkg/files/archive/zip"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/br"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/bzip2"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/gzip"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/lz4"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/xz"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/zlib"
+	"github.com/hiforensics/fox/internal/pkg/files/compress/zstd"
+	"github.com/hiforensics/fox/internal/pkg/files/format/csv"
+	"github.com/hiforensics/fox/internal/pkg/files/parser/evtx"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
@@ -85,7 +86,7 @@ func (hs *HeapSet) loadFile(path, base string) {
 	hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadArchive(fn file.Deflate, path, base string) {
+func (hs *HeapSet) loadArchive(fn files.Deflate, path, base string) {
 	for _, i := range fn(path) {
 		i.Path = hs.deflate(i.Path, base)
 
@@ -189,8 +190,8 @@ func (hs *HeapSet) process(path, base string) string {
 				continue
 			}
 
-			p.Execute(path, base, func(file sys.File, base string) {
-				hs.loadPlugin(file.Name(), base, p.Name)
+			p.Execute(path, base, func(f file.File, base string) {
+				hs.loadPlugin(f.Name(), base, p.Name)
 			})
 
 			return ""

@@ -10,6 +10,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/arg"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/smap"
 )
 
@@ -29,9 +30,9 @@ type Heap struct {
 
 	filters []*Filter // filters
 
-	hash Hash     // file hash sums
-	size int64    // file size
-	file sys.File // file handle
+	hash Hash      // file hash sums
+	size int64     // file size
+	file file.File // file handle
 }
 
 type Cache map[string]any
@@ -119,7 +120,7 @@ func (h *Heap) Reload() {
 	h.Lock()
 
 	if h.file == nil {
-		h.file = sys.OpenFile(h.Path)
+		h.file = sys.Open(h.Path)
 	}
 
 	fi, err := h.file.Stat()
@@ -164,7 +165,7 @@ func (h *Heap) Reload() {
 			}
 
 		// virtual file
-		case *sys.FileData:
+		case *file.FileData:
 			m = make(mmap.MMap, h.size)
 
 			copy(m, f.Bytes())

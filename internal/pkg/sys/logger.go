@@ -3,7 +3,10 @@ package sys
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
+
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 )
 
 var (
@@ -11,33 +14,37 @@ var (
 )
 
 type logger struct {
-	file File // log file handle
+	f file.File // log file handle
 }
 
 func Setup() {
-	Log = &logger{file: Stderr()}
+	Log = &logger{f: Stderr()}
 	log.SetFlags(0)
 	log.SetOutput(Log)
 }
 
 func (l logger) Name() string {
-	return l.file.Name()
+	return l.f.Name()
 }
 
 func (l logger) Write(b []byte) (int, error) {
 	ts := time.Now().UTC().Format(time.RFC3339)
 
-	return fmt.Fprintf(l.file, "[%s] %s", ts, string(b))
+	return fmt.Fprintf(l.f, "[%s] %s", ts, string(b))
 }
 
 func (l logger) Close() {
-	_ = l.file.Close()
+	_ = l.f.Close()
+}
+
+func Print(v ...any) {
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf("fox: %s", v...))
 }
 
 func Error(v ...any) {
-	log.Println(v...)
+	log.Println(fmt.Sprintf("fox: %s", v...))
 }
 
 func Panic(v ...any) {
-	log.Panic(v...)
+	log.Panic(fmt.Sprintf("fox: %s", v...))
 }

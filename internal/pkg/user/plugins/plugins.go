@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/user"
 )
 
@@ -18,7 +19,7 @@ var (
 	Input chan string
 )
 
-type Func func(file sys.File, base string)
+type Func func(file.File, string)
 
 type Plugins struct {
 	Autostart map[string]Plugin `toml:"Autostart"`
