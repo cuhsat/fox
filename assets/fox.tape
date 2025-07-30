@@ -4,6 +4,10 @@ Set CursorBlink false
 Set TypingSpeed 150ms
 Set Padding 0
 
+#Type "cd .. && go run main.go test/testdata/nist/HackingCase.E01 -S" Enter Sleep 2s
+#
+#F7 Type "evtx" Enter Sleep 3s
+
 Type "cd .. && go run main.go test/testdata/zip/events.zip -S" Enter Sleep 2s
 
 Tab Sleep 3s

@@ -165,7 +165,7 @@ func (h *Heap) Reload() {
 			}
 
 		// virtual file
-		case *file.FileData:
+		case *file.Data:
 			m = make(mmap.MMap, h.size)
 
 			copy(m, f.Bytes())

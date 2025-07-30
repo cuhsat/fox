@@ -1,11 +1,13 @@
 package context
 
 import (
+	"strings"
 	"sync"
 	"sync/atomic"
 
 	"github.com/gdamore/tcell/v2"
 
+	"github.com/hiforensics/fox/internal/pkg/arg"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
 	"github.com/hiforensics/fox/internal/pkg/user/config"
 )
@@ -29,6 +31,7 @@ type Context struct {
 }
 
 func New(root tcell.Screen) *Context {
+	arg := arg.GetArgs().UI.Status
 	cfg := config.New()
 	ctx := &Context{
 		// screen
@@ -48,10 +51,25 @@ func New(root tcell.Screen) *Context {
 		theme: cfg.Theme,
 	}
 
+	ft := cfg.Follow
+	fn := cfg.Numbers
+	fw := cfg.Wrap
+
+	// args overwrite
+	if strings.ContainsRune(arg, '-') {
+		ft = false
+		fn = false
+		fw = false
+	} else if len(arg) > 0 {
+		ft = strings.ContainsRune(arg, 'T')
+		fn = strings.ContainsRune(arg, 'N')
+		fw = strings.ContainsRune(arg, 'W')
+	}
+
 	// flags
-	ctx.follow.Store(cfg.Follow)
-	ctx.numbers.Store(cfg.Numbers)
-	ctx.wrap.Store(cfg.Wrap)
+	ctx.follow.Store(ft)
+	ctx.numbers.Store(fn)
+	ctx.wrap.Store(fw)
 
 	return ctx
 }

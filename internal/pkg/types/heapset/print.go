@@ -24,37 +24,40 @@ func (hs *HeapSet) Deflate(path string) {
 	hs.RLock()
 
 	for _, h := range hs.heaps {
-		b := filepath.Base(h.Base)
+		root := path
 
-		dir := b[0 : len(b)-len(filepath.Ext(b))]
+		if root == "-" {
+			name := filepath.Base(h.Base)
+			root = name[0 : len(name)-len(filepath.Ext(name))]
+		}
 
 		// convert to relative path
-		p := h.Title
+		path := h.Title
 
 		if h.Type == types.Deflate {
-			p = p[len(h.Base)+1:]
+			path = path[len(h.Base)+1:]
 		} else {
-			p = filepath.Base(p)
+			path = filepath.Base(path)
 		}
 
 		// create (sub)folders
-		if d := filepath.Dir(p); len(d) > 0 {
-			d = filepath.Join(path, dir, d)
+		if sub := filepath.Dir(path); len(sub) > 0 {
+			sub = filepath.Join(root, sub)
 
-			err := os.MkdirAll(d, 0700)
+			err := os.MkdirAll(sub, 0700)
 
 			if err != nil {
 				sys.Exit(err)
 			}
 		}
 
-		p = filepath.Join(path, dir, p)
+		path = filepath.Join(root, path)
 
 		if !args.Print.NoFile {
-			fmt.Printf("Deflate %s\n", p)
+			fmt.Printf("Deflate %s\n", path)
 		}
 
-		err := os.WriteFile(p, *h.Ensure().MMap(), 0600)
+		err := os.WriteFile(path, *h.Ensure().MMap(), 0600)
 
 		if err != nil {
 			sys.Exit(err)

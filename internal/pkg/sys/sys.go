@@ -155,7 +155,7 @@ func Persist(name string) string {
 	f := file.Open(name)
 
 	if f == nil {
-		return name // already persistet
+		return name // already persistent
 	}
 
 	t, err := os.CreateTemp("", "fox-*")

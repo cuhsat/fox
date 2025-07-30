@@ -30,7 +30,7 @@ type File interface {
 	Truncate(size int64) error
 }
 
-type FileData struct {
+type Data struct {
 	sync.RWMutex
 
 	name string
@@ -40,8 +40,8 @@ type FileData struct {
 	evt  chan fsnotify.Event
 }
 
-type FileInfo struct {
-	fd *FileData
+type Info struct {
+	data *Data
 }
 
 var (
@@ -57,65 +57,63 @@ func Open(name string) File {
 }
 
 func New(name string) File {
-	rand.Seed(time.Now().UnixNano())
-
-	f := NewFileData(name)
+	f := NewData(name)
 
 	vfs[f.Name()] = f
 
 	return f
 }
 
-func NewFileData(name string) *FileData {
-	return &FileData{name: fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)}
+func NewData(name string) *Data {
+	return &Data{name: fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)}
 }
 
-func NewFileInfo(fd *FileData) *FileInfo {
-	return &FileInfo{fd: fd}
+func NewInfo(data *Data) *Info {
+	return &Info{data: data}
 }
 
-func (fd *FileData) Bytes() []byte {
-	fd.RLock()
-	defer fd.RUnlock()
-	return fd.buf
+func (d *Data) Bytes() []byte {
+	d.RLock()
+	defer d.RUnlock()
+	return d.buf
 }
 
-func (fd *FileData) Watch(ch chan fsnotify.Event) {
-	fd.Lock()
-	fd.evt = ch
-	fd.Unlock()
+func (d *Data) Watch(ch chan fsnotify.Event) {
+	d.Lock()
+	d.evt = ch
+	d.Unlock()
 }
 
-func (fd *FileData) Close() error {
-	fd.pos.Store(0)
+func (d *Data) Close() error {
+	d.pos.Store(0)
 	return nil
 }
 
-func (fd *FileData) Name() string {
-	return fd.name
+func (d *Data) Name() string {
+	return d.name
 }
 
-func (fd *FileData) Read(b []byte) (n int, err error) {
-	n, err = fd.ReadAt(b, fd.pos.Load())
+func (d *Data) Read(b []byte) (n int, err error) {
+	n, err = d.ReadAt(b, d.pos.Load())
 
-	fd.pos.Add(int64(n))
+	d.pos.Add(int64(n))
 
 	return
 }
 
-func (fd *FileData) ReadAt(b []byte, off int64) (n int, err error) {
-	fd.RLock()
-	defer fd.RUnlock()
+func (d *Data) ReadAt(b []byte, off int64) (n int, err error) {
+	d.RLock()
+	defer d.RUnlock()
 
 	if off < 0 || int64(int(off)) < off {
 		return 0, ErrorInvalidOffset
 	}
 
-	if off > int64(len(fd.buf)) {
+	if off > int64(len(d.buf)) {
 		return 0, io.EOF
 	}
 
-	n = copy(b, fd.buf[off:])
+	n = copy(b, d.buf[off:])
 
 	if n < len(b) {
 		return n, io.EOF
@@ -124,21 +122,21 @@ func (fd *FileData) ReadAt(b []byte, off int64) (n int, err error) {
 	return n, nil
 }
 
-func (fd *FileData) ReadFrom(r io.Reader) (n int64, err error) {
+func (d *Data) ReadFrom(r io.Reader) (n int64, err error) {
 	b, err := io.ReadAll(r)
 
 	if err != nil {
 		return 0, err
 	}
 
-	i, err := fd.Write(b)
+	i, err := d.Write(b)
 
 	return int64(i), err
 }
 
-func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
-	fd.RLock()
-	defer fd.RUnlock()
+func (d *Data) Seek(offset int64, whence int) (int64, error) {
+	d.RLock()
+	defer d.RUnlock()
 
 	var abs int64
 
@@ -147,10 +145,10 @@ func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
 		abs = offset
 
 	case io.SeekCurrent:
-		abs = fd.pos.Load() + offset
+		abs = d.pos.Load() + offset
 
 	case io.SeekEnd:
-		abs = int64(len(fd.buf)) + offset
+		abs = int64(len(d.buf)) + offset
 
 	default:
 		return 0, ErrorInvalidOffset
@@ -160,109 +158,113 @@ func (fd *FileData) Seek(offset int64, whence int) (int64, error) {
 		return 0, ErrorInvalidOffset
 	}
 
-	fd.pos.Store(abs)
+	d.pos.Store(abs)
 
 	return abs, nil
 }
 
-func (fd *FileData) Stat() (fs.FileInfo, error) {
-	return NewFileInfo(fd), nil
+func (d *Data) Stat() (fs.FileInfo, error) {
+	return NewInfo(d), nil
 }
 
-func (fd *FileData) Truncate(size int64) error {
-	fd.Lock()
-	defer fd.Unlock()
+func (d *Data) Truncate(size int64) error {
+	d.Lock()
+	defer d.Unlock()
 
 	switch {
 	case size < 0 || int64(int(size)) < size:
 		return ErrorInvalidOffset
 
-	case size <= int64(len(fd.buf)):
-		fd.buf = fd.buf[:size]
+	case size <= int64(len(d.buf)):
+		d.buf = d.buf[:size]
 
 	default:
-		fd.buf = append(fd.buf, make([]byte, int(size)-len(fd.buf))...)
+		d.buf = append(d.buf, make([]byte, int(size)-len(d.buf))...)
 	}
 
-	fd.mod = time.Now()
+	d.mod = time.Now()
 
-	fd.notify()
+	d.notify()
 
 	return nil
 }
 
-func (fd *FileData) Write(b []byte) (n int, err error) {
-	n, err = fd.WriteAt(b, fd.pos.Load())
+func (d *Data) Write(b []byte) (n int, err error) {
+	n, err = d.WriteAt(b, d.pos.Load())
 
-	fd.pos.Add(int64(n))
+	d.pos.Add(int64(n))
 
 	return
 }
 
-func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
-	fd.Lock()
-	defer fd.Unlock()
+func (d *Data) WriteAt(b []byte, off int64) (n int, err error) {
+	d.Lock()
+	defer d.Unlock()
 
 	if off < 0 || int64(int(off)) < off {
 		return 0, ErrorInvalidOffset
 	}
 
-	if off > int64(len(fd.buf)) {
-		_ = fd.Truncate(off)
+	if off > int64(len(d.buf)) {
+		_ = d.Truncate(off)
 	}
 
-	n = copy(fd.buf[off:], b)
+	n = copy(d.buf[off:], b)
 
-	fd.buf = append(fd.buf, b[n:]...)
-	fd.mod = time.Now()
+	d.buf = append(d.buf, b[n:]...)
+	d.mod = time.Now()
 
-	fd.notify()
+	d.notify()
 
 	return len(b), nil
 }
 
-func (fd *FileData) WriteTo(w io.Writer) (n int64, err error) {
-	fd.RLock()
-	defer fd.RUnlock()
+func (d *Data) WriteTo(w io.Writer) (n int64, err error) {
+	d.RLock()
+	defer d.RUnlock()
 
-	i, err := w.Write(fd.buf)
+	i, err := w.Write(d.buf)
 
 	return int64(i), err
 }
 
-func (fd *FileData) WriteString(s string) (n int, err error) {
-	return fd.Write([]byte(s))
+func (d *Data) WriteString(s string) (n int, err error) {
+	return d.Write([]byte(s))
 }
 
-func (fd *FileData) notify() {
-	if fd.evt != nil {
-		fd.evt <- fsnotify.Event{
-			Name: fd.name,
+func (d *Data) notify() {
+	if d.evt != nil {
+		d.evt <- fsnotify.Event{
+			Name: d.name,
 			Op:   fsnotify.Write,
 		}
 	}
 }
 
-func (fi *FileInfo) Name() string {
-	return fi.fd.Name()
+func (i *Info) Name() string {
+	return i.data.Name()
 }
 
-func (fi *FileInfo) Size() int64 {
-	return int64(len(fi.fd.buf))
+func (i *Info) Size() int64 {
+	i.data.RLock()
+	defer i.data.RUnlock()
+	return int64(len(i.data.buf))
 }
 
-func (fi *FileInfo) Mode() fs.FileMode {
-	return 0
+func (i *Info) Mode() fs.FileMode {
+	return 0 // regular
 }
 
-func (fi *FileInfo) ModTime() time.Time {
-	return fi.fd.mod
+func (i *Info) ModTime() time.Time {
+	i.data.RLock()
+	defer i.data.RUnlock()
+	return i.data.mod
 }
 
-func (fi *FileInfo) IsDir() bool {
+func (i *Info) IsDir() bool {
 	return false
 }
 
-func (fi *FileInfo) Sys() any {
+func (i *Info) Sys() any {
 	return nil
 }

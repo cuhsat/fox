@@ -3,6 +3,7 @@ package arg
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	flag "github.com/spf13/pflag"
@@ -19,7 +20,6 @@ const (
 
 const (
 	BagNone   = "none"
-	BagRaw    = "raw"
 	BagText   = "text"
 	BagJson   = "json"
 	BagJsonl  = "jsonl"
@@ -54,11 +54,15 @@ type ArgsBag struct {
 }
 
 type ArgsOpt struct {
-	Skip bool
+	Raw       bool
+	NoConvert bool
+	NoDeflate bool
+	NoPlugins bool
 }
 
 type ArgsUI struct {
-	Mode mode.Mode
+	Status string
+	Mode   mode.Mode
 }
 
 // singleton
@@ -91,24 +95,24 @@ func parse() *Args {
 
 	x := flag.BoolP("hex", "x", false, "")
 	w := flag.BoolP("counts", "w", false, "")
+
+	// actions
 	H := flag.StringP("hash", "H", "", "")
 
 	if len(*H) == 0 {
 		flag.Lookup("hash").NoOptDefVal = "sha256" // default
 	}
 
-	// carve strings
 	s := flag.IntP("strings", "s", 0, "")
 
 	if *s == 0 {
 		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
-	// deflate file
-	d := flag.StringP("deflate", "d", "", "")
+	flag.StringVarP(&args.Deflate, "deflate", "d", "", "")
 
-	if len(*d) == 0 {
-		flag.Lookup("deflate").NoOptDefVal = "out" // default
+	if len(args.Deflate) == 0 {
+		flag.Lookup("deflate").NoOptDefVal = "-" // default
 	}
 
 	// file limits
@@ -152,16 +156,21 @@ func parse() *Args {
 		flag.Lookup("mode").NoOptDefVal = BagText // default
 	}
 
+	// disable
+	flag.BoolVarP(&args.Opt.Raw, "raw", "r", false, "")
+	flag.BoolVarP(&args.Opt.NoConvert, "no-convert", "", false, "")
+	flag.BoolVarP(&args.Opt.NoDeflate, "no-deflate", "", false, "")
+	flag.BoolVarP(&args.Opt.NoPlugins, "no-plugins", "", false, "")
+
 	// aliases
-	R := flag.BoolP("raw", "R", false, "")
 	T := flag.BoolP("text", "T", false, "")
 	j := flag.BoolP("json", "j", false, "")
 	J := flag.BoolP("jsonl", "J", false, "")
 	X := flag.BoolP("xml", "X", false, "")
 	S := flag.BoolP("sqlite", "S", false, "")
 
-	// plugins
-	flag.BoolVarP(&args.Opt.Skip, "skip", "a", false, "")
+	// interface
+	flag.StringVarP(&args.UI.Status, "status", "", "", "")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "")
@@ -182,7 +191,7 @@ func parse() *Args {
 
 	args.Args = flag.Args()
 
-	// flag checks
+	// checks
 	if *head && *tail {
 		sys.Exit("Can't specify both -h and -t")
 	}
@@ -203,11 +212,11 @@ func parse() *Args {
 		sys.Exit("Can't specify both -x and -e")
 	}
 
-	if len(*d) > 0 && args.Print.Active {
+	if len(args.Deflate) > 0 && args.Print.Active {
 		sys.Exit("Can't specify both -d and -p")
 	}
 
-	if len(*d) > 0 && len(filters.Patterns) > 0 {
+	if len(args.Deflate) > 0 && len(filters.Patterns) > 0 {
 		sys.Exit("Can't specify both -d and -e")
 	}
 
@@ -226,13 +235,16 @@ func parse() *Args {
 		filters.After = *C
 	}
 
+	// disable
+	if args.Opt.Raw {
+		args.Opt.NoConvert = true
+		args.Opt.NoDeflate = true
+		args.Opt.NoPlugins = true
+	}
+
 	// aliases
 	if *N {
 		args.Bag.Mode = BagNone
-	}
-
-	if *R {
-		args.Bag.Mode = BagRaw
 	}
 
 	if *T {
@@ -259,9 +271,12 @@ func parse() *Args {
 		args.Bag.Mode = strings.ToLower(args.Bag.Mode)
 	}
 
-	// deflate file
-	if len(*d) > 0 {
-		args.Deflate = *d
+	// interface
+	if len(args.UI.Status) > 0 {
+		re := regexp.MustCompile("[^-NWT]+")
+
+		args.UI.Status = strings.ToUpper(args.UI.Status)
+		args.UI.Status = re.ReplaceAllString(args.UI.Status, "")
 	}
 
 	// output mode

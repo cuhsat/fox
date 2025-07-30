@@ -41,10 +41,12 @@ func (hs *HeapSet) loadPath(path string) {
 		return
 	}
 
-	path = hs.deflate(path, base)
+	if !arg.GetArgs().Opt.NoDeflate {
+		path = hs.deflate(path, base)
 
-	if len(path) == 0 {
-		return
+		if len(path) == 0 {
+			return
+		}
 	}
 
 	path = hs.process(path, base)
@@ -173,28 +175,28 @@ func (hs *HeapSet) deflate(path, base string) string {
 }
 
 func (hs *HeapSet) process(path, base string) string {
-	// check for parser
-	if evtx.Detect(path) {
-		path = evtx.Parse(path)
+	if !arg.GetArgs().Opt.NoConvert {
+		// check for parser
+		if evtx.Detect(path) {
+			path = evtx.Parse(path)
+		}
+
+		// check for format
+		if csv.Detect(path) {
+			path = csv.Format(path)
+		}
 	}
 
-	// check for format
-	if csv.Detect(path) {
-		path = csv.Format(path)
-	}
-
-	// check for plugin
-	if !arg.GetArgs().Opt.Skip {
+	if !arg.GetArgs().Opt.NoPlugins {
+		// check for plugin
 		for _, p := range hs.plugins {
-			if !p.Match(path) {
-				continue
+			if p.Match(path) {
+				p.Execute(path, base, func(f file.File, base string) {
+					hs.loadPlugin(f.Name(), base, p.Name)
+				})
+
+				return ""
 			}
-
-			p.Execute(path, base, func(f file.File, base string) {
-				hs.loadPlugin(f.Name(), base, p.Name)
-			})
-
-			return ""
 		}
 	}
 

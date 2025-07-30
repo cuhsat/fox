@@ -19,47 +19,47 @@ import (
 )
 
 const (
-	Md5      = "md5"
-	Sha1     = "sha1"
-	Sha256   = "sha256"
-	Sha3     = "sha3"
-	Sha3_224 = "sha3-224"
-	Sha3_256 = "sha3-256"
-	Sha3_384 = "sha3-384"
-	Sha3_512 = "sha3-512"
-	Sdhash   = "sdhash"
-	Ssdeep   = "ssdeep"
-	Tlsh     = "tlsh"
+	MD5     = "md5"
+	SHA1    = "sha1"
+	SHA256  = "sha256"
+	SHA3    = "sha3"
+	SHA3224 = "sha3-224"
+	SHA3256 = "sha3-256"
+	SHA3384 = "sha3-384"
+	SHA3512 = "sha3-512"
+	SDHASH  = "sdhash"
+	SSDEEP  = "ssdeep"
+	TLSH    = "tlsh"
 )
 
 type Hash map[string][]byte
 
 func (h *Heap) Md5() ([]byte, error) {
-	return h.HashSum(Md5)
+	return h.HashSum(MD5)
 }
 
 func (h *Heap) Sha1() ([]byte, error) {
-	return h.HashSum(Sha1)
+	return h.HashSum(SHA1)
 }
 
 func (h *Heap) Sha256() ([]byte, error) {
-	return h.HashSum(Sha256)
+	return h.HashSum(SHA256)
 }
 
 func (h *Heap) Sha3() ([]byte, error) {
-	return h.HashSum(Sha3)
+	return h.HashSum(SHA3)
 }
 
 func (h *Heap) Sdhash() ([]byte, error) {
-	return h.HashSum(Sdhash)
+	return h.HashSum(SDHASH)
 }
 
 func (h *Heap) Ssdeep() ([]byte, error) {
-	return h.HashSum(Ssdeep)
+	return h.HashSum(SSDEEP)
 }
 
 func (h *Heap) Tlsh() ([]byte, error) {
-	return h.HashSum(Tlsh)
+	return h.HashSum(TLSH)
 }
 
 func (h *Heap) HashSum(algo string) ([]byte, error) {
@@ -76,25 +76,25 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 	var imp hash.Hash
 
 	switch algo {
-	case Md5:
+	case MD5:
 		imp = md5.New()
-	case Sha1:
+	case SHA1:
 		imp = sha1.New()
-	case Sha256:
+	case SHA256:
 		imp = sha256.New()
-	case Sha3, Sha3_224:
+	case SHA3, SHA3224:
 		imp = sha3.New224()
-	case Sha3_256:
+	case SHA3256:
 		imp = sha3.New256()
-	case Sha3_384:
+	case SHA3384:
 		imp = sha3.New384()
-	case Sha3_512:
+	case SHA3512:
 		imp = sha3.New512()
-	case Sdhash:
+	case SDHASH:
 		imp = new(SDHash)
-	case Ssdeep:
+	case SSDEEP:
 		imp = ssdeep.New()
-	case Tlsh:
+	case TLSH:
 		imp = tlsh.New()
 	default:
 		return nil, errors.New("hash not supported")

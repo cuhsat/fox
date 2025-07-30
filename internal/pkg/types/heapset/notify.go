@@ -15,8 +15,8 @@ func (hs *HeapSet) watch(name string) {
 	switch f := file.Open(name); f.(type) {
 
 	// virtual file
-	case *file.FileData:
-		f.(*file.FileData).Watch(hs.watcher.Events)
+	case *file.Data:
+		f.(*file.Data).Watch(hs.watcher.Events)
 
 	// regular file
 	case nil:
