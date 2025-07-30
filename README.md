@@ -5,7 +5,6 @@ The Swiss Army Knife for examining text files. Combining the power of **cat**, *
 ![](assets/fox.gif "Demo")
 
 ## Install
-
 ```console
 go install github.com/hiforensics/fox@latest
 ```

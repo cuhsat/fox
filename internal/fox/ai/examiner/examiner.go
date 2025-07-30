@@ -95,7 +95,7 @@ func (e *Examiner) Listen() {
 			s = strings.TrimSpace(s)
 		}
 
-		s = strings.Replace(s, "  ", "-", 1)
+		s = strings.Replace(s, "  ", "", 1)
 
 		// response chunk
 		_, _ = e.File.WriteString(s)

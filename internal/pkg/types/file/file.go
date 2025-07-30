@@ -35,6 +35,7 @@ type FileData struct {
 
 	name string
 	buf  []byte
+	mod  time.Time
 	pos  atomic.Int64
 	evt  chan fsnotify.Event
 }
@@ -183,6 +184,8 @@ func (fd *FileData) Truncate(size int64) error {
 		fd.buf = append(fd.buf, make([]byte, int(size)-len(fd.buf))...)
 	}
 
+	fd.mod = time.Now()
+
 	fd.notify()
 
 	return nil
@@ -211,6 +214,7 @@ func (fd *FileData) WriteAt(b []byte, off int64) (n int, err error) {
 	n = copy(fd.buf[off:], b)
 
 	fd.buf = append(fd.buf, b[n:]...)
+	fd.mod = time.Now()
 
 	fd.notify()
 
@@ -252,7 +256,7 @@ func (fi *FileInfo) Mode() fs.FileMode {
 }
 
 func (fi *FileInfo) ModTime() time.Time {
-	return time.Now()
+	return fi.fd.mod
 }
 
 func (fi *FileInfo) IsDir() bool {

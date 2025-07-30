@@ -1,15 +1,3 @@
-# Disassembler
-
-## objdump
-```toml
-[Autostart.Disassembler]
-Name = "objdump"
-Pattern = '.*\.(bin|dll|exe|scr|sys)'
-Commands = [
-  'objdump -D "{{file}}"',
-]
-```
-
 # Dissect
 
 ## target-info
@@ -61,5 +49,27 @@ Name = "JLECmd"
 Pattern = '.*\.(automatic|custom)Destination-ms'
 Commands = [
   'dotnet JLECmd.dll -f "{{file}}" --mp --fd',
+]
+```
+
+# Reverse Engineering
+
+## capa
+```toml
+[Autostart.Capa]
+Name = "capa"
+Pattern = '.*\.(bin|dll|exe|scr|sys)'
+Commands = [
+  'capa "{{file}}"',
+]
+```
+
+## objdump
+```toml
+[Autostart.Dump]
+Name = "objdump"
+Pattern = '.*\.(bin|dll|exe|scr|sys)'
+Commands = [
+  'objdump -D "{{file}}"',
 ]
 ```

@@ -20,9 +20,9 @@ const (
 
 const (
 	filter  = '❯'
-	follow  = 'T'
 	numbers = 'N'
 	wrap    = 'W'
+	follow  = 'T'
 	off     = '·'
 )
 
@@ -230,12 +230,6 @@ func (p *Prompt) fmtStatus(n, m int) string {
 		sb.WriteString(fmt.Sprintf(" %d ", n))
 	}
 
-	if p.ctx.IsFollow() {
-		sb.WriteRune(follow)
-	} else {
-		sb.WriteRune(off)
-	}
-
 	if p.ctx.IsNumbers() {
 		sb.WriteRune(numbers)
 	} else {
@@ -244,6 +238,12 @@ func (p *Prompt) fmtStatus(n, m int) string {
 
 	if p.ctx.IsWrap() {
 		sb.WriteRune(wrap)
+	} else {
+		sb.WriteRune(off)
+	}
+
+	if p.ctx.IsFollow() {
+		sb.WriteRune(follow)
 	} else {
 		sb.WriteRune(off)
 	}
