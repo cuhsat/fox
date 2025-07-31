@@ -113,7 +113,7 @@ func (hs *HeapSet) loadArchive(fn files.Deflate, path, base string) {
 
 func (hs *HeapSet) loadPlugin(path, base, name string) {
 	hs.atomicAdd(heap.New(
-		fmt.Sprintf("%s (%s)", base, name),
+		fmt.Sprintf("%s : %s", base, name),
 		path,
 		base,
 		types.Plugin,

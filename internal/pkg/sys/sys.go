@@ -24,7 +24,7 @@ func Exit(v ...any) {
 	os.Exit(1)
 }
 
-func Exec(cmds []string) file.File {
+func Call(cmds []string) file.File {
 	f := file.New("stdout")
 	defer f.Close()
 
@@ -141,6 +141,16 @@ func Open(name string) file.File {
 	return nil
 }
 
+func Temp(name string) file.File {
+	f, err := os.CreateTemp("", "fox-*")
+
+	if err != nil {
+		Panic(err)
+	}
+
+	return f
+}
+
 func Exists(name string) bool {
 	if file.Open(name) != nil {
 		return true
@@ -158,13 +168,9 @@ func Persist(name string) string {
 		return name // already persistent
 	}
 
-	t, err := os.CreateTemp("", "fox-*")
+	t := Temp(name)
 
-	if err != nil {
-		Panic(err)
-	}
-
-	_, err = f.WriteTo(t)
+	_, err := f.WriteTo(t)
 
 	if err != nil {
 		Panic(err)
@@ -173,20 +179,7 @@ func Persist(name string) string {
 	return t.Name()
 }
 
-func DumpStr(data string) file.File {
-	f := file.New("dump")
-	defer f.Close()
-
-	_, err := f.WriteString(data)
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return f
-}
-
-func DumpErr(err any, stack any) {
+func Trace(err any, stack any) {
 	s := fmt.Sprintf("%+v\n\n%s", err, stack)
 
 	err = os.WriteFile(Dump, []byte(s), 0600)

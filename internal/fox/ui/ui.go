@@ -266,12 +266,11 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					}
 
 					go p.Execute(heap.Path, heap.Base, func(f file.File, base string) {
-						name := fmt.Sprintf("%s (%s)", base, p.Name)
-						hs.OpenFile(f.Name(), base, name, types.Plugin)
+						name := fmt.Sprintf("%s : %s", base, p.Name)
+						hs.OpenPlugin(f.Name(), base, name)
 						ui.ctx.ForceRender()
+						ui.overlay.SendInfo(fmt.Sprintf("%s executed", p.Name))
 					})
-
-					ui.overlay.SendInfo(fmt.Sprintf("%s executed", p.Name))
 
 					if len(p.Prompt) > 0 {
 						ui.change(mode.Mode(p.Prompt))
@@ -355,13 +354,13 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 				case tcell.KeyCtrlL:
 					ui.change(mode.Less)
 
-				case tcell.KeyCtrlF:
+				case tcell.KeyCtrlG:
 					ui.change(mode.Grep)
 
 				case tcell.KeyCtrlX:
 					ui.change(mode.Hex)
 
-				case tcell.KeyCtrlE:
+				case tcell.KeyCtrlF:
 					ui.change(mode.Fox)
 
 				case tcell.KeyCtrlT:
@@ -393,9 +392,9 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					hs.Aggregate()
-
-					ui.overlay.SendInfo("All open files aggregated")
+					if hs.Aggregate() {
+						ui.overlay.SendInfo("All open files aggregated")
+					}
 
 				case tcell.KeyCtrlC:
 					if ui.ctx.Mode().Static() {

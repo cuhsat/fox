@@ -52,24 +52,26 @@ var (
 	ErrorInvalidOffset = errors.New("invalid offset")
 )
 
-func Open(name string) File {
-	return vfs[name]
-}
-
 func New(name string) File {
-	f := NewData(name)
+	f := &Data{
+		name: fmt.Sprintf("fox://%d/%s", rand.Uint64(), name),
+	}
 
 	vfs[f.Name()] = f
 
 	return f
 }
 
-func NewData(name string) *Data {
-	return &Data{name: fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)}
+func Open(name string) File {
+	return vfs[name]
 }
 
-func NewInfo(data *Data) *Info {
-	return &Info{data: data}
+func Create(name, data string) File {
+	f := New(name)
+
+	_, _ = f.WriteString(data)
+
+	return f
 }
 
 func (d *Data) Bytes() []byte {
@@ -164,7 +166,7 @@ func (d *Data) Seek(offset int64, whence int) (int64, error) {
 }
 
 func (d *Data) Stat() (fs.FileInfo, error) {
-	return NewInfo(d), nil
+	return &Info{data: d}, nil
 }
 
 func (d *Data) Truncate(size int64) error {

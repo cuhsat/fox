@@ -2,7 +2,7 @@
 
 The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc** and many decompression and hash algorithms into one performant standalone binary.
 
-![](assets/fox.gif "Demo")
+![](assets/fox.gif "Live Demo")
 
 ## Install
 ```console

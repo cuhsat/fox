@@ -32,6 +32,7 @@ type Plugin struct {
 	Name     string   `toml:"Name"`
 	Prompt   string   `toml:"Prompt"`
 	Pattern  string   `toml:"Pattern"`
+	Options  string   `toml:"Options"`
 	Commands []string `toml:"Commands"`
 }
 
@@ -100,5 +101,5 @@ func (p *Plugin) Execute(file, base string, fn Func) {
 		cmds = append(cmds, r.Replace(cmd))
 	}
 
-	fn(sys.Exec(cmds), base)
+	fn(sys.Call(cmds), base)
 }

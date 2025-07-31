@@ -134,13 +134,12 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		s := fmt.Sprintf(fox.Help, fox.Version)
-		p := sys.DumpStr(s).Name()
+		f := file.Create("Help", fmt.Sprintf(fox.Help, fox.Version))
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",
-			Path:  p,
-			Base:  p,
+			Path:  f.Name(),
+			Base:  f.Name(),
 			Type:  types.Stdout,
 		})
 	}
@@ -151,17 +150,47 @@ func (hs *HeapSet) OpenHelp() {
 }
 
 func (hs *HeapSet) OpenChat(path string) {
-	idx, ok := hs.findByName("Examiner")
+	idx, ok := hs.findByName("Fox")
 
 	if !ok {
 		idx = hs.Len()
 
 		hs.atomicAdd(&heap.Heap{
-			Title: "Examiner",
+			Title: "Fox",
 			Path:  path,
 			Base:  path,
 			Type:  types.Prompt,
 		})
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.load()
+}
+
+func (hs *HeapSet) OpenPlugin(path, base, title string) {
+	idx, ok := hs.findByName(title)
+
+	if !ok {
+		idx = hs.Len()
+
+		hs.atomicAdd(&heap.Heap{
+			Title: title,
+			Path:  path,
+			Base:  base,
+			Type:  types.Plugin,
+		})
+	} else {
+		old := hs.atomicGet(idx)
+
+		hs.atomicMod(&heap.Heap{
+			Title: title,
+			Path:  path,
+			Base:  base,
+			Type:  types.Plugin,
+		}, idx)
+
+		old.ThrowAway()
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -230,7 +259,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 	return hs.NextHeap()
 }
 
-func (hs *HeapSet) Aggregate() {
+func (hs *HeapSet) Aggregate() bool {
 	f := file.New("Aggregated")
 
 	hs.RLock()
@@ -255,6 +284,12 @@ func (hs *HeapSet) Aggregate() {
 
 	hs.RUnlock()
 
+	fi, _ := f.Stat()
+
+	if fi.Size() == 0 {
+		return false
+	}
+
 	hs.Lock()
 
 	hs.heaps = append(heaps, &heap.Heap{
@@ -271,6 +306,8 @@ func (hs *HeapSet) Aggregate() {
 	atomic.StoreInt32(hs.index, idx)
 
 	hs.atomicGet(idx).Reload()
+
+	return true
 }
 
 func (hs *HeapSet) ThrowAway() {
@@ -318,6 +355,12 @@ func (hs *HeapSet) findByName(name string) (int32, bool) {
 func (hs *HeapSet) atomicAdd(h *heap.Heap) {
 	hs.Lock()
 	hs.heaps = append(hs.heaps, h)
+	hs.Unlock()
+}
+
+func (hs *HeapSet) atomicMod(h *heap.Heap, idx int32) {
+	hs.Lock()
+	hs.heaps[idx] = h
 	hs.Unlock()
 }
 

@@ -18,8 +18,8 @@ Keymap:
   Ctrl + Space         Scroll to [+|-]LINE
   Ctrl + ^             Cycle through themes
   Ctrl + l             Switch to LESS mode
-  Ctrl + f             Switch to GREP mode
-  Ctrl + e             Switch to FOX mode
+  Ctrl + g             Switch to GREP mode
+  Ctrl + f             Switch to FOX mode
   Ctrl + x             Switch to HEX mode
   Ctrl + t             Toggle tail follow
   Ctrl + n             Toggle line numbers

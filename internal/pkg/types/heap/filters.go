@@ -3,6 +3,7 @@ package heap
 import (
 	"regexp"
 
+	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types/smap"
 )
 
@@ -20,7 +21,12 @@ type Context struct {
 }
 
 func (h *Heap) AddFilter(pattern string, b, a int) {
-	re := regexp.MustCompile(pattern)
+	re, err := regexp.Compile(pattern)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
 
 	fmap := h.FMap()
 	last := h.LastFilter()

@@ -66,6 +66,10 @@ func (hs *HeapSet) Deflate(path string) {
 
 	hs.RUnlock()
 
+	if l := sys.Log.Consume(); len(l) > 0 {
+		fmt.Fprintln(os.Stderr, l)
+	}
+
 	fmt.Printf("%d file(s) written\n", hs.Len())
 }
 
@@ -106,6 +110,10 @@ func (hs *HeapSet) Print(args arg.ArgsPrint) {
 	}
 
 	hs.RUnlock()
+
+	if l := sys.Log.Consume(); len(l) > 0 {
+		fmt.Fprintln(os.Stderr, l)
+	}
 }
 
 func printFile(ctx *buffer.Context) {

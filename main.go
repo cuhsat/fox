@@ -19,7 +19,7 @@ func main() {
 
 	defer func() {
 		if err := recover(); err != nil {
-			sys.DumpErr(err, debug.Stack())
+			sys.Trace(err, debug.Stack())
 			sys.Print(err)
 		}
 
