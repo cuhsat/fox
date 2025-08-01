@@ -42,7 +42,7 @@ func main() {
 		bg := bag.New(args.Bag)
 		defer bg.Close()
 
-		fx := ui.New(args.UI)
+		fx := ui.New(args)
 		defer fx.Close()
 
 		fx.Run(hs, hi, bg)

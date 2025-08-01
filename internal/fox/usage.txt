@@ -41,8 +41,11 @@ Line filter:
   -A, --after=NUMBER       number of lines trailing context after match
 
 User interface:
-      --state={N|W|T|-}    sets the UI state flags
-      --theme=THEME        sets the UI theme
+      --state={N|W|T|-}    sets the used UI state flags
+      --theme=THEME        sets the used UI theme
+
+LLM interface:
+      --model=MODEL        sets the used Ollama model
 
 Evidence bag:
   -f, --file=FILE          evidence bag file name (default: "evidence")

@@ -33,6 +33,7 @@ type Args struct {
 	Run   ArgsRun
 	Bag   ArgsBag
 	Opt   ArgsOpt
+	LLM   ArgsLLM
 	UI    ArgsUI
 }
 
@@ -60,6 +61,10 @@ type ArgsOpt struct {
 	NoConvert bool
 	NoDeflate bool
 	NoPlugins bool
+}
+
+type ArgsLLM struct {
+	Model string
 }
 
 type ArgsUI struct {
@@ -150,6 +155,9 @@ func parse() *Args {
 	// user interface
 	flag.StringVarP(&args.UI.State, "state", "", "", "")
 	flag.StringVarP(&args.UI.Theme, "theme", "", "", "")
+
+	// llm interface
+	flag.StringVarP(&args.LLM.Model, "model", "", "", "")
 
 	// evidence bag
 	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "")

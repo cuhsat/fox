@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of **cat**, **less**, **grep**, **hexdump**, **head**, **tail**, **strings**, **wc** and many decompression and hash algorithms into one performant standalone binary.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of LLM models, to leverage your forensic investigation process.
 
 ![](assets/fox.gif "Live Demo")
 
@@ -13,8 +13,8 @@ go install github.com/hiforensics/fox@latest
 * Standalone native binary for AMD64 and ARM64
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
+* In-memory virtual filesystem
 * Path pattern matching and globbing
-* In-memory virtual file handling
 * File write access is prohibited
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)

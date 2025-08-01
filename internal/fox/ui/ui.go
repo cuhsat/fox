@@ -52,7 +52,7 @@ type UI struct {
 	overlay *widgets.Overlay
 }
 
-func New(args arg.ArgsUI) *UI {
+func New(args *arg.Args) *UI {
 	runewidth.CreateLUT()
 
 	root, err := tcell.NewScreen()
@@ -71,7 +71,7 @@ func New(args arg.ArgsUI) *UI {
 	root.EnablePaste()
 
 	ctx := context.New(root)
-	ctx.Precede(arg.GetArgs().UI)
+	ctx.Precede(args)
 
 	ui := UI{
 		ctx: ctx,
@@ -93,7 +93,7 @@ func New(args arg.ArgsUI) *UI {
 	root.Sync()
 
 	ui.render(nil)
-	ui.change(args.Mode)
+	ui.change(args.UI.Mode)
 
 	ai.Init(ctx.Model())
 

@@ -57,23 +57,28 @@ func New(root tcell.Screen) *Context {
 	return ctx
 }
 
-func (ctx *Context) Precede(args arg.ArgsUI) {
-	s := strings.ToUpper(args.State)
+func (ctx *Context) Precede(args *arg.Args) {
+	s := strings.ToUpper(args.UI.State)
 
 	// overwrite flags
 	if strings.ContainsRune(s, '-') {
 		ctx.t.Store(false)
 		ctx.n.Store(false)
 		ctx.w.Store(false)
-	} else if len(args.State) > 0 {
+	} else if len(args.UI.State) > 0 {
 		ctx.t.Store(strings.ContainsRune(s, 'T'))
 		ctx.n.Store(strings.ContainsRune(s, 'N'))
 		ctx.w.Store(strings.ContainsRune(s, 'W'))
 	}
 
 	// overwrite theme
-	if len(args.Theme) > 0 {
-		ctx.theme = args.Theme
+	if len(args.UI.Theme) > 0 {
+		ctx.theme = args.UI.Theme
+	}
+
+	// overwrite model
+	if len(args.LLM.Model) > 0 {
+		ctx.model = args.LLM.Model
 	}
 }
 
