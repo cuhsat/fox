@@ -5,7 +5,8 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Usage: fox [PARAMETER(S) ...] [PATH(S) ...]
+Usage:
+  fox [OPTIONS...] [PATHS...]
 
 Positional arguments:
   PATH(S) to open or '-' for STDIN (default: open UI and show Help)
