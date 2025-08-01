@@ -14,8 +14,8 @@ go install github.com/hiforensics/fox@latest
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * Path pattern matching and globbing
+* In-memory virtual file handling
 * File write access is prohibited
-* In-memory virtual filesystem
 * Unicode multi-byte support
 * Unicode bidirectional character filtering (CVE-2021-42574)
 * Build-in scroll past end ability

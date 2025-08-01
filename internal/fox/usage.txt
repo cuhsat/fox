@@ -18,21 +18,21 @@ Print:
       --no-line            don't print line numbers
 
 Actions:
-  -d, --deflate[=DIR]      deflate all files from archive (default: FILE)
-  -s, --strings[=MIN]      print ASCII and Unicode strings (default: 3)
-  -H, --hash[=ALGORITHM]   print hash sum of files (default: SHA256)
+  -d, --deflate[=DIR]      deflate all files (default: FILE)
+  -s, --strings[=MIN]      show ASCII and Unicode strings (default: 3)
+  -H, --hash[=ALGORITHM]   show hash sum of files (default: SHA256)
 
-  cryptographic hashes:
-    MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
+    Cryptographic hashes:
+      MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
 
-  fuzzy hashes:
-    SDHASH, SSDEEP, TLSH
+    Fuzzy hashes:
+      SDHASH, SSDEEP, TLSH
 
 File limits:
   -h, --head               limit head of file by ...
   -t, --tail               limit tail of file by ...
-  -n, --lines=NUMBER       number of lines (default: 10)
-  -c, --bytes=NUMBER       number of bytes (default: 16)
+  -n, --lines[=NUMBER]     number of lines (default: 10)
+  -c, --bytes[=NUMBER]     number of bytes (default: 16)
 
 Line filter:
   -e, --regexp=PATTERN     filter for lines that match pattern
@@ -40,20 +40,26 @@ Line filter:
   -B, --before=NUMBER      number of lines leading context before match
   -A, --after=NUMBER       number of lines trailing context after match
 
+User interface:
+      --state={N|W|T|-}    sets the UI state flags
+      --theme=THEME        sets the UI theme
+
 Evidence bag:
   -f, --file=FILE          evidence bag file name (default: "evidence")
-  -m, --mode={none|raw|text|json|jsonl|xml|sqlite}
-                           evidence bag file mode (default: raw)
+  -m, --mode=MODE          evidence bag file mode (default: raw)
+
+    File modes:
+      None, Raw, Text, JSON, JSONL, XML, SQLite
 
   -k, --key=KEY            key phrase for evidence bag signing with HMAC
-  -u, --url=URL            url to also send evidence data in ECS format
+  -u, --url=URL            url to also send evidence data too
       --no-bag             don't write an evidence bag
 
 Disable:
-  -r, --raw                raw file processing only
-      --no-convert         no automatic converting
-      --no-deflate         no automatic deflate
-      --no-plugins         no automatic plugins
+  -r, --raw                don't process files at all
+      --no-convert         don't convert automatically
+      --no-deflate         don't deflate automatically
+      --no-plugins         don't run autostart plugins
 
 Aliases:
   -T, --text               short for --mode=text
@@ -61,9 +67,6 @@ Aliases:
   -J, --jsonl              short for --mode=jsonl
   -S, --sqlite             short for --mode=sqlite
   -X, --xml                short for --mode=xml
-
-Interface:
-      --status={-|n|w|t}   set status flags
 
 Standard options:
       --help               shows this message

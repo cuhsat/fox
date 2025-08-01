@@ -25,13 +25,12 @@ type Context struct {
 	model string
 	theme string
 
-	follow  atomic.Bool
-	numbers atomic.Bool
-	wrap    atomic.Bool
+	t atomic.Bool
+	n atomic.Bool
+	w atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
-	arg := arg.GetArgs().UI.Status
 	cfg := config.New()
 	ctx := &Context{
 		// screen
@@ -51,27 +50,31 @@ func New(root tcell.Screen) *Context {
 		theme: cfg.Theme,
 	}
 
-	ft := cfg.Follow
-	fn := cfg.Numbers
-	fw := cfg.Wrap
-
-	// args overwrite
-	if strings.ContainsRune(arg, '-') {
-		ft = false
-		fn = false
-		fw = false
-	} else if len(arg) > 0 {
-		ft = strings.ContainsRune(arg, 'T')
-		fn = strings.ContainsRune(arg, 'N')
-		fw = strings.ContainsRune(arg, 'W')
-	}
-
-	// flags
-	ctx.follow.Store(ft)
-	ctx.numbers.Store(fn)
-	ctx.wrap.Store(fw)
+	ctx.t.Store(cfg.Follow)
+	ctx.n.Store(cfg.Numbers)
+	ctx.w.Store(cfg.Wrap)
 
 	return ctx
+}
+
+func (ctx *Context) Precede(args arg.ArgsUI) {
+	s := strings.ToUpper(args.State)
+
+	// overwrite flags
+	if strings.ContainsRune(s, '-') {
+		ctx.t.Store(false)
+		ctx.n.Store(false)
+		ctx.w.Store(false)
+	} else if len(args.State) > 0 {
+		ctx.t.Store(strings.ContainsRune(s, 'T'))
+		ctx.n.Store(strings.ContainsRune(s, 'N'))
+		ctx.w.Store(strings.ContainsRune(s, 'W'))
+	}
+
+	// overwrite theme
+	if len(args.Theme) > 0 {
+		ctx.theme = args.Theme
+	}
 }
 
 func (ctx *Context) Mode() mode.Mode {
@@ -99,15 +102,15 @@ func (ctx *Context) Theme() string {
 }
 
 func (ctx *Context) IsFollow() bool {
-	return ctx.follow.Load()
+	return ctx.t.Load()
 }
 
 func (ctx *Context) IsNumbers() bool {
-	return ctx.numbers.Load()
+	return ctx.n.Load()
 }
 
 func (ctx *Context) IsWrap() bool {
-	return ctx.wrap.Load()
+	return ctx.w.Load()
 }
 
 func (ctx *Context) ForceRender() {
@@ -140,15 +143,15 @@ func (ctx *Context) ChangeTheme(t string) {
 }
 
 func (ctx *Context) ToggleFollow() {
-	ctx.follow.Store(!ctx.follow.Load())
+	ctx.t.Store(!ctx.t.Load())
 }
 
 func (ctx *Context) ToggleNumbers() {
-	ctx.numbers.Store(!ctx.numbers.Load())
+	ctx.n.Store(!ctx.n.Load())
 }
 
 func (ctx *Context) ToggleWrap() {
-	ctx.wrap.Store(!ctx.wrap.Load())
+	ctx.w.Store(!ctx.w.Load())
 }
 
 func (ctx *Context) Background(fn func()) {

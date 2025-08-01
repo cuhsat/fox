@@ -71,6 +71,7 @@ func New(args arg.ArgsUI) *UI {
 	root.EnablePaste()
 
 	ctx := context.New(root)
+	ctx.Precede(arg.GetArgs().UI)
 
 	ui := UI{
 		ctx: ctx,

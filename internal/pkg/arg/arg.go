@@ -61,8 +61,9 @@ type ArgsOpt struct {
 }
 
 type ArgsUI struct {
-	Status string
-	Mode   mode.Mode
+	State string
+	Theme string
+	Mode  mode.Mode
 }
 
 // singleton
@@ -169,8 +170,9 @@ func parse() *Args {
 	X := flag.BoolP("xml", "X", false, "")
 	S := flag.BoolP("sqlite", "S", false, "")
 
-	// interface
-	flag.StringVarP(&args.UI.Status, "status", "", "", "")
+	// user interface
+	flag.StringVarP(&args.UI.State, "state", "", "", "")
+	flag.StringVarP(&args.UI.Theme, "theme", "", "", "")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "")
@@ -271,12 +273,11 @@ func parse() *Args {
 		args.Bag.Mode = strings.ToLower(args.Bag.Mode)
 	}
 
-	// interface
-	if len(args.UI.Status) > 0 {
-		re := regexp.MustCompile("[^-NWT]+")
+	// user interface
+	if len(args.UI.State) > 0 {
+		re := regexp.MustCompile("[^-nwtNWT]+")
 
-		args.UI.Status = strings.ToUpper(args.UI.Status)
-		args.UI.Status = re.ReplaceAllString(args.UI.Status, "")
+		args.UI.State = re.ReplaceAllString(args.UI.State, "")
 	}
 
 	// output mode
