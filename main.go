@@ -32,9 +32,9 @@ func main() {
 	defer hs.ThrowAway()
 
 	if args.Print.Active {
-		hs.Print(args.Print)
-	} else if len(args.Deflate) > 0 {
-		hs.Deflate(args.Deflate)
+		hs.Print(args)
+	} else if len(args.Run.Deflate) > 0 {
+		hs.Deflate(args)
 	} else {
 		hi := history.New()
 		defer hi.Close()

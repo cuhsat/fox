@@ -13,54 +13,6 @@ import (
 
 type util func(h *heap.Heap) string
 
-func (hs *HeapSet) Md5() {
-	hs.newHeap("md5sum", func(h *heap.Heap) string {
-		buf, err := h.Md5()
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		return fmt.Sprintf("%x  %s\n", buf, h.String())
-	})
-}
-
-func (hs *HeapSet) Sha1() {
-	hs.newHeap("sha1sum", func(h *heap.Heap) string {
-		buf, err := h.Sha1()
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		return fmt.Sprintf("%x  %s\n", buf, h.String())
-	})
-}
-
-func (hs *HeapSet) Sha256() {
-	hs.newHeap("sha256sum", func(h *heap.Heap) string {
-		buf, err := h.Sha256()
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		return fmt.Sprintf("%x  %s\n", buf, h.String())
-	})
-}
-
-func (hs *HeapSet) Sha3() {
-	hs.newHeap("sha3sum", func(h *heap.Heap) string {
-		buf, err := h.Sha3()
-
-		if err != nil {
-			sys.Error(err)
-		}
-
-		return fmt.Sprintf("%x  %s\n", buf, h.String())
-	})
-}
-
 func (hs *HeapSet) Counts() {
 	hs.newHeap("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
@@ -77,6 +29,18 @@ func (hs *HeapSet) Strings() {
 		}
 
 		return sb.String()
+	})
+}
+
+func (hs *HeapSet) HashSum(algo string) {
+	hs.newHeap(algo, func(h *heap.Heap) string {
+		buf, err := h.HashSum(algo)
+
+		if err != nil {
+			sys.Error(err)
+		}
+
+		return fmt.Sprintf("%x  %s\n", buf, h.String())
 	})
 }
 

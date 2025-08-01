@@ -114,6 +114,17 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.overlay.Listen()
 	go ui.examiner.Listen()
 
+	args := arg.GetArgs()
+
+	switch args.Run.Mode {
+	case types.Stats:
+		hs.Counts()
+	case types.Strings:
+		hs.Strings()
+	case types.Hash:
+		hs.HashSum(args.Run.Value.(string))
+	}
+
 	esc := false
 
 	for {
@@ -230,19 +241,19 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:
-					hs.Md5()
+					hs.HashSum(types.MD5)
 					ui.change(mode.Default)
 
 				case tcell.KeyF4:
-					hs.Sha1()
+					hs.HashSum(types.SHA1)
 					ui.change(mode.Default)
 
 				case tcell.KeyF5:
-					hs.Sha256()
+					hs.HashSum(types.SHA256)
 					ui.change(mode.Default)
 
 				case tcell.KeyF6:
-					hs.Sha3()
+					hs.HashSum(types.SHA3)
 					ui.change(mode.Default)
 
 				case tcell.KeyF7:

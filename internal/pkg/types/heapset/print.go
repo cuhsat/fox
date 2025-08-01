@@ -18,13 +18,11 @@ const (
 	termW = 78 // default terminal width
 )
 
-func (hs *HeapSet) Deflate(path string) {
-	args := arg.GetArgs()
-
+func (hs *HeapSet) Deflate(args *arg.Args) {
 	hs.RLock()
 
 	for _, h := range hs.heaps {
-		root := path
+		root := args.Run.Deflate
 
 		if root == "-" {
 			name := filepath.Base(h.Base)
@@ -73,7 +71,7 @@ func (hs *HeapSet) Deflate(path string) {
 	fmt.Printf("%d file(s) written\n", hs.Len())
 }
 
-func (hs *HeapSet) Print(args arg.ArgsPrint) {
+func (hs *HeapSet) Print(args *arg.Args) {
 	ctx := buffer.Context{
 		Context: true,
 		Numbers: true,
@@ -93,7 +91,7 @@ func (hs *HeapSet) Print(args arg.ArgsPrint) {
 
 		ctx.Heap = h.Ensure()
 
-		switch args.Mode {
+		switch args.Run.Mode {
 		case types.File:
 			printFile(&ctx)
 		case types.Grep:
@@ -101,11 +99,11 @@ func (hs *HeapSet) Print(args arg.ArgsPrint) {
 		case types.Hex:
 			printHex(&ctx)
 		case types.Hash:
-			printHash(&ctx, args.Value.(string))
+			printHash(&ctx, args.Run.Value.(string))
 		case types.Stats:
 			printStats(&ctx)
 		case types.Strings:
-			printStrings(&ctx, args.Value.(int))
+			printStrings(&ctx, args.Run.Value.(int))
 		}
 	}
 

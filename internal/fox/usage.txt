@@ -10,14 +10,14 @@ Usage: fox [PARAMETER(S) ...] [PATH(S) ...]
 Positional arguments:
   PATH(S) to open or '-' for STDIN (default: open UI and show Help)
 
-Print:
+Console:
   -p, --print              print to console (no UI)
-  -w, --counts             print file line and byte counts
-  -x, --hex                print file in hex or start in HEX mode
       --no-file            don't print filenames
       --no-line            don't print line numbers
 
 Actions:
+  -x, --hex                show file in canonical hex
+  -w, --counts             show file line and byte counts
   -d, --deflate[=DIR]      deflate all files (default: FILE)
   -s, --strings[=MIN]      show ASCII and Unicode strings (default: 3)
   -H, --hash[=ALGORITHM]   show hash sum of files (default: SHA256)

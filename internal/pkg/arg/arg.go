@@ -28,11 +28,9 @@ const (
 )
 
 type Args struct {
-	Args []string
-
-	Deflate string
-
+	Args  []string
 	Print ArgsPrint
+	Run   ArgsRun
 	Bag   ArgsBag
 	Opt   ArgsOpt
 	UI    ArgsUI
@@ -42,8 +40,12 @@ type ArgsPrint struct {
 	Active bool
 	NoFile bool
 	NoLine bool
-	Mode   types.Print
-	Value  any
+}
+
+type ArgsRun struct {
+	Deflate string
+	Mode    types.Run
+	Value   any
 }
 
 type ArgsBag struct {
@@ -80,7 +82,7 @@ func GetArgs() *Args {
 func NewArgs() *Args {
 	args := new(Args)
 
-	args.Print.Mode = types.File
+	args.Run.Mode = types.File
 	args.UI.Mode = mode.Default
 
 	return args
@@ -89,7 +91,7 @@ func NewArgs() *Args {
 func parse() *Args {
 	args := NewArgs()
 
-	// console print
+	// console
 	flag.BoolVarP(&args.Print.Active, "print", "p", false, "")
 	flag.BoolVarP(&args.Print.NoFile, "no-file", "", false, "")
 	flag.BoolVarP(&args.Print.NoLine, "no-line", "", false, "")
@@ -110,9 +112,9 @@ func parse() *Args {
 		flag.Lookup("strings").NoOptDefVal = "3" // default
 	}
 
-	flag.StringVarP(&args.Deflate, "deflate", "d", "", "")
+	flag.StringVarP(&args.Run.Deflate, "deflate", "d", "", "")
 
-	if len(args.Deflate) == 0 {
+	if len(args.Run.Deflate) == 0 {
 		flag.Lookup("deflate").NoOptDefVal = "-" // default
 	}
 
@@ -145,6 +147,10 @@ func parse() *Args {
 	flag.IntVarP(&filters.Before, "before", "B", 0, "")
 	flag.IntVarP(&filters.After, "after", "A", 0, "")
 
+	// user interface
+	flag.StringVarP(&args.UI.State, "state", "", "", "")
+	flag.StringVarP(&args.UI.Theme, "theme", "", "", "")
+
 	// evidence bag
 	flag.StringVarP(&args.Bag.Path, "file", "f", Bag, "")
 	flag.StringVarP(&args.Bag.Mode, "mode", "m", "", "")
@@ -169,10 +175,6 @@ func parse() *Args {
 	J := flag.BoolP("jsonl", "J", false, "")
 	X := flag.BoolP("xml", "X", false, "")
 	S := flag.BoolP("sqlite", "S", false, "")
-
-	// user interface
-	flag.StringVarP(&args.UI.State, "state", "", "", "")
-	flag.StringVarP(&args.UI.Theme, "theme", "", "", "")
 
 	// standard options
 	v := flag.BoolP("version", "v", false, "")
@@ -214,12 +216,27 @@ func parse() *Args {
 		sys.Exit("Can't specify both -x and -e")
 	}
 
-	if len(args.Deflate) > 0 && args.Print.Active {
+	if len(args.Run.Deflate) > 0 && args.Print.Active {
 		sys.Exit("Can't specify both -d and -p")
 	}
 
-	if len(args.Deflate) > 0 && len(filters.Patterns) > 0 {
+	if len(args.Run.Deflate) > 0 && len(filters.Patterns) > 0 {
 		sys.Exit("Can't specify both -d and -e")
+	}
+
+	// actions
+	if *w {
+		args.Run.Mode = types.Stats
+	}
+
+	if *s > 0 {
+		args.Run.Mode = types.Strings
+		args.Run.Value = *s
+	}
+
+	if len(*H) > 0 {
+		args.Run.Mode = types.Hash
+		args.Run.Value = *H
 	}
 
 	// file limits
@@ -286,30 +303,13 @@ func parse() *Args {
 	}
 
 	if len(filters.Patterns) > 0 {
-		args.Print.Mode = types.Grep
-	}
-
-	if *w {
-		args.Print.Active = true
-		args.Print.Mode = types.Stats
-	}
-
-	if *s > 0 {
-		args.Print.Active = true
-		args.Print.Mode = types.Strings
-		args.Print.Value = *s
-	}
-
-	if len(*H) > 0 {
-		args.Print.Active = true
-		args.Print.Mode = types.Hash
-		args.Print.Value = *H
+		args.Run.Mode = types.Grep
 	}
 
 	// ui mode
 	if *x {
 		args.UI.Mode = mode.Hex
-		args.Print.Mode = types.Hex
+		args.Run.Mode = types.Hex
 	}
 
 	return args

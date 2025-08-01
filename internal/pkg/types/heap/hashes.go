@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 
 	"github.com/eciavatta/sdhash"
@@ -18,49 +19,7 @@ import (
 	"github.com/glaslos/tlsh"
 )
 
-const (
-	MD5     = "md5"
-	SHA1    = "sha1"
-	SHA256  = "sha256"
-	SHA3    = "sha3"
-	SHA3224 = "sha3-224"
-	SHA3256 = "sha3-256"
-	SHA3384 = "sha3-384"
-	SHA3512 = "sha3-512"
-	SDHASH  = "sdhash"
-	SSDEEP  = "ssdeep"
-	TLSH    = "tlsh"
-)
-
 type Hash map[string][]byte
-
-func (h *Heap) Md5() ([]byte, error) {
-	return h.HashSum(MD5)
-}
-
-func (h *Heap) Sha1() ([]byte, error) {
-	return h.HashSum(SHA1)
-}
-
-func (h *Heap) Sha256() ([]byte, error) {
-	return h.HashSum(SHA256)
-}
-
-func (h *Heap) Sha3() ([]byte, error) {
-	return h.HashSum(SHA3)
-}
-
-func (h *Heap) Sdhash() ([]byte, error) {
-	return h.HashSum(SDHASH)
-}
-
-func (h *Heap) Ssdeep() ([]byte, error) {
-	return h.HashSum(SSDEEP)
-}
-
-func (h *Heap) Tlsh() ([]byte, error) {
-	return h.HashSum(TLSH)
-}
 
 func (h *Heap) HashSum(algo string) ([]byte, error) {
 	algo = strings.ToLower(algo)
@@ -76,25 +35,25 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 	var imp hash.Hash
 
 	switch algo {
-	case MD5:
+	case types.MD5:
 		imp = md5.New()
-	case SHA1:
+	case types.SHA1:
 		imp = sha1.New()
-	case SHA256:
+	case types.SHA256:
 		imp = sha256.New()
-	case SHA3, SHA3224:
+	case types.SHA3, types.SHA3224:
 		imp = sha3.New224()
-	case SHA3256:
+	case types.SHA3256:
 		imp = sha3.New256()
-	case SHA3384:
+	case types.SHA3384:
 		imp = sha3.New384()
-	case SHA3512:
+	case types.SHA3512:
 		imp = sha3.New512()
-	case SDHASH:
+	case types.SDHASH:
 		imp = new(SDHash)
-	case SSDEEP:
+	case types.SSDEEP:
 		imp = ssdeep.New()
-	case TLSH:
+	case types.TLSH:
 		imp = tlsh.New()
 	default:
 		return nil, errors.New("hash not supported")
@@ -102,7 +61,14 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 
 	imp.Reset()
 
-	f := sys.Open(h.Base)
+	var f file.File
+
+	// use deflate file not archive
+	if h.Type == types.Deflate {
+		f = sys.Open(h.Path)
+	} else {
+		f = sys.Open(h.Base)
+	}
 
 	defer func(f file.File) {
 		_ = f.Close()

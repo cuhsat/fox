@@ -9,6 +9,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/pkg/arg"
 	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/user"
@@ -104,7 +105,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
-	s, err := h.Sha256()
+	s, err := h.HashSum(types.SHA256)
 
 	if err != nil {
 		sys.Error(err)
