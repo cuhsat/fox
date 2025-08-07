@@ -247,6 +247,11 @@ func parse() *Args {
 		args.Run.Value = *H
 	}
 
+	if len(args.Run.Deflate) > 0 {
+		args.Opt.NoConvert = true
+		args.Opt.NoPlugins = true
+	}
+
 	// file limits
 	if *head {
 		limits.Head = *counts
