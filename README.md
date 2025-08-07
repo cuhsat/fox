@@ -10,14 +10,14 @@ go install github.com/hiforensics/fox@latest
 ```
 
 ## Features
-* Standalone native binary for AMD64 and ARM64
+* Standalone native [binaries](https://github.com/hiforensics/fox/releases) for AMD64 and ARM64
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * In-memory virtual filesystem
 * Path pattern matching and globbing
 * File write access is prohibited
 * Unicode multi-byte support
-* Unicode bidirectional character filtering (CVE-2021-42574)
+* Unicode bidirectional character filtering ([CVE-2021-42574](https://nvd.nist.gov/vuln/detail/CVE-2021-42574))
 * Build-in scroll past end ability
 * Build-in canonical hex view of files
 * Build-in regular expression filtering
@@ -31,11 +31,11 @@ go install github.com/hiforensics/fox@latest
 * Build-in fuzzy hashes: SDHASH, SSDEEP, TLSH
 * Build-in wc like file content statistics
 * Build-in timestamped input history
-* Build-in analyzing using Ollama supported LLMs like DeepSeek-R1 or Mistral
-* [Plugin support](PLUGINS.md) for e.g. Eric Zimmerman's tools or Fox-IT's Dissect
+* Build-in analyzing using [Ollama](https://ollama.com/) supported LLMs like [DeepSeek-R1](https://www.deepseek.com/) or [Mistral](https://mistral.ai/)
+* [Plugin support](PLUGINS.md) for e.g. [Eric Zimmerman's tools](https://ericzimmerman.github.io) or Fox-IT's [Dissect](https://docs.dissect.tools/en/latest/)
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite3
 * Evidence bag signing via HMAC-SHA256 passphrase
-* Evidence streaming to server in ECS 9.0 format
+* Evidence streaming to server in [ECS 9.0](https://www.elastic.co/docs/reference/ecs) format
 * Terminal interface compatible with many terminals
   * With support for copy and bracketed paste
   * With support for mouse scrolling
