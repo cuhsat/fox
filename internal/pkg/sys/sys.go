@@ -141,14 +141,24 @@ func Open(name string) file.File {
 	return nil
 }
 
-func Temp(name string) file.File {
-	f, err := os.CreateTemp("", "fox-*")
+func TempFile() file.File {
+	tmp, err := os.CreateTemp("", "fox-*")
 
 	if err != nil {
 		Panic(err)
 	}
 
-	return f
+	return tmp
+}
+
+func TempDir() string {
+	tmp, err := os.MkdirTemp("", "fox-*")
+
+	if err != nil {
+		Panic(err)
+	}
+
+	return tmp
 }
 
 func Exists(name string) bool {
@@ -168,7 +178,7 @@ func Persist(name string) string {
 		return name // already persistent
 	}
 
-	t := Temp(name)
+	t := TempFile()
 
 	_, err := f.WriteTo(t)
 

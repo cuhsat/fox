@@ -7,7 +7,6 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/user"
 )
 
@@ -19,7 +18,7 @@ var (
 	Input chan string
 )
 
-type Func func(file.File, string)
+type Func func(path, base, dir string)
 
 type Plugins struct {
 	Autostart map[string]Plugin `toml:"Autostart"`
@@ -83,16 +82,24 @@ func (p *Plugin) Match(s string) bool {
 }
 
 func (p *Plugin) Execute(file, base string, fn Func) {
-	var value string
+	var value, dir string
 
 	if len(p.Prompt) > 0 {
 		value = <-Input // blocking call
+	}
+
+	for _, cmd := range p.Commands {
+		if strings.Contains(cmd, "{{dir}}") {
+			dir = sys.TempDir()
+			break
+		}
 	}
 
 	r := strings.NewReplacer(
 		"{{value}}", value,
 		"{{file}}", sys.Persist(file),
 		"{{base}}", sys.Persist(base),
+		"{{dir}}", dir,
 	)
 
 	cmds := make([]string, len(p.Commands))
@@ -101,5 +108,5 @@ func (p *Plugin) Execute(file, base string, fn Func) {
 		cmds = append(cmds, r.Replace(cmd))
 	}
 
-	fn(sys.Call(cmds), base)
+	fn(sys.Call(cmds).Name(), base, dir)
 }

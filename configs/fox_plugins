@@ -7,6 +7,7 @@
 #
 # Available variables:
 #
+# {{dir}}       new random folder
 # {{file}}      path of open file
 # {{base}}      path of base file
 # {{value}}     user prompt value (only hotkey)

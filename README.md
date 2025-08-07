@@ -32,7 +32,7 @@ go install github.com/hiforensics/fox@latest
 * Build-in wc like file content statistics
 * Build-in timestamped input history
 * Build-in analyzing using Ollama supported LLMs like DeepSeek-R1 or Mistral
-* Configurable plugin support for i.e. Fox-IT's Dissect tools
+* [plugin](PLUGINS.md) support for e.g. Eric Zimmerman's tools or Fox-IT's Dissect
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite3
 * Evidence bag signing via HMAC-SHA256 passphrase
 * Evidence streaming to server in ECS 9.0 format

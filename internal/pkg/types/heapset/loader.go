@@ -22,7 +22,6 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/files/parser/evtx"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
@@ -191,8 +190,12 @@ func (hs *HeapSet) process(path, base string) string {
 		// check for plugin
 		for _, p := range hs.plugins {
 			if p.Match(path) {
-				p.Execute(path, base, func(f file.File, base string) {
-					hs.loadPlugin(f.Name(), base, p.Name)
+				p.Execute(path, base, func(path, base, dir string) {
+					if len(dir) > 0 {
+						hs.Open(dir)
+					}
+
+					hs.loadPlugin(path, base, p.Name)
 				})
 
 				return ""

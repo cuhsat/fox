@@ -32,23 +32,93 @@ Commands = [
 
 # Eric Zimmerman's tools
 
+## JLECmd
+```toml
+[Autostart.Jumplist]
+Name = "JLECmd"
+Pattern = '.*\.(automatic|custom)Destination-ms'
+Commands = [
+  'dotnet JLECmd.dll -f "{{file}}" --json "{{dir}}"',
+]
+```
+
+## LECmd
+```toml
+[Autostart.Link]
+Name = "LECmd"
+Pattern = '.*\.lnk'
+Commands = [
+  'dotnet LECmd.dll -f "{{file}}" --json "{{dir}}"',
+]
+```
+
+## MFTECmd
+```toml
+[Autostart.Filesystem]
+Name = "MFTECmd"
+Pattern = '\$(Boot|LogFile|J|MFT|SDS)'
+Commands = [
+  'dotnet MFTECmd.dll -f "{{file}}" --json "{{dir}}"',
+]
+```
+
 ## PECmd
 ```toml
 [Autostart.Prefetch]
 Name = "PECmd"
 Pattern = '.*\.pf'
 Commands = [
-  'dotnet PECmd.dll -f "{{file}}" --mp',
+  'dotnet PECmd.dll -f "{{file}}" --json "{{dir}}"',
 ]
 ```
 
-## JLECmd
+## RBCmd
 ```toml
-[Autostart.Jumplists]
-Name = "JLECmd"
-Pattern = '.*\.(automatic|custom)Destination-ms'
+[Autostart.Trash]
+Name = "RBCmd"
+Pattern = '(INFO2|\$[0-9A-Z]{7}(\..+)?)$'
 Commands = [
-  'dotnet JLECmd.dll -f "{{file}}" --mp --fd',
+  'dotnet RBCmd.dll -f "{{file}}" --csv "{{dir}}"',
+]
+```
+
+## RECmd
+```toml
+[Autostart.Registry]
+Name = "RECmd"
+Pattern = '.*\.dat'
+Commands = [
+  'dotnet RECmd.dll -f "{{file}}" --json "{{dir}}"',
+]
+```
+
+## SQLECmd
+```toml
+[Autostart.Database]
+Name = "SQLECmd"
+Pattern = '.*\.db'
+Commands = [
+  'dotnet SQLECmd.dll -f "{{file}}" --json "{{dir}}"',
+]
+```
+
+## SrumECmd
+```toml
+[Autostart.Energy]
+Name = "SrumECmd"
+Pattern = 'SRUDB.dat'
+Commands = [
+  'dotnet SrumECmd.dll -f "{{file}}" --csv "{{dir}}"',
+]
+```
+
+## WxTCmd
+```toml
+[Autostart.Timeline]
+Name = "WxTCmd"
+Pattern = '.*\ActivitiesCache.db'
+Commands = [
+  'dotnet WxTCmd.dll -f "{{file}}" --csv "{{dir}}"',
 ]
 ```
 
