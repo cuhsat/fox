@@ -1,4 +1,4 @@
-package arg
+package flags
 
 import (
 	"fmt"
@@ -6,19 +6,9 @@ import (
 
 type Filters struct {
 	Patterns []string // patterns
+	Context  int      // lines context
 	Before   int      // lines before
 	After    int      // lines after
-}
-
-// singleton
-var filters *Filters = nil
-
-func GetFilters() *Filters {
-	if filters == nil {
-		filters = new(Filters)
-	}
-
-	return filters
 }
 
 func (f *Filters) String() string {

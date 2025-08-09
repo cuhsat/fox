@@ -19,11 +19,11 @@ func (hs *HeapSet) Counts() {
 	})
 }
 
-func (hs *HeapSet) Strings() {
+func (hs *HeapSet) Strings(min int) {
 	hs.newHeap("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
-		for str := range h.Strings(3) {
+		for str := range h.Strings(min) {
 			sb.WriteString(strings.TrimSpace(str.Str))
 			sb.WriteRune('\n')
 		}
@@ -34,13 +34,18 @@ func (hs *HeapSet) Strings() {
 
 func (hs *HeapSet) HashSum(algo string) {
 	hs.newHeap(algo, func(h *heap.Heap) string {
-		buf, err := h.HashSum(algo)
+		sum, err := h.HashSum(algo)
 
 		if err != nil {
 			sys.Error(err)
 		}
 
-		return fmt.Sprintf("%x  %s\n", buf, h.String())
+		switch algo {
+		case types.SDHASH:
+			return fmt.Sprintf("%s  %s\n", sum, h.String())
+		default:
+			return fmt.Sprintf("%x  %s\n", sum, h.String())
+		}
 	})
 }
 

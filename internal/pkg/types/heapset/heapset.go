@@ -22,7 +22,9 @@ const (
 	Stdin = "-"
 )
 
-type callback func()
+type Call func()
+
+type Each func(*heap.Heap)
 
 type HeapSet struct {
 	sync.RWMutex
@@ -30,8 +32,8 @@ type HeapSet struct {
 
 	watcher *fsnotify.Watcher // file watcher
 
-	fnWatch callback // watcher callback
-	fnError callback // error callback
+	fnWatch Call // watcher callback
+	fnError Call // error callback
 
 	heaps []*heap.Heap // set heaps
 	index *int32       // set index
@@ -87,7 +89,17 @@ func (hs *HeapSet) Len() int32 {
 	return int32(len(hs.heaps))
 }
 
-func (hs *HeapSet) Bind(fn1, fn2 callback) {
+func (hs *HeapSet) Each(fn Each) {
+	hs.RLock()
+
+	for _, h := range hs.heaps {
+		fn(h.Ensure())
+	}
+
+	hs.RUnlock()
+}
+
+func (hs *HeapSet) Bind(fn1, fn2 Call) {
 	hs.fnWatch = fn1
 	hs.fnError = fn2
 }

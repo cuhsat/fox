@@ -7,7 +7,7 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
@@ -103,7 +103,7 @@ func (h *Heap) Ensure() *Heap {
 	if h.file == nil {
 		h.Reload()
 
-		fs := arg.GetFilters()
+		fs := flags.Get().Filters
 
 		// apply global filters once
 		for _, f := range fs.Patterns {
@@ -174,13 +174,13 @@ func (h *Heap) Reload() {
 		h.mmap = &m
 	}
 
-	l := arg.GetLimits()
+	limit := flags.Get().Limits
 
 	// reduce mmap
-	h.mmap = l.ReduceMMap(h.mmap)
+	h.mmap = limit.ReduceMMap(h.mmap)
 
 	// reduce smap
-	h.smap = l.ReduceSMap(smap.Map(h.mmap))
+	h.smap = limit.ReduceSMap(smap.Map(h.mmap))
 
 	// resets filters
 	h.filters = h.filters[:0]

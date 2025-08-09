@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
-	"github.com/hiforensics/fox/internal/pkg/arg"
 	"github.com/hiforensics/fox/internal/pkg/files"
 	"github.com/hiforensics/fox/internal/pkg/files/archive/rar"
 	"github.com/hiforensics/fox/internal/pkg/files/archive/tar"
@@ -20,6 +19,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/files/compress/zstd"
 	"github.com/hiforensics/fox/internal/pkg/files/format/csv"
 	"github.com/hiforensics/fox/internal/pkg/files/parser/evtx"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
@@ -40,7 +40,7 @@ func (hs *HeapSet) loadPath(path string) {
 		return
 	}
 
-	if !arg.GetArgs().Opt.NoDeflate {
+	if !flags.Get().Opt.NoDeflate {
 		path = hs.deflate(path, base)
 
 		if len(path) == 0 {
@@ -174,7 +174,7 @@ func (hs *HeapSet) deflate(path, base string) string {
 }
 
 func (hs *HeapSet) process(path, base string) string {
-	if !arg.GetArgs().Opt.NoConvert {
+	if !flags.Get().Opt.NoConvert {
 		// check for parser
 		if evtx.Detect(path) {
 			path = evtx.Parse(path)
@@ -186,7 +186,7 @@ func (hs *HeapSet) process(path, base string) string {
 		}
 	}
 
-	if !arg.GetArgs().Opt.NoPlugins {
+	if !flags.Get().Opt.NoPlugins {
 		// check for plugin
 		for _, p := range hs.plugins {
 			if p.Match(path) {

@@ -3,7 +3,7 @@ package buffer
 import (
 	"fmt"
 
-	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
@@ -27,8 +27,10 @@ func Hex(ctx *Context) (buf HexBuffer) {
 
 	mmap := *ctx.Heap.MMap()
 
-	if arg.GetLimits().Tail.Bytes > 0 {
-		tail = max(int(ctx.Heap.Len())-arg.GetLimits().Tail.Bytes, 0)
+	limit := flags.Get().Limits
+
+	if limit.IsTail && limit.Bytes > 0 {
+		tail = max(int(ctx.Heap.Len())-limit.Bytes, 0)
 	}
 
 	buf.W, buf.H = ctx.W, len(mmap)/16

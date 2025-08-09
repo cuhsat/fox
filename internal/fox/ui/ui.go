@@ -15,7 +15,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox/ui/context"
 	"github.com/hiforensics/fox/internal/fox/ui/themes"
 	"github.com/hiforensics/fox/internal/fox/ui/widgets"
-	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
@@ -51,7 +51,13 @@ type UI struct {
 	overlay *widgets.Overlay
 }
 
-func New(args *arg.Args) *UI {
+func Start(args []string) {
+	ui := create()
+	defer ui.delete()
+	ui.run(args)
+}
+
+func create() *UI {
 	runewidth.CreateLUT()
 
 	root, err := tcell.NewScreen()
@@ -70,7 +76,6 @@ func New(args *arg.Args) *UI {
 	root.EnablePaste()
 
 	ctx := context.New(root)
-	ctx.Precede(args)
 
 	ui := UI{
 		ctx: ctx,
@@ -92,14 +97,33 @@ func New(args *arg.Args) *UI {
 	root.Sync()
 
 	ui.render(nil)
-	ui.change(args.UI.Mode)
+	ui.change(flags.Get().UI.Mode)
 
 	ai.Init(ctx.Model())
 
 	return &ui
 }
 
-func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
+func (ui *UI) delete() {
+	if ui.plugins != nil {
+		plugins.Close()
+	}
+
+	ui.overlay.Close()
+	ui.root.Fini()
+	ui.ctx.Save()
+}
+
+func (ui *UI) run(args []string) {
+	hs := heapset.New(args)
+	defer hs.ThrowAway()
+
+	hi := history.New()
+	defer hi.Close()
+
+	bg := bag.New()
+	defer bg.Close()
+
 	hs.Bind(func() {
 		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
 	}, func() {
@@ -113,15 +137,15 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 	go ui.overlay.Listen()
 	go ui.examiner.Listen()
 
-	args := arg.GetArgs()
+	flg := flags.Get()
 
-	switch args.Run.Mode {
-	case types.Stats:
+	switch flg.UI.Invoke {
+	case types.Counts:
 		hs.Counts()
-	case types.Strings:
-		hs.Strings()
 	case types.Hash:
-		hs.HashSum(args.Run.Value.(string))
+		hs.HashSum(flg.Hash.Algo.String())
+	case types.Strings:
+		hs.Strings(flg.Strings.Min)
 	}
 
 	esc := false
@@ -236,7 +260,7 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 					ui.change(mode.Default)
 
 				case tcell.KeyF2:
-					hs.Strings()
+					hs.Strings(3)
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:
@@ -427,16 +451,16 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 						continue
 					}
 
-					if bag.Put(heap) {
-						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bag.String()))
+					if bg.Put(heap) {
+						ui.overlay.SendInfo(fmt.Sprintf("%s saved to %s", heap.String(), bg.String()))
 					}
 
 				case tcell.KeyCtrlB:
-					if sys.Exists(bag.Path) {
+					if sys.Exists(bg.Path) {
 						ui.view.Reset()
-						hs.OpenFile(bag.Path, bag.Path, bag.Path, types.Ignore)
+						hs.OpenFile(bg.Path, bg.Path, bg.Path, types.Ignore)
 					} else {
-						ui.overlay.SendError(fmt.Sprintf("%s not found", bag.Path))
+						ui.overlay.SendError(fmt.Sprintf("%s not found", bg.Path))
 					}
 
 				case tcell.KeyCtrlH:
@@ -560,16 +584,6 @@ func (ui *UI) Run(hs *heapset.HeapSet, hi *history.History, bag *bag.Bag) {
 			ui.render(hs)
 		}
 	}
-}
-
-func (ui *UI) Close() {
-	if ui.plugins != nil {
-		plugins.Close()
-	}
-
-	ui.overlay.Close()
-	ui.root.Fini()
-	ui.ctx.Save()
 }
 
 func (ui *UI) change(m mode.Mode) {

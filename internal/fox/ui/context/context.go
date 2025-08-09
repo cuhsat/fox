@@ -7,7 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
 	"github.com/hiforensics/fox/internal/pkg/user/config"
 )
@@ -54,31 +54,35 @@ func New(root tcell.Screen) *Context {
 	ctx.n.Store(cfg.Numbers)
 	ctx.w.Store(cfg.Wrap)
 
+	ctx.Precede()
+
 	return ctx
 }
 
-func (ctx *Context) Precede(args *arg.Args) {
-	s := strings.ToUpper(args.UI.State)
+func (ctx *Context) Precede() {
+	flg := flags.Get()
+
+	s := strings.ToUpper(flg.UI.State)
 
 	// overwrite flags
 	if strings.ContainsRune(s, '-') {
 		ctx.t.Store(false)
 		ctx.n.Store(false)
 		ctx.w.Store(false)
-	} else if len(args.UI.State) > 0 {
+	} else if len(flg.UI.State) > 0 {
 		ctx.t.Store(strings.ContainsRune(s, 'T'))
 		ctx.n.Store(strings.ContainsRune(s, 'N'))
 		ctx.w.Store(strings.ContainsRune(s, 'W'))
 	}
 
 	// overwrite theme
-	if len(args.UI.Theme) > 0 {
-		ctx.theme = args.UI.Theme
+	if len(flg.UI.Theme) > 0 {
+		ctx.theme = flg.UI.Theme
 	}
 
 	// overwrite model
-	if len(args.LLM.Model) > 0 {
-		ctx.model = args.LLM.Model
+	if len(flg.LLM.Model) > 0 {
+		ctx.model = flg.LLM.Model
 	}
 }
 

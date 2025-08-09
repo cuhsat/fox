@@ -1,8 +1,5 @@
 package types
 
-type Run int
-type Heap int
-
 const (
 	MD5     = "md5"
 	SHA1    = "sha1"
@@ -17,14 +14,7 @@ const (
 	TLSH    = "tlsh"
 )
 
-const (
-	File Run = iota
-	Grep
-	Hex
-	Hash
-	Stats
-	Strings
-)
+type Heap int
 
 const (
 	Regular Heap = iota
@@ -35,4 +25,13 @@ const (
 	Stderr
 	Prompt
 	Plugin
+)
+
+type Invoke int
+
+const (
+	None Invoke = iota
+	Counts
+	Hash
+	Strings
 )

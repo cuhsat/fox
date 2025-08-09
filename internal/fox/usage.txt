@@ -6,28 +6,24 @@
 The Swiss Army Knife for examining text files (%s)
 
 Usage:
-  fox [OPTIONS...] [PATHS...]
+  fox [COMMAND] [FLAG...] [PATH...]
 
 Positional arguments:
-  PATH(S) to open or '-' for STDIN (default: open UI and show Help)
+  Path(s) to open or '-' for STDIN
 
-Console:
+Commands:
+  counts                   display line and byte counts
+  deflate                  deflate compressed files
+  hash                     display hash sums
+  strings                  display ASCII and Unicode strings
+
+Global:
   -p, --print              print to console (no UI)
       --no-file            don't print filenames
       --no-line            don't print line numbers
 
-Actions:
+Hex display:
   -x, --hex                show file in canonical hex
-  -w, --counts             show file line and byte counts
-  -d, --deflate[=DIR]      deflate all files (default: FILE)
-  -s, --strings[=MIN]      show ASCII and Unicode strings (default: 3)
-  -H, --hash[=ALGORITHM]   show hash sum of files (default: SHA256)
-
-    Cryptographic hashes:
-      MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
-
-    Fuzzy hashes:
-      SDHASH, SSDEEP, TLSH
 
 File limits:
   -h, --head               limit head of file by ...
@@ -51,9 +47,7 @@ LLM interface:
 Evidence bag:
   -f, --file=FILE          evidence bag file name (default: "evidence")
   -m, --mode=MODE          evidence bag file mode (default: raw)
-
-    File modes:
-      None, Raw, Text, JSON, JSONL, XML, SQLite
+                             None, Raw, Text, JSON, JSONL, XML, SQLite
 
   -k, --key=KEY            key phrase for evidence bag signing with HMAC
   -u, --url=URL            url to also send evidence data too
@@ -72,7 +66,7 @@ Aliases:
   -S, --sqlite             short for --mode=sqlite
   -X, --xml                short for --mode=xml
 
-Standard options:
+Standard:
       --help               shows this message
       --version            shows the version
 
@@ -80,9 +74,9 @@ Example: print matching lines
   $ fox -pe "John Doe" ./**/*.evtx
 
 Example: print content hashes
-  $ fox -pH sha256 example.zip
+  $ fox hash -pt md5 example.zip
 
 Example: print first sector in hex
   $ fox -pxhc=512 example.dd > mbr
 
-Type "fox" for more help...
+Type "fox help COMMAND" for more help...

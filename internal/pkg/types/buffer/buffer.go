@@ -2,12 +2,18 @@ package buffer
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 )
 
 const (
 	Size = 1024
+)
+
+const (
+	TermW = 78
+	TermH = 24
 )
 
 type Buffer struct {
@@ -41,6 +47,19 @@ type Context struct {
 	Y int
 	W int
 	H int
+}
+
+func NewContext(h *heap.Heap) *Context {
+	return &Context{
+		Context: true,
+		Numbers: true,
+		Wrap:    false,
+		Heap:    h,
+		X:       0,
+		Y:       0,
+		W:       math.MaxInt,
+		H:       math.MaxInt,
+	}
 }
 
 func (ctx *Context) Hash() string {

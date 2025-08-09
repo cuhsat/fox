@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hiforensics/fox/internal/fox"
-	"github.com/hiforensics/fox/internal/pkg/arg"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
@@ -16,8 +16,8 @@ import (
 )
 
 type Bag struct {
-	Path string // bag path
-	Mode string // bag mode
+	Path string        // bag path
+	Mode flags.BagMode // bag mode
 
 	file *os.File // file handle
 	key  string   // key phrase
@@ -45,44 +45,46 @@ type meta struct {
 	modified time.Time
 }
 
-func New(args arg.ArgsBag) *Bag {
+func New() *Bag {
 	var ws []writer
 
-	if len(args.Path) == 0 {
-		args.Path = arg.Bag
+	bag := flags.Get().Bag
+
+	if len(bag.Path) == 0 {
+		bag.Path = flags.BagName
 	}
 
-	switch args.Mode {
-	case arg.BagNone:
-	case arg.BagSqlite:
+	switch bag.Mode {
+	case flags.BagModeNone:
+	case flags.BagModeSqlite:
 		ws = append(ws, NewSqliteWriter())
-		args.Path += ".sqlite3"
-	case arg.BagJsonl:
+		bag.Path += ".sqlite3"
+	case flags.BagModeJsonl:
 		ws = append(ws, NewJsonWriter(false))
-		args.Path += ".jsonl"
-	case arg.BagJson:
+		bag.Path += ".jsonl"
+	case flags.BagModeJson:
 		ws = append(ws, NewJsonWriter(true))
-		args.Path += ".json"
-	case arg.BagXml:
+		bag.Path += ".json"
+	case flags.BagModeXml:
 		ws = append(ws, NewXmlWriter())
-		args.Path += ".xml"
-	case arg.BagText:
+		bag.Path += ".xml"
+	case flags.BagModeText:
 		ws = append(ws, NewTextWriter())
-		args.Path += ".bag"
+		bag.Path += ".bag"
 	default:
 		ws = append(ws, NewRawWriter())
-		args.Path += ".txt"
+		bag.Path += ".txt"
 	}
 
-	if len(args.Url) > 0 {
-		ws = append(ws, NewEcsWriter(args.Url))
+	if len(bag.Url) > 0 {
+		ws = append(ws, NewEcsWriter(bag.Url))
 	}
 
 	return &Bag{
-		Path: args.Path,
-		Mode: args.Mode,
-		key:  args.Key,
-		url:  args.Url,
+		Path: bag.Path,
+		Mode: bag.Mode,
+		key:  bag.Key,
+		url:  bag.Url,
 		file: nil,
 		ws:   ws,
 	}
@@ -159,7 +161,7 @@ func (bag *Bag) Close() {
 func (bag *Bag) init() {
 	old := sys.Exists(bag.Path)
 
-	if bag.Mode != arg.BagNone {
+	if bag.Mode != flags.BagModeNone {
 		var err error
 
 		bag.file, err = os.OpenFile(bag.Path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
