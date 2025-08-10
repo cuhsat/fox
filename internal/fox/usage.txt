@@ -46,8 +46,8 @@ LLM interface:
 
 Evidence bag:
   -f, --file=FILE          evidence bag file name (default: "evidence")
-  -m, --mode=MODE          evidence bag file mode (default: raw)
-                             None, Raw, Text, JSON, JSONL, XML, SQLite
+  -m, --mode=MODE          evidence bag file mode (default: "raw")
+                             NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
 
   -k, --key=KEY            key phrase for evidence bag signing with HMAC
   -u, --url=URL            url to also send evidence data too
