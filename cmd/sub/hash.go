@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
@@ -12,6 +13,33 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
+
+var HashUsage = `
+Display hash sums.
+
+Usage:
+  fox hash [FLAG...] [PATH...]
+
+Positional arguments:
+  Path(s) to open
+
+Global:
+  -p, --print              print directly to console
+
+Hash:
+  -t, --type=ALGORITHM     hash algorithm (default: SHA256)
+
+    Cryptographic hash algorithms:
+      MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
+
+    Fuzzy hash algorithms:
+      SDHASH, SSDEEP, TLSH
+
+Example:
+  $ fox hash -t=SHA3 artifacts.zip
+
+Type "fox help" for more help...
+`
 
 var Hash = &cobra.Command{
 	Use:   "hash",
@@ -29,15 +57,10 @@ var Hash = &cobra.Command{
 		if len(flg.Hash.Algo) == 0 {
 			flg.Hash.Algo = types.SHA256
 		}
-
-		// invoke UI
-		if !flg.Print {
-			flg.UI.Invoke = types.Hash
-		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
-			ui.Start(args)
+			ui.Start(args, types.Hash)
 		} else {
 			algo := flags.Get().Hash.Algo.String()
 
@@ -65,5 +88,7 @@ var Hash = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
+	Hash.SetHelpTemplate(fox.Fox + HashUsage)
+	Hash.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Hash.Flags().VarP(&flg.Hash.Algo, "type", "t", "hash algorithm")
 }

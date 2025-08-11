@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
@@ -14,6 +15,30 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
+
+var StringsUsage = `
+Display ASCII and Unicode strings.
+
+Usage:
+  fox strings [FLAG...] [PATH...]
+
+Positional arguments:
+  Path(s) to open
+
+Global:
+  -p, --print              print directly to console
+      --no-file            don't print filenames
+      --no-line            don't print line numbers
+
+Strings:
+  -n, --min=NUMBER         minimum length (default: 3)
+  -m, --max=NUMBER         maximum length (default: Unlimited)
+
+Example:
+  $ fox strings -n=8 malware.exe
+
+Type "fox help" for more help...
+`
 
 var Strings = &cobra.Command{
 	Use:   "strings",
@@ -26,15 +51,10 @@ var Strings = &cobra.Command{
 		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
-
-		// invoke UI
-		if !flg.Print {
-			flg.UI.Invoke = types.Strings
-		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
-			ui.Start(args)
+			ui.Start(args, types.Strings)
 		} else {
 			flg := flags.Get()
 
@@ -47,7 +67,10 @@ var Strings = &cobra.Command{
 						fmt.Println(text.Title(h.String(), buffer.TermW))
 					}
 
-					for s := range h.Strings(flg.Strings.Min) {
+					for s := range h.Strings(
+						flg.Strings.Min,
+						flg.Strings.Max,
+					) {
 						if !flg.NoLine {
 							fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
 						} else {
@@ -63,5 +86,10 @@ var Strings = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "m", 3, "minimum length")
+	Strings.SetHelpTemplate(fox.Fox + StringsUsage)
+	Strings.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
+	Strings.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
+	Strings.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
+	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "n", 3, "minimum length")
+	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", 0, "maximum length")
 }

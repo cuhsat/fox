@@ -20,6 +20,86 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var Usage = `
+The Swiss Army Knife for examining text files (%s)
+
+Usage:
+  fox [COMMAND] [FLAG...] [PATH...]
+
+Positional arguments:
+  Path(s) to open or '-' for STDIN
+
+Commands:
+  counts                   display line and byte counts
+  deflate                  deflate compressed files
+  hash                     display hash sums
+  strings                  display ASCII and Unicode strings
+
+Global:
+  -p, --print              print directly to console
+      --no-file            don't print filenames
+      --no-line            don't print line numbers
+
+Hex display:
+  -x, --hex                show file in canonical hex
+
+File limits:
+  -h, --head               limit head of file by ...
+  -t, --tail               limit tail of file by ...
+  -n, --lines[=NUMBER]     number of lines (default: 10)
+  -c, --bytes[=NUMBER]     number of bytes (default: 16)
+
+Line filter:
+  -e, --regexp=PATTERN     filter for lines that match pattern
+  -C, --context=NUMBER     number of lines surrounding context of match
+  -B, --before=NUMBER      number of lines leading context before match
+  -A, --after=NUMBER       number of lines trailing context after match
+
+User interface:
+      --state={N|W|T|-}    sets the used UI state flags
+      --theme=THEME        sets the used UI theme
+
+LLM interface:
+      --model=MODEL        sets the used Ollama model
+
+Evidence bag:
+  -f, --file=FILE          evidence bag file name (default: "evidence")
+  -m, --mode=MODE          evidence bag file mode (default: "raw")
+                             NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
+
+  -k, --key=KEY            key phrase for evidence bag signing with HMAC
+  -u, --url=URL            url to also send evidence data too
+      --no-bag             don't write an evidence bag
+
+Disable:
+  -r, --raw                don't process files at all
+      --no-convert         don't convert automatically
+      --no-deflate         don't deflate automatically
+      --no-plugins         don't run autostart plugins
+
+Aliases:
+  -T, --text               short for --mode=text
+  -j, --json               short for --mode=json
+  -J, --jsonl              short for --mode=jsonl
+  -S, --sqlite             short for --mode=sqlite
+  -X, --xml                short for --mode=xml
+
+Standard:
+      --help               shows this message
+      --version            shows the version
+
+Example: print matching lines
+  $ fox -pe "John Doe" ./**/*.evtx
+
+Example: print content hashes
+  $ fox hash -pt md5 example.zip
+
+Example: print first sector in hex
+  $ fox -pxhc=512 example.dd > mbr
+
+Type "fox help COMMAND" for more help...
+`
+
 var Fox = &cobra.Command{
 	Use:     "fox",
 	Short:   "examine text files",
@@ -87,7 +167,7 @@ var Fox = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
-			ui.Start(args)
+			ui.Start(args, types.None)
 		} else {
 			print(args)
 		}
@@ -155,9 +235,9 @@ func print(args []string) {
 func init() {
 	flg := flags.Get()
 
-	Fox.PersistentFlags().BoolVarP(&flg.Print, "print", "p", false, "print to console (no UI)")
-	Fox.PersistentFlags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
-	Fox.PersistentFlags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
+	Fox.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
+	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
+	Fox.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
 
 	Fox.Flags().BoolVarP(&flg.Hex, "hex", "x", false, "show file in canonical hex")
 
@@ -198,12 +278,12 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Alias.Sqlite, "sqlite", "S", false, "short for --mode=sqlite")
 	Fox.Flags().BoolVarP(&flg.Alias.Xml, "xml", "X", false, "short for --mode=xml")
 
-	Fox.Flags().BoolP("help", "", false, "shows this message")
-	Fox.Flags().BoolP("version", "", false, "shows the version")
+	Fox.PersistentFlags().BoolP("help", "", false, "shows this message")
+	Fox.PersistentFlags().BoolP("version", "", false, "shows the version")
 
 	Fox.MarkFlagsMutuallyExclusive("head", "tail")
 
-	Fox.SetHelpTemplate(fmt.Sprintf(fox.Usage, fox.Version))
+	Fox.SetHelpTemplate(fmt.Sprintf(fox.Fox+Usage, fox.Version))
 	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", fox.Product, fox.Version))
 
 	Fox.AddCommand(sub.Counts)

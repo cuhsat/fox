@@ -17,7 +17,7 @@ func Detect(path string) bool {
 	})
 }
 
-func Deflate(path string) (i []*files.Item) {
+func Deflate(path, _ string) (i []*files.Item) {
 	r, err := zip.OpenReader(path)
 
 	if err != nil {

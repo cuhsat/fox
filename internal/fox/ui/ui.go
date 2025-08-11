@@ -51,10 +51,11 @@ type UI struct {
 	overlay *widgets.Overlay
 }
 
-func Start(args []string) {
+func Start(args []string, invoke types.Invoke) {
 	ui := create()
 	defer ui.delete()
-	ui.run(args)
+
+	ui.run(args, invoke)
 }
 
 func create() *UI {
@@ -114,7 +115,7 @@ func (ui *UI) delete() {
 	ui.ctx.Save()
 }
 
-func (ui *UI) run(args []string) {
+func (ui *UI) run(args []string, invoke types.Invoke) {
 	hs := heapset.New(args)
 	defer hs.ThrowAway()
 
@@ -139,13 +140,16 @@ func (ui *UI) run(args []string) {
 
 	flg := flags.Get()
 
-	switch flg.UI.Invoke {
+	switch invoke {
 	case types.Counts:
 		hs.Counts()
 	case types.Hash:
 		hs.HashSum(flg.Hash.Algo.String())
 	case types.Strings:
-		hs.Strings(flg.Strings.Min)
+		hs.Strings(
+			flg.Strings.Min,
+			flg.Strings.Max,
+		)
 	}
 
 	esc := false
@@ -260,7 +264,7 @@ func (ui *UI) run(args []string) {
 					ui.change(mode.Default)
 
 				case tcell.KeyF2:
-					hs.Strings(3)
+					hs.Strings(3, 0)
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:

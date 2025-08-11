@@ -7,12 +7,35 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
+
+var DeflateUsage = `
+Deflate compressed files.
+
+Usage:
+  fox deflate [FLAG...] [PATH...]
+
+Positional arguments:
+  Path(s) to open
+
+Global:
+      --no-file            don't print filenames
+
+Deflate:
+  -d, --dir[=PATH]         deflate into directory (default: .)
+  -p, --pass=PASSWORD      decrypt with password (only for RAR)
+
+Example:
+  $ fox deflate -p=infected ioc.rar
+
+Type "fox help" for more help...
+`
 
 var Deflate = &cobra.Command{
 	Use:   "deflate",
@@ -66,7 +89,7 @@ var Deflate = &cobra.Command{
 				fmt.Printf("Deflate %s\n", path)
 			}
 
-			err := os.WriteFile(path, *h.Ensure().MMap(), 0600)
+			err := os.WriteFile(path, *h.MMap(), 0600)
 
 			if err != nil {
 				sys.Exit(err)
@@ -80,6 +103,8 @@ var Deflate = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
+	Deflate.SetHelpTemplate(fox.Fox + DeflateUsage)
+	Deflate.Flags().StringVarP(&flg.Deflate.Pass, "pass", "p", "", "decrypt with password")
 	Deflate.Flags().StringVarP(&flg.Deflate.Path, "dir", "d", "", "deflate into directory")
 	Deflate.Flags().Lookup("dir").NoOptDefVal = "."
 	Deflate.MarkFlagDirname("dir")

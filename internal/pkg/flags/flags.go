@@ -1,7 +1,6 @@
 package flags
 
 import (
-	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
 )
 
@@ -39,10 +38,9 @@ type Flags struct {
 
 	// ui flags
 	UI struct {
-		Theme  string
-		State  string
-		Mode   mode.Mode
-		Invoke types.Invoke
+		Theme string
+		State string
+		Mode  mode.Mode
 	}
 
 	// alias flags
@@ -57,6 +55,7 @@ type Flags struct {
 	// deflate command
 	Deflate struct {
 		Path string
+		Pass string
 	}
 
 	// hash command
@@ -67,6 +66,7 @@ type Flags struct {
 	// strings command
 	Strings struct {
 		Min int
+		Max int
 	}
 }
 

@@ -18,11 +18,11 @@ func Detect(path string) bool {
 	})
 }
 
-func Deflate(path string) (i []*files.Item) {
+func Deflate(path, pass string) (i []*files.Item) {
 	a := sys.Open(path)
 	defer a.Close()
 
-	r, err := rardecode.NewReader(a, "")
+	r, err := rardecode.NewReader(a, pass)
 
 	if err != nil {
 		sys.Error(err)

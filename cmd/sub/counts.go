@@ -5,12 +5,31 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
+
+var CountsUsage string = `
+Display line and byte counts.
+
+Usage:
+  fox counts [FLAG...] [PATH...]
+
+Positional arguments:
+  Path(s) to open
+
+Global:
+  -p, --print              print directly to console
+
+Example:
+  $ fox counts ./**/*.txt
+
+Type "fox help" for more help...
+`
 
 var Counts = &cobra.Command{
 	Use:   "counts",
@@ -23,15 +42,10 @@ var Counts = &cobra.Command{
 		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
-
-		// invoke UI
-		if !flg.Print {
-			flg.UI.Invoke = types.Counts
-		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
-			ui.Start(args)
+			ui.Start(args, types.Counts)
 		} else {
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
@@ -45,4 +59,11 @@ var Counts = &cobra.Command{
 			})
 		}
 	},
+}
+
+func init() {
+	flg := flags.Get()
+
+	Counts.SetHelpTemplate(fox.Fox + CountsUsage)
+	Counts.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 }

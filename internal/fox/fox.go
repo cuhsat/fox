@@ -15,9 +15,9 @@ var (
 	//go:embed prompt.txt
 	Prompt string
 
-	//go:embed usage.txt
-	Usage string
-
 	//go:embed help.txt
 	Help string
+
+	//go:embed fox.txt
+	Fox string
 )
