@@ -18,7 +18,7 @@ var HashUsage = `
 Display hash sums.
 
 Usage:
-  fox hash [FLAG...] [PATH...]
+  fox hash [FLAG ...] PATH ...
 
 Positional arguments:
   Path(s) to open

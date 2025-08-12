@@ -19,11 +19,11 @@ func (hs *HeapSet) Counts() {
 	})
 }
 
-func (hs *HeapSet) Strings(mn, mx int) {
+func (hs *HeapSet) Strings(n, m int) {
 	hs.newHeap("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
-		for str := range h.Strings(mn, mx) {
+		for str := range h.Strings(n, m) {
 			sb.WriteString(strings.TrimSpace(str.Str))
 			sb.WriteRune('\n')
 		}

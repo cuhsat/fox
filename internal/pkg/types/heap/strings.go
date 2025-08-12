@@ -4,6 +4,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
@@ -12,36 +13,37 @@ type String struct {
 	Str string
 }
 
-func (h *Heap) Strings(mn, mx int) <-chan String {
-	bc := make(chan byte, 1024)
-	sc := make(chan String)
+func (h *Heap) Strings(n, m int) <-chan String {
+	ch := make(chan byte, 1024)
+	s := make(chan String)
 
-	go h.readMMap(bc)
-	go h.carve(bc, sc, mn, mx)
+	go h.read(ch)
+	go h.carve(ch, s, n, m)
 
-	return sc
+	return s
 }
 
-func (h *Heap) readMMap(ch chan<- byte) {
-	defer close(ch)
-
+func (h *Heap) read(ch chan<- byte) {
 	h.RLock()
 
-	for _, c := range *h.mmap {
-		ch <- c
+	for _, b := range *h.mmap {
+		ch <- b
 	}
 
 	h.RUnlock()
+
+	close(ch)
 }
 
-func (h *Heap) carve(ch <-chan byte, s chan<- String, mn, mx int) {
+func (h *Heap) carve(ch <-chan byte, s chan<- String, n, m int) {
 	var rs []rune
 
+	flg := flags.Get().Strings
 	buf := make([]byte, 4)
 	off := 0
 
-	flush := func(mn, mx int) {
-		if len(rs) >= mn && (len(rs) <= mx && mx > 0) {
+	flush := func() {
+		if len(rs) >= n && len(rs) <= m {
 			s <- String{
 				Off: max(off-(len(rs)+1), 0),
 				Str: string(rs),
@@ -52,34 +54,34 @@ func (h *Heap) carve(ch <-chan byte, s chan<- String, mn, mx int) {
 	}
 
 	defer close(s)
-	defer flush(mn, mx)
+	defer flush()
 
 	for b := range ch {
 		buf[0] = b
 		off++
 
-		if !utf8.RuneStart(b) {
+		if flg.Ascii {
 			if b >= text.MinASCII && b <= text.MaxASCII {
 				rs = append(rs, rune(b))
 			} else {
-				flush(mn, mx)
+				flush()
 			}
 		} else {
 			l := 1
-			n := 1
+			k := 1
 
 			if b&0x80 == 0 {
-				n = 1
+				k = 1
 			} else if b&0xE0 == 0xC0 {
-				n = 2
+				k = 2
 			} else if b&0xF0 == 0xE0 {
-				n = 3
+				k = 3
 			} else if b&0xF8 == 0xF0 {
-				n = 4
+				k = 4
 			}
 
-			if n > 1 {
-				for i := 1; i < n; i++ {
+			if k > 1 {
+				for i := 1; i < k; i++ {
 					b, ok := <-ch
 					off++
 
@@ -97,7 +99,7 @@ func (h *Heap) carve(ch <-chan byte, s chan<- String, mn, mx int) {
 			if r != utf8.RuneError && unicode.IsPrint(r) {
 				rs = append(rs, r)
 			} else {
-				flush(mn, mx)
+				flush()
 			}
 		}
 	}

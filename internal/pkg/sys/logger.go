@@ -10,6 +10,10 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 )
 
+const (
+	Prefix = "fox:"
+)
+
 var (
 	Log *logger // global logger
 )
@@ -47,13 +51,13 @@ func (l logger) Consume() string {
 }
 
 func Print(v ...any) {
-	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf("fox: %s", v...))
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %s", v...))
 }
 
 func Error(v ...any) {
-	log.Println(fmt.Sprintf("fox: %s", v...))
+	log.Println(fmt.Sprintf(Prefix+" %s", v...))
 }
 
 func Panic(v ...any) {
-	log.Panic(fmt.Sprintf("fox: %s", v...))
+	log.Panic(fmt.Sprintf(Prefix+" %s", v...))
 }

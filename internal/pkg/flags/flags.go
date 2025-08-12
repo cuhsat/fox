@@ -65,8 +65,9 @@ type Flags struct {
 
 	// strings command
 	Strings struct {
-		Min int
-		Max int
+		Min   int
+		Max   int
+		Ascii bool
 	}
 }
 

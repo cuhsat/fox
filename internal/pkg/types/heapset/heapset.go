@@ -72,9 +72,7 @@ func New(paths []string) *HeapSet {
 		hs.Open(path)
 	}
 
-	if len(paths) == 0 {
-		hs.OpenHelp()
-	} else if hs.Len() == 0 {
+	if hs.Len() == 0 {
 		sys.Exit("no files found")
 	}
 
@@ -121,6 +119,25 @@ func (hs *HeapSet) Open(path string) {
 	}
 }
 
+func (hs *HeapSet) OpenFox(path string) {
+	idx, ok := hs.findByName("Examine")
+
+	if !ok {
+		idx = hs.Len()
+
+		hs.atomicAdd(&heap.Heap{
+			Title: "Examine",
+			Path:  path,
+			Base:  path,
+			Type:  types.Prompt,
+		})
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.load()
+}
+
 func (hs *HeapSet) OpenLog() {
 	idx, ok := hs.findByPath(sys.Log.Name())
 
@@ -159,25 +176,6 @@ func (hs *HeapSet) OpenHelp() {
 	atomic.StoreInt32(hs.index, idx)
 
 	hs.atomicGet(idx).Reload()
-}
-
-func (hs *HeapSet) OpenChat(path string) {
-	idx, ok := hs.findByName("Fox")
-
-	if !ok {
-		idx = hs.Len()
-
-		hs.atomicAdd(&heap.Heap{
-			Title: "Fox",
-			Path:  path,
-			Base:  path,
-			Type:  types.Prompt,
-		})
-	}
-
-	atomic.StoreInt32(hs.index, idx)
-
-	hs.load()
 }
 
 func (hs *HeapSet) OpenPlugin(path, base, title string) {

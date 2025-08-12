@@ -2,6 +2,7 @@ package sub
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -9,6 +10,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/buffer"
@@ -20,7 +22,7 @@ var StringsUsage = `
 Display ASCII and Unicode strings.
 
 Usage:
-  fox strings [FLAG...] [PATH...]
+  fox strings [FLAG ...] PATH ...
 
 Positional arguments:
   Path(s) to open
@@ -31,6 +33,7 @@ Global:
       --no-line            don't print line numbers
 
 Strings:
+  -a, --ascii              only ASCII strings
   -n, --min=NUMBER         minimum length (default: 3)
   -m, --max=NUMBER         maximum length (default: Unlimited)
 
@@ -51,6 +54,10 @@ var Strings = &cobra.Command{
 		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
+
+		if flg.Strings.Min > flg.Strings.Max {
+			sys.Exit("max must be greater than min")
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
@@ -91,5 +98,6 @@ func init() {
 	Strings.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Strings.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
 	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "n", 3, "minimum length")
-	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", 0, "maximum length")
+	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", math.MaxInt, "maximum length")
+	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "only ASCII strings")
 }

@@ -19,7 +19,7 @@ var DeflateUsage = `
 Deflate compressed files.
 
 Usage:
-  fox deflate [FLAG...] [PATH...]
+  fox deflate [FLAG ...] PATH...
 
 Positional arguments:
   Path(s) to open

@@ -1,10 +1,6 @@
 ## fox
 
-examine text files
 
-### Synopsis
-
-examine text files
 
 ```
 fox [flags]

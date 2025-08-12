@@ -52,10 +52,19 @@ type UI struct {
 }
 
 func Start(args []string, invoke types.Invoke) {
+	hs := heapset.New(args)
+	defer hs.ThrowAway()
+
+	hi := history.New()
+	defer hi.Close()
+
+	bg := bag.New()
+	defer bg.Close()
+
 	ui := create()
 	defer ui.delete()
 
-	ui.run(args, invoke)
+	ui.run(hs, hi, bg, invoke)
 }
 
 func create() *UI {
@@ -115,16 +124,7 @@ func (ui *UI) delete() {
 	ui.ctx.Save()
 }
 
-func (ui *UI) run(args []string, invoke types.Invoke) {
-	hs := heapset.New(args)
-	defer hs.ThrowAway()
-
-	hi := history.New()
-	defer hi.Close()
-
-	bg := bag.New()
-	defer bg.Close()
-
+func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke types.Invoke) {
 	hs.Bind(func() {
 		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
 	}, func() {
@@ -535,7 +535,7 @@ func (ui *UI) run(args []string, invoke types.Invoke) {
 							ui.examiner.Query(v, heap)
 							ui.prompt.Lock(false)
 						})
-						hs.OpenChat(ui.examiner.File.Name())
+						hs.OpenFox(ui.examiner.File.Name())
 
 					default:
 						plugins.Input <- v

@@ -24,7 +24,7 @@ var Usage = `
 The Swiss Army Knife for examining text files (%s)
 
 Usage:
-  fox [COMMAND] [FLAG...] [PATH...]
+  fox [COMMAND] [FLAG ...] PATH ...
 
 Positional arguments:
   Path(s) to open or '-' for STDIN
@@ -102,9 +102,7 @@ Type "fox help COMMAND" for more help...
 
 var Fox = &cobra.Command{
 	Use:     "fox",
-	Short:   "examine text files",
-	Long:    "examine text files",
-	Args:    cobra.ArbitraryArgs,
+	Args:    cobra.MinimumNArgs(1),
 	Version: fox.Version,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
@@ -177,6 +175,7 @@ var Fox = &cobra.Command{
 			log.Print(l)
 		}
 	},
+	SilenceUsage: true,
 }
 
 func Execute() error {
@@ -279,10 +278,11 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Alias.Xml, "xml", "X", false, "short for --mode=xml")
 
 	Fox.PersistentFlags().BoolP("help", "", false, "shows this message")
-	Fox.PersistentFlags().BoolP("version", "", false, "shows the version")
+	Fox.Flags().BoolP("version", "", false, "shows the version")
 
 	Fox.MarkFlagsMutuallyExclusive("head", "tail")
 
+	Fox.SetErrPrefix(sys.Prefix)
 	Fox.SetHelpTemplate(fmt.Sprintf(fox.Fox+Usage, fox.Version))
 	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", fox.Product, fox.Version))
 

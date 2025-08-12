@@ -17,7 +17,7 @@ var CountsUsage string = `
 Display line and byte counts.
 
 Usage:
-  fox counts [FLAG...] [PATH...]
+  fox counts [FLAG ...] PATH ...
 
 Positional arguments:
   Path(s) to open
