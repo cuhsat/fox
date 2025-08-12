@@ -1,10 +1,11 @@
 package zip
 
 import (
-	"archive/zip"
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/hiforensics/zip/pkg/zip"
 
 	"github.com/hiforensics/fox/internal/pkg/files"
 	"github.com/hiforensics/fox/internal/pkg/sys"
@@ -17,7 +18,7 @@ func Detect(path string) bool {
 	})
 }
 
-func Deflate(path, _ string) (i []*files.Item) {
+func Deflate(path, pass string) (i []*files.Item) {
 	r, err := zip.OpenReader(path)
 
 	if err != nil {
@@ -36,6 +37,10 @@ func Deflate(path, _ string) (i []*files.Item) {
 	for _, f := range r.File {
 		if strings.HasSuffix(f.Name, "/") {
 			continue
+		}
+
+		if len(pass) > 0 {
+			f.SetPassword(pass)
 		}
 
 		a, err := f.Open()

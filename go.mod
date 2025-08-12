@@ -1,6 +1,6 @@
 module github.com/hiforensics/fox
 
-go 1.24.5
+go 1.24.6
 
 require (
 	github.com/0xrawsec/golang-evtx v1.2.9
@@ -13,10 +13,11 @@ require (
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/glaslos/ssdeep v0.4.0
 	github.com/glaslos/tlsh v0.3.0
+	github.com/hiforensics/zip v0.5.1
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/nwaples/rardecode v1.1.3
-	github.com/spf13/pflag v1.0.7
+	github.com/spf13/cobra v1.9.1
 	github.com/ulikunitz/xz v0.5.12
 	modernc.org/sqlite v1.38.2
 )
@@ -26,10 +27,10 @@ require (
 	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/spf13/cobra v1.9.1 // indirect
+	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
-	golang.org/x/crypto v0.40.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
@@ -47,9 +48,9 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/term v0.33.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/term v0.34.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	modernc.org/libc v1.66.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect

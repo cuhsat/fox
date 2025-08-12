@@ -35,10 +35,13 @@ Commands:
   hash                     display hash sums
   strings                  display ASCII and Unicode strings
 
-Global:
+Print:
   -p, --print              print directly to console
       --no-file            don't print filenames
       --no-line            don't print line numbers
+
+Deflate:
+      --pass=PASSWORD      decrypt with password (RAR, ZIP)
 
 Hex display:
   -x, --hex                show file in canonical hex
@@ -92,10 +95,10 @@ Example: print matching lines
   $ fox -pe "John Doe" ./**/*.evtx
 
 Example: print content hashes
-  $ fox hash -pt md5 example.zip
+  $ fox hash -pt tlsh files.zip
 
 Example: print first sector in hex
-  $ fox -pxhc=512 example.dd > mbr
+  $ fox -pxhc=512 image.dd > mbr
 
 Type "fox help COMMAND" for more help...
 `
@@ -237,6 +240,8 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Fox.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
+
+	Fox.PersistentFlags().StringVarP(&flg.Deflate.Pass, "pass", "", "", "decrypt with password")
 
 	Fox.Flags().BoolVarP(&flg.Hex, "hex", "x", false, "show file in canonical hex")
 

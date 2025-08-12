@@ -87,8 +87,20 @@ func (hs *HeapSet) loadFile(path, base string) {
 	hs.atomicAdd(h)
 }
 
-func (hs *HeapSet) loadArchive(fn files.Deflate, path, base, pass string) {
-	for _, i := range fn(path, pass) {
+func (hs *HeapSet) loadArchive(fn files.Deflate, path, base string) {
+	defer func() {
+		if err := recover(); err != nil {
+			sys.Exit("corrupted archive or wrong password")
+		}
+	}()
+
+	items := fn(path, flags.Get().Deflate.Pass)
+
+	if len(items) == 0 {
+		panic("no item(s)")
+	}
+
+	for _, i := range items {
 		i.Path = hs.deflate(i.Path, base)
 
 		if len(i.Path) == 0 {
@@ -139,8 +151,6 @@ func (hs *HeapSet) load() *heap.Heap {
 }
 
 func (hs *HeapSet) deflate(path, base string) string {
-	pass := flags.Get().Deflate.Pass
-
 	// check for compression
 	switch {
 	case br.Detect(path):
@@ -162,13 +172,13 @@ func (hs *HeapSet) deflate(path, base string) string {
 	// check for archive
 	switch {
 	case rar.Detect(path):
-		hs.loadArchive(rar.Deflate, path, base, pass)
+		hs.loadArchive(rar.Deflate, path, base)
 		return ""
 	case tar.Detect(path):
-		hs.loadArchive(tar.Deflate, path, base, pass)
+		hs.loadArchive(tar.Deflate, path, base)
 		return ""
 	case zip.Detect(path):
-		hs.loadArchive(zip.Deflate, path, base, pass)
+		hs.loadArchive(zip.Deflate, path, base)
 		return ""
 	}
 

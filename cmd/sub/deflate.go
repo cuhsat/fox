@@ -29,10 +29,10 @@ Global:
 
 Deflate:
   -d, --dir[=PATH]         deflate into directory (default: .)
-  -p, --pass=PASSWORD      decrypt with password (only for RAR)
+      --pass=PASSWORD      decrypt with password (RAR and ZIP only)
 
 Example:
-  $ fox deflate -p=infected ioc.rar
+  $ fox deflate --pass=infected ioc.rar
 
 Type "fox help" for more help...
 `
@@ -104,7 +104,6 @@ func init() {
 	flg := flags.Get()
 
 	Deflate.SetHelpTemplate(fox.Fox + DeflateUsage)
-	Deflate.Flags().StringVarP(&flg.Deflate.Pass, "pass", "p", "", "decrypt with password")
 	Deflate.Flags().StringVarP(&flg.Deflate.Path, "dir", "d", "", "deflate into directory")
 	Deflate.Flags().Lookup("dir").NoOptDefVal = "."
 	Deflate.MarkFlagDirname("dir")
