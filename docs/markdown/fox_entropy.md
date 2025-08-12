@@ -1,13 +1,13 @@
-## fox counts
+## fox entropy
 
-display line and byte counts
+display file entropy
 
 ### Synopsis
 
-display line and byte counts
+display file entropy
 
 ```
-fox counts [flags]
+fox entropy [flags]
 ```
 
 ### Options
