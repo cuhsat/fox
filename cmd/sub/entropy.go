@@ -13,11 +13,11 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var CountsUsage string = `
-Display line and byte counts.
+var EntropyUsage string = `
+Display file entropy.
 
 Usage:
-  fox counts [FLAG ...] PATH ...
+  fox entropy [FLAG ...] PATH ...
 
 Positional arguments:
   Path(s) to open
@@ -26,15 +26,15 @@ Global:
   -p, --print              print directly to console
 
 Example:
-  $ fox counts ./**/*.txt
+  $ fox entropy ./**/*
 
 Type "fox help" for more help...
 `
 
-var Counts = &cobra.Command{
-	Use:   "counts",
-	Short: "display line and byte counts",
-	Long:  "display line and byte counts",
+var Entropy = &cobra.Command{
+	Use:   "entropy",
+	Short: "display file entropy",
+	Long:  "display file entropy",
 	Args:  cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
@@ -45,13 +45,13 @@ var Counts = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
-			ui.Start(args, types.Counts)
+			ui.Start(args, types.Entropy)
 		} else {
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
 			hs.Each(func(h *heap.Heap) {
-				fmt.Printf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
+				fmt.Printf("%.10f  %s\n", h.Entropy(), h.String())
 			})
 		}
 	},
@@ -60,6 +60,6 @@ var Counts = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Counts.SetHelpTemplate(fox.Fox + CountsUsage)
-	Counts.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
+	Entropy.SetHelpTemplate(fox.Fox + EntropyUsage)
+	Entropy.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 }

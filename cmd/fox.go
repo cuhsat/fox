@@ -32,7 +32,8 @@ Positional arguments:
 Commands:
   counts                   display line and byte counts
   deflate                  deflate compressed files
-  hash                     display hash sums
+  entropy                  display file entropy
+  hash                     display file hash sums
   strings                  display ASCII and Unicode strings
 
 Print:
@@ -105,6 +106,8 @@ Type "fox help COMMAND" for more help...
 
 var Fox = &cobra.Command{
 	Use:     "fox",
+	Short:   "The Swiss Army Knife for examining text files",
+	Long:    "The Swiss Army Knife for examining text files",
 	Args:    cobra.MinimumNArgs(1),
 	Version: fox.Version,
 	PreRun: func(cmd *cobra.Command, args []string) {
@@ -293,6 +296,7 @@ func init() {
 
 	Fox.AddCommand(sub.Counts)
 	Fox.AddCommand(sub.Deflate)
+	Fox.AddCommand(sub.Entropy)
 	Fox.AddCommand(sub.Hash)
 	Fox.AddCommand(sub.Strings)
 }

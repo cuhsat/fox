@@ -4,6 +4,9 @@ NIST Computer Forensic Reference Data Sets
 EICAR Anti-Virus Test File
 - https://www.eicar.org/download-anti-malware-testfile/
 
+RANDOM.ORG Random Byte Generator
+- https://www.random.org/bytes/
+
 Historic Sample CSV datasets
 - https://www.tablab.app/csv/sample
 

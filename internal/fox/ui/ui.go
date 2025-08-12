@@ -143,6 +143,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 	switch invoke {
 	case types.Counts:
 		hs.Counts()
+	case types.Entropy:
+		hs.Entropy()
 	case types.Hash:
 		hs.HashSum(flg.Hash.Algo.String())
 	case types.Strings:
@@ -264,23 +266,23 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					ui.change(mode.Default)
 
 				case tcell.KeyF2:
-					hs.Strings(3, 0)
+					hs.Entropy()
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:
-					hs.HashSum(types.MD5)
+					hs.Strings(3, 0)
 					ui.change(mode.Default)
 
 				case tcell.KeyF4:
-					hs.HashSum(types.SHA1)
+					hs.HashSum(types.MD5)
 					ui.change(mode.Default)
 
 				case tcell.KeyF5:
-					hs.HashSum(types.SHA256)
+					hs.HashSum(types.SHA1)
 					ui.change(mode.Default)
 
 				case tcell.KeyF6:
-					hs.HashSum(types.SHA3)
+					hs.HashSum(types.SHA256)
 					ui.change(mode.Default)
 
 				case tcell.KeyF7:

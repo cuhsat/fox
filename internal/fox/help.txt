@@ -35,11 +35,11 @@ Keymap:
   Ctrl + z             Suspend to shell
   Ctrl + h             Show help message
   F1                   Show file(s) counts
-  F2                   Show file(s) strings
-  F3                   Show file(s) MD5
-  F4                   Show file(s) SHA1
-  F5                   Show file(s) SHA256
-  F6                   Show file(s) SHA3
+  F2                   Show file(s) entropy
+  F3                   Show file(s) strings
+  F4                   Show file(s) MD5
+  F5                   Show file(s) SHA1
+  F6                   Show file(s) SHA256
   F7 - F12             Execute plugin(s)
 
 LESS:

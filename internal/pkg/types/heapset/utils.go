@@ -19,6 +19,12 @@ func (hs *HeapSet) Counts() {
 	})
 }
 
+func (hs *HeapSet) Entropy() {
+	hs.newHeap("entropy", func(h *heap.Heap) string {
+		return fmt.Sprintf("%.10f  %s\n", h.Entropy(), h.String())
+	})
+}
+
 func (hs *HeapSet) Strings(n, m int) {
 	hs.newHeap("strings", func(h *heap.Heap) string {
 		var sb strings.Builder

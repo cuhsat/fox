@@ -15,7 +15,7 @@ import (
 )
 
 var HashUsage = `
-Display hash sums.
+Display file hash sums.
 
 Usage:
   fox hash [FLAG ...] PATH ...
@@ -43,8 +43,8 @@ Type "fox help" for more help...
 
 var Hash = &cobra.Command{
 	Use:   "hash",
-	Short: "display hash sums",
-	Long:  "display hash sums",
+	Short: "display file hash sums",
+	Long:  "display file hash sums",
 	Args:  cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()

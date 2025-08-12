@@ -32,6 +32,7 @@ type Invoke int
 const (
 	None Invoke = iota
 	Counts
+	Entropy
 	Hash
 	Strings
 )
