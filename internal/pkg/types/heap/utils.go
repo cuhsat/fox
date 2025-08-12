@@ -40,8 +40,8 @@ func (h *Heap) Entropy() float64 {
 }
 
 func (h *Heap) Strings(n, m int) <-chan String {
+	str := make(chan String)
 	ch := make(chan byte, 1024)
-	s := make(chan String)
 
 	go func() {
 		h.RLock()
@@ -64,7 +64,7 @@ func (h *Heap) Strings(n, m int) <-chan String {
 
 		flush := func() {
 			if len(rs) >= n && len(rs) <= m {
-				s <- String{
+				str <- String{
 					Off: max(off-(len(rs)+1), 0),
 					Str: string(rs),
 				}
@@ -73,7 +73,7 @@ func (h *Heap) Strings(n, m int) <-chan String {
 			rs = rs[:0]
 		}
 
-		defer close(s)
+		defer close(str)
 		defer flush()
 
 		for b := range ch {
@@ -125,5 +125,5 @@ func (h *Heap) Strings(n, m int) <-chan String {
 		}
 	}()
 
-	return s
+	return str
 }
