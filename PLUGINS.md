@@ -140,6 +140,6 @@ Commands = [
 Name = "objdump"
 Pattern = '.*\.(bin|dll|exe|scr|sys)'
 Commands = [
-  'objdump -D "{{file}}"',
+  'objdump --disassemble "{{file}}"',
 ]
 ```

@@ -1,6 +1,9 @@
 NIST Computer Forensic Reference Data Sets
 - https://cfreds.nist.gov/all/NIST/HackingCase
 
+AMTSO Potentially Unwanted Application
+- https://www.amtso.org/feature-settings-check-potentially-unwanted-applications/
+
 EICAR Anti-Virus Test File
 - https://www.eicar.org/download-anti-malware-testfile/
 
