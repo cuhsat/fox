@@ -29,6 +29,7 @@ fox [flags]
       --no-file               don't print filenames
       --no-line               don't print line numbers
       --no-plugins            don't run autostart plugins
+      --pass string           decrypt with password
   -p, --print                 print directly to console
   -r, --raw                   don't process files at all
   -e, --regexp strings        filter for lines that match pattern (default [])

@@ -20,7 +20,8 @@ fox hash [flags]
 ### Options inherited from parent commands
 
 ```
-      --help   shows this message
+      --help          shows this message
+      --pass string   decrypt with password
 ```
 
 ### SEE ALSO

@@ -14,13 +14,13 @@ fox deflate [flags]
 
 ```
   -d, --dir string[="."]   deflate into directory
-  -p, --pass string        decrypt with password
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --help   shows this message
+      --help          shows this message
+      --pass string   decrypt with password
 ```
 
 ### SEE ALSO
