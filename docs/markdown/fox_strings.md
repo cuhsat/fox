@@ -13,7 +13,8 @@ fox strings [flags]
 ### Options
 
 ```
-  -m, --max int   maximum length
+  -a, --ascii     only ASCII strings
+  -m, --max int   maximum length (default 9223372036854775807)
   -n, --min int   minimum length (default 3)
       --no-file   don't print filenames
       --no-line   don't print line numbers
