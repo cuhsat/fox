@@ -14,16 +14,16 @@ Model = "Default"
 
 # Available theme names:
 #
-# Examiner-Light
 # Examiner-Dark
+# Examiner-Light
 # Catppuccin-Latte
 # Catppuccin-Frappe
 # Catppuccin-Macchiato
 # Catppuccin-Mocha
-# Solarized-Light
 # Solarized-Dark
-# VSCode-Light
+# Solarized-Light
 # VSCode-Dark
+# VSCode-Light
 # Monokai
 # Darcula
 # Nord

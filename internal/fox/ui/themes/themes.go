@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Default = "Monochrome"
+	Default = "Examiner-Dark"
 )
 
 var (
@@ -38,19 +38,6 @@ type palette []int32
 func New(name string) *Themes {
 	t := Themes{
 		palettes: map[string]palette{
-			"Examiner-Light": {
-				0x888888, 0xeeeeee, // Base
-				0xcccccc, 0xcccccc, // Surface0 (line)
-				0x111111, 0xcccccc, // Surface1 (pane)
-				0x111111, 0xcccccc, // Surface2 (title)
-				0xeeeeee, 0x0f88cd, // Surface3 (mode)
-				0xeeeeee, 0xf8340c, // Overlay0 (error)
-				0x333333, 0x88cd0f, // Overlay1 (success)
-				0xcccccc, 0xeeeeee, // Subtext0 (numbers)
-				0xcccccc, 0xeeeeee, // Subtext1 (vertical)
-				0x111111, 0xeeeeee, // Subtext2 (highlight)
-			},
-
 			"Examiner-Dark": {
 				0x777777, 0x111111, // Base
 				0x333333, 0x333333, // Surface0 (line)
@@ -62,6 +49,19 @@ func New(name string) *Themes {
 				0x333333, 0x111111, // Subtext0 (numbers)
 				0x333333, 0x111111, // Subtext1 (vertical)
 				0xeeeeee, 0x111111, // Subtext2 (highlight)
+			},
+
+			"Examiner-Light": {
+				0x888888, 0xeeeeee, // Base
+				0xcccccc, 0xcccccc, // Surface0 (line)
+				0x111111, 0xcccccc, // Surface1 (pane)
+				0x111111, 0xcccccc, // Surface2 (title)
+				0xeeeeee, 0x0f88cd, // Surface3 (mode)
+				0xeeeeee, 0xf8340c, // Overlay0 (error)
+				0x333333, 0x88cd0f, // Overlay1 (success)
+				0xcccccc, 0xeeeeee, // Subtext0 (numbers)
+				0xcccccc, 0xeeeeee, // Subtext1 (vertical)
+				0x111111, 0xeeeeee, // Subtext2 (highlight)
 			},
 
 			"Catppuccin-Latte": {
@@ -116,19 +116,6 @@ func New(name string) *Themes {
 				0xf38ba8, 0x1e1e2e, // Subtext2 (highlight)
 			},
 
-			"Solarized-Light": {
-				0x586e75, 0xfdf6e3, // Base
-				0xeee8d5, 0xeee8d5, // Surface0 (line)
-				0x002b36, 0xeee8d5, // Surface1 (pane)
-				0x002b36, 0xeee8d5, // Surface2 (title)
-				0xfdf6e3, 0x93a1a1, // Surface3 (mode)
-				0xfdf6e3, 0xdc322f, // Overlay0 (error)
-				0xfdf6e3, 0x859900, // Overlay1 (success)
-				0x93a1a1, 0xfdf6e3, // Subtext0 (numbers)
-				0xeee8d5, 0xfdf6e3, // Subtext1 (vertical)
-				0xb58900, 0xfdf6e3, // Subtext2 (highlight)
-			},
-
 			"Solarized-Dark": {
 				0x93a1a1, 0x002b36, // Base
 				0x073642, 0x073642, // Surface0 (line)
@@ -142,17 +129,17 @@ func New(name string) *Themes {
 				0xcb4b16, 0x002b36, // Subtext2 (highlight)
 			},
 
-			"VSCode-Light": {
-				0x343434, 0xe7e7e7, // Base
-				0x343434, 0xdfdfdf, // Surface0 (line)
-				0x343434, 0xcfcfcf, // Surface1 (pane)
-				0x343434, 0xdfdfdf, // Surface2 (title)
-				0xe7e7e7, 0x007acc, // Surface3 (mode)
-				0xe7e7e7, 0xff0000, // Overlay0 (error)
-				0xe7e7e7, 0x008000, // Overlay1 (success)
-				0xafafaf, 0xe7e7e7, // Subtext0 (numbers)
-				0xafafaf, 0xe7e7e7, // Subtext1 (vertical)
-				0xc72e0f, 0xe7e7e7, // Subtext2 (highlight)
+			"Solarized-Light": {
+				0x586e75, 0xfdf6e3, // Base
+				0xeee8d5, 0xeee8d5, // Surface0 (line)
+				0x002b36, 0xeee8d5, // Surface1 (pane)
+				0x002b36, 0xeee8d5, // Surface2 (title)
+				0xfdf6e3, 0x93a1a1, // Surface3 (mode)
+				0xfdf6e3, 0xdc322f, // Overlay0 (error)
+				0xfdf6e3, 0x859900, // Overlay1 (success)
+				0x93a1a1, 0xfdf6e3, // Subtext0 (numbers)
+				0xeee8d5, 0xfdf6e3, // Subtext1 (vertical)
+				0xb58900, 0xfdf6e3, // Subtext2 (highlight)
 			},
 
 			"VSCode-Dark": {
@@ -166,6 +153,19 @@ func New(name string) *Themes {
 				0x626262, 0x282828, // Subtext0 (numbers)
 				0x313131, 0x282828, // Subtext1 (vertical)
 				0xd3967d, 0x282828, // Subtext2 (highlight)
+			},
+
+			"VSCode-Light": {
+				0x343434, 0xe7e7e7, // Base
+				0x343434, 0xdfdfdf, // Surface0 (line)
+				0x343434, 0xcfcfcf, // Surface1 (pane)
+				0x343434, 0xdfdfdf, // Surface2 (title)
+				0xe7e7e7, 0x007acc, // Surface3 (mode)
+				0xe7e7e7, 0xff0000, // Overlay0 (error)
+				0xe7e7e7, 0x008000, // Overlay1 (success)
+				0xafafaf, 0xe7e7e7, // Subtext0 (numbers)
+				0xafafaf, 0xe7e7e7, // Subtext1 (vertical)
+				0xc72e0f, 0xe7e7e7, // Subtext2 (highlight)
 			},
 
 			"Monokai": {
@@ -234,16 +234,16 @@ func New(name string) *Themes {
 			},
 		},
 		names: []string{
-			"Examiner-Light",
 			"Examiner-Dark",
+			"Examiner-Light",
 			"Catppuccin-Latte",
 			"Catppuccin-Frappe",
 			"Catppuccin-Macchiato",
 			"Catppuccin-Mocha",
-			"Solarized-Light",
 			"Solarized-Dark",
-			"VSCode-Light",
+			"Solarized-Light",
 			"VSCode-Dark",
+			"VSCode-Light",
 			"Monokai",
 			"Darcula",
 			"Nord",

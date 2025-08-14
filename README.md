@@ -42,16 +42,16 @@ go install github.com/hiforensics/fox@latest
   * With suspend to shell capability
   * With configurable color themes
   * Popular themes already included:
-    * Examiner-Light
     * Examiner-Dark
+    * Examiner-Light
     * Catppuccin-Latte
     * Catppuccin-Frappe
     * Catppuccin-Macchiato
     * Catppuccin-Mocha
-    * Solarized-Light
     * Solarized-Dark
-    * VSCode-Light
+    * Solarized-Light
     * VSCode-Dark
+    * VSCode-Light
     * Monokai
     * Darcula
     * Nord
