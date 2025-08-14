@@ -11,6 +11,7 @@ import (
 	"runtime"
 
 	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 )
@@ -190,6 +191,10 @@ func Persist(name string) string {
 }
 
 func Trace(err any, stack any) {
+	if !flags.Get().Opt.Readonly {
+		return // prevent dump
+	}
+
 	s := fmt.Sprintf("%+v\n\n%s", err, stack)
 
 	err = os.WriteFile(Dump, []byte(s), 0600)
