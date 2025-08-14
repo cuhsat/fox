@@ -7,6 +7,10 @@ import (
 type BagMode string
 
 const (
+	BagName = "evidence"
+)
+
+const (
 	BagModeNone   BagMode = "none"
 	BagModeText   BagMode = "text"
 	BagModeJson   BagMode = "json"
@@ -15,7 +19,9 @@ const (
 	BagModeSqlite BagMode = "sqlite"
 )
 
-const BagName = "evidence"
+const (
+	BagUrlLogstash = "http://localhost:8080"
+)
 
 func (bm *BagMode) String() string {
 	return string(*bm)

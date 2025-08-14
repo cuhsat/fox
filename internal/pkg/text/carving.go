@@ -1,6 +1,7 @@
 package text
 
 import (
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -18,9 +19,11 @@ func Carve(ch <-chan byte, str chan<- String, n, m int) {
 
 	flush := func() {
 		if len(rs) >= n && len(rs) <= m {
-			str <- String{
-				Off: max(off-(len(rs)+1), 0),
-				Str: string(rs),
+			o := max(off-(len(rs)+1), 0)
+			s := string(rs)
+
+			if len(strings.TrimSpace(s)) > 0 {
+				str <- String{o, s}
 			}
 		}
 

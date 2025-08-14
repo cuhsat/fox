@@ -84,6 +84,7 @@ Disable:
       --no-plugins         don't run autostart plugins
 
 Aliases:
+  -L, --logstash           short for --url=http://localhost:8080
   -T, --text               short for --mode=text
   -j, --json               short for --mode=json
   -J, --jsonl              short for --mode=jsonl
@@ -154,6 +155,10 @@ var Fox = &cobra.Command{
 
 		if flg.Alias.Sqlite {
 			flg.Bag.Mode = flags.BagModeSqlite
+		}
+
+		if flg.Alias.Logstash {
+			flg.Bag.Url = flags.BagUrlLogstash
 		}
 
 		// explicit set UI mode
@@ -286,6 +291,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run autostart plugins")
 
+	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for --url=http://localhost:8080")
 	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for --mode=text")
 	Fox.Flags().BoolVarP(&flg.Alias.Json, "json", "j", false, "short for --mode=json")
 	Fox.Flags().BoolVarP(&flg.Alias.Jsonl, "jsonl", "J", false, "short for --mode=jsonl")

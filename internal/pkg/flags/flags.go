@@ -45,11 +45,12 @@ type Flags struct {
 
 	// alias flags
 	Alias struct {
-		Text   bool
-		Json   bool
-		Jsonl  bool
-		Sqlite bool
-		Xml    bool
+		Logstash bool
+		Text     bool
+		Json     bool
+		Jsonl    bool
+		Sqlite   bool
+		Xml      bool
 	}
 
 	// deflate command
