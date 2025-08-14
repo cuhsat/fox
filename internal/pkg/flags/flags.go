@@ -59,6 +59,12 @@ type Flags struct {
 		Pass string
 	}
 
+	// entropy command
+	Entropy struct {
+		Min float64
+		Max float64
+	}
+
 	// hash command
 	Hash struct {
 		Algo HashAlgo
@@ -66,9 +72,9 @@ type Flags struct {
 
 	// strings command
 	Strings struct {
+		Ascii bool
 		Min   int
 		Max   int
-		Ascii bool
 	}
 }
 

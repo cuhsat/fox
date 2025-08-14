@@ -2,6 +2,7 @@ package sub
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -37,16 +38,18 @@ var Counts = &cobra.Command{
 	Use:   "counts",
 	Short: "display line and byte counts",
 	Long:  "display line and byte counts",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
-		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if !flags.Get().Print {
+		if len(args) == 0 {
+			fmt.Print(CountsUsage)
+			os.Exit(0)
+		} else if !flags.Get().Print {
 			ui.Start(args, types.Counts)
 		} else {
 			hs := heapset.New(args)

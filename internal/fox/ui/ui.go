@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -144,13 +145,18 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 	case types.Counts:
 		hs.Counts()
 	case types.Entropy:
-		hs.Entropy()
-	case types.Hash:
-		hs.HashSum(flg.Hash.Algo.String())
+		hs.Entropy(
+			flg.Entropy.Min,
+			flg.Entropy.Max,
+		)
 	case types.Strings:
 		hs.Strings(
 			flg.Strings.Min,
 			flg.Strings.Max,
+		)
+	case types.Hash:
+		hs.HashSum(
+			flg.Hash.Algo.String(),
 		)
 	}
 
@@ -266,11 +272,11 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					ui.change(mode.Default)
 
 				case tcell.KeyF2:
-					hs.Entropy()
+					hs.Entropy(0.0, 1.0)
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:
-					hs.Strings(3, 0)
+					hs.Strings(3, math.MaxInt)
 					ui.change(mode.Default)
 
 				case tcell.KeyF4:

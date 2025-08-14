@@ -90,7 +90,8 @@ func (hs *HeapSet) loadFile(path, base string) {
 func (hs *HeapSet) loadArchive(fn files.Deflate, path, base string) {
 	defer func() {
 		if err := recover(); err != nil {
-			sys.Exit("corrupted archive or wrong password")
+			sys.Error("corrupted archive or wrong password")
+			return
 		}
 	}()
 

@@ -2,6 +2,7 @@ package sub
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -47,13 +48,17 @@ var Hash = &cobra.Command{
 	Use:   "hash",
 	Short: "display file hash sums",
 	Long:  "display file hash sums",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
-		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
+
+		if flg.Print {
+			flg.Opt.NoConvert = true
+			flg.Opt.NoPlugins = true
+		}
 
 		// default
 		if len(flg.Hash.Algo) == 0 {
@@ -61,7 +66,10 @@ var Hash = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if !flags.Get().Print {
+		if len(args) == 0 {
+			fmt.Print(HashUsage)
+			os.Exit(0)
+		} else if !flags.Get().Print {
 			ui.Start(args, types.Hash)
 		} else {
 			algo := flags.Get().Hash.Algo.String()

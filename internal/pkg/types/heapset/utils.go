@@ -19,9 +19,15 @@ func (hs *HeapSet) Counts() {
 	})
 }
 
-func (hs *HeapSet) Entropy() {
+func (hs *HeapSet) Entropy(n, m float64) {
 	hs.newHeap("entropy", func(h *heap.Heap) string {
-		return fmt.Sprintf("%.10f  %s\n", h.Entropy(), h.String())
+		v := h.Entropy(n, m)
+
+		if v == -1 {
+			return "" // filtered
+		}
+
+		return fmt.Sprintf("%.10f  %s\n", v, h.String())
 	})
 }
 

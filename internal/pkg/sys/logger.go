@@ -2,7 +2,6 @@ package sys
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"time"
@@ -37,17 +36,11 @@ func (l logger) Close() {
 }
 
 func (l logger) Write(b []byte) (int, error) {
+	_, _ = fmt.Fprint(os.Stderr, string(b))
+
 	ts := time.Now().UTC().Format(time.RFC3339)
 
 	return fmt.Fprintf(l.f, "[%s] %s", ts, string(b))
-}
-
-func (l logger) Consume() string {
-	l.Close()
-
-	b, _ := io.ReadAll(l.f)
-
-	return string(b)
 }
 
 func Print(v ...any) {

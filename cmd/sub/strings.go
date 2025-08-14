@@ -3,6 +3,7 @@ package sub
 import (
 	"fmt"
 	"math"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -49,20 +50,30 @@ var Strings = &cobra.Command{
 	Use:   "strings",
 	Short: "display ASCII and Unicode strings",
 	Long:  "display ASCII and Unicode strings",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
-		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
+
+		if flg.Strings.Min <= 0 {
+			sys.Exit("min must be greater than 0")
+		}
+
+		if flg.Strings.Max <= 0 {
+			sys.Exit("min must be greater than 0")
+		}
 
 		if flg.Strings.Min > flg.Strings.Max {
 			sys.Exit("max must be greater than min")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if !flags.Get().Print {
+		if len(args) == 0 {
+			fmt.Print(StringsUsage)
+			os.Exit(0)
+		} else if !flags.Get().Print {
 			ui.Start(args, types.Strings)
 		} else {
 			flg := flags.Get()

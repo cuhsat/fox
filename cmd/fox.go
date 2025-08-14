@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 
@@ -185,11 +184,6 @@ var Fox = &cobra.Command{
 			os.Exit(0)
 		} else {
 			print(args)
-		}
-	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if l := sys.Log.Consume(); len(l) > 0 {
-			log.Print(l)
 		}
 	},
 	SilenceUsage: true,

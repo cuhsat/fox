@@ -2,12 +2,14 @@ package sub
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
@@ -26,8 +28,12 @@ Positional arguments:
 Global:
   -p, --print              print directly to console
 
+Entropy:
+  -n, --min[=DECIMAL]      minimum score (default: 0.8)
+  -m, --max[=DECIMAL]      maximum score (default: 0.8)
+
 Example:
-  $ fox entropy ./**/*
+  $ fox entropy -n ./**/*
 
 Type "fox help" for more help...
 `
@@ -37,23 +43,44 @@ var Entropy = &cobra.Command{
 	Use:   "entropy",
 	Short: "display file entropy",
 	Long:  "display file entropy",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
-		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
+
+		if flg.Entropy.Min < 0 {
+			sys.Exit("min must be 0 or greater")
+		}
+
+		if flg.Entropy.Max > 1 {
+			sys.Exit("max must be 1 or lesser")
+		}
+
+		if flg.Entropy.Min > flg.Entropy.Max {
+			sys.Exit("max must be greater than min")
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if !flags.Get().Print {
+		if len(args) == 0 {
+			fmt.Print(EntropyUsage)
+			os.Exit(0)
+		} else if !flags.Get().Print {
 			ui.Start(args, types.Entropy)
 		} else {
+			flg := flags.Get()
+
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
 			hs.Each(func(h *heap.Heap) {
-				fmt.Printf("%.10f  %s\n", h.Entropy(), h.String())
+				if v := h.Entropy(
+					flg.Entropy.Min,
+					flg.Entropy.Max,
+				); v != -1 {
+					fmt.Printf("%.10f  %s\n", v, h.String())
+				}
 			})
 		}
 	},
@@ -64,4 +91,8 @@ func init() {
 
 	Entropy.SetHelpTemplate(EntropyUsage)
 	Entropy.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
+	Entropy.Flags().Float64VarP(&flg.Entropy.Min, "min", "n", 0.0, "minimum score")
+	Entropy.Flags().Float64VarP(&flg.Entropy.Max, "max", "m", 1.0, "maximum score")
+	Entropy.Flags().Lookup("min").NoOptDefVal = "0.8"
+	Entropy.Flags().Lookup("max").NoOptDefVal = "0.8"
 }

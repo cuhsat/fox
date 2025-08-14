@@ -43,15 +43,19 @@ var Deflate = &cobra.Command{
 	Use:   "deflate",
 	Short: "deflate compressed files",
 	Long:  "deflate compressed files",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
-		// force
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Print(DeflateUsage)
+			os.Exit(0)
+		}
+
 		flg := flags.Get()
 
 		hs := heapset.New(args)
