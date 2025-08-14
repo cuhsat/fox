@@ -37,6 +37,7 @@ fox [flags]
       --pass string           decrypt with password
   -p, --print                 print directly to console
   -r, --raw                   don't process files at all
+  -R, --readonly              don't write any new files
   -e, --regexp strings        filter for lines that match pattern (default [])
   -S, --sqlite                short for --mode=sqlite
       --state string          sets the used UI state flags

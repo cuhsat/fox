@@ -77,6 +77,7 @@ Evidence bag:
       --no-bag             don't write an evidence bag
 
 Disable:
+  -R, --readonly           don't write any new files
   -r, --raw                don't process files at all
       --no-convert         don't convert automatically
       --no-deflate         don't deflate automatically
@@ -130,6 +131,10 @@ var Fox = &cobra.Command{
 			flg.Opt.NoConvert = true
 			flg.Opt.NoDeflate = true
 			flg.Opt.NoPlugins = true
+		}
+
+		if flg.Opt.Readonly {
+			flg.Bag.No = true
 		}
 
 		if flg.Bag.No {
@@ -281,6 +286,7 @@ func init() {
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
 
 	Fox.Flags().BoolVarP(&flg.Opt.Raw, "raw", "r", false, "don't process files at all")
+	Fox.Flags().BoolVarP(&flg.Opt.Readonly, "readonly", "R", false, "don't write any new files")
 	Fox.Flags().BoolVarP(&flg.Opt.NoConvert, "no-convert", "", false, "don't convert automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run autostart plugins")

@@ -9,6 +9,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/user"
 )
@@ -34,7 +35,15 @@ func New() *History {
 
 	_, p := user.File(Filename)
 
-	h.file, err = os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	var m int
+
+	if !flags.Get().Opt.Readonly {
+		m = os.O_CREATE | os.O_APPEND | os.O_RDWR
+	} else {
+		m = os.O_RDONLY
+	}
+
+	h.file, err = os.OpenFile(p, m, 0600)
 
 	if err != nil {
 		sys.Error(err)
@@ -80,12 +89,8 @@ func (h *History) AddLine(s string) {
 	l := fmt.Sprintf("%10d;%s", time.Now().Unix(), s)
 
 	h.Lock()
-	_, err := fmt.Fprintln(h.file, l)
+	_, _ = fmt.Fprintln(h.file, l)
 	h.Unlock()
-
-	if err != nil {
-		sys.Error(err)
-	}
 }
 
 func (h *History) PrevLine() string {

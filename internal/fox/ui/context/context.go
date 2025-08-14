@@ -176,5 +176,8 @@ func (ctx *Context) Save() {
 	ctx.cfg.Follow = ctx.IsFollow()
 	ctx.cfg.Numbers = ctx.IsNumbers()
 	ctx.cfg.Wrap = ctx.IsWrap()
-	ctx.cfg.Save()
+
+	if !flags.Get().Opt.Readonly {
+		ctx.cfg.Save()
+	}
 }

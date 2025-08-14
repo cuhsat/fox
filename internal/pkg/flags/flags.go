@@ -26,6 +26,7 @@ type Flags struct {
 	// optional flags
 	Opt struct {
 		Raw       bool
+		Readonly  bool
 		NoConvert bool
 		NoDeflate bool
 		NoPlugins bool
