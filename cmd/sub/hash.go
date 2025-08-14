@@ -14,7 +14,8 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var HashUsage = `
+// Fox hash usage
+var HashUsage = fox.Fox + `
 Display file hash sums.
 
 Usage:
@@ -41,6 +42,7 @@ Example:
 Type "fox help" for more help...
 `
 
+// Displays file hash sums
 var Hash = &cobra.Command{
 	Use:   "hash",
 	Short: "display file hash sums",
@@ -88,7 +90,7 @@ var Hash = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Hash.SetHelpTemplate(fox.Fox + HashUsage)
+	Hash.SetHelpTemplate(HashUsage)
 	Hash.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Hash.Flags().VarP(&flg.Hash.Algo, "type", "t", "hash algorithm")
 }

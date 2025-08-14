@@ -6,6 +6,8 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/spf13/cobra"
+
 	"github.com/hiforensics/fox/cmd/sub"
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ui"
@@ -17,14 +19,14 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
-	"github.com/spf13/cobra"
 )
 
-var Usage = `
+// Fox usage
+var Usage = fmt.Sprintf(fox.Fox+`
 The Swiss Army Knife for examining text files (%s)
 
 Usage:
-  fox [COMMAND] [FLAG ...] PATH ...
+  fox [COMMAND] [FLAG ...] [PATH ...]
 
 Positional arguments:
   Path(s) to open or '-' for STDIN
@@ -96,19 +98,20 @@ Example: print matching lines
   $ fox -pe "John Doe" ./**/*.evtx
 
 Example: print content hashes
-  $ fox hash -pt tlsh files.zip
+  $ fox hash -pt sha1 files.zip
 
 Example: print first sector in hex
   $ fox -pxhc=512 image.dd > mbr
 
 Type "fox help COMMAND" for more help...
-`
+`, fox.Version)
 
+// Displays files
 var Fox = &cobra.Command{
 	Use:     "fox",
 	Short:   "The Swiss Army Knife for examining text files",
 	Long:    "The Swiss Army Knife for examining text files",
-	Args:    cobra.MinimumNArgs(1),
+	Args:    cobra.ArbitraryArgs,
 	Version: fox.Version,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
@@ -172,6 +175,9 @@ var Fox = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if !flags.Get().Print {
 			ui.Start(args, types.None)
+		} else if len(args) == 0 {
+			fmt.Print(Usage)
+			os.Exit(0)
 		} else {
 			print(args)
 		}
@@ -184,6 +190,7 @@ var Fox = &cobra.Command{
 	SilenceUsage: true,
 }
 
+// Execute fox
 func Execute() error {
 	return Fox.Execute()
 }
@@ -291,7 +298,7 @@ func init() {
 	Fox.MarkFlagsMutuallyExclusive("head", "tail")
 
 	Fox.SetErrPrefix(sys.Prefix)
-	Fox.SetHelpTemplate(fmt.Sprintf(fox.Fox+Usage, fox.Version))
+	Fox.SetHelpTemplate(Usage)
 	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", fox.Product, fox.Version))
 
 	Fox.AddCommand(sub.Counts)

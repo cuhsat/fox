@@ -13,7 +13,8 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var CountsUsage string = `
+// Fox counts usage
+var CountsUsage string = fox.Fox + `
 Display line and byte counts.
 
 Usage:
@@ -31,6 +32,7 @@ Example:
 Type "fox help" for more help...
 `
 
+// Displays line and byte counts
 var Counts = &cobra.Command{
 	Use:   "counts",
 	Short: "display line and byte counts",
@@ -60,6 +62,6 @@ var Counts = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Counts.SetHelpTemplate(fox.Fox + CountsUsage)
+	Counts.SetHelpTemplate(CountsUsage)
 	Counts.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 }

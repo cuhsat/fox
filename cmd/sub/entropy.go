@@ -13,7 +13,8 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var EntropyUsage string = `
+// Fox entropy usage
+var EntropyUsage string = fox.Fox + `
 Display file entropy.
 
 Usage:
@@ -31,6 +32,7 @@ Example:
 Type "fox help" for more help...
 `
 
+// Displays file entropy
 var Entropy = &cobra.Command{
 	Use:   "entropy",
 	Short: "display file entropy",
@@ -60,6 +62,6 @@ var Entropy = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Entropy.SetHelpTemplate(fox.Fox + EntropyUsage)
+	Entropy.SetHelpTemplate(EntropyUsage)
 	Entropy.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 }

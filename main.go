@@ -1,3 +1,7 @@
+// The Swiss Army Knife for examining text files.
+//
+// Usage of this code is governed by the GPL-3.0 License.
+// Please see the LICENSE.md file for further information.
 package main
 
 import (
@@ -8,6 +12,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
+// Starts the Forensic Examiner
 func main() {
 	sys.Setup()
 

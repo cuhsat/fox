@@ -73,7 +73,7 @@ func New(paths []string) *HeapSet {
 	}
 
 	if hs.Len() == 0 {
-		sys.Exit("file(s) not found")
+		hs.OpenHelp()
 	}
 
 	hs.load()

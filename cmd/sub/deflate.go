@@ -15,7 +15,8 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var DeflateUsage = `
+// Fox deflate usage
+var DeflateUsage = fox.Fox + `
 Deflate compressed files.
 
 Usage:
@@ -37,6 +38,7 @@ Example:
 Type "fox help" for more help...
 `
 
+// Deflates compressed files
 var Deflate = &cobra.Command{
 	Use:   "deflate",
 	Short: "deflate compressed files",
@@ -103,7 +105,7 @@ var Deflate = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Deflate.SetHelpTemplate(fox.Fox + DeflateUsage)
+	Deflate.SetHelpTemplate(DeflateUsage)
 	Deflate.Flags().StringVarP(&flg.Deflate.Path, "dir", "d", "", "deflate into directory")
 	Deflate.Flags().Lookup("dir").NoOptDefVal = "."
 	Deflate.MarkFlagDirname("dir")

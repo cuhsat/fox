@@ -18,7 +18,8 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var StringsUsage = `
+// Fox strings usage
+var StringsUsage = fox.Fox + `
 Display ASCII and Unicode strings.
 
 Usage:
@@ -43,6 +44,7 @@ Example:
 Type "fox help" for more help...
 `
 
+// Displays ASCII and Unicode strings
 var Strings = &cobra.Command{
 	Use:   "strings",
 	Short: "display ASCII and Unicode strings",
@@ -93,7 +95,7 @@ var Strings = &cobra.Command{
 func init() {
 	flg := flags.Get()
 
-	Strings.SetHelpTemplate(fox.Fox + StringsUsage)
+	Strings.SetHelpTemplate(StringsUsage)
 	Strings.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Strings.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Strings.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
