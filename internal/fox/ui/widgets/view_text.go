@@ -48,7 +48,7 @@ func (v *View) textRender(p *panel) {
 
 	i := 0
 
-	ai := v.heap.Type == types.Prompt
+	agent := v.heap.Type == types.Agent
 
 	// render lines
 	var color tcell.Style
@@ -73,7 +73,7 @@ func (v *View) textRender(p *panel) {
 
 		// text value
 		if len(line.Str) > 0 {
-			if ai && strings.HasPrefix(line.Str, text.PS1) {
+			if agent && strings.HasPrefix(line.Str, text.PS1) {
 				color = themes.Subtext2
 			} else {
 				color = themes.Base

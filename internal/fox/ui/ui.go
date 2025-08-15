@@ -12,7 +12,7 @@ import (
 
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ai"
-	"github.com/hiforensics/fox/internal/fox/ai/examiner"
+	"github.com/hiforensics/fox/internal/fox/ai/agent"
 	"github.com/hiforensics/fox/internal/fox/ui/context"
 	"github.com/hiforensics/fox/internal/fox/ui/themes"
 	"github.com/hiforensics/fox/internal/fox/ui/widgets"
@@ -42,9 +42,9 @@ type UI struct {
 
 	root tcell.Screen
 
-	themes   *themes.Themes
-	plugins  *plugins.Plugins
-	examiner *examiner.Examiner
+	agent   *agent.Agent
+	themes  *themes.Themes
+	plugins *plugins.Plugins
 
 	title   *widgets.Title
 	view    *widgets.View
@@ -93,9 +93,9 @@ func create() *UI {
 
 		root: root,
 
-		themes:   themes.New(ctx.Theme()),
-		plugins:  plugins.New(),
-		examiner: examiner.New(),
+		agent:   agent.New(),
+		themes:  themes.New(ctx.Theme()),
+		plugins: plugins.New(),
 
 		title:   widgets.NewTitle(ctx),
 		view:    widgets.NewView(ctx),
@@ -116,6 +116,8 @@ func create() *UI {
 }
 
 func (ui *UI) delete() {
+	ui.agent.Close()
+
 	if ui.plugins != nil {
 		plugins.Close()
 	}
@@ -536,13 +538,13 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 					case mode.Fox:
 						ui.view.Reset()
-						ui.examiner.PS1(v)
+						ui.agent.PS1(v)
 						ui.ctx.Background(func() {
 							ui.prompt.Lock(true)
-							ui.examiner.Ask(v, heap)
+							ui.agent.Ask(v, heap)
 							ui.prompt.Lock(false)
 						})
-						hs.OpenFox(ui.examiner.File.Name())
+						hs.OpenAgent(ui.agent.File.Name())
 
 					default:
 						plugins.Input <- v
@@ -600,7 +602,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 func (ui *UI) change(m mode.Mode) {
 	// check for examiner support
 	if m == mode.Fox && !ai.IsInit() {
-		ui.overlay.SendError("Examiner is not available")
+		ui.overlay.SendError(ai.ErrNotAvailable.Error())
 		return
 	}
 

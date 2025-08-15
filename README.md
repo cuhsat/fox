@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of LLM models, to leverage your forensic investigation process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic investigation process.
 
 ![](assets/fox.gif "Live Demo")
 
@@ -31,8 +31,8 @@ go install github.com/hiforensics/fox@latest
 * Build-in fuzzy hashes: SDHASH, SSDEEP, TLSH
 * Build-in wc like counts with Shannon entropy
 * Build-in timestamped input history
-* Build-in RAG agent with non-persistent file embeddings
-* Build-in LLM using Ollama provided models like Mistral or DeepSeek R1
+* Build-in AI agent using local Ollama LLMs like Mistral or DeepSeek R1
+* Build-in AI agent in-memory RAG database for file embeddings
 * [Plugin support](PLUGINS.md) for e.g. Eric Zimmerman's tools or Fox-IT's Dissect
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite3
 * Evidence bag signing via HMAC-SHA256 passphrase

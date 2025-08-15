@@ -119,25 +119,6 @@ func (hs *HeapSet) Open(path string) {
 	}
 }
 
-func (hs *HeapSet) OpenFox(path string) {
-	idx, ok := hs.findByName("Examine")
-
-	if !ok {
-		idx = hs.Len()
-
-		hs.atomicAdd(&heap.Heap{
-			Title: "Examine",
-			Path:  path,
-			Base:  path,
-			Type:  types.Prompt,
-		})
-	}
-
-	atomic.StoreInt32(hs.index, idx)
-
-	hs.load()
-}
-
 func (hs *HeapSet) OpenLog() {
 	idx, ok := hs.findByPath(sys.Log.Name())
 
@@ -201,6 +182,25 @@ func (hs *HeapSet) OpenPlugin(path, base, title string) {
 		}, idx)
 
 		old.ThrowAway()
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.load()
+}
+
+func (hs *HeapSet) OpenAgent(path string) {
+	idx, ok := hs.findByName("Agent")
+
+	if !ok {
+		idx = hs.Len()
+
+		hs.atomicAdd(&heap.Heap{
+			Title: "Agent",
+			Path:  path,
+			Base:  path,
+			Type:  types.Agent,
+		})
 	}
 
 	atomic.StoreInt32(hs.index, idx)

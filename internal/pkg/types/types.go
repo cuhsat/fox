@@ -23,8 +23,8 @@ const (
 	Stdin
 	Stdout
 	Stderr
-	Prompt
 	Plugin
+	Agent
 )
 
 type Invoke int
@@ -33,6 +33,6 @@ const (
 	None Invoke = iota
 	Counts
 	Entropy
-	Hash
 	Strings
+	Hash
 )

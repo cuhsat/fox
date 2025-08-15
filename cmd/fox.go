@@ -10,7 +10,7 @@ import (
 	"github.com/hiforensics/fox/cmd/sub"
 	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ai"
-	"github.com/hiforensics/fox/internal/fox/ai/examiner"
+	"github.com/hiforensics/fox/internal/fox/ai/agent"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
@@ -64,8 +64,8 @@ Line filter:
   -A, --after=NUMBER       number of lines trailing context after match
 
 AI flags:
-  -m, --model=MODEL        used Ollama LLM model
-  -q, --query=QUERY        used Ollama RAG query
+  -m, --model=MODEL        AI model for the agent to use
+  -q, --query=QUERY        AI query for the agent to process
 
 UI flags:
       --state={N|W|T|-}    sets the used UI state flags
@@ -179,6 +179,10 @@ var Fox = &cobra.Command{
 			flg.UI.Mode = mode.Grep
 		}
 
+		if len(flg.AI.Query) > 0 && !flg.Print {
+			sys.Exit("query requires print")
+		}
+
 		if len(flg.UI.State) > 0 {
 			re := regexp.MustCompile("[^-nwtNWT]+")
 
@@ -209,10 +213,8 @@ func print(args []string) {
 	if len(flg.AI.Query) > 0 {
 		ai.Init(config.New().Model)
 
-		ai.Wait()
-
 		if !ai.IsInit() {
-			sys.Exit("Examiner is not available")
+			sys.Exit(ai.ErrNotAvailable.Error())
 		}
 	}
 
@@ -228,7 +230,7 @@ func print(args []string) {
 			}
 
 			if len(flg.AI.Query) > 0 {
-				examiner.New().Ask(flg.AI.Query, h)
+				agent.New().Ask(flg.AI.Query, h)
 			} else if len(flg.Filters.Patterns) > 0 {
 				if ctx.Heap.Len() == 0 {
 					return // ignore empty files
@@ -288,8 +290,8 @@ func init() {
 	Fox.Flags().IntVarP(&flg.Filters.Before, "before", "B", 0, "number of lines leading context before match")
 	Fox.Flags().IntVarP(&flg.Filters.After, "after", "A", 0, "number of lines trailing context after match")
 
-	Fox.Flags().StringVarP(&flg.AI.Model, "model", "m", "", "used Ollama LLM model")
-	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "used Ollama RAG query")
+	Fox.Flags().StringVarP(&flg.AI.Model, "model", "m", "", "AI model for the agent to use")
+	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "AI query for the agent to process")
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", "", "sets the used UI theme")

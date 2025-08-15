@@ -2,6 +2,7 @@ package ai
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"sync"
 	"time"
@@ -11,6 +12,10 @@ import (
 
 const (
 	Default = "" // disabled
+)
+
+var (
+	ErrNotAvailable = errors.New("AI is not available")
 )
 
 var (
@@ -49,16 +54,24 @@ func Init(model string) {
 	}(llm)
 }
 
-func Wait() {
-	for !IsInit() {
-		time.Sleep(time.Millisecond * 100)
-	}
-}
-
 func IsInit() bool {
-	mutex.RLock()
-	defer mutex.RUnlock()
-	return client != nil
+	ch := make(chan bool, 1)
+
+	go func() {
+		for GetClient() == nil {
+			time.Sleep(time.Millisecond * 100)
+		}
+
+		ch <- true
+	}()
+
+	select {
+	case <-ch:
+		return true // ready
+
+	case <-time.After(time.Second):
+		return false // timeout
+	}
 }
 
 func GetClient() *api.Client {
