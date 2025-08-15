@@ -71,12 +71,12 @@ UI flags:
       --state={N|W|T|-}    sets the used UI state flags
       --theme=THEME        sets the used UI theme
 
-Evidence bag:
+Evidence:
   -f, --file=FILE          evidence bag file name (default: "evidence")
       --mode=MODE          evidence bag file mode (default: "raw")
                              NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
 
-  -s, --sign[=PHRASE]      sign evidence bag with (HMAC-)SHA256
+  -s, --sign[=PHRASE]      sign evidence bag via (HMAC-)SHA256
   -u, --url=URL            url to also send evidence data too
       --no-bag             don't write an evidence bag
 
@@ -85,7 +85,7 @@ Disable:
   -r, --raw                don't process files at all
       --no-convert         don't convert automatically
       --no-deflate         don't deflate automatically
-      --no-plugins         don't run autostart plugins
+      --no-plugins         don't run any plugins
 
 Aliases:
   -L, --logstash           short for --url=http://localhost:8080
@@ -299,7 +299,7 @@ func init() {
 
 	Fox.Flags().StringVarP(&flg.Bag.Path, "file", "f", flags.BagName, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
-	Fox.Flags().StringVarP(&flg.Bag.Sign, "sign", "s", "", "sign evidence bag with (HMAC-)SHA256")
+	Fox.Flags().StringVarP(&flg.Bag.Sign, "sign", "s", "", "sign evidence bag via (HMAC-)SHA256")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "url to also send evidence data too")
 	Fox.Flags().BoolVarP(&flg.Bag.No, "no-bag", "", false, "don't write an evidence bag")
 
@@ -310,7 +310,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.Readonly, "readonly", "R", false, "don't write any new files")
 	Fox.Flags().BoolVarP(&flg.Opt.NoConvert, "no-convert", "", false, "don't convert automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
-	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run autostart plugins")
+	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
 
 	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for --url=http://localhost:8080")
 	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for --mode=text")

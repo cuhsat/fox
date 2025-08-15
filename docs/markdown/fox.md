@@ -32,14 +32,14 @@ fox [flags]
       --no-deflate            don't deflate automatically
       --no-file               don't print filenames
       --no-line               don't print line numbers
-      --no-plugins            don't run autostart plugins
+      --no-plugins            don't run any plugins
       --pass string           decrypt with password
   -p, --print                 print directly to console
   -q, --query string          AI query for the agent to process
   -r, --raw                   don't process files at all
   -R, --readonly              don't write any new files
   -e, --regexp strings        filter for lines that match pattern (default [])
-  -s, --sign string[="-"]     sign evidence bag with (HMAC-)SHA256
+  -s, --sign string[="-"]     sign evidence bag via (HMAC-)SHA256
   -S, --sqlite                short for --mode=sqlite
       --state string          sets the used UI state flags
   -t, --tail                  limit tail of file by ...

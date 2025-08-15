@@ -35,16 +35,19 @@ func File(name string) (bool, string) {
 }
 
 func Sign(path, key string) {
-	var algo hash.Hash
+	var imp hash.Hash
+	var ext string
 
 	if len(path) == 0 {
 		return
 	}
 
 	if len(key) > 0 && key != "-" {
-		algo = hmac.New(sha256.New, []byte(key))
+		imp = hmac.New(sha256.New, []byte(key))
+		ext = ".hmac_sha256"
 	} else {
-		algo = sha256.New()
+		imp = sha256.New()
+		ext = ".sha256"
 	}
 
 	buf, err := os.ReadFile(path)
@@ -54,11 +57,11 @@ func Sign(path, key string) {
 		return
 	}
 
-	algo.Write(buf)
+	imp.Write(buf)
 
-	sum := fmt.Appendf(nil, "%x", algo.Sum(nil))
+	sum := fmt.Appendf(nil, "%x  %s\n", imp.Sum(nil), path)
 
-	err = os.WriteFile(path+".sha256", sum, 0600)
+	err = os.WriteFile(path+ext, sum, 0600)
 
 	if err != nil {
 		sys.Error(err)
