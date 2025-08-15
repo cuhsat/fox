@@ -144,7 +144,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		f := file.Create("Help", fmt.Sprintf(fox.Help, fox.Version))
+		f := file.Create("Help", fmt.Sprintf(fox.Fox+fox.Help, fox.Version))
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Help",

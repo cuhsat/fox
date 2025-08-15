@@ -31,8 +31,8 @@ go install github.com/hiforensics/fox@latest
 * Build-in fuzzy hashes: SDHASH, SSDEEP, TLSH
 * Build-in wc like counts with Shannon entropy
 * Build-in timestamped input history
+* Build-in in-memory RAG database for file embeddings
 * Build-in AI agent using local Ollama LLMs like Mistral or DeepSeek R1
-* Build-in AI agent in-memory RAG database for file embeddings
 * [Plugin support](PLUGINS.md) for e.g. Eric Zimmerman's tools or Fox-IT's Dissect
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite3
 * Evidence bag signing via HMAC-SHA256 passphrase

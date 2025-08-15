@@ -1,48 +1,59 @@
 package llm
 
 import (
-    "context"
-    "fmt"
+	"context"
+	"fmt"
 
-    "github.com/ollama/ollama/api"
+	"github.com/ollama/ollama/api"
 
-    "github.com/hiforensics/fox/internal/fox"
-    "github.com/hiforensics/fox/internal/fox/ai"
-    "github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/fox/ai"
+	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
 type LLM struct {
-    history []api.Message // chat history
+	history []api.Message // chat history
 }
 
 func New() *LLM {
-    return &LLM{
-        history: make([]api.Message, 0),
-    }
+	return &LLM{
+		history: make([]api.Message, 0),
+	}
 }
 
 func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
-    llm.history = append(llm.history, api.Message{
-        Role:    "user",
-        Content: fmt.Sprintf(fox.Prompt, query, lines),
-    })
+	llm.AddUser(fmt.Sprintf(fox.Prompt, query, lines))
 
-    ctx := context.Background()
-    req := &api.ChatRequest{
-        Model:     ai.Model,
-        KeepAlive: ai.Alive,
-        Messages:  llm.history,
-        Options: map[string]any{
-            "temperature": 0.2,
-            "top_p":       0.5,
-            "top_k":       10,
-            "seed":        8211,
-        },
-    }
+	ctx := context.Background()
+	req := &api.ChatRequest{
+		Model:     ai.Model,
+		KeepAlive: ai.Alive,
+		Messages:  llm.history,
+		Options: map[string]any{
+			"temperature": 0.2,
+			"top_p":       0.5,
+			"top_k":       10,
+			"seed":        8211,
+		},
+	}
 
-    err := ai.GetClient().Chat(ctx, req, fn)
+	err := ai.GetClient().Chat(ctx, req, fn)
 
-    if err != nil {
-        sys.Error(err)
-    }
+	if err != nil {
+		sys.Error(err)
+	}
+}
+
+func (llm *LLM) AddUser(content string) {
+	llm.history = append(llm.history, api.Message{
+		Role:    "user",
+		Content: content,
+	})
+}
+
+func (llm *LLM) AddSystem(content string) {
+	llm.history = append(llm.history, api.Message{
+		Role:    "system",
+		Content: content,
+	})
 }

@@ -77,11 +77,13 @@ func (a *Agent) Ask(query string, h *heap.Heap) {
 }
 
 func (a *Agent) listen() {
-	flg, t := flags.Get(), true
+	flg, end := flags.Get(), true
+
+	var sb strings.Builder
 
 	for s := range a.ch {
 		// response start
-		if t {
+		if end {
 			s = strings.TrimSpace(s)
 		}
 
@@ -95,6 +97,13 @@ func (a *Agent) listen() {
 		}
 
 		// response end
-		t = s == "\n\n"
+		end = s == "\n\n"
+
+		sb.WriteString(s)
+
+		if end {
+			a.llm.AddSystem(sb.String())
+			sb.Reset()
+		}
 	}
 }
