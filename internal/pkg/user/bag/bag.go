@@ -20,7 +20,7 @@ type Bag struct {
 	Mode flags.BagMode // bag mode
 
 	file *os.File // file handle
-	key  string   // key phrase
+	sign string   // sign phrase
 	url  string   // url address
 	ws   []writer // writers
 }
@@ -83,7 +83,7 @@ func New() *Bag {
 	return &Bag{
 		Path: bag.Path,
 		Mode: bag.Mode,
-		key:  bag.Key,
+		sign: bag.Sign,
 		url:  bag.Url,
 		file: nil,
 		ws:   ws,
@@ -145,8 +145,8 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		w.Flush()
 	}
 
-	if bag.file != nil {
-		user.Sign(bag.Path, bag.key)
+	if bag.file != nil && len(bag.sign) > 0 {
+		user.Sign(bag.Path, bag.sign)
 	}
 
 	return len(bag.ws) > 0

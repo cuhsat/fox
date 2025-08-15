@@ -41,7 +41,7 @@ func Sign(path, key string) {
 		return
 	}
 
-	if len(key) > 0 {
+	if len(key) > 0 && key != "-" {
 		algo = hmac.New(sha256.New, []byte(key))
 	} else {
 		algo = sha256.New()

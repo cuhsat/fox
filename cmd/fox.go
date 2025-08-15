@@ -76,7 +76,7 @@ Evidence bag:
       --mode=MODE          evidence bag file mode (default: "raw")
                              NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
 
-  -k, --key=KEY            key phrase for evidence bag signing with HMAC
+  -s, --sign[=PHRASE]      sign evidence bag with (HMAC-)SHA256
   -u, --url=URL            url to also send evidence data too
       --no-bag             don't write an evidence bag
 
@@ -299,11 +299,12 @@ func init() {
 
 	Fox.Flags().StringVarP(&flg.Bag.Path, "file", "f", flags.BagName, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
-	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase for evidence bag signing with HMAC")
+	Fox.Flags().StringVarP(&flg.Bag.Sign, "sign", "s", "", "sign evidence bag with (HMAC-)SHA256")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "url to also send evidence data too")
 	Fox.Flags().BoolVarP(&flg.Bag.No, "no-bag", "", false, "don't write an evidence bag")
 
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
+	Fox.Flags().Lookup("sign").NoOptDefVal = "-"
 
 	Fox.Flags().BoolVarP(&flg.Opt.Raw, "raw", "r", false, "don't process files at all")
 	Fox.Flags().BoolVarP(&flg.Opt.Readonly, "readonly", "R", false, "don't write any new files")

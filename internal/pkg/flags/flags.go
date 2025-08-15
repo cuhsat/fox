@@ -18,7 +18,7 @@ type Flags struct {
 	Bag struct {
 		Mode BagMode
 		Path string
-		Key  string
+		Sign string
 		Url  string
 		No   bool
 	}
