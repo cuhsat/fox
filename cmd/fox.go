@@ -138,6 +138,7 @@ var Fox = &cobra.Command{
 		}
 
 		if flg.Opt.Readonly {
+			flg.Opt.NoPlugins = true
 			flg.Bag.No = true
 		}
 

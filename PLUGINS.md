@@ -6,7 +6,7 @@
 Name = "target-info"
 Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 Commands = [
-  'target-info "{{file}}"',
+  'target-info "{{FILE}}"',
 ]
 ```
 
@@ -16,7 +16,7 @@ Commands = [
 Name = "target-query"
 Prompt = "Query"
 Commands = [
-  'target-query -j -f "{{value}}" "{{base}}"',
+  'target-query -j -f "{{VALUE}}" "{{BASE}}"',
 ]
 ```
 
@@ -26,7 +26,7 @@ Commands = [
 Name = "target-shell"
 Prompt = "Shell"
 Commands = [
-  'target-shell -c="{{value}}" "{{base}}"',
+  'target-shell -c="{{VALUE}}" "{{BASE}}"',
 ]
 ```
 
@@ -38,7 +38,7 @@ Commands = [
 Name = "JLECmd"
 Pattern = '.*\.(automatic|custom)Destination-ms'
 Commands = [
-  'dotnet JLECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet JLECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -48,7 +48,7 @@ Commands = [
 Name = "LECmd"
 Pattern = '.*\.lnk'
 Commands = [
-  'dotnet LECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet LECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -58,7 +58,7 @@ Commands = [
 Name = "MFTECmd"
 Pattern = '\$(Boot|LogFile|J|MFT|SDS)'
 Commands = [
-  'dotnet MFTECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet MFTECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -68,7 +68,7 @@ Commands = [
 Name = "PECmd"
 Pattern = '.*\.pf'
 Commands = [
-  'dotnet PECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet PECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -78,7 +78,7 @@ Commands = [
 Name = "RBCmd"
 Pattern = '(INFO2|\$[0-9A-Z]{7}(\..+)?)$'
 Commands = [
-  'dotnet RBCmd.dll -f "{{file}}" --csv "{{dir}}"',
+  'dotnet RBCmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
 ]
 ```
 
@@ -88,7 +88,7 @@ Commands = [
 Name = "RECmd"
 Pattern = '.*\.dat'
 Commands = [
-  'dotnet RECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet RECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -98,7 +98,7 @@ Commands = [
 Name = "SQLECmd"
 Pattern = '.*\.db'
 Commands = [
-  'dotnet SQLECmd.dll -f "{{file}}" --json "{{dir}}"',
+  'dotnet SQLECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
 ]
 ```
 
@@ -108,7 +108,7 @@ Commands = [
 Name = "SrumECmd"
 Pattern = 'SRUDB.dat'
 Commands = [
-  'dotnet SrumECmd.dll -f "{{file}}" --csv "{{dir}}"',
+  'dotnet SrumECmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
 ]
 ```
 
@@ -118,7 +118,7 @@ Commands = [
 Name = "WxTCmd"
 Pattern = '.*\ActivitiesCache.db'
 Commands = [
-  'dotnet WxTCmd.dll -f "{{file}}" --csv "{{dir}}"',
+  'dotnet WxTCmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
 ]
 ```
 
@@ -130,7 +130,7 @@ Commands = [
 Name = "capa"
 Pattern = '.*\.(bin|dll|exe|scr|sys)'
 Commands = [
-  'capa "{{file}}"',
+  'capa "{{FILE}}"',
 ]
 ```
 
@@ -140,6 +140,6 @@ Commands = [
 Name = "objdump"
 Pattern = '.*\.(bin|dll|exe|scr|sys)'
 Commands = [
-  'objdump --disassemble "{{file}}"',
+  'objdump --disassemble "{{FILE}}"',
 ]
 ```

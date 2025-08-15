@@ -13,7 +13,7 @@ import (
 
 const (
 	short = 2 // seconds
-	long  = 5 // seconds
+	long  = 4 // seconds
 )
 
 type Overlay struct {

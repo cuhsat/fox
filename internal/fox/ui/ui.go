@@ -307,6 +307,11 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						continue
 					}
 
+					if flg.Opt.NoPlugins {
+						ui.overlay.SendError("Plugins deactivated")
+						goto render
+					}
+
 					p, ok := ui.plugins.Hotkey[ev.Name()]
 
 					if !ok {
@@ -594,6 +599,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				}
 			}
 
+		render:
 			ui.render(hs)
 		}
 	}

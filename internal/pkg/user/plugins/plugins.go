@@ -82,24 +82,24 @@ func (p *Plugin) Match(s string) bool {
 }
 
 func (p *Plugin) Execute(file, base string, fn Func) {
-	var value, dir string
+	var value, temp string
 
 	if len(p.Prompt) > 0 {
 		value = <-Input // blocking call
 	}
 
 	for _, cmd := range p.Commands {
-		if strings.Contains(cmd, "{{dir}}") {
-			dir = sys.TempDir()
+		if strings.Contains(cmd, "{{TEMP}}") {
+			temp = sys.TempDir()
 			break
 		}
 	}
 
 	r := strings.NewReplacer(
-		"{{value}}", value,
-		"{{file}}", sys.Persist(file),
-		"{{base}}", sys.Persist(base),
-		"{{dir}}", dir,
+		"{{VALUE}}", value,
+		"{{FILE}}", sys.Persist(file),
+		"{{BASE}}", sys.Persist(base),
+		"{{TEMP}}", temp,
 	)
 
 	cmds := make([]string, len(p.Commands))
@@ -108,5 +108,5 @@ func (p *Plugin) Execute(file, base string, fn Func) {
 		cmds = append(cmds, r.Replace(cmd))
 	}
 
-	fn(sys.Call(cmds).Name(), base, dir)
+	fn(sys.Call(cmds).Name(), base, temp)
 }

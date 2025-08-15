@@ -3,15 +3,10 @@ package ai
 import (
 	"context"
 	"errors"
-	"strings"
 	"sync"
 	"time"
 
 	"github.com/ollama/ollama/api"
-)
-
-const (
-	Default = "" // disabled
 )
 
 var (
@@ -19,8 +14,8 @@ var (
 )
 
 var (
-	Model = Default
 	Alive = &api.Duration{Duration: time.Minute * 10}
+	Model = ""
 )
 
 var (
@@ -29,9 +24,7 @@ var (
 )
 
 func Init(model string) {
-	Model = model
-
-	if len(model) == 0 || strings.ToLower(model) == "default" {
+	if len(model) == 0 {
 		return
 	}
 
@@ -41,12 +34,15 @@ func Init(model string) {
 		return
 	}
 
-	// preload model in the background
+	Model = model
+
 	go func(*api.Client) {
 		if llm.Chat(context.Background(), &api.ChatRequest{
 			Model:     Model,
 			KeepAlive: Alive,
-		}, null) == nil {
+		}, func(cr api.ChatResponse) error {
+			return nil // preload model
+		}) == nil {
 			mutex.Lock()
 			client = llm
 			mutex.Unlock()
@@ -78,8 +74,4 @@ func GetClient() *api.Client {
 	mutex.RLock()
 	defer mutex.RUnlock()
 	return client
-}
-
-func null(_ api.ChatResponse) error {
-	return nil
 }

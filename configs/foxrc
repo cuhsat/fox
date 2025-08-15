@@ -1,42 +1,44 @@
 #
 # ~/.foxrc - Forensic Examiner configuration file
 #
+
 # Available environment variables:
 #
-# FOX_MODEL
-# FOX_THEME
+#  FOX_MODEL (overrules config)
+#  FOX_THEME (overrules config)
 #
-# Available model names:
+
+# Available model names ("" to disable):
 #
-# https://ollama.com/library
+#  https://ollama.com/library
 #
-Model = "Default"
+Model = "mistral"
 
 # Available theme names:
 #
-# Examiner-Dark
-# Examiner-Light
-# Catppuccin-Latte
-# Catppuccin-Frappe
-# Catppuccin-Macchiato
-# Catppuccin-Mocha
-# Solarized-Dark
-# Solarized-Light
-# VSCode-Dark
-# VSCode-Light
-# Monokai
-# Darcula
-# Nord
-# Matrix
-# Monochrome
+#  Examiner-Dark
+#  Examiner-Light
+#  Catppuccin-Latte
+#  Catppuccin-Frappe
+#  Catppuccin-Macchiato
+#  Catppuccin-Mocha
+#  Solarized-Dark
+#  Solarized-Light
+#  VSCode-Dark
+#  VSCode-Light
+#  Monokai
+#  Darcula
+#  Nord
+#  Matrix
+#  Monochrome
 #
-Theme = "Default"
+Theme = "Examiner-Dark"
 
 # Follow file end
-Follow = false
+Follow = true
 
 # Show line numbers
-Numbers = false
+Numbers = true
 
 # Wrap text
-Wrap = false
+Wrap = true
