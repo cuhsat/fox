@@ -1,92 +1,81 @@
 package examiner
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
-	_ "embed"
-
-	"github.com/ollama/ollama/api"
-
-	"github.com/hiforensics/fox/internal/fox"
 	"github.com/hiforensics/fox/internal/fox/ai"
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/hiforensics/fox/internal/fox/ai/examiner/llm"
+	"github.com/hiforensics/fox/internal/fox/ai/examiner/rag"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
+	"github.com/ollama/ollama/api"
 )
 
 type Examiner struct {
 	File file.File // examiner chat file
 
-	heap *heap.Heap // buffered heap
+	buf *heap.Heap // buffered heap
+	llm *llm.LLM   // examiner llm
+	rag *rag.RAG   // examiner rag
 
-	hi []api.Message // examiner history
-	ch chan string   // examiner channel
+	ch chan string // answer channel
 }
 
 func New() *Examiner {
-	return &Examiner{
+	e := &Examiner{
 		File: file.New("Examiner"),
 
-		hi: make([]api.Message, 0),
+		llm: llm.New(),
+		rag: rag.New(),
+
 		ch: make(chan string, 16),
 	}
+
+	go e.listen()
+
+	return e
 }
 
-func (e *Examiner) User(s string) {
-	_, _ = e.File.WriteString(fmt.Sprintf("%s %s\n", text.User, s))
+func (e *Examiner) PS1(query string) {
+	_, _ = e.File.WriteString(fmt.Sprintf("%s %s\n", text.PS1, query))
 }
 
-func (e *Examiner) Query(s string, h *heap.Heap) {
+func (e *Examiner) Ask(query string, h *heap.Heap) {
 	if !ai.IsInit() {
 		return
 	}
 
 	if h.Type != types.Prompt {
-		e.heap = h // use last normal heap
+		e.buf = h // buffer last regular heap
 	}
 
-	var sb strings.Builder
+	col := e.rag.Embed(e.buf)
 
-	for _, str := range *e.heap.FMap() {
-		sb.WriteString(fmt.Sprintf("Line %d: %s\n", str.Nr, str.Str))
+	if col == nil {
+		return
 	}
 
-	e.hi = append(e.hi, api.Message{
-		Role:    "user",
-		Content: fmt.Sprintf(fox.Prompt, s, sb.String()),
-	})
+	ctx := e.rag.Query(query, col)
 
-	ctx := context.Background()
-	req := &api.ChatRequest{
-		Model:     ai.Model,
-		KeepAlive: ai.Alive,
-		Messages:  e.hi,
-		Options: map[string]any{
-			"temperature": 0.2,
-			"top_p":       0.5,
-			"top_k":       10,
-			"seed":        8211,
-		},
+	if len(ctx) == 0 {
+		return
 	}
 
-	if err := ai.GetClient().Chat(ctx, req, func(cr api.ChatResponse) error {
-		if s := cr.Message.Content; len(s) > 0 {
-			e.ch <- s
+	e.llm.Ask(query, ctx, func(res api.ChatResponse) error {
+		if len(res.Message.Content) > 0 {
+			e.ch <- res.Message.Content
 		} else {
 			e.ch <- "\n\n"
 		}
 
 		return nil
-	}); err != nil {
-		sys.Error(err)
-	}
+	})
 }
 
-func (e *Examiner) Listen() {
+func (e *Examiner) listen() {
 	t := true
 
 	for s := range e.ch {

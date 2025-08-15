@@ -31,7 +31,8 @@ go install github.com/hiforensics/fox@latest
 * Build-in fuzzy hashes: SDHASH, SSDEEP, TLSH
 * Build-in wc like counts with Shannon entropy
 * Build-in timestamped input history
-* Build-in analyzing using Ollama supported LLMs like or Mistral
+* Build-in RAG agent for non-persistent file embeddings
+* Build-in examining using Ollama provided models like Mistral or DeepSeek R1
 * [Plugin support](PLUGINS.md) for e.g. Eric Zimmerman's tools or Fox-IT's Dissect
 * Evidence bag formats: Raw, Text, JSON, JSONL, XML, SQLite3
 * Evidence bag signing via HMAC-SHA256 passphrase

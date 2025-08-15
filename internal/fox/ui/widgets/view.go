@@ -16,6 +16,8 @@ type View struct {
 	fmap *smap.SMap
 
 	nr int
+	w  int
+	h  int
 
 	last  point
 	delta point
@@ -39,15 +41,15 @@ func NewView(ctx *context.Context) *View {
 }
 
 func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
-	h -= 1 // fill all but the least line
+	v.w, v.h = w, h-1 // fill all but the least line
 
 	if hs != nil {
 		_, v.heap = hs.Heap()
 	} else {
-		return h
+		return v.h
 	}
 
-	p := &panel{x, y, w, h}
+	p := &panel{x, y, v.w, v.h}
 
 	switch v.ctx.Mode() {
 	case mode.Hex:
@@ -56,7 +58,7 @@ func (v *View) Render(hs *heapset.HeapSet, x, y, w, h int) int {
 		v.textRender(p)
 	}
 
-	return h
+	return v.h
 }
 
 func (v *View) Reset() {
@@ -124,6 +126,10 @@ func (v *View) ScrollLine() {
 			break
 		}
 	}
+}
+
+func (v *View) ScrollLast() {
+	v.delta.Y = max(v.last.Y-(v.h-1), 0)
 }
 
 func (v *View) ScrollStart() {

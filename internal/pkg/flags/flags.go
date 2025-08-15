@@ -32,9 +32,10 @@ type Flags struct {
 		NoPlugins bool
 	}
 
-	// llm flags
-	LLM struct {
+	// ai flags
+	AI struct {
 		Model string
+		Query string
 	}
 
 	// ui flags

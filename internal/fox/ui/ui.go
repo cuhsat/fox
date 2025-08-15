@@ -137,7 +137,6 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
-	go ui.examiner.Listen()
 
 	flg := flags.Get()
 
@@ -181,7 +180,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				v, ok := ev.Data().(bool)
 
 				if ok && v {
-					ui.view.ScrollEnd()
+					ui.view.ScrollLast()
 				}
 
 			case *tcell.EventClipboard:
@@ -537,10 +536,10 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 					case mode.Fox:
 						ui.view.Reset()
-						ui.examiner.User(v)
+						ui.examiner.PS1(v)
 						ui.ctx.Background(func() {
 							ui.prompt.Lock(true)
-							ui.examiner.Query(v, heap)
+							ui.examiner.Ask(v, heap)
 							ui.prompt.Lock(false)
 						})
 						hs.OpenFox(ui.examiner.File.Name())

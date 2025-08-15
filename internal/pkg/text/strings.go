@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	User = "❯"
+	PS1 = "❯"
 )
 
 func Dec(n int) int {

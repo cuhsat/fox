@@ -81,8 +81,8 @@ func (ctx *Context) Precede() {
 	}
 
 	// overwrite model
-	if len(flg.LLM.Model) > 0 {
-		ctx.model = flg.LLM.Model
+	if len(flg.AI.Model) > 0 {
+		ctx.model = flg.AI.Model
 	}
 }
 

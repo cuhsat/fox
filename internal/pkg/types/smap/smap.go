@@ -169,7 +169,7 @@ func (s *SMap) CanIndent() bool {
 }
 
 func chunks(n int) (c []*chunk) {
-	m := min(runtime.GOMAXPROCS(0), n)
+	m := min(runtime.NumCPU(), n)
 
 	for i := range m {
 		c = append(c, &chunk{

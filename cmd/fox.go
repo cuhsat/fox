@@ -60,16 +60,17 @@ Line filter:
   -B, --before=NUMBER      number of lines leading context before match
   -A, --after=NUMBER       number of lines trailing context after match
 
-User interface:
+AI flags:
+  -m, --model=MODEL        used Ollama LLM model
+  -q, --query=QUERY        used Ollama RAG query
+
+UI flags:
       --state={N|W|T|-}    sets the used UI state flags
       --theme=THEME        sets the used UI theme
 
-LLM interface:
-      --model=MODEL        sets the used Ollama model
-
 Evidence bag:
   -f, --file=FILE          evidence bag file name (default: "evidence")
-  -m, --mode=MODE          evidence bag file mode (default: "raw")
+      --mode=MODE          evidence bag file mode (default: "raw")
                              NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
 
   -k, --key=KEY            key phrase for evidence bag signing with HMAC
@@ -272,13 +273,14 @@ func init() {
 	Fox.Flags().IntVarP(&flg.Filters.Before, "before", "B", 0, "number of lines leading context before match")
 	Fox.Flags().IntVarP(&flg.Filters.After, "after", "A", 0, "number of lines trailing context after match")
 
+	Fox.Flags().StringVarP(&flg.AI.Model, "model", "m", "", "used Ollama LLM model")
+	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "used Ollama RAG query")
+
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", "", "sets the used UI theme")
 
-	Fox.Flags().StringVarP(&flg.LLM.Model, "model", "", "", "sets the used Ollama model")
-
 	Fox.Flags().StringVarP(&flg.Bag.Path, "file", "f", flags.BagName, "evidence bag file name")
-	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "m", "evidence bag file mode")
+	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase for evidence bag signing with HMAC")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "url to also send evidence data too")
 	Fox.Flags().BoolVarP(&flg.Bag.No, "no-bag", "", false, "don't write an evidence bag")
