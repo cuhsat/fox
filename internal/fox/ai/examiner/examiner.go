@@ -7,6 +7,7 @@ import (
 	"github.com/hiforensics/fox/internal/fox/ai"
 	"github.com/hiforensics/fox/internal/fox/ai/examiner/llm"
 	"github.com/hiforensics/fox/internal/fox/ai/examiner/rag"
+	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
@@ -76,7 +77,7 @@ func (e *Examiner) Ask(query string, h *heap.Heap) {
 }
 
 func (e *Examiner) listen() {
-	t := true
+	flg, t := flags.Get(), true
 
 	for s := range e.ch {
 		// response start
@@ -87,7 +88,11 @@ func (e *Examiner) listen() {
 		s = strings.Replace(s, "  ", "", 1)
 
 		// response chunk
-		_, _ = e.File.WriteString(s)
+		if !flg.Print {
+			_, _ = e.File.WriteString(s)
+		} else {
+			_, _ = fmt.Print(s)
+		}
 
 		// response end
 		t = s == "\n\n"

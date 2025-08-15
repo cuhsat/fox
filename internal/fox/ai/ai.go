@@ -49,6 +49,12 @@ func Init(model string) {
 	}(llm)
 }
 
+func Wait() {
+	for !IsInit() {
+		time.Sleep(time.Millisecond * 100)
+	}
+}
+
 func IsInit() bool {
 	mutex.RLock()
 	defer mutex.RUnlock()

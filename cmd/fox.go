@@ -9,6 +9,8 @@ import (
 
 	"github.com/hiforensics/fox/cmd/sub"
 	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/fox/ai"
+	"github.com/hiforensics/fox/internal/fox/ai/examiner"
 	"github.com/hiforensics/fox/internal/fox/ui"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
@@ -18,6 +20,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 	"github.com/hiforensics/fox/internal/pkg/types/mode"
+	"github.com/hiforensics/fox/internal/pkg/user/config"
 )
 
 // Fox usage
@@ -203,6 +206,16 @@ func Execute() error {
 func print(args []string) {
 	flg := flags.Get()
 
+	if len(flg.AI.Query) > 0 {
+		ai.Init(config.New().Model)
+
+		ai.Wait()
+
+		if !ai.IsInit() {
+			sys.Exit("Examiner is not available")
+		}
+	}
+
 	hs := heapset.New(args)
 	defer hs.ThrowAway()
 
@@ -214,7 +227,9 @@ func print(args []string) {
 				fmt.Println(text.Title(h.String(), buffer.TermW))
 			}
 
-			if len(flg.Filters.Patterns) > 0 {
+			if len(flg.AI.Query) > 0 {
+				examiner.New().Ask(flg.AI.Query, h)
+			} else if len(flg.Filters.Patterns) > 0 {
 				if ctx.Heap.Len() == 0 {
 					return // ignore empty files
 				}
