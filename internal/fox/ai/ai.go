@@ -65,7 +65,7 @@ func IsInit() bool {
 	case <-ch:
 		return true // ready
 
-	case <-time.After(time.Second * 3):
+	case <-time.After(time.Second * 2):
 		return false // timeout
 	}
 }
