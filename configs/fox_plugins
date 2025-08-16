@@ -4,8 +4,8 @@
 
 # Available variables:
 #
-#  {{BASE}}     path of file (based on)
-#  {{FILE}}     path of file (derived)
+#  {{FILE}}     file path (derived)
+#  {{BASE}}     file path (originally)
 #  {{TEMP}}     new random temp folder
 #
 # Available variables (only hotkey):

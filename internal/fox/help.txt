@@ -1,7 +1,7 @@
 
 The Swiss Army Knife for examining text files (%s)
 
-Keymap:
+GLOBAL:
   Esc (x2)             Exit
   Tab                  Load next file
   Shift + Tab          Load prev file

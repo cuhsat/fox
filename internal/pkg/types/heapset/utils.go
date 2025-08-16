@@ -96,6 +96,6 @@ func (hs *HeapSet) newHeap(s string, fn util) {
 
 		atomic.StoreInt32(hs.index, hs.Len()-1)
 
-		hs.load()
+		hs.LoadHeap()
 	}
 }

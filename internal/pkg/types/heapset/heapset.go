@@ -2,12 +2,10 @@ package heapset
 
 import (
 	"fmt"
-	"os"
 	"slices"
 	"sync"
 	"sync/atomic"
 
-	"github.com/bmatcuk/doublestar/v4"
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/hiforensics/fox/internal/fox"
@@ -15,11 +13,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
 	"github.com/hiforensics/fox/internal/pkg/types/heap"
-	"github.com/hiforensics/fox/internal/pkg/user/plugins"
-)
-
-const (
-	Stdin = "-"
+	"github.com/hiforensics/fox/internal/pkg/types/loader"
 )
 
 type Call func()
@@ -28,8 +22,8 @@ type Each func(*heap.Heap)
 
 type HeapSet struct {
 	sync.RWMutex
-	plugins []plugins.Plugin // automatic plugins
 
+	loader  *loader.Loader    // file loader
 	watcher *fsnotify.Watcher // file watcher
 
 	fnWatch Call // watcher callback
@@ -48,35 +42,29 @@ func New(paths []string) *HeapSet {
 
 	hs := HeapSet{
 		watcher: w,
+		loader:  loader.New(),
 		index:   new(int32),
-	}
-
-	if ps := plugins.New(); ps != nil {
-		hs.plugins = ps.Autostarts()
 	}
 
 	go hs.notify()
 
 	hs.watch(sys.Log.Name())
 
-	if sys.Piped(os.Stdin) {
-		paths = append(paths, Stdin)
-	}
-
-	for _, path := range paths {
-		if path == Stdin {
-			hs.loadPipe()
-			break
-		}
-
-		hs.Open(path)
+	for _, e := range hs.loader.Init(paths) {
+		hs.atomicAdd(&heap.Heap{
+			Title: e.Name,
+			Path:  e.Path,
+			Base:  e.Base,
+			Type:  e.Type,
+		})
 	}
 
 	if hs.Len() == 0 {
 		hs.OpenHelp()
 	}
 
-	hs.load()
+	// load first heap
+	hs.LoadHeap()
 
 	return &hs
 }
@@ -108,14 +96,13 @@ func (hs *HeapSet) Heap() (int32, *heap.Heap) {
 }
 
 func (hs *HeapSet) Open(path string) {
-	match, err := doublestar.FilepathGlob(path)
-
-	if err != nil {
-		sys.Error(err)
-	}
-
-	for _, m := range match {
-		hs.loadPath(m)
+	for _, e := range hs.loader.Load(path) {
+		hs.atomicAdd(&heap.Heap{
+			Title: e.Name,
+			Path:  e.Path,
+			Base:  e.Base,
+			Type:  e.Type,
+		})
 	}
 }
 
@@ -147,7 +134,7 @@ func (hs *HeapSet) OpenHelp() {
 		f := file.Create("Help", fmt.Sprintf(fox.Fox+fox.Help, fox.Version))
 
 		hs.atomicAdd(&heap.Heap{
-			Title: "Help",
+			Title: "Keymap",
 			Path:  f.Name(),
 			Base:  f.Name(),
 			Type:  types.Stdout,
@@ -186,7 +173,7 @@ func (hs *HeapSet) OpenPlugin(path, base, title string) {
 
 	atomic.StoreInt32(hs.index, idx)
 
-	hs.load()
+	hs.LoadHeap()
 }
 
 func (hs *HeapSet) OpenAgent(path string) {
@@ -205,7 +192,7 @@ func (hs *HeapSet) OpenAgent(path string) {
 
 	atomic.StoreInt32(hs.index, idx)
 
-	hs.load()
+	hs.LoadHeap()
 }
 
 func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
@@ -228,7 +215,7 @@ func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
 
 	atomic.StoreInt32(hs.index, idx)
 
-	hs.load()
+	hs.LoadHeap()
 }
 
 func (hs *HeapSet) PrevHeap() *heap.Heap {
@@ -238,7 +225,7 @@ func (hs *HeapSet) PrevHeap() *heap.Heap {
 		atomic.StoreInt32(hs.index, hs.Len()-1)
 	}
 
-	return hs.load()
+	return hs.LoadHeap()
 }
 
 func (hs *HeapSet) NextHeap() *heap.Heap {
@@ -248,7 +235,15 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 		atomic.StoreInt32(hs.index, 0)
 	}
 
-	return hs.load()
+	return hs.LoadHeap()
+}
+
+func (hs *HeapSet) LoadHeap() *heap.Heap {
+	h := hs.atomicGet(atomic.LoadInt32(hs.index))
+
+	hs.watch(h.Ensure().Path)
+
+	return h
 }
 
 func (hs *HeapSet) CloseHeap() *heap.Heap {
