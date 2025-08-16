@@ -34,7 +34,8 @@ func Text(ctx *Context) (buf TextBuffer) {
 	buf.N = text.Dec(ctx.Heap.Count())
 
 	if ctx.Numbers {
-		ctx.W -= buf.N + 1
+		ctx.W -= 2 + buf.N
+		ctx.H -= 1
 	}
 
 	cache, key := ctx.Heap.Cache(), ctx.Hash()

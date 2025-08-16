@@ -20,6 +20,8 @@ func (v *View) hexRender(p *panel) {
 		H:       p.H,
 	})
 
+	y := p.Y
+
 	// set buffer bounds
 	v.last.X = max(buf.W, 0)
 	v.last.Y = max(buf.H-p.H, 0)
@@ -27,18 +29,34 @@ func (v *View) hexRender(p *panel) {
 	// render buffer
 	for line := range buf.Lines {
 		// print offset number
-		v.print(p.X+0, p.Y, line.Nr, themes.Subtext0)
+		v.print(p.X+0, y, line.Nr, themes.Subtext0)
 
 		// print hex values
-		v.print(p.X+11, p.Y, line.Hex, themes.Base)
+		v.print(p.X+11, y, line.Hex, themes.Base)
 
 		// print text value
-		v.print(p.X+62, p.Y, line.Str, themes.Base)
+		v.print(p.X+62, y, line.Str, themes.Base)
 
 		// print separators on top
-		v.print(p.X+9, p.Y, "│", themes.Subtext1)
-		v.print(p.X+60, p.Y, "│", themes.Subtext1)
+		v.print(p.X+9, y, "│", themes.Subtext1)
+		v.print(p.X+60, y, "│", themes.Subtext1)
 
-		p.Y++
+		// print scrollbar
+		v.print(p.W-1, y, "│", themes.Subtext1)
+
+		y++
+	}
+
+	// render scrollbar
+	if v.last.Y > 0 {
+		scrollY := int((float32(v.delta.Y+1) / float32(v.last.Y+1)) * float32(p.H-1))
+
+		// fix zero position
+		if v.delta.Y > 0 {
+			scrollY = 0
+		}
+
+		// vertical scrollbar
+		v.ctx.Root.SetContent(p.W-1, p.Y+scrollY, '│', nil, themes.Base)
 	}
 }

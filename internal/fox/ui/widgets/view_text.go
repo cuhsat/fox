@@ -26,13 +26,6 @@ func (v *View) textRender(p *panel) {
 
 	v.fmap = buf.FMap
 
-	// set line width
-	maxW := p.W
-
-	if v.ctx.IsNumbers() {
-		p.W -= text.Dec(v.heap.Count()) + 1
-	}
-
 	// set buffer bounds
 	v.last.X = max(buf.W-1, 0)
 	v.last.Y = max(buf.H-1, 0)
@@ -61,7 +54,7 @@ func (v *View) textRender(p *panel) {
 
 		// context separators
 		if line.Nr == "--" {
-			v.print(lineX, lineY, strings.Repeat("―", maxW), themes.Subtext1)
+			v.print(lineX, lineY, strings.Repeat("―", p.W), themes.Subtext1)
 			continue
 		}
 
@@ -94,6 +87,43 @@ func (v *View) textRender(p *panel) {
 
 		// part value
 		v.print(partX, partY, part.Str, themes.Subtext2)
+	}
+
+	// render scrollbars
+	if v.ctx.IsNumbers() {
+		w := p.W - 1
+		h := p.H - 1
+		x := p.X
+		y := p.Y
+
+		scrollX := int((float32(v.delta.X+1) / float32(v.last.X+1)) * float32(w-2))
+		scrollY := int((float32(v.delta.Y+1) / float32(v.last.Y+1)) * float32(h-1))
+
+		// fix zero positions
+		if v.delta.X == 0 {
+			scrollX = 0
+		}
+
+		if v.delta.Y == 0 {
+			scrollY = 0
+		}
+
+		for i := range w {
+			v.ctx.Root.SetContent(x+i, y+h, '─', nil, themes.Subtext1)
+		}
+
+		for i := range h {
+			v.ctx.Root.SetContent(x+w, y+i, '│', nil, themes.Subtext1)
+		}
+
+		v.ctx.Root.SetContent(x+w, y+h, '┘', nil, themes.Subtext1)
+
+		// horizontal scrollbar
+		v.ctx.Root.SetContent(x+scrollX+0, y+h, '─', nil, themes.Base)
+		v.ctx.Root.SetContent(x+scrollX+1, y+h, '─', nil, themes.Base)
+
+		// vertical scrollbar
+		v.ctx.Root.SetContent(x+w, y+scrollY, '│', nil, themes.Base)
 	}
 }
 
