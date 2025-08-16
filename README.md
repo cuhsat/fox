@@ -2,7 +2,7 @@
 
 The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic investigation process.
 
-![](assets/fox.gif "Live Demo")
+![](assets/live.png "Live Demo")
 
 ## Install
 ```console
