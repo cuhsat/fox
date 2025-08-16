@@ -52,7 +52,7 @@ func (v *View) hexRender(p *panel) {
 		scrollY := int((float32(v.delta.Y+1) / float32(v.last.Y+1)) * float32(p.H-1))
 
 		// fix zero position
-		if v.delta.Y > 0 {
+		if v.delta.Y == 0 {
 			scrollY = 0
 		}
 
