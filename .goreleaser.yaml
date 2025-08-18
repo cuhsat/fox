@@ -35,4 +35,7 @@ changelog:
       - "^test:"
 
 sboms:
-  - artifacts: source
+  - id: archive
+    artifacts: archive
+  - id: source
+    artifacts: source
