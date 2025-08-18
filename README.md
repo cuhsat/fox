@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic investigation process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic examining process.
 
 ![](assets/live.png "Live Demo")
 

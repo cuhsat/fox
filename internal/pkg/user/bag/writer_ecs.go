@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/app"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 )
 
@@ -69,8 +69,8 @@ func (w *EcsWriter) Start() {
 	w.entry.Ecs.Version = "9.0.0"
 
 	w.entry.Agent.Name = w.title
-	w.entry.Agent.Type = fox.Product
-	w.entry.Agent.Version = fox.Version[1:]
+	w.entry.Agent.Type = app.Product
+	w.entry.Agent.Version = app.Version[1:]
 }
 
 func (w *EcsWriter) Flush() {

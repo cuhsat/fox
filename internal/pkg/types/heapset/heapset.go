@@ -8,7 +8,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/app"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
@@ -131,7 +131,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		f := file.Create("Help", fmt.Sprintf(fox.Fox+fox.Help, fox.Version))
+		f := file.Create("Help", fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
 		hs.atomicAdd(&heap.Heap{
 			Title: "Keymap",

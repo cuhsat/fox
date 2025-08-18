@@ -78,6 +78,8 @@ type Flags struct {
 		Min   int
 		Max   int
 	}
+
+	Credits bool
 }
 
 var (

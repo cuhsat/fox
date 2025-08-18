@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/app"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/text"
 	"github.com/hiforensics/fox/internal/pkg/types/file"
@@ -61,7 +61,7 @@ func Shell() {
 		}
 	}
 
-	fmt.Println(fox.Product, fox.Version)
+	fmt.Println(app.Product, app.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shell, "-l") // login shell

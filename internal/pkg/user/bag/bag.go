@@ -6,7 +6,7 @@ import (
 	usr "os/user"
 	"time"
 
-	"github.com/hiforensics/fox/internal/fox"
+	"github.com/hiforensics/fox/internal/app"
 	"github.com/hiforensics/fox/internal/pkg/flags"
 	"github.com/hiforensics/fox/internal/pkg/sys"
 	"github.com/hiforensics/fox/internal/pkg/types"
@@ -172,7 +172,7 @@ func (bag *Bag) init() {
 		}
 	}
 
-	title := fmt.Sprintf("Forensic Examiner Evidence Bag %s", fox.Version)
+	title := fmt.Sprintf("Forensic Examiner Evidence Bag %s", app.Version)
 
 	for _, w := range bag.ws {
 		w.Init(bag.file, old, title)
