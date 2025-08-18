@@ -33,3 +33,6 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+sboms:
+  - artifacts: any

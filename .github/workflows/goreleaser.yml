@@ -27,7 +27,5 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: release --clean
-        sboms:
-          - artifacts: any
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
