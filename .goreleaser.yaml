@@ -35,4 +35,4 @@ changelog:
       - "^test:"
 
 sboms:
-  - artifacts: any
+  - artifacts: source
