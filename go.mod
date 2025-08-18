@@ -17,22 +17,19 @@ require (
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/nwaples/rardecode v1.1.3
+	github.com/philippgille/chromem-go v0.7.0
 	github.com/spf13/cobra v1.9.1
 	github.com/ulikunitz/xz v0.5.12
 	modernc.org/sqlite v1.38.2
 )
 
 require (
-	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/philippgille/chromem-go v0.7.0 // indirect
-	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
 	golang.org/x/crypto v0.41.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
