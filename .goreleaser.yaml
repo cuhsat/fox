@@ -39,3 +39,14 @@ sboms:
     artifacts: archive
   - id: source
     artifacts: source
+
+signs:
+  - cmd: cosign
+    certificate: "${artifact}.pem"
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+    artifacts: checksum
+    output: true

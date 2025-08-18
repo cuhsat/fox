@@ -21,6 +21,9 @@ jobs:
         name: Set up Syft
         uses: anchore/sbom-action/download-syft@v0
       -
+        name: Set up Cosign
+        uses: sigstore/cosign-installer@v3
+      -
         name: Set up Go
         uses: actions/setup-go@v5
       -
