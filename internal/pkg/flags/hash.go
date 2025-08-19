@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/hiforensics/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types"
 )
 
 type HashAlgo string

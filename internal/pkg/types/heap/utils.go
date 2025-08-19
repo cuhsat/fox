@@ -3,7 +3,7 @@ package heap
 import (
 	"math"
 
-	"github.com/hiforensics/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
 // Entropy code source: https://gist.github.com/n2p5/4eda328b080c9f09eff928ad47228ab1

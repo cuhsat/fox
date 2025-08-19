@@ -1,11 +1,11 @@
 package widgets
 
 import (
-	"github.com/hiforensics/fox/internal/app/ui/context"
-	"github.com/hiforensics/fox/internal/pkg/types/heap"
-	"github.com/hiforensics/fox/internal/pkg/types/heapset"
-	"github.com/hiforensics/fox/internal/pkg/types/mode"
-	"github.com/hiforensics/fox/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type View struct {

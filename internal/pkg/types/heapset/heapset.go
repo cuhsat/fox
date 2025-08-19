@@ -8,12 +8,12 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/hiforensics/fox/internal/app"
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
-	"github.com/hiforensics/fox/internal/pkg/types/heap"
-	"github.com/hiforensics/fox/internal/pkg/types/loader"
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/loader"
 )
 
 type Call func()

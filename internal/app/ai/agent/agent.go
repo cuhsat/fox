@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hiforensics/fox/internal/app/ai/agent/llm"
-	"github.com/hiforensics/fox/internal/app/ai/agent/rag"
-	"github.com/hiforensics/fox/internal/pkg/flags"
-	"github.com/hiforensics/fox/internal/pkg/text"
-	"github.com/hiforensics/fox/internal/pkg/types"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
-	"github.com/hiforensics/fox/internal/pkg/types/heap"
 	"github.com/ollama/ollama/api"
+
+	"github.com/cuhsat/fox/internal/app/ai/agent/llm"
+	"github.com/cuhsat/fox/internal/app/ai/agent/rag"
+	"github.com/cuhsat/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 type Agent struct {

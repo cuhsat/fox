@@ -3,8 +3,8 @@ package themes
 import (
 	"github.com/BurntSushi/toml"
 
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/user"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 const (

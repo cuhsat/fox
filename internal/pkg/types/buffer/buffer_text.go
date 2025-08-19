@@ -3,8 +3,8 @@ package buffer
 import (
 	"fmt"
 
-	"github.com/hiforensics/fox/internal/pkg/text"
-	"github.com/hiforensics/fox/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type TextBuffer struct {

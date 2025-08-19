@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 const (

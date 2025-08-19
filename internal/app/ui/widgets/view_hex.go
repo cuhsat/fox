@@ -3,8 +3,8 @@ package widgets
 import (
 	"math"
 
-	"github.com/hiforensics/fox/internal/app/ui/themes"
-	"github.com/hiforensics/fox/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/app/ui/themes"
+	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 )
 
 const (

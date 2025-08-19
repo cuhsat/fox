@@ -10,10 +10,10 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/hiforensics/fox/internal/app"
-	"github.com/hiforensics/fox/internal/pkg/flags"
-	"github.com/hiforensics/fox/internal/pkg/text"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/text"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (

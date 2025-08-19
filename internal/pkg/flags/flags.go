@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"github.com/hiforensics/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/types/mode"
 )
 
 type Flags struct {

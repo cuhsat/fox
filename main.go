@@ -5,8 +5,8 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/hiforensics/fox/internal/cmd"
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/cmd"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 // Bootstraps all.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 type RawWrite struct {

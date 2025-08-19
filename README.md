@@ -5,11 +5,11 @@ The Swiss Army Knife for examining text files. Combining the power of many tradi
 ![](assets/live.png "Live Demo")
 
 ```console
-go install github.com/hiforensics/fox@latest
+go install github.com/cuhsat/fox@latest
 ```
 
 ## Key features
-* Available for [Windows / Linux / macOS](https://github.com/hiforensics/fox/releases)
+* Available for [Windows / Linux / macOS](https://github.com/cuhsat/fox/releases)
 * Standalone native `AMD64` and `ARM64` binaries 
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling

@@ -6,13 +6,13 @@ import (
 	usr "os/user"
 	"time"
 
-	"github.com/hiforensics/fox/internal/app"
-	"github.com/hiforensics/fox/internal/pkg/flags"
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
-	"github.com/hiforensics/fox/internal/pkg/types/heap"
-	"github.com/hiforensics/fox/internal/pkg/user"
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type Bag struct {

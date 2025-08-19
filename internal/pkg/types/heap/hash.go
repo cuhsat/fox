@@ -10,9 +10,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 
 	"github.com/eciavatta/sdhash"
 	"github.com/glaslos/ssdeep"

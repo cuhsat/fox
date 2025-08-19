@@ -1,5 +1,5 @@
 {
-  "$id": "https://github.com/hiforensics/fox/api/evidence.schema.json",
+  "$id": "https://github.com/cuhsat/fox/api/evidence.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Evidence Bag",
   "description": "Forensic Examiner Evidence Bag",

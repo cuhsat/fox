@@ -7,7 +7,7 @@ import (
 const (
 	Company = "Hinterland Forensics"
 	Product = "Forensic Examiner"
-	Url = "https://hiforensics.eu"
+	Url = "https://cuhsat.eu"
 )
 
 var (

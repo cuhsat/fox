@@ -5,7 +5,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/hiforensics/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/flags"
 )
 
 type String struct {

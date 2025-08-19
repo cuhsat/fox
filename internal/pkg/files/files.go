@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 type Item struct {

@@ -3,7 +3,7 @@ package flags
 import (
 	"github.com/edsrzf/mmap-go"
 
-	"github.com/hiforensics/fox/internal/pkg/types/smap"
+	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
 type Limits struct {

@@ -3,9 +3,9 @@ package evtx
 import (
 	"github.com/0xrawsec/golang-evtx/evtx"
 
-	"github.com/hiforensics/fox/internal/pkg/files"
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/files"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (

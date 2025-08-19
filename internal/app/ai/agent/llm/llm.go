@@ -6,9 +6,9 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"github.com/hiforensics/fox/internal/app"
-	"github.com/hiforensics/fox/internal/app/ai"
-	"github.com/hiforensics/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/app/ai"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
 type LLM struct {

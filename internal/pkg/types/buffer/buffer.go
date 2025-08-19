@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/hiforensics/fox/internal/pkg/types/heap"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 const (

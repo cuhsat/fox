@@ -5,11 +5,11 @@ import (
 	"io"
 	"strings"
 
-	"github.com/hiforensics/zip/pkg/zip"
+	"github.com/cuhsat/zip/pkg/zip"
 
-	"github.com/hiforensics/fox/internal/pkg/files"
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/files"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {

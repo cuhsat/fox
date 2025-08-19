@@ -4,9 +4,9 @@ import (
 	"compress/bzip2"
 	"io"
 
-	"github.com/hiforensics/fox/internal/pkg/files"
-	"github.com/hiforensics/fox/internal/pkg/sys"
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/files"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {

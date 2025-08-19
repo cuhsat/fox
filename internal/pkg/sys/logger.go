@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/hiforensics/fox/internal/pkg/types/file"
+	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (
