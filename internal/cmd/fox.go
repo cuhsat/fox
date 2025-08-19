@@ -203,7 +203,7 @@ var Fox = &cobra.Command{
 			fmt.Print(Usage)
 			os.Exit(0)
 		} else {
-			print(args)
+			exec(args)
 		}
 	},
 	SilenceUsage: true,
@@ -211,65 +211,6 @@ var Fox = &cobra.Command{
 
 func Execute() error {
 	return Fox.Execute()
-}
-
-func print(args []string) {
-	flg := flags.Get()
-
-	if len(flg.AI.Query) > 0 {
-		ai.Init(config.New().Model)
-
-		if !ai.IsInit() {
-			sys.Exit(ai.ErrNotAvailable.Error())
-		}
-	}
-
-	hs := heapset.New(args)
-	defer hs.ThrowAway()
-
-	hs.Each(func(h *heap.Heap) {
-		if h.Type != types.Stdin {
-			ctx := buffer.NewContext(h)
-
-			if !flg.NoFile {
-				fmt.Println(text.Title(h.String(), buffer.TermW))
-			}
-
-			if len(flg.AI.Query) > 0 {
-				agent.New().Ask(flg.AI.Query, h)
-			} else if len(flg.Filters.Patterns) > 0 {
-				if ctx.Heap.Len() == 0 {
-					return // ignore empty files
-				}
-
-				flg := flags.Get()
-
-				for l := range buffer.Text(ctx).Lines {
-					if l.Nr == "--" {
-						if !flg.NoLine {
-							fmt.Println("--")
-						}
-					} else {
-						if !flg.NoLine {
-							fmt.Printf("%s:%s\n", l.Nr, l)
-						} else {
-							fmt.Println(l)
-						}
-					}
-				}
-			} else if flg.Hex {
-				ctx.W = buffer.TermW
-
-				for l := range buffer.Hex(ctx).Lines {
-					fmt.Println(l)
-				}
-			} else {
-				if h.Len() > 0 {
-					fmt.Print(string(*h.MMap()))
-				}
-			}
-		}
-	})
 }
 
 func init() {
@@ -339,4 +280,63 @@ func init() {
 	Fox.AddCommand(actions.Entropy)
 	Fox.AddCommand(actions.Hash)
 	Fox.AddCommand(actions.Strings)
+}
+
+func exec(args []string) {
+	flg := flags.Get()
+
+	if len(flg.AI.Query) > 0 {
+		if !ai.IsAvailable() {
+			sys.Exit("AI is not available")
+		}
+
+		ai.Load(config.New().Model)
+	}
+
+	hs := heapset.New(args)
+	defer hs.ThrowAway()
+
+	hs.Each(func(h *heap.Heap) {
+		if h.Type != types.Stdin {
+			ctx := buffer.NewContext(h)
+
+			if !flg.NoFile {
+				fmt.Println(text.Title(h.String(), buffer.TermW))
+			}
+
+			if len(flg.AI.Query) > 0 {
+				agent.New().Ask(flg.AI.Query, h)
+			} else if len(flg.Filters.Patterns) > 0 {
+				if ctx.Heap.Len() == 0 {
+					return // ignore empty files
+				}
+
+				flg := flags.Get()
+
+				for l := range buffer.Text(ctx).Lines {
+					if l.Nr == "--" {
+						if !flg.NoLine {
+							fmt.Println("--")
+						}
+					} else {
+						if !flg.NoLine {
+							fmt.Printf("%s:%s\n", l.Nr, l)
+						} else {
+							fmt.Println(l)
+						}
+					}
+				}
+			} else if flg.Hex {
+				ctx.W = buffer.TermW
+
+				for l := range buffer.Hex(ctx).Lines {
+					fmt.Println(l)
+				}
+			} else {
+				if h.Len() > 0 {
+					fmt.Print(string(*h.MMap()))
+				}
+			}
+		}
+	})
 }

@@ -12,11 +12,19 @@ import (
 )
 
 type LLM struct {
+	client  *api.Client   // chat client
 	history []api.Message // chat history
 }
 
 func New() *LLM {
+	client, err := api.ClientFromEnvironment()
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
 	return &LLM{
+		client:  client,
 		history: make([]api.Message, 0),
 	}
 }
@@ -37,7 +45,7 @@ func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
 		},
 	}
 
-	err := ai.GetClient().Chat(ctx, req, fn)
+	err := llm.client.Chat(ctx, req, fn)
 
 	if err != nil {
 		sys.Error(err)

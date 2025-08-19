@@ -51,12 +51,7 @@ func New(paths []string) *HeapSet {
 	hs.watch(sys.Log.Name())
 
 	for _, e := range hs.loader.Init(paths) {
-		hs.atomicAdd(&heap.Heap{
-			Title: e.Name,
-			Path:  e.Path,
-			Base:  e.Base,
-			Type:  e.Type,
-		})
+		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
 	}
 
 	if hs.Len() == 0 {
@@ -97,12 +92,7 @@ func (hs *HeapSet) Heap() (int32, *heap.Heap) {
 
 func (hs *HeapSet) Open(path string) {
 	for _, e := range hs.loader.Load(path) {
-		hs.atomicAdd(&heap.Heap{
-			Title: e.Name,
-			Path:  e.Path,
-			Base:  e.Base,
-			Type:  e.Type,
-		})
+		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
 	}
 }
 
@@ -112,12 +102,12 @@ func (hs *HeapSet) OpenLog() {
 	if !ok {
 		idx = hs.Len()
 
-		hs.atomicAdd(&heap.Heap{
-			Title: "Log",
-			Path:  sys.Log.Name(),
-			Base:  sys.Log.Name(),
-			Type:  types.Stderr,
-		})
+		hs.atomicAdd(heap.New(
+			"Log",
+			sys.Log.Name(),
+			sys.Log.Name(),
+			types.Stderr,
+		))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -133,12 +123,12 @@ func (hs *HeapSet) OpenHelp() {
 
 		f := file.Create("Help", fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
-		hs.atomicAdd(&heap.Heap{
-			Title: "Keymap",
-			Path:  f.Name(),
-			Base:  f.Name(),
-			Type:  types.Stdout,
-		})
+		hs.atomicAdd(heap.New(
+			"Keymap",
+			f.Name(),
+			f.Name(),
+			types.Stdout,
+		))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -152,21 +142,11 @@ func (hs *HeapSet) OpenPlugin(path, base, title string) {
 	if !ok {
 		idx = hs.Len()
 
-		hs.atomicAdd(&heap.Heap{
-			Title: title,
-			Path:  path,
-			Base:  base,
-			Type:  types.Plugin,
-		})
+		hs.atomicAdd(heap.New(title, path, base, types.Plugin))
 	} else {
 		old := hs.atomicGet(idx)
 
-		hs.atomicMod(&heap.Heap{
-			Title: title,
-			Path:  path,
-			Base:  base,
-			Type:  types.Plugin,
-		}, idx)
+		hs.atomicAdd(heap.New(title, path, base, types.Plugin))
 
 		old.ThrowAway()
 	}
@@ -182,12 +162,7 @@ func (hs *HeapSet) OpenAgent(path string) {
 	if !ok {
 		idx = hs.Len()
 
-		hs.atomicAdd(&heap.Heap{
-			Title: "Agent",
-			Path:  path,
-			Base:  path,
-			Type:  types.Agent,
-		})
+		hs.atomicAdd(heap.New("Agent", path, path, types.Agent))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -205,12 +180,7 @@ func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
 	if !ok {
 		idx = hs.Len()
 
-		hs.atomicAdd(&heap.Heap{
-			Title: title,
-			Path:  path,
-			Base:  base,
-			Type:  tp,
-		})
+		hs.atomicAdd(heap.New(title, path, base, tp))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -297,12 +267,12 @@ func (hs *HeapSet) Aggregate() bool {
 
 	hs.Lock()
 
-	hs.heaps = append(heaps, &heap.Heap{
-		Title: "Aggregated",
-		Path:  f.Name(),
-		Base:  f.Name(),
-		Type:  types.Ignore,
-	})
+	hs.heaps = append(heaps, heap.New(
+		"Aggregated",
+		f.Name(),
+		f.Name(),
+		types.Ignore,
+	))
 
 	hs.Unlock()
 

@@ -110,5 +110,5 @@ func init() {
 	Deflate.SetHelpTemplate(DeflateUsage)
 	Deflate.Flags().StringVarP(&flg.Deflate.Path, "dir", "d", "", "deflate into directory")
 	Deflate.Flags().Lookup("dir").NoOptDefVal = "."
-	Deflate.MarkFlagDirname("dir")
+	_ = Deflate.MarkFlagDirname("dir")
 }

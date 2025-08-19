@@ -1,6 +1,8 @@
-# Dissect
+# Plugins
 
-## target-info
+## Dissect Framework
+
+### target-info
 ```toml
 [Autostart.Info]
 Name = "target-info"
@@ -10,7 +12,7 @@ Commands = [
 ]
 ```
 
-## target-query
+### target-query
 ```toml
 [Hotkey.F7]
 Name = "target-query"
@@ -20,7 +22,7 @@ Commands = [
 ]
 ```
 
-## target-shell
+### target-shell
 ```toml
 [Hotkey.F8]
 Name = "target-shell"
@@ -30,9 +32,9 @@ Commands = [
 ]
 ```
 
-# Eric Zimmerman's tools
+## Eric Zimmerman's tools
 
-## JLECmd
+### JLECmd
 ```toml
 [Autostart.Jumplist]
 Name = "JLECmd"
@@ -42,7 +44,7 @@ Commands = [
 ]
 ```
 
-## LECmd
+### LECmd
 ```toml
 [Autostart.Link]
 Name = "LECmd"
@@ -52,7 +54,7 @@ Commands = [
 ]
 ```
 
-## MFTECmd
+### MFTECmd
 ```toml
 [Autostart.Filesystem]
 Name = "MFTECmd"
@@ -62,7 +64,7 @@ Commands = [
 ]
 ```
 
-## PECmd
+### PECmd
 ```toml
 [Autostart.Prefetch]
 Name = "PECmd"
@@ -72,7 +74,7 @@ Commands = [
 ]
 ```
 
-## RBCmd
+### RBCmd
 ```toml
 [Autostart.Trash]
 Name = "RBCmd"
@@ -82,7 +84,7 @@ Commands = [
 ]
 ```
 
-## RECmd
+### RECmd
 ```toml
 [Autostart.Registry]
 Name = "RECmd"
@@ -92,7 +94,7 @@ Commands = [
 ]
 ```
 
-## SQLECmd
+### SQLECmd
 ```toml
 [Autostart.Database]
 Name = "SQLECmd"
@@ -102,7 +104,7 @@ Commands = [
 ]
 ```
 
-## SrumECmd
+### SrumECmd
 ```toml
 [Autostart.Energy]
 Name = "SrumECmd"
@@ -112,7 +114,7 @@ Commands = [
 ]
 ```
 
-## WxTCmd
+### WxTCmd
 ```toml
 [Autostart.Timeline]
 Name = "WxTCmd"
@@ -122,9 +124,9 @@ Commands = [
 ]
 ```
 
-# Reverse Engineering
+## Reverse Engineering
 
-## capa
+### capa
 ```toml
 [Autostart.Capa]
 Name = "capa"
@@ -134,7 +136,7 @@ Commands = [
 ]
 ```
 
-## objdump
+### objdump
 ```toml
 [Autostart.Dump]
 Name = "objdump"

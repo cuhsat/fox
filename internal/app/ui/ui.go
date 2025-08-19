@@ -1,3 +1,5 @@
+//go:build !minimal
+
 package ui
 
 import (
@@ -110,7 +112,7 @@ func create() *UI {
 	ui.render(nil)
 	ui.change(flags.Get().UI.Mode)
 
-	ai.Init(ctx.Model())
+	ai.Load(ctx.Model())
 
 	return &ui
 }
@@ -159,6 +161,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 		hs.HashSum(
 			flg.Hash.Algo.String(),
 		)
+	case types.None:
+		//
 	}
 
 	esc := false
@@ -607,8 +611,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 func (ui *UI) change(m mode.Mode) {
 	// check for examiner support
-	if m == mode.Fox && !ai.IsInit() {
-		ui.overlay.SendError(ai.ErrNotAvailable.Error())
+	if m == mode.Fox && !ai.IsAvailable() {
+		ui.overlay.SendError("AI is not available")
 		return
 	}
 

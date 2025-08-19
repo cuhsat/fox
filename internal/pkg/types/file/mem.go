@@ -235,8 +235,6 @@ func (d *Data) WriteString(s string) (n int, err error) {
 }
 
 func (d *Data) notify() {
-	defer recover()
-
 	if d.evt != nil {
 		d.evt <- fsnotify.Event{
 			Name: d.name,

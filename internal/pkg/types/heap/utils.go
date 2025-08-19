@@ -6,7 +6,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/text"
 )
 
-// https://gist.github.com/n2p5/4eda328b080c9f09eff928ad47228ab1
+// Entropy code source: https://gist.github.com/n2p5/4eda328b080c9f09eff928ad47228ab1
 func (h *Heap) Entropy(n, m float64) float64 {
 	var a [256]float64
 	var v float64

@@ -14,7 +14,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var CountsUsage string = app.Ascii + `
+var CountsUsage = app.Ascii + `
 Display line and byte counts.
 
 Usage:

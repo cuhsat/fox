@@ -15,7 +15,7 @@ import (
 	"github.com/hiforensics/fox/internal/pkg/types/heapset"
 )
 
-var EntropyUsage string = app.Ascii + `
+var EntropyUsage = app.Ascii + `
 Display file entropy.
 
 Usage:
