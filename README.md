@@ -9,7 +9,7 @@ go install github.com/hiforensics/fox@latest
 ```
 
 ## Key features
-* Available for Windows, macOS and Linux / Unix
+* Available for [Windows / macOS / Linux / Unix](https://github.com/hiforensics/fox/releases)
 * Standalone native `AMD64` and `ARM64` binaries 
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
