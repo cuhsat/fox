@@ -1,16 +1,15 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of **AI** models, to leverage your forensic examining process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic examining process.
 
 ![](assets/live.png "Live Demo")
 
-## How to get
 ```console
 go install github.com/hiforensics/fox@latest
 ```
 
 ## Key features
-* Available for **Windows**, **macOS** and **Linux**
+* Available for Windows, macOS and Linux / Unix
 * Standalone native `AMD64` and `ARM64` binaries 
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
