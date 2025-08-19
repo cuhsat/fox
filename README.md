@@ -28,7 +28,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in parser for Windows event log `EVTX` files
 * Build-in sniffer for `CSV` delimiter formats
 * Build-in formating of `CSV`, `JSON`, `JSONL` data
-* Build-in decompression of: `brotli`, `bzip2`, `gzip`, `lz4`, `rar`, `tar`, `xz`, `zip`, `zlib`, `zstd`
+* Build-in decompression of: `brotli`, `bzip2`, `cab`, `gzip`, `lz4`, `rar`, `tar`, `xz`, `zip`, `zlib`, `zstd`
 * Build-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-XYZ`
 * Build-in fuzzy hashes: `SDHASH`, `SSDEEP`, `TLSH`
 * Build-in in-memory only RAG database for document embeddings

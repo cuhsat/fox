@@ -7,6 +7,7 @@ import (
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/cuhsat/fox/internal/pkg/files"
+	"github.com/cuhsat/fox/internal/pkg/files/archive/cab"
 	"github.com/cuhsat/fox/internal/pkg/files/archive/rar"
 	"github.com/cuhsat/fox/internal/pkg/files/archive/tar"
 	"github.com/cuhsat/fox/internal/pkg/files/archive/zip"
@@ -230,6 +231,9 @@ func (l *Loader) deflate(path, base string) string {
 
 	// check for archive
 	switch {
+	case cab.Detect(path):
+		l.loadArchive(path, base, cab.Deflate)
+		return ""
 	case rar.Detect(path):
 		l.loadArchive(path, base, rar.Deflate)
 		return ""

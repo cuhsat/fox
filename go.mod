@@ -25,6 +25,7 @@ require (
 
 require (
 	github.com/frankban/quicktest v1.14.6 // indirect
+	github.com/google/go-cabfile v0.0.0-20220815135208-f9ac3a87fd26 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
