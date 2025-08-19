@@ -9,7 +9,7 @@ go install github.com/hiforensics/fox@latest
 ```
 
 ## Key features
-* Available for [Windows / macOS / Linux / Unix](https://github.com/hiforensics/fox/releases)
+* Available for [Windows / Linux / macOS](https://github.com/hiforensics/fox/releases)
 * Standalone native `AMD64` and `ARM64` binaries 
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
@@ -20,9 +20,9 @@ go install github.com/hiforensics/fox@latest
 * [Bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) filtering
 * Build-in scroll past end ability
 * Build-in timestamped input history
-* Build-in canonical hex view of files
 * Build-in regular expression filtering
 * Build-in dynamic context window
+* Build-in canonical `hexdump` of files
 * Build-in `wc` like counts with *Shannon* entropy
 * Build-in string carving for `ASCII` and `Unicode`
 * Build-in parser for Windows event log `EVTX` files
