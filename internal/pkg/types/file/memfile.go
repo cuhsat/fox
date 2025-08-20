@@ -18,12 +18,19 @@ type File interface {
 	io.Reader
 	io.ReaderAt
 	io.ReaderFrom
+	io.ReadCloser
 	io.ReadSeeker
+	io.ReadSeekCloser
+	io.ReadWriteCloser
+	io.ReadWriteSeeker
+	io.ReadWriter
 	io.Seeker
+	io.StringWriter
 	io.Writer
 	io.WriterAt
 	io.WriterTo
-	io.StringWriter
+	io.WriteCloser
+	io.WriteSeeker
 
 	Name() string
 	Stat() (fs.FileInfo, error)
