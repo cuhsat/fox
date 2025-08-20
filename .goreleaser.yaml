@@ -41,7 +41,7 @@ sboms:
     artifacts: source
 
 signs:
-  - cmd: cosign
+  - cmd: cosign sign --yes
     env:
       - COSIGN_EXPERIMENTAL=1
     certificate: "${artifact}.pem"
