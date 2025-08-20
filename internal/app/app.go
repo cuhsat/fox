@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	Company = "Hinterland Forensics"
 	Product = "Forensic Examiner"
-	Url = "https://cuhsat.eu"
+	Author  = "Christian Uhsat"
+	Email   = "fox@uhsat.de"
 )
 
 var (

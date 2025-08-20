@@ -19,6 +19,18 @@ func (ha *HashAlgo) Type() string {
 
 func (ha *HashAlgo) Set(v string) error {
 	switch strings.ToLower(v) {
+	case types.CRC32IEEE:
+		fallthrough
+	case types.CRC64ISO:
+		fallthrough
+	case types.CRC64ECMA:
+		fallthrough
+	case types.SDHASH:
+		fallthrough
+	case types.SSDEEP:
+		fallthrough
+	case types.TLSH:
+		fallthrough
 	case types.MD5:
 		fallthrough
 	case types.SHA1:
@@ -34,12 +46,6 @@ func (ha *HashAlgo) Set(v string) error {
 	case types.SHA3384:
 		fallthrough
 	case types.SHA3512:
-		fallthrough
-	case types.SDHASH:
-		fallthrough
-	case types.SSDEEP:
-		fallthrough
-	case types.TLSH:
 		*ha = HashAlgo(v)
 		return nil
 

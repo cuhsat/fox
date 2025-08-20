@@ -136,7 +136,7 @@ func (h *Heap) Reload() {
 		clear(h.hash)
 	}
 
-	h.hash = make(Hash, 11)
+	h.hash = make(Hash, 14)
 
 	// invalidate cache
 	if h.cache != nil {

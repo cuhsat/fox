@@ -16,7 +16,7 @@ import (
 )
 
 var HashUsage = app.Ascii + `
-Display file hash sums.
+Display file hash or checksums.
 
 Usage:
   fox hash [FLAG ...] PATH ...
@@ -33,8 +33,11 @@ Hash:
     Cryptographic hash algorithms:
       MD5, SHA1, SHA256, SHA3, SHA3-224, SHA3-256, SHA3-384, SHA3-512
 
-    Fuzzy hash algorithms:
+    Similarity hash algorithms:
       SDHASH, SSDEEP, TLSH
+
+    Checksum algorithms:
+      CRC32-IEEE, CRC64-ECMA, CRC64-ISO
 
 Example:
   $ fox hash -t=SHA3 artifacts.zip
@@ -44,8 +47,8 @@ Type "fox help" for more help...
 
 var Hash = &cobra.Command{
 	Use:   "hash",
-	Short: "display file hash sums",
-	Long:  "display file hash sums",
+	Short: "display file hash or checksums",
+	Long:  "display file hash or checksums",
 	Args:  cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()

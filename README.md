@@ -27,10 +27,12 @@ go install github.com/cuhsat/fox@latest
 * Build-in string carving for `ASCII` and `Unicode`
 * Build-in parser for Windows event log `EVTX` files
 * Build-in sniffer for `CSV` delimiter formats
-* Build-in formating of `CSV`, `JSON`, `JSONL` data
-* Build-in decompression of: `brotli`, `bzip2`, `cab`, `gzip`, `lz4`, `rar`, `tar`, `xz`, `zip`, `zlib`, `zstd`
+* Build-in formating of: `CSV`, `JSON`, `JSONL` data
+* Build-in extraction of: `cab`, `rar`, `tar`, `zip`
+* Build-in deflation of: `brotli`, `bzip2`, `gzip`, `lz4`, `xz`, `zlib`, `zstd`
 * Build-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-XYZ`
-* Build-in fuzzy hashes: `SDHASH`, `SSDEEP`, `TLSH`
+* Build-in similarity hashes: `SDHASH`, `SSDEEP`, `TLSH`
+* Build-in checksums: `CRC32-IEEE`, `CRC64-ECMA`, `CRC64-ISO`
 * Build-in in-memory only RAG database for document embeddings
 * Build-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *Mistral* or *DeepSeek R1*
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)

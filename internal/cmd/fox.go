@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"time"
 
 	"github.com/spf13/cobra"
 
@@ -37,7 +36,7 @@ Actions:
   counts                   display line and byte counts
   deflate                  deflate compressed files
   entropy                  display file entropy
-  hash                     display file hash sums
+  hash                     display file hash or checksums
   strings                  display ASCII and Unicode strings
 
 Print:
@@ -123,7 +122,7 @@ var Fox = &cobra.Command{
 
 		// print credits
 		if flg.Credits {
-			fmt.Printf("%d %s (%s)\n", time.Now().Year(), app.Company, app.Url)
+			fmt.Printf("%s <%s>\n", app.Author, app.Email)
 			os.Exit(0)
 		}
 
