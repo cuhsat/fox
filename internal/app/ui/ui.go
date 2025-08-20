@@ -323,7 +323,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					}
 
 					go p.Execute(heap.Path, heap.Base, func(path, base, dir string) {
-						name := fmt.Sprintf("%s : %s", base, p.Name)
+						name := fmt.Sprintf("%s*", base)
 
 						if len(dir) > 0 {
 							hs.Open(dir)

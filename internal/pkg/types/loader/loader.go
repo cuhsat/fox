@@ -201,9 +201,9 @@ func (l *Loader) addItem(path, base, name string) {
 	})
 }
 
-func (l *Loader) addPlugin(path, base, name string) {
+func (l *Loader) addPlugin(path, base string) {
 	l.entries = append(l.entries, Entry{
-		fmt.Sprintf("%s : %s", base, name),
+		fmt.Sprintf("%s*", base),
 		path,
 		base,
 		types.Plugin,
@@ -270,7 +270,7 @@ func (l *Loader) process(path, base string) string {
 						l.loadDir(dir) // load dir results
 					}
 
-					l.addPlugin(path, base, p.Name)
+					l.addPlugin(path, base)
 				})
 
 				return ""
