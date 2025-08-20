@@ -41,11 +41,10 @@ sboms:
     artifacts: source
 
 signs:
-  - cmd: cosign sign --yes
-    env:
-      - COSIGN_EXPERIMENTAL=1
+  - cmd: cosign
     certificate: "${artifact}.pem"
     args:
+      - --yes
       - sign-blob
       - "--output-certificate=${certificate}"
       - "--output-signature=${signature}"
