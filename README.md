@@ -46,4 +46,4 @@ go install github.com/cuhsat/fox@latest
   * Configurable color [themes](THEMES.md)
 
 ## License
-Powered by 🥃 and released under the [GPL-3.0](LICENSE.md).
+🦊 is released under the [GPL-3.0](LICENSE.md).
