@@ -22,8 +22,8 @@ GLOBAL:
   Ctrl + w             Toggle text wrap
   Ctrl + j             Decrease context
   Ctrl + k             Increase context
-  Ctrl + a             Aggregate files
   Ctrl + o             Open file(s)
+  Ctrl + a             Merge files
   Ctrl + q             Close file
   Ctrl + b             Open evidence bag
   Ctrl + s             Save evidence bag

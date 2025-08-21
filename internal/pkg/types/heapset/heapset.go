@@ -15,7 +15,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/loader"
 )
 
-type Call func()
+type Callback func()
 
 type Each func(int, *heap.Heap)
 
@@ -25,8 +25,8 @@ type HeapSet struct {
 	loader  *loader.Loader    // file loader
 	watcher *fsnotify.Watcher // file watcher
 
-	watch Call // watcher callback
-	error Call // error callback
+	error Callback // error callback
+	watch Callback // watch callback
 
 	heaps []*heap.Heap // set heaps
 	index *int32       // set index
@@ -45,7 +45,7 @@ func New(paths []string) *HeapSet {
 		index:   new(int32),
 	}
 
-	go hs.observe()
+	go hs.watchFiles()
 
 	hs.watchFile(sys.Log.Name())
 
@@ -77,11 +77,6 @@ func (hs *HeapSet) Each(fn Each) {
 	}
 
 	hs.RUnlock()
-}
-
-func (hs *HeapSet) Bind(fn1, fn2 Call) {
-	hs.watch = fn1
-	hs.error = fn2
 }
 
 func (hs *HeapSet) Heap() (int32, *heap.Heap) {
@@ -121,7 +116,7 @@ func (hs *HeapSet) OpenHelp() {
 		idx = hs.Len()
 
 		f := sys.Create("Help")
-		f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
+		_, _ = f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
 		hs.atomicAdd(heap.New(
 			"Keymap",
@@ -134,6 +129,24 @@ func (hs *HeapSet) OpenHelp() {
 	atomic.StoreInt32(hs.index, idx)
 
 	hs.atomicGet(idx).Reload()
+}
+
+func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
+	if !sys.Exists(path) {
+		return
+	}
+
+	idx, ok := hs.findByPath(path)
+
+	if !ok {
+		idx = hs.Len()
+
+		hs.atomicAdd(heap.New(title, path, base, tp))
+	}
+
+	atomic.StoreInt32(hs.index, idx)
+
+	hs.LoadHeap()
 }
 
 func (hs *HeapSet) OpenPlugin(path, base, title string) {
@@ -163,24 +176,6 @@ func (hs *HeapSet) OpenAgent(path string) {
 		idx = hs.Len()
 
 		hs.atomicAdd(heap.New("Agent", path, path, types.Agent))
-	}
-
-	atomic.StoreInt32(hs.index, idx)
-
-	hs.LoadHeap()
-}
-
-func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
-	if !sys.Exists(path) {
-		return
-	}
-
-	idx, ok := hs.findByPath(path)
-
-	if !ok {
-		idx = hs.Len()
-
-		hs.atomicAdd(heap.New(title, path, base, tp))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
@@ -232,57 +227,6 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 	atomic.AddInt32(hs.index, -1)
 
 	return hs.NextHeap()
-}
-
-func (hs *HeapSet) Aggregate() bool {
-	f := sys.Create("Aggregated")
-
-	hs.RLock()
-
-	var heaps []*heap.Heap
-
-	for _, h := range hs.heaps {
-		switch h.Type {
-		case types.Deflate:
-			fallthrough
-
-		case types.Regular:
-			_, _ = f.Write(h.Ensure().Bytes())
-			_, _ = f.WriteString("\n")
-
-			h.ThrowAway()
-
-		default:
-			heaps = append(heaps, h)
-		}
-	}
-
-	hs.RUnlock()
-
-	fi, _ := f.Stat()
-
-	if fi.Size() == 0 {
-		return false
-	}
-
-	hs.Lock()
-
-	hs.heaps = append(heaps, heap.New(
-		"Aggregated",
-		f.Name(),
-		f.Name(),
-		types.Ignore,
-	))
-
-	hs.Unlock()
-
-	idx := hs.Len() - 1
-
-	atomic.StoreInt32(hs.index, idx)
-
-	hs.atomicGet(idx).Reload()
-
-	return true
 }
 
 func (hs *HeapSet) ThrowAway() {

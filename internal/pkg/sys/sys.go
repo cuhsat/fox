@@ -26,7 +26,7 @@ var (
 	files = make(map[string]File)
 )
 
-type File = memfile.File
+type File = memfile.Fileable
 
 func Exit(v ...any) {
 	Print(v...)
@@ -151,12 +151,12 @@ func Open(name string) File {
 }
 
 func Create(name string) File {
-	s := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
-	f := memfile.New(s)
+	fuid := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
+	file := memfile.New(fuid)
 
-	files[s] = f
+	files[fuid] = file
 
-	return f
+	return file
 }
 
 func TempFile() File {

@@ -129,7 +129,7 @@ func (v *View) ScrollLine() {
 }
 
 func (v *View) ScrollLast() {
-	v.delta.Y = max(v.last.Y-(v.h-1), 0)
+	v.delta.Y = max(v.last.Y-(v.h-3), 0)
 }
 
 func (v *View) ScrollStart() {

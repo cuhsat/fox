@@ -130,10 +130,10 @@ func (ui *UI) delete() {
 }
 
 func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke types.Invoke) {
-	hs.Bind(func() {
-		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
-	}, func() {
+	hs.SetCallbacks(func() {
 		_ = ui.root.PostEvent(tcell.NewEventError(nil))
+	}, func() {
+		_ = ui.root.PostEvent(tcell.NewEventInterrupt(ui.ctx.IsFollow()))
 	})
 
 	events := make(chan tcell.Event, 128)
@@ -162,7 +162,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 			flg.Hash.Algo.String(),
 		)
 	case types.None:
-		//
+		// normal
 	}
 
 	esc := false
@@ -455,8 +455,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						continue
 					}
 
-					if hs.Aggregate() {
-						ui.overlay.SendInfo("All open files aggregated")
+					if hs.Merge() {
+						ui.overlay.SendInfo("Merged all open files")
 					}
 
 				case tcell.KeyCtrlC:

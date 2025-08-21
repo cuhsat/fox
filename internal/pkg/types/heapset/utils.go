@@ -13,14 +13,60 @@ import (
 
 type util func(h *heap.Heap) string
 
+func (hs *HeapSet) Merge() bool {
+	f := sys.Create("Merged")
+
+	hs.RLock()
+
+	var heaps []*heap.Heap
+
+	for _, h := range hs.heaps {
+		switch h.Type {
+		case types.Regular, types.Deflate:
+			_, _ = f.Write(h.Ensure().Bytes())
+			_, _ = f.WriteString("\n")
+
+			h.ThrowAway()
+
+		default:
+			heaps = append(heaps, h)
+		}
+	}
+
+	hs.RUnlock()
+
+	fi, _ := f.Stat()
+
+	if fi.Size() == 0 {
+		return false
+	}
+
+	hs.Lock()
+
+	hs.heaps = append(heaps, heap.New(
+		"Merged",
+		f.Name(),
+		f.Name(),
+		types.Ignore,
+	))
+
+	hs.Unlock()
+
+	atomic.StoreInt32(hs.index, hs.Len()-1)
+
+	hs.LoadHeap()
+
+	return true
+}
+
 func (hs *HeapSet) Counts() {
-	hs.newHeap("counts", func(h *heap.Heap) string {
+	hs.newUtil("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
 	})
 }
 
 func (hs *HeapSet) Entropy(n, m float64) {
-	hs.newHeap("entropy", func(h *heap.Heap) string {
+	hs.newUtil("entropy", func(h *heap.Heap) string {
 		v := h.Entropy(n, m)
 
 		if v == -1 {
@@ -32,7 +78,7 @@ func (hs *HeapSet) Entropy(n, m float64) {
 }
 
 func (hs *HeapSet) Strings(n, m int) {
-	hs.newHeap("strings", func(h *heap.Heap) string {
+	hs.newUtil("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
 		for v := range h.Strings(n, m) {
@@ -45,7 +91,7 @@ func (hs *HeapSet) Strings(n, m int) {
 }
 
 func (hs *HeapSet) HashSum(algo string) {
-	hs.newHeap(algo, func(h *heap.Heap) string {
+	hs.newUtil(algo, func(h *heap.Heap) string {
 		sum, err := h.HashSum(algo)
 
 		if err != nil {
@@ -61,7 +107,7 @@ func (hs *HeapSet) HashSum(algo string) {
 	})
 }
 
-func (hs *HeapSet) newHeap(s string, fn util) {
+func (hs *HeapSet) newUtil(s string, fn util) {
 	f := sys.Stdout()
 
 	hs.RLock()

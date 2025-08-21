@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/cuhsat/memfile"
+	mem "github.com/cuhsat/memfile"
 	"github.com/edsrzf/mmap-go"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
@@ -164,11 +164,11 @@ func (h *Heap) Reload() {
 				sys.Error(err)
 			}
 
-		// virtual file
-		case *memfile.FileData:
+		// memory file
+		case *mem.File:
 			m = make(mmap.MMap, h.size)
 
-			copy(m, f.Bytes())
+			copy(m, f.MMap())
 		}
 
 		h.mmap = &m
