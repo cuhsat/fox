@@ -81,10 +81,12 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		// pinned head
 		if ctx.Pinned {
-			off++
+			if buf.Y == 0 {
+				off++
+			}
 
 			n := fmt.Sprintf("%0*d", buf.N, 1)
-			s := (*buf.FMap)[0].Str
+			s := (*ctx.Heap.SMap())[0].Str
 			s = text.Trim(s, min(ctx.X, text.Len(s)), ctx.W)
 
 			buf.Lines <- TextLine{Line{n, 0, s}}
@@ -111,7 +113,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 				for _, i := range f.Regex.FindAllStringIndex(s, -1) {
 					buf.Parts <- TextPart{Part{
 						text.Len(s[:i[0]]),
-						y + sep,
+						y + sep + off,
 						str.Grp,
 						s[i[0]:i[1]],
 					}}

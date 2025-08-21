@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of AI models, to leverage your forensic examining process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLM** models, to leverage your forensic examining process.
 
 ![](assets/live.png "Live Demo")
 
@@ -30,7 +30,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in formating of: `CSV`, `JSON`, `JSONL` data
 * Build-in extraction of: `cab`, `rar`, `tar`, `zip`
 * Build-in deflation of: `brotli`, `bzip2`, `gzip`, `lz4`, `xz`, `zlib`, `zstd`
-* Build-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-XYZ`
+* Build-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-224`, `SHA3-256`, `SHA3-384`, `SHA3-512`
 * Build-in similarity hashes: `SDHASH`, `SSDEEP`, `TLSH`
 * Build-in checksums: `CRC32-IEEE`, `CRC64-ECMA`, `CRC64-ISO`
 * Build-in in-memory only RAG database for document embeddings
@@ -40,10 +40,10 @@ go install github.com/cuhsat/fox@latest
 * Evidence bag signing via `HMAC-SHA256`
 * Evidence streaming to server in [Elastic Common Schema 9.0](https://www.elastic.co/docs/reference/ecs)
 * Terminal interface compatible with many terminals
-  * With support for copy and bracketed paste
-  * With support for mouse scrolling
-  * With suspend to shell capability
-  * With configurable color [themes](THEMES.md)
+  * Support for copy and bracketed paste
+  * Support for mouse scrolling
+  * Suspend to shell capability
+  * Configurable color [themes](THEMES.md)
 
 ## License
 Powered by 🥃 and released under the [GPL-3.0](LICENSE.md).
