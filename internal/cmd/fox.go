@@ -45,7 +45,7 @@ Print:
       --no-line            don't print line numbers
 
 Deflate:
-      --pass=PASSWORD      decrypt with password (RAR, ZIP)
+      --pass=PASSWORD      decrypt with password (only RAR, ZIP)
 
 Hex display:
   -x, --hex                show file in canonical hex
@@ -62,9 +62,16 @@ Line filter:
   -B, --before=NUMBER      number of lines leading context before match
   -A, --after=NUMBER       number of lines trailing context after match
 
-AI flags:
-  -m, --model=MODEL        AI model for the agent to use
-  -q, --query=QUERY        AI query for the agent to process
+AI agent:
+  -m, --model=MODEL        model for the agent to use
+  -q, --query=QUERY        query for the agent to process
+
+AI model:
+	  --num-ctx=NUMBER     context window length (default: 4096)
+      --temp=DECIMAL       option for temperature (default: 0.2)
+      --top-p=DECIMAL      option for model top_p (default: 0.5)
+      --top-k=NUMBER       option for model top_k (default: 10)
+      --seed=NUMBER        option for random seed (default: 8211)
 
 UI flags:
       --state={N|W|T|-}    sets the used UI state flags
@@ -107,6 +114,9 @@ Example: print content hashes
 
 Example: print first sector in hex
   $ fox -pxhc=512 image.dd > mbr
+
+Example: print log file analysis
+  $ fox -pq="analyse this" log.xz
 
 Type "fox help COMMAND" for more help...
 `, app.Version)
@@ -219,7 +229,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Fox.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
 
-	Fox.PersistentFlags().StringVarP(&flg.Deflate.Pass, "pass", "", "", "decrypt with password")
+	Fox.PersistentFlags().StringVarP(&flg.Deflate.Pass, "pass", "", "", "decrypt with password (only RAR, ZIP)")
 
 	Fox.Flags().BoolVarP(&flg.Hex, "hex", "x", false, "show file in canonical hex")
 
@@ -236,8 +246,13 @@ func init() {
 	Fox.Flags().IntVarP(&flg.Filters.Before, "before", "B", 0, "number of lines leading context before match")
 	Fox.Flags().IntVarP(&flg.Filters.After, "after", "A", 0, "number of lines trailing context after match")
 
-	Fox.Flags().StringVarP(&flg.AI.Model, "model", "m", "", "AI model for the agent to use")
-	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "AI query for the agent to process")
+	Fox.Flags().StringVarP(&flg.AI.Model, "model", "m", "", "model for the agent to use")
+	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "query for the agent to process")
+	Fox.Flags().IntVarP(&flg.AI.NumCtx, "num-ctx", "", 4096, "context window length")
+	Fox.Flags().Float64VarP(&flg.AI.Temp, "temp", "", 0.2, "option for temperature")
+	Fox.Flags().Float64VarP(&flg.AI.TopP, "top-p", "", 0.5, "option for model top_p")
+	Fox.Flags().IntVarP(&flg.AI.TopK, "top-k", "", 10, "option for model top_k")
+	Fox.Flags().IntVarP(&flg.AI.Seed, "seed", "", 8211, "option for random seed")
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", "", "sets the used UI theme")

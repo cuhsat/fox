@@ -34,8 +34,13 @@ type Flags struct {
 
 	// ai flags
 	AI struct {
-		Model string
-		Query string
+		Model  string
+		Query  string
+		NumCtx int
+		Temp   float64
+		TopP   float64
+		TopK   int
+		Seed   int
 	}
 
 	// ui flags
