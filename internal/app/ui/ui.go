@@ -426,6 +426,9 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				case tcell.KeyCtrlF:
 					ui.change(mode.Fox)
 
+				case tcell.KeyCtrlP:
+					ui.ctx.TogglePinned()
+
 				case tcell.KeyCtrlT:
 					ui.ctx.ToggleFollow()
 

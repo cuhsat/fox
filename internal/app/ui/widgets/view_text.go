@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
+
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -17,6 +18,7 @@ func (v *View) textRender(p *panel) {
 		Heap:    v.heap,
 		Context: v.heap.HasContext(),
 		Numbers: v.ctx.IsNumbers(),
+		Pinned:  v.ctx.IsPinned(),
 		Wrap:    v.ctx.IsWrap(),
 		Nr:      v.nr,
 		X:       v.delta.X,

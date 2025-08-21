@@ -39,6 +39,7 @@ type Context struct {
 
 	Context bool
 	Numbers bool
+	Pinned  bool
 	Wrap    bool
 
 	Nr int
@@ -53,6 +54,7 @@ func NewContext(h *heap.Heap) *Context {
 	return &Context{
 		Context: true,
 		Numbers: true,
+		Pinned:  false,
 		Wrap:    false,
 		Heap:    h,
 		X:       0,

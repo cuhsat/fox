@@ -25,6 +25,7 @@ type Context struct {
 	model string
 	theme string
 
+	p atomic.Bool
 	t atomic.Bool
 	n atomic.Bool
 	w atomic.Bool
@@ -50,6 +51,7 @@ func New(root tcell.Screen) *Context {
 		theme: cfg.Theme,
 	}
 
+	ctx.p.Store(false)
 	ctx.t.Store(cfg.Follow)
 	ctx.n.Store(cfg.Numbers)
 	ctx.w.Store(cfg.Wrap)
@@ -110,6 +112,10 @@ func (ctx *Context) Theme() string {
 	return ctx.theme
 }
 
+func (ctx *Context) IsPinned() bool {
+	return ctx.p.Load()
+}
+
 func (ctx *Context) IsFollow() bool {
 	return ctx.t.Load()
 }
@@ -149,6 +155,10 @@ func (ctx *Context) ChangeTheme(t string) {
 	ctx.Lock()
 	ctx.theme = t
 	ctx.Unlock()
+}
+
+func (ctx *Context) TogglePinned() {
+	ctx.p.Store(!ctx.p.Load())
 }
 
 func (ctx *Context) ToggleFollow() {

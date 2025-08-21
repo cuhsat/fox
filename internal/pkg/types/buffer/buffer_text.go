@@ -77,10 +77,21 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		fs := ctx.Heap.Filters()
 
-		sep, grp, num := 0, 0, 1
+		off, sep, grp, num := 0, 0, 0, 1
 
-		for y, str := range (*buf.FMap)[buf.Y:] {
-			if y >= ctx.H {
+		// pinned head
+		if ctx.Pinned {
+			off++
+
+			n := fmt.Sprintf("%0*d", buf.N, 1)
+			s := (*buf.FMap)[0].Str
+			s = text.Trim(s, min(ctx.X, text.Len(s)), ctx.W)
+
+			buf.Lines <- TextLine{Line{n, 0, s}}
+		}
+
+		for y, str := range (*buf.FMap)[buf.Y+off:] {
+			if y >= ctx.H-off {
 				return
 			}
 
