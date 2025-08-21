@@ -32,7 +32,7 @@ Deflate:
       --pass=PASSWORD      decrypt with password (RAR and ZIP only)
 
 Example:
-  $ fox deflate --pass=infected ioc.rar
+  $ fox deflate --pass=infected ioc.zip
 
 Type "fox help" for more help...
 `
@@ -89,14 +89,22 @@ var Deflate = &cobra.Command{
 
 			path = filepath.Join(root, path)
 
-			if !flg.NoFile {
-				fmt.Printf("Deflate %s\n", path)
-			}
-
+			// deflate file
 			err := os.WriteFile(path, *h.MMap(), 0600)
 
 			if err != nil {
 				sys.Exit(err)
+			}
+
+			// calculate hash
+			if !flg.NoFile {
+				sum, err := h.HashSum(types.SHA256)
+
+				if err != nil {
+					sys.Exit(err)
+				}
+
+				fmt.Printf("%x  %s\n", sum, path)
 			}
 		})
 
@@ -108,6 +116,7 @@ func init() {
 	flg := flags.Get()
 
 	Deflate.SetHelpTemplate(DeflateUsage)
+	Deflate.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Deflate.Flags().StringVarP(&flg.Deflate.Path, "dir", "d", "", "deflate into directory")
 	Deflate.Flags().Lookup("dir").NoOptDefVal = "."
 	_ = Deflate.MarkFlagDirname("dir")

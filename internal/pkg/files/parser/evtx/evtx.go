@@ -21,16 +21,17 @@ func Parse(path string) string {
 	f := sys.Open(path)
 	defer f.Close()
 
+	t := sys.Create(path)
+	defer t.Close()
+
 	r, err := evtx.New(f)
-	defer r.Close()
 
 	if err != nil {
 		sys.Error(err)
 		return path
 	}
 
-	t := sys.Create(path)
-	defer t.Close()
+	defer r.Close()
 
 	for e := range r.Events() {
 		_, err := t.Write(evtx.ToJSON(e))

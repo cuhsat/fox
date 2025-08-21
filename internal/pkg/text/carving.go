@@ -62,14 +62,14 @@ func Carve(ch <-chan byte, str chan<- String, n, m int) {
 
 			if k > 1 {
 				for i := 1; i < k; i++ {
-					b, ok := <-ch
 					off++
 
-					if !ok {
+					if b, ok := <-ch; ok {
+						buf[i] = b
+					} else {
 						break
 					}
 
-					buf[i] = b
 					l++
 				}
 			}

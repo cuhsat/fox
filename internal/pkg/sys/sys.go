@@ -11,7 +11,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/cuhsat/memfile"
+	mem "github.com/cuhsat/memfile"
 
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/flags"
@@ -23,10 +23,10 @@ const (
 )
 
 var (
-	files = make(map[string]File)
+	files = make(map[string]*mem.File)
 )
 
-type File = memfile.Fileable
+type File = mem.Fileable
 
 func Exit(v ...any) {
 	Print(v...)
@@ -134,16 +134,17 @@ func Piped(file File) bool {
 }
 
 func Open(name string) File {
-	f := files[name]
+	vtl, ok := files[name]
 
-	if f != nil {
-		return f // virtual file
+	if ok {
+		vtl.Open()
+		return vtl // virtual file
 	}
 
-	f, err := os.OpenFile(name, os.O_RDONLY, 0400)
+	reg, err := os.OpenFile(name, os.O_RDONLY, 0400)
 
 	if err == nil {
-		return f // physical file
+		return reg // regular file
 	}
 
 	Panic(err)
@@ -151,10 +152,10 @@ func Open(name string) File {
 }
 
 func Create(name string) File {
-	fuid := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
-	file := memfile.New(fuid)
+	uniq := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
+	file := mem.Create(uniq)
 
-	files[fuid] = file
+	files[uniq] = file
 
 	return file
 }
@@ -180,7 +181,9 @@ func TempDir() string {
 }
 
 func Exists(name string) bool {
-	if files[name] != nil {
+	_, ok := files[name]
+
+	if ok {
 		return true
 	}
 
@@ -190,9 +193,9 @@ func Exists(name string) bool {
 }
 
 func Persist(name string) string {
-	f := files[name]
+	f, ok := files[name]
 
-	if f == nil {
+	if !ok {
 		return name // already persistent
 	}
 

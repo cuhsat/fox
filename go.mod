@@ -7,7 +7,7 @@ require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/andybalholm/brotli v1.2.0
 	github.com/bmatcuk/doublestar/v4 v4.9.1
-	github.com/cuhsat/memfile v0.5.3
+	github.com/cuhsat/memfile v0.5.6
 	github.com/cuhsat/zip v0.5.2
 	github.com/eciavatta/sdhash v0.0.0-20210117153940-a7b55306eeff
 	github.com/edsrzf/mmap-go v1.2.0

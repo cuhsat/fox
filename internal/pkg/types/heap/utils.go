@@ -6,7 +6,6 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
-// Entropy code source: https://gist.github.com/n2p5/4eda328b080c9f09eff928ad47228ab1
 func (h *Heap) Entropy(n, m float64) float64 {
 	var a [256]float64
 	var v float64
@@ -42,6 +41,7 @@ func (h *Heap) Strings(n, m int) <-chan text.String {
 	ch := make(chan byte, 1024)
 
 	go h.stream(ch)
+
 	go text.Carve(ch, str, n, m)
 
 	return str
