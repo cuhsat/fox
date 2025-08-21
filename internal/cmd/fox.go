@@ -295,7 +295,7 @@ func exec(args []string) {
 	hs := heapset.New(args)
 	defer hs.ThrowAway()
 
-	hs.Each(func(h *heap.Heap) {
+	hs.Each(func(_ int, h *heap.Heap) {
 		if h.Type != types.Stdin {
 			ctx := buffer.NewContext(h)
 

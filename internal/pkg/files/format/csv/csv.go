@@ -8,7 +8,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {
@@ -19,7 +18,7 @@ func Format(path string) string {
 	f := sys.Open(path)
 	defer f.Close()
 
-	t := file.New(path)
+	t := sys.Create(path)
 	defer t.Close()
 
 	r := csvd.NewReader(f)

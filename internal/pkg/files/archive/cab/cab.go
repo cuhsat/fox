@@ -9,7 +9,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {
@@ -41,7 +40,7 @@ func Deflate(path, _ string) (i []*files.Item) {
 			continue
 		}
 
-		t := file.New(fmt.Sprintf("%s/%s", path, s))
+		t := sys.Create(fmt.Sprintf("%s/%s", path, s))
 
 		_, err = io.Copy(t, h)
 		_ = t.Close()

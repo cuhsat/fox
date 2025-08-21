@@ -12,13 +12,12 @@ import (
 	"io"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
+	"github.com/eciavatta/sdhash"
 	"github.com/glaslos/ssdeep"
 	"github.com/glaslos/tlsh"
 
-	"github.com/eciavatta/sdhash"
+	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/types"
 )
 
 type Hash map[string][]byte
@@ -69,7 +68,7 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 
 	imp.Reset()
 
-	var f file.File
+	var f sys.File
 
 	// use deflate file not archive
 	if h.Type == types.Deflate {
@@ -78,7 +77,7 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 		f = sys.Open(h.Base)
 	}
 
-	defer func(f file.File) {
+	defer func(f sys.File) {
 		_ = f.Close()
 	}(f)
 

@@ -7,7 +7,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {
@@ -38,7 +37,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	t := file.New(path + ".tmp")
+	t := sys.Create(path)
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

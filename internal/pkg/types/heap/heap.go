@@ -5,12 +5,12 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/cuhsat/memfile"
 	"github.com/edsrzf/mmap-go"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
@@ -30,9 +30,9 @@ type Heap struct {
 
 	filters []*Filter // filters
 
-	hash Hash      // file hash sums
-	size int64     // file size
-	file file.File // file handle
+	hash Hash     // file hash sums
+	size int64    // file size
+	file sys.File // file handle
 }
 
 type Cache map[string]any
@@ -165,7 +165,7 @@ func (h *Heap) Reload() {
 			}
 
 		// virtual file
-		case *file.Data:
+		case *memfile.FileData:
 			m = make(mmap.MMap, h.size)
 
 			copy(m, f.Bytes())

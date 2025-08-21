@@ -5,7 +5,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (
@@ -30,7 +29,7 @@ func Parse(path string) string {
 		return path
 	}
 
-	t := file.New(path)
+	t := sys.Create(path)
 	defer t.Close()
 
 	for e := range r.Events() {

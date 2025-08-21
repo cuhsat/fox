@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (
@@ -18,7 +16,7 @@ var (
 )
 
 type logger struct {
-	f file.File // log file handle
+	f File // log file handle
 }
 
 func Setup() {

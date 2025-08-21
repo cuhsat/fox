@@ -6,27 +6,35 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
 
+	"github.com/cuhsat/memfile"
+
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 const (
 	Dump = ".fox_dump"
 )
 
+var (
+	files = make(map[string]File)
+)
+
+type File = memfile.File
+
 func Exit(v ...any) {
 	Print(v...)
 	os.Exit(1)
 }
 
-func Call(cmds []string) file.File {
-	f := file.New("stdout")
+func Call(cmds []string) File {
+	f := Create("stdout")
 	defer f.Close()
 
 	for _, cmd := range cmds {
@@ -72,14 +80,14 @@ func Shell() {
 	_ = cmd.Run()
 }
 
-func Stdin() file.File {
+func Stdin() File {
 	if !Piped(os.Stdin) {
 		Panic("Device mode is invalid")
 	}
 
-	f := file.New("stdin")
+	f := Create("stdin")
 
-	go func(f file.File) {
+	go func(f File) {
 		r := bufio.NewReader(os.Stdin)
 
 		for {
@@ -106,15 +114,15 @@ func Stdin() file.File {
 	return f
 }
 
-func Stdout() file.File {
-	return file.New("stdout")
+func Stdout() File {
+	return Create("stdout")
 }
 
-func Stderr() file.File {
-	return file.New("stderr")
+func Stderr() File {
+	return Create("stderr")
 }
 
-func Piped(file file.File) bool {
+func Piped(file File) bool {
 	fi, err := file.Stat()
 
 	if err != nil {
@@ -125,8 +133,8 @@ func Piped(file file.File) bool {
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func Open(name string) file.File {
-	f := file.Open(name)
+func Open(name string) File {
+	f := files[name]
 
 	if f != nil {
 		return f // virtual file
@@ -142,7 +150,16 @@ func Open(name string) file.File {
 	return nil
 }
 
-func TempFile() file.File {
+func Create(name string) File {
+	s := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
+	f := memfile.New(s)
+
+	files[s] = f
+
+	return f
+}
+
+func TempFile() File {
 	tmp, err := os.CreateTemp("", "fox-*")
 
 	if err != nil {
@@ -163,7 +180,7 @@ func TempDir() string {
 }
 
 func Exists(name string) bool {
-	if file.Open(name) != nil {
+	if files[name] != nil {
 		return true
 	}
 
@@ -173,7 +190,7 @@ func Exists(name string) bool {
 }
 
 func Persist(name string) string {
-	f := file.Open(name)
+	f := files[name]
 
 	if f == nil {
 		return name // already persistent

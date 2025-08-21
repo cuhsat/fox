@@ -11,14 +11,13 @@ import (
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/loader"
 )
 
 type Call func()
 
-type Each func(*heap.Heap)
+type Each func(int, *heap.Heap)
 
 type HeapSet struct {
 	sync.RWMutex
@@ -26,8 +25,8 @@ type HeapSet struct {
 	loader  *loader.Loader    // file loader
 	watcher *fsnotify.Watcher // file watcher
 
-	fnWatch Call // watcher callback
-	fnError Call // error callback
+	watch Call // watcher callback
+	error Call // error callback
 
 	heaps []*heap.Heap // set heaps
 	index *int32       // set index
@@ -46,9 +45,9 @@ func New(paths []string) *HeapSet {
 		index:   new(int32),
 	}
 
-	go hs.notify()
+	go hs.observe()
 
-	hs.watch(sys.Log.Name())
+	hs.watchFile(sys.Log.Name())
 
 	for _, e := range hs.loader.Init(paths) {
 		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
@@ -73,16 +72,16 @@ func (hs *HeapSet) Len() int32 {
 func (hs *HeapSet) Each(fn Each) {
 	hs.RLock()
 
-	for _, h := range hs.heaps {
-		fn(h.Ensure())
+	for i, h := range hs.heaps {
+		fn(i, h.Ensure())
 	}
 
 	hs.RUnlock()
 }
 
 func (hs *HeapSet) Bind(fn1, fn2 Call) {
-	hs.fnWatch = fn1
-	hs.fnError = fn2
+	hs.watch = fn1
+	hs.error = fn2
 }
 
 func (hs *HeapSet) Heap() (int32, *heap.Heap) {
@@ -121,7 +120,8 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		f := file.Create("Help", fmt.Sprintf(app.Ascii+app.Help, app.Version))
+		f := sys.Create("Help")
+		f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
 		hs.atomicAdd(heap.New(
 			"Keymap",
@@ -211,7 +211,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 func (hs *HeapSet) LoadHeap() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	hs.watch(h.Ensure().Path)
+	hs.watchFile(h.Ensure().Path)
 
 	return h
 }
@@ -235,7 +235,7 @@ func (hs *HeapSet) CloseHeap() *heap.Heap {
 }
 
 func (hs *HeapSet) Aggregate() bool {
-	f := file.New("Aggregated")
+	f := sys.Create("Aggregated")
 
 	hs.RLock()
 
@@ -330,12 +330,6 @@ func (hs *HeapSet) findByName(name string) (int32, bool) {
 func (hs *HeapSet) atomicAdd(h *heap.Heap) {
 	hs.Lock()
 	hs.heaps = append(hs.heaps, h)
-	hs.Unlock()
-}
-
-func (hs *HeapSet) atomicMod(h *heap.Heap, idx int32) {
-	hs.Lock()
-	hs.heaps[idx] = h
 	hs.Unlock()
 }
 

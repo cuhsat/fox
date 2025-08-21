@@ -59,7 +59,7 @@ var Deflate = &cobra.Command{
 		hs := heapset.New(args)
 		defer hs.ThrowAway()
 
-		hs.Each(func(h *heap.Heap) {
+		hs.Each(func(_ int, h *heap.Heap) {
 			root := flg.Deflate.Path
 
 			if root == "." {

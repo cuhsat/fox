@@ -9,14 +9,14 @@ import (
 	"github.com/cuhsat/fox/internal/app/ai/agent/llm"
 	"github.com/cuhsat/fox/internal/app/ai/agent/rag"
 	"github.com/cuhsat/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 type Agent struct {
-	File file.File // agent chat file
+	File sys.File // agent chat file
 
 	buf *heap.Heap // buffered heap
 
@@ -28,7 +28,7 @@ type Agent struct {
 
 func New() *Agent {
 	a := &Agent{
-		File: file.New("agent"),
+		File: sys.Create("agent"),
 
 		llm: llm.New(),
 		rag: rag.New(),

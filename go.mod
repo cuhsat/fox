@@ -7,6 +7,7 @@ require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/andybalholm/brotli v1.2.0
 	github.com/bmatcuk/doublestar/v4 v4.9.1
+	github.com/cuhsat/memfile v0.4.0
 	github.com/cuhsat/zip v0.5.2
 	github.com/eciavatta/sdhash v0.0.0-20210117153940-a7b55306eeff
 	github.com/edsrzf/mmap-go v1.2.0
@@ -14,6 +15,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/glaslos/ssdeep v0.4.0
 	github.com/glaslos/tlsh v0.4.0
+	github.com/google/go-cabfile v0.0.0-20220815135208-f9ac3a87fd26
 	github.com/klauspost/compress v1.18.0
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/nwaples/rardecode v1.1.3
@@ -25,7 +27,6 @@ require (
 
 require (
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/google/go-cabfile v0.0.0-20220815135208-f9ac3a87fd26 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect

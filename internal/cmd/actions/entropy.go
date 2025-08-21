@@ -72,7 +72,7 @@ var Entropy = &cobra.Command{
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
-			hs.Each(func(h *heap.Heap) {
+			hs.Each(func(_ int, h *heap.Heap) {
 				if v := h.Entropy(
 					flg.Entropy.Min,
 					flg.Entropy.Max,

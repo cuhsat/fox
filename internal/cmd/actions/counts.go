@@ -53,7 +53,7 @@ var Counts = &cobra.Command{
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
-			hs.Each(func(h *heap.Heap) {
+			hs.Each(func(_ int, h *heap.Heap) {
 				fmt.Printf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
 			})
 		}

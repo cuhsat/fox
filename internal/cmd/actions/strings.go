@@ -79,7 +79,7 @@ var Strings = &cobra.Command{
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
-			hs.Each(func(h *heap.Heap) {
+			hs.Each(func(_ int, h *heap.Heap) {
 				if h.Type != types.Stdin {
 					if !flg.NoFile {
 						fmt.Println(text.Title(h.String(), buffer.TermW))

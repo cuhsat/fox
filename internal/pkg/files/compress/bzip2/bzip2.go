@@ -6,7 +6,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 )
 
 func Detect(path string) bool {
@@ -21,7 +20,7 @@ func Deflate(path string) string {
 
 	r := bzip2.NewReader(a)
 
-	t := file.New(path)
+	t := sys.Create(path)
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

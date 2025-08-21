@@ -78,7 +78,7 @@ var Hash = &cobra.Command{
 			hs := heapset.New(args)
 			defer hs.ThrowAway()
 
-			hs.Each(func(h *heap.Heap) {
+			hs.Each(func(_ int, h *heap.Heap) {
 				sum, err := h.HashSum(algo)
 
 				if err != nil {

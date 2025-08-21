@@ -10,7 +10,6 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/file"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/user"
 )
@@ -115,7 +114,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 
 	t := time.Time.UTC(time.Now())
 
-	if file.Open(h.Path) == nil {
+	if sys.Open(h.Path) == nil {
 		fi, err := os.Stat(h.Path)
 
 		if err != nil {
