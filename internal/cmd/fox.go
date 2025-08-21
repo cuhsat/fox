@@ -67,7 +67,7 @@ AI agent:
   -q, --query=QUERY        query for the agent to process
 
 AI model:
-	  --num-ctx=NUMBER     context window length (default: 4096)
+      --num-ctx=NUMBER     context window length (default: 4096)
       --temp=DECIMAL       option for temperature (default: 0.2)
       --top-p=DECIMAL      option for model top_p (default: 0.5)
       --top-k=NUMBER       option for model top_k (default: 10)
