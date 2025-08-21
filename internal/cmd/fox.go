@@ -67,10 +67,10 @@ AI agent:
   -q, --query=QUERY        query for the agent to process
 
 AI model:
-      --num-ctx=NUMBER     context window length (default: 4096)
+      --num-ctx=SIZE       context window length (default: 4096)
       --temp=DECIMAL       option for temperature (default: 0.2)
-      --top-p=DECIMAL      option for model top_p (default: 0.5)
-      --top-k=NUMBER       option for model top_k (default: 10)
+      --topp=DECIMAL       option for model top_p (default: 0.5)
+      --topk=NUMBER        option for model top_k (default: 10)
       --seed=NUMBER        option for random seed (default: 8211)
 
 UI flags:
@@ -250,8 +250,8 @@ func init() {
 	Fox.Flags().StringVarP(&flg.AI.Query, "query", "q", "", "query for the agent to process")
 	Fox.Flags().IntVarP(&flg.AI.NumCtx, "num-ctx", "", 4096, "context window length")
 	Fox.Flags().Float64VarP(&flg.AI.Temp, "temp", "", 0.2, "option for temperature")
-	Fox.Flags().Float64VarP(&flg.AI.TopP, "top-p", "", 0.5, "option for model top_p")
-	Fox.Flags().IntVarP(&flg.AI.TopK, "top-k", "", 10, "option for model top_k")
+	Fox.Flags().Float64VarP(&flg.AI.TopP, "topp", "", 0.5, "option for model top_p")
+	Fox.Flags().IntVarP(&flg.AI.TopK, "topk", "", 10, "option for model top_k")
 	Fox.Flags().IntVarP(&flg.AI.Seed, "seed", "", 8211, "option for random seed")
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
