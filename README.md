@@ -8,9 +8,9 @@ The Swiss Army Knife for examining text files. Combining the power of many tradi
 go install github.com/cuhsat/fox@latest
 ```
 
-## Key features
+## Key Features
 * Available for [Windows / Linux / macOS](https://github.com/cuhsat/fox/releases)
-* Standalone native `AMD64` and `ARM64` binaries 
+* Standalone native `AMD64` and `ARM64` binaries
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * In-memory virtual filesystem
