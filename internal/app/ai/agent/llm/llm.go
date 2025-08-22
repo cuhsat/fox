@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/app"
-	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/ollama/ollama/api"
 
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai"
+	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
@@ -31,7 +31,7 @@ func New() *LLM {
 }
 
 func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
-	llm.AddUser(fmt.Sprintf(app.Base, query, lines))
+	llm.AddUser(fmt.Sprintf(app.Prompt, query, lines))
 
 	flg := flags.Get().AI
 	ctx := context.Background()

@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLM** models, to leverage your forensic examining process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLMs**, to leverage your forensic examining process.
 
 ![](assets/live.png "Live Demo")
 
@@ -23,8 +23,8 @@ go install github.com/cuhsat/fox@latest
 * Build-in regular expression filtering
 * Build-in dynamic context window
 * Build-in canonical `hexdump` of files
-* Build-in `wc` like counts with *Shannon* entropy
-* Build-in string carving for `ASCII` and `Unicode`
+* Build-in `wc` like counts with Shannon entropy
+* Build-in `ASCII` and `Unicode` string carving 
 * Build-in parser for Windows event log `EVTX` files
 * Build-in sniffer for `CSV` delimiter formats
 * Build-in formating of: `CSV`, `JSON`, `JSONL` data
@@ -33,7 +33,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-224`, `SHA3-256`, `SHA3-384`, `SHA3-512`
 * Build-in similarity hashes: `SDHASH`, `SSDEEP`, `TLSH`
 * Build-in checksums: `CRC32-IEEE`, `CRC64-ECMA`, `CRC64-ISO`
-* Build-in in-memory only RAG database for document embeddings
+* Build-in in-memory RAG database for document embeddings
 * Build-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *Mistral* or *DeepSeek R1*
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
 * Evidence bag formats: `raw`, `text`, `JSON`, `JSONL`, `XML`, `SQLite3`

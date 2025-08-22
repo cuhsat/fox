@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/bmatcuk/doublestar/v4"
+
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/files/archive/cab"
 	"github.com/cuhsat/fox/internal/pkg/files/archive/rar"

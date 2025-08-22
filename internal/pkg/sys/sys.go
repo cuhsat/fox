@@ -137,7 +137,6 @@ func Open(name string) File {
 	vtl, ok := files[name]
 
 	if ok {
-		vtl.Open()
 		return vtl // virtual file
 	}
 
@@ -153,7 +152,7 @@ func Open(name string) File {
 
 func Create(name string) File {
 	uniq := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
-	file := mem.Create(uniq)
+	file := mem.New(uniq)
 
 	files[uniq] = file
 

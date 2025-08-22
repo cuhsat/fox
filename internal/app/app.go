@@ -14,11 +14,11 @@ var (
 	//go:embed ascii.txt
 	Ascii string
 
-	//go:embed base.txt
-	Base string
-
 	//go:embed help.txt
 	Help string
+
+	//go:embed prompt.txt
+	Prompt string
 
 	//go:embed version.txt
 	Version string
