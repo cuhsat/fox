@@ -1,11 +1,9 @@
 package config
 
 import (
-	"bytes"
-	"os"
+	"github.com/spf13/viper"
 
-	"github.com/BurntSushi/toml"
-
+	"github.com/cuhsat/fox/configs"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/user"
 )
@@ -14,61 +12,37 @@ const (
 	Filename = ".foxrc"
 )
 
-type Config struct {
-	Model   string `toml:"Model"`
-	Theme   string `toml:"Theme"`
-	Follow  bool   `toml:"Follow"`
-	Numbers bool   `toml:"Numbers"`
-	Wrap    bool   `toml:"Wrap"`
+var (
+	Default = configs.Config
+)
+
+type Themes struct {
+	Themes map[string]Theme `toml:"theme"`
 }
 
-func New() *Config {
-	cfg := new(Config)
-
-	is, p := user.File(Filename)
-
-	if !is {
-		return cfg
-	}
-
-	_, err := toml.DecodeFile(p, &cfg)
-
-	if err != nil {
-		sys.Error(err)
-	}
-
-	// higher ranking environment variables
-	m := os.Getenv("FOX_MODEL")
-
-	if len(m) > 0 {
-		cfg.Model = m
-	}
-
-	t := os.Getenv("FOX_THEME")
-
-	if len(t) > 0 {
-		cfg.Theme = t
-	}
-
-	return cfg
+type Theme struct {
+	Name     string `toml:"name"`
+	Base     Style  `toml:"base"`
+	Surface0 Style  `toml:"surface0"`
+	Surface1 Style  `toml:"surface1"`
+	Surface2 Style  `toml:"surface2"`
+	Surface3 Style  `toml:"surface3"`
+	Overlay0 Style  `toml:"overlay0"`
+	Overlay1 Style  `toml:"overlay1"`
+	Subtext0 Style  `toml:"subtext0"`
+	Subtext1 Style  `toml:"subtext1"`
+	Subtext2 Style  `toml:"subtext2"`
 }
 
-func (cfg *Config) Save() {
-	buf := new(bytes.Buffer)
+type Style struct {
+	Fg int32 `toml:"fg"`
+	Bg int32 `toml:"bg"`
+}
 
-	enc := toml.NewEncoder(buf)
-	enc.Indent = "" // no indent
+func Save() {
+	_, path := user.File(Filename)
 
-	err := enc.Encode(cfg)
-
-	if err != nil {
-		sys.Error(err)
-		return
-	}
-
-	_, p := user.File(Filename)
-
-	err = os.WriteFile(p, buf.Bytes(), 0600)
+	err := viper.WriteConfigAs(path)
 
 	if err != nil {
 		sys.Error(err)

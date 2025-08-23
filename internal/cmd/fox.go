@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai"
@@ -224,6 +227,7 @@ func Execute() error {
 
 func init() {
 	flg := flags.Get()
+	cfg := viper.GetViper()
 
 	Fox.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
@@ -294,6 +298,37 @@ func init() {
 	Fox.AddCommand(actions.Entropy)
 	Fox.AddCommand(actions.Hash)
 	Fox.AddCommand(actions.Strings)
+
+	cfg.SetConfigPermissions(0600)
+	cfg.SetConfigName(".foxrc")
+	cfg.SetConfigType("toml")
+	cfg.AddConfigPath("$HOME")
+
+	cfg.AutomaticEnv()
+	cfg.SetEnvPrefix("FOX")
+	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	cfg.BindPFlag("ai.model", Fox.Flags().Lookup("model"))
+	cfg.BindPFlag("ai.num_ctx", Fox.Flags().Lookup("num-ctx"))
+	cfg.BindPFlag("ai.temp", Fox.Flags().Lookup("temp"))
+	cfg.BindPFlag("ai.topp", Fox.Flags().Lookup("topp"))
+	cfg.BindPFlag("ai.topk", Fox.Flags().Lookup("topk"))
+	cfg.BindPFlag("ai.seed", Fox.Flags().Lookup("seed"))
+
+	cfg.BindPFlag("ui.theme", Fox.Flags().Lookup("theme"))
+
+	if err := cfg.ReadInConfig(); err != nil {
+		var e viper.ConfigFileNotFoundError
+
+		if errors.As(err, &e) {
+			cfg.ReadConfig(strings.NewReader(config.Default))
+		}
+	}
+
+	// viper.WatchConfig()
+	// viper.OnConfigChange(func(e fsnotify.Event) {
+	// 	fmt.Println("Config file changed:", e.Name)
+	// })
 }
 
 func exec(args []string) {
@@ -304,7 +339,7 @@ func exec(args []string) {
 			sys.Exit("AI is not available")
 		}
 
-		ai.Load(config.New().Model)
+		ai.Load(viper.GetString("model"))
 	}
 
 	hs := heapset.New(args)

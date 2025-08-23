@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Fallback = "Monochrome"
+	Fallback = "Examiner-Dark"
 )
 
 var (

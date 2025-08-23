@@ -4,84 +4,59 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
+
+const width = 78
 
 type TextWrite struct {
 	file *os.File // file handle
 }
 
 func NewTextWriter() *TextWrite {
-	return &TextWrite{
-		file: nil,
-	}
+	return new(TextWrite)
 }
 
 func (w *TextWrite) Init(f *os.File, old bool, title string) {
 	w.file = f
 
-	if old {
-		return
-	}
-
-	_, err := fmt.Fprintf(w.file, "%s\n", title)
-
-	if err != nil {
-		sys.Error(err)
+	if !old {
+		w.write("%s\n%s\n", app.Ascii, title)
 	}
 }
 
 func (w *TextWrite) Start() {
-	_, err := fmt.Fprintf(w.file, "\n")
-
-	if err != nil {
-		sys.Error(err)
-	}
+	w.write("\n")
 }
 
 func (w *TextWrite) Flush() {
-	_, err := fmt.Fprintf(w.file, "\n")
-
-	if err != nil {
-		sys.Error(err)
-	}
+	w.write("%s\n", strings.Repeat("-", width))
 }
 
 func (w *TextWrite) WriteMeta(meta meta) {
-	f := strings.Join(meta.filters, " > ")
+	var sb strings.Builder
 
-	_, err := fmt.Fprintf(w.file, "File: %s %s (%d bytes)\n", meta.path, f, meta.size)
-
-	if err != nil {
-		sys.Error(err)
+	for _, f := range meta.filters {
+		sb.WriteString("> ")
+		sb.WriteString(f)
 	}
 
-	_, err = fmt.Fprintf(w.file, "User: %s (%s)\n", meta.user.Username, meta.user.Name)
-
-	if err != nil {
-		sys.Error(err)
-	}
-
-	_, err = fmt.Fprintf(w.file, "Time: %s / %s\n",
-		meta.bagged.UTC().Format(time.RFC3339),
-		meta.modified.UTC().Format(time.RFC3339),
-	)
-
-	if err != nil {
-		sys.Error(err)
-	}
-
-	_, err = fmt.Fprintf(w.file, "Hash: %x\n\n", meta.hash)
-
-	if err != nil {
-		sys.Error(err)
-	}
+	w.write("%s\n", strings.Repeat("=", width))
+	w.write("File: %s %s (%d bytes)\n", meta.path, sb.String(), meta.size)
+	w.write("User: %s (%s)\n", meta.user.Username, meta.user.Name)
+	w.write("Time: %s / %s\n", utc(meta.bagged), utc(meta.modified))
+	w.write("Hash: %x\n", meta.hash)
+	w.write("%s\n", strings.Repeat("-", width))
 }
 
 func (w *TextWrite) WriteLine(nr, grp int, s string) {
-	_, err := fmt.Fprintf(w.file, "%d:%d:%s\n", nr, grp, s)
+	w.write("%d:%d:%s\n", nr, grp, s)
+}
+
+func (w *TextWrite) write(format string, a ...any) {
+	_, err := fmt.Fprintf(w.file, format, a...)
 
 	if err != nil {
 		sys.Error(err)

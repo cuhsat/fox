@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
@@ -16,8 +17,6 @@ type Context struct {
 	sync.RWMutex
 
 	Root tcell.Screen
-
-	cfg *config.Config
 
 	mode mode.Mode
 	last mode.Mode
@@ -32,60 +31,41 @@ type Context struct {
 }
 
 func New(root tcell.Screen) *Context {
-	cfg := config.New()
+	cfg := viper.GetViper()
 	ctx := &Context{
 		// screen
 		Root: root,
-
-		// config
-		cfg: cfg,
 
 		// modes
 		mode: mode.Default,
 		last: mode.Default,
 
 		// model
-		model: cfg.Model,
+		model: cfg.GetString("ai.model"),
 
 		// theme
-		theme: cfg.Theme,
+		theme: cfg.GetString("ui.theme"),
 	}
 
 	ctx.p.Store(false)
-	ctx.t.Store(cfg.Follow)
-	ctx.n.Store(cfg.Numbers)
-	ctx.w.Store(cfg.Wrap)
+	ctx.t.Store(cfg.GetBool("ui.state.t"))
+	ctx.n.Store(cfg.GetBool("ui.state.n"))
+	ctx.w.Store(cfg.GetBool("ui.state.w"))
 
-	ctx.Precede()
+	s := strings.ToUpper(flags.Get().UI.State)
 
-	return ctx
-}
-
-func (ctx *Context) Precede() {
-	flg := flags.Get()
-
-	s := strings.ToUpper(flg.UI.State)
-
-	// overwrite flags
+	// precede flags
 	if strings.ContainsRune(s, '-') {
 		ctx.t.Store(false)
 		ctx.n.Store(false)
 		ctx.w.Store(false)
-	} else if len(flg.UI.State) > 0 {
+	} else if len(s) > 0 {
 		ctx.t.Store(strings.ContainsRune(s, 'T'))
 		ctx.n.Store(strings.ContainsRune(s, 'N'))
 		ctx.w.Store(strings.ContainsRune(s, 'W'))
 	}
 
-	// overwrite theme
-	if len(flg.UI.Theme) > 0 {
-		ctx.theme = flg.UI.Theme
-	}
-
-	// overwrite model
-	if len(flg.AI.Model) > 0 {
-		ctx.model = flg.AI.Model
-	}
+	return ctx
 }
 
 func (ctx *Context) Mode() mode.Mode {
@@ -181,13 +161,15 @@ func (ctx *Context) Background(fn func()) {
 }
 
 func (ctx *Context) Save() {
-	ctx.cfg.Model = ctx.Model()
-	ctx.cfg.Theme = ctx.Theme()
-	ctx.cfg.Follow = ctx.IsFollow()
-	ctx.cfg.Numbers = ctx.IsNumbers()
-	ctx.cfg.Wrap = ctx.IsWrap()
+	cfg := viper.GetViper()
+
+	cfg.Set("ai.model", ctx.Model())
+	cfg.Set("ui.theme", ctx.Theme())
+	cfg.Set("ui.state.t", ctx.IsFollow())
+	cfg.Set("ui.state.n", ctx.IsNumbers())
+	cfg.Set("ui.state.w", ctx.IsWrap())
 
 	if !flags.Get().Opt.Readonly {
-		ctx.cfg.Save()
+		config.Save()
 	}
 }

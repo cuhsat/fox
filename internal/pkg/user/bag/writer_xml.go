@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
@@ -133,8 +132,8 @@ func (w *XmlWriter) WriteMeta(meta meta) {
 
 	w.entry.Metadata.Hash = fmt.Sprintf("%x", meta.hash)
 
-	w.entry.Metadata.Time.Bagged = meta.bagged.UTC().Format(time.RFC3339)
-	w.entry.Metadata.Time.Modified = meta.modified.UTC().Format(time.RFC3339)
+	w.entry.Metadata.Time.Bagged = utc(meta.bagged)
+	w.entry.Metadata.Time.Modified = utc(meta.modified)
 
 	w.entry.Metadata.User.Login = meta.user.Username
 	w.entry.Metadata.User.Name = meta.user.Name

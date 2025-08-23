@@ -45,6 +45,10 @@ func Print(v ...any) {
 	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %s", v...))
 }
 
+func Debug(v ...any) {
+	_, _ = fmt.Fprintln(os.Stdout, fmt.Sprintf(Prefix+" %#v", v...))
+}
+
 func Error(v ...any) {
 	log.Println(fmt.Sprintf(Prefix+" %s", v...))
 }

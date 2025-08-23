@@ -12,9 +12,7 @@ type RawWrite struct {
 }
 
 func NewRawWriter() *RawWrite {
-	return &RawWrite{
-		file: nil,
-	}
+	return new(RawWrite)
 }
 
 func (w *RawWrite) Init(f *os.File, _ bool, _ string) {

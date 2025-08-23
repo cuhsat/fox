@@ -22,7 +22,6 @@ func (f *Filters) Type() string {
 // Set global filter
 func (f *Filters) Set(p string) error {
 	f.Patterns = append(f.Patterns, p)
-
 	return nil
 }
 

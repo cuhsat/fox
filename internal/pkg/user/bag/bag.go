@@ -171,9 +171,13 @@ func (bag *Bag) init() {
 		}
 	}
 
-	title := fmt.Sprintf("Forensic Examiner Evidence Bag %s", app.Version)
+	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", app.Version)
 
 	for _, w := range bag.ws {
 		w.Init(bag.file, old, title)
 	}
+}
+
+func utc(t time.Time) string {
+	return t.UTC().Format(time.RFC3339)
 }

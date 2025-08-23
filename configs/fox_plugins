@@ -1,7 +1,3 @@
-#
-# ~/.fox_plugins - Forensic Examiner plugins file
-#
-
 # Available variables:
 #
 #  {{FILE}}     file path (derived)
@@ -12,16 +8,16 @@
 #
 #  {{VALUE}}    user prompt value
 #
-[Autostart.Info]
+[autostart.info]
 
 # Plugin name
-Name = "target-info"
+name = "target-info"
 
 # Filepath regex pattern
-Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
+pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 
 # List of commands to execute
-Commands = [
+commands = [
   'target-info "{{FILE}}"',
 ]
 
@@ -29,15 +25,15 @@ Commands = [
 #
 #  F7 - F12
 #
-[Hotkey.F7]
+[hotkey.f7]
 
 # Plugin name
-Name = "target-query"
+name = "target-query"
 
 # User input prompt
-Prompt = "Query"
+prompt = "Query"
 
 # List of commands to execute
-Commands = [
+commands = [
   'target-query -j -f "{{VALUE}}" "{{BASE}}"',
 ]

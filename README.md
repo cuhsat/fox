@@ -37,7 +37,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *Mistral* or *DeepSeek R1*
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
 * Evidence bag formats: `raw`, `text`, `JSON`, `JSONL`, `XML`, `SQLite3`
-* Evidence bag signing via `HMAC-SHA256`
+* Evidence bag signing via `HMAC-SHA256` for Chain of Custody proof
 * Evidence streaming to server in [Elastic Common Schema 9.0](https://www.elastic.co/docs/reference/ecs)
 * Terminal interface compatible with many terminals
   * Support for copy and bracketed paste
