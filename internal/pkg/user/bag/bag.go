@@ -3,7 +3,7 @@ package bag
 import (
 	"fmt"
 	"os"
-	usr "os/user"
+	"os/user"
 	"time"
 
 	"github.com/cuhsat/fox/internal/app"
@@ -11,7 +11,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
-	"github.com/cuhsat/fox/internal/pkg/user"
+	file "github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type Bag struct {
@@ -35,7 +35,7 @@ type writer interface {
 }
 
 type meta struct {
-	user     *usr.User
+	user     *user.User
 	path     string
 	size     int64
 	hash     []byte
@@ -100,41 +100,39 @@ func (bag *Bag) String() string {
 func (bag *Bag) Put(h *heap.Heap) bool {
 	bag.init()
 
-	u, err := usr.Current()
+	usr, err := user.Current()
 
 	if err != nil {
 		sys.Error(err)
 	}
 
-	s, err := h.HashSum(types.SHA256)
+	sum, err := h.HashSum(types.SHA256)
 
 	if err != nil {
 		sys.Error(err)
 	}
 
-	t := time.Time.UTC(time.Now())
+	mod := time.Time.UTC(time.Now())
 
-	if sys.Open(h.Path) == nil {
-		fi, err := os.Stat(h.Path)
+	fi, err := os.Stat(h.Base)
 
-		if err != nil {
-			sys.Error(err)
-		} else {
-			t = fi.ModTime()
-		}
+	if err == nil {
+		mod = fi.ModTime()
+	} else {
+		sys.Error(err)
 	}
 
 	for _, w := range bag.ws {
 		w.Start()
 
 		w.WriteMeta(meta{
-			user:     u,
+			user:     usr,
 			path:     h.String(),
 			size:     h.Len(),
-			hash:     s,
+			hash:     sum,
 			filters:  h.Patterns(),
 			bagged:   time.Now(),
-			modified: t,
+			modified: mod,
 		})
 
 		for _, str := range *h.FMap() {
@@ -145,7 +143,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 	}
 
 	if bag.file != nil && len(bag.sign) > 0 {
-		user.Sign(bag.Path, bag.sign)
+		file.Sign(bag.Path, bag.sign)
 	}
 
 	return len(bag.ws) > 0
