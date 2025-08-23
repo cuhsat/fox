@@ -1,49 +1,52 @@
 package themes
 
 import (
-	"github.com/BurntSushi/toml"
+	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
-const (
-	Filename = ".fox_themes"
-)
+const Filename = ".fox_themes"
 
 type Themes struct {
-	Themes map[string]Theme `toml:"Theme"`
+	Themes map[string]Theme `mapstructure:"Theme"`
 }
 
 type Theme struct {
-	Name     string `toml:"name"`
-	Base     Style  `toml:"base"`
-	Surface0 Style  `toml:"surface0"`
-	Surface1 Style  `toml:"surface1"`
-	Surface2 Style  `toml:"surface2"`
-	Surface3 Style  `toml:"surface3"`
-	Overlay0 Style  `toml:"overlay0"`
-	Overlay1 Style  `toml:"overlay1"`
-	Subtext0 Style  `toml:"subtext0"`
-	Subtext1 Style  `toml:"subtext1"`
-	Subtext2 Style  `toml:"subtext2"`
+	Name     string
+	Base     Style
+	Surface0 Style
+	Surface1 Style
+	Surface2 Style
+	Surface3 Style
+	Overlay0 Style
+	Overlay1 Style
+	Subtext0 Style
+	Subtext1 Style
+	Subtext2 Style
 }
 
 type Style struct {
-	Fg int32 `toml:"fg"`
-	Bg int32 `toml:"bg"`
+	Fg int32
+	Bg int32
 }
 
 func New() *Themes {
 	ts := new(Themes)
 
-	is, p := user.File(Filename)
+	cfg := viper.New()
 
-	if !is {
+	cfg.SetConfigName(Filename)
+	cfg.SetConfigType("toml")
+	cfg.AddConfigPath("$HOME")
+
+	err := cfg.ReadInConfig()
+
+	if err != nil {
 		return nil
 	}
 
-	_, err := toml.DecodeFile(p, &ts)
+	err = cfg.Unmarshal(ts)
 
 	if err != nil {
 		sys.Error(err)

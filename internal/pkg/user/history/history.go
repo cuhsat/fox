@@ -14,9 +14,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
-const (
-	Filename = ".fox_history"
-)
+const Filename = ".fox_history"
 
 type History struct {
 	sync.RWMutex

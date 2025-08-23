@@ -4,35 +4,29 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/BurntSushi/toml"
+	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
-const (
-	Filename = ".fox_plugins"
-)
+const Filename = ".fox_plugins"
 
-var (
-	Input chan string
-)
+var Input chan string
 
-type Func func(path, base, dir string)
+type Callback func(path, base, dir string)
 
 type Plugins struct {
-	Autostart map[string]Plugin `toml:"autostart"`
-	Hotkey    map[string]Plugin `toml:"hotkey"`
+	Auto   map[string]Plugin `mapstructure:"auto"`
+	Hotkey map[string]Plugin `mapstructure:"hotkey"`
 }
 
 type Plugin struct {
 	re *regexp.Regexp
 
-	Name     string   `toml:"name"`
-	Prompt   string   `toml:"prompt"`
-	Pattern  string   `toml:"pattern"`
-	Options  string   `toml:"options"`
-	Commands []string `toml:"commands"`
+	Name string
+	Mode string
+	Mask string
+	Exec []string
 }
 
 func New() *Plugins {
@@ -40,13 +34,19 @@ func New() *Plugins {
 
 	ps := new(Plugins)
 
-	ok, path := user.File(Filename)
+	cfg := viper.New()
 
-	if !ok {
+	cfg.SetConfigName(Filename)
+	cfg.SetConfigType("toml")
+	cfg.AddConfigPath("$HOME")
+
+	err := cfg.ReadInConfig()
+
+	if err != nil {
 		return nil
 	}
 
-	_, err := toml.DecodeFile(path, &ps)
+	err = cfg.Unmarshal(ps)
 
 	if err != nil {
 		sys.Error(err)
@@ -60,52 +60,55 @@ func Close() {
 	close(Input)
 }
 
-func (ps *Plugins) Autostarts() []Plugin {
-	r := make([]Plugin, len(ps.Autostart))
+func (ps *Plugins) Autos() []Plugin {
+	as := make([]Plugin, len(ps.Auto))
 
-	for key := range ps.Autostart {
-		p := ps.Autostart[key]
-		p.re = regexp.MustCompile(p.Pattern)
+	for key := range ps.Auto {
+		p := ps.Auto[key]
+		p.re = regexp.MustCompile(p.Mask)
 
-		r = append(r, p)
+		as = append(as, p)
 	}
 
-	return r
+	return as
 }
 
-func (p *Plugin) Match(s string) bool {
+func (p *Plugin) Match(mask string) bool {
 	if p.re != nil {
-		return p.re.MatchString(s)
+		return p.re.MatchString(mask)
 	} else {
 		return false
 	}
 }
 
-func (p *Plugin) Execute(file, base string, fn Func) {
-	var value, temp string
+func (p *Plugin) Execute(file, base string, fn Callback) {
+	var val, temp string
 
-	if len(p.Prompt) > 0 {
-		value = <-Input // blocking call
+	// blocking call
+	if len(p.Mode) > 0 {
+		val = <-Input
 	}
 
-	for _, cmd := range p.Commands {
-		if strings.Contains(cmd, "{{TEMP}}") {
+	// create temp dir if necessary
+	for _, cmd := range p.Exec {
+		if strings.Contains(cmd, "$TEMP") {
 			temp = sys.TempDir()
 			break
 		}
 	}
 
-	r := strings.NewReplacer(
-		"{{VALUE}}", value,
-		"{{FILE}}", sys.Persist(file),
-		"{{BASE}}", sys.Persist(base),
-		"{{TEMP}}", temp,
+	// replace and persist
+	rep := strings.NewReplacer(
+		"$BASE", sys.Persist(base),
+		"$FILE", sys.Persist(file),
+		"$TEMP", temp,
+		"$INPUT", val,
 	)
 
-	cmds := make([]string, len(p.Commands))
+	cmds := make([]string, len(p.Exec))
 
-	for _, cmd := range p.Commands {
-		cmds = append(cmds, r.Replace(cmd))
+	for _, cmd := range p.Exec {
+		cmds = append(cmds, rep.Replace(cmd))
 	}
 
 	fn(sys.Call(cmds).Name(), base, temp)

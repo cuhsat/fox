@@ -1,39 +1,27 @@
-# Available variables:
+# Available variables (all):
 #
-#  {{FILE}}     file path (derived)
-#  {{BASE}}     file path (originally)
-#  {{TEMP}}     new random temp folder
+#  $FILE    file path
+#  $BASE    base path
+#  $TEMP    new temporary folder
 #
 # Available variables (only hotkey):
 #
-#  {{VALUE}}    user prompt value
+#  $INPUT   user input
 #
-[autostart.info]
-
-# Plugin name
-name = "target-info"
-
-# Filepath regex pattern
-pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
-
-# List of commands to execute
-commands = [
-  'target-info "{{FILE}}"',
+[auto.info]
+name = 'target-info'
+mask = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
+exec = [
+  'target-info "$FILE"'
 ]
 
 # Available hotkeys:
 #
-#  F7 - F12
+#  F7 to F12
 #
 [hotkey.f7]
-
-# Plugin name
-name = "target-query"
-
-# User input prompt
-prompt = "Query"
-
-# List of commands to execute
-commands = [
-  'target-query -j -f "{{VALUE}}" "{{BASE}}"',
+name = 'target-query'
+mode = 'query'
+exec = [
+  'target-query -j -f "$INPUT" "$BASE"'
 ]

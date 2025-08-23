@@ -1,44 +1,45 @@
+# Available theme zones:
+#
+#  base        Terminal
+#  surface0    Info panes
+#  surface1    Info areas
+#  surface2    Current file
+#  surface3    Current mode
+#  overlay0    Failure messages
+#  overlay1    Success messages
+#  subtext0    Navigation items
+#  subtext1    Separator lines
+#  subtext2    Highlights
+#
 [theme.custom]
+name = 'custom'
 
-# Theme name
-name = "custom"
-
-# Basic text area
-base.fg = 0x000000
+base.fg = 0xFFFFFF
 base.bg = 0x000000
 
-# Top and bottom lines
-surface0.fg = 0x000000
+surface0.fg = 0xFFFFFF
 surface0.bg = 0x000000
 
-# Informational areas
-surface1.fg = 0x000000
+surface1.fg = 0xFFFFFF
 surface1.bg = 0x000000
 
-# Filename
-surface2.fg = 0x000000
+surface2.fg = 0xFFFFFF
 surface2.bg = 0x000000
 
-# Mode indicator
-surface3.fg = 0x000000
+surface3.fg = 0xFFFFFF
 surface3.bg = 0x000000
 
-# Error messages
-overlay0.fg = 0x000000
+overlay0.fg = 0xFFFFFF
 overlay0.bg = 0x000000
 
-# Status messages
-overlay1.fg = 0x000000
+overlay1.fg = 0xFFFFFF
 overlay1.bg = 0x000000
 
-# Line numbers and file offsets
-subtext0.fg = 0x000000
+subtext0.fg = 0xFFFFFF
 subtext0.bg = 0x000000
 
-# Vertical lines
-subtext1.fg = 0x000000
+subtext1.fg = 0xFFFFFF
 subtext1.bg = 0x000000
 
-# Text highlights
-subtext2.fg = 0x000000
+subtext2.fg = 0xFFFFFF
 subtext2.bg = 0x000000

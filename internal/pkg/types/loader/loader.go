@@ -46,8 +46,10 @@ type Entry struct {
 func New() *Loader {
 	l := new(Loader)
 
-	if ps := plugins.New(); ps != nil {
-		l.plugins = ps.Autostarts()
+	ps := plugins.New()
+
+	if ps != nil {
+		l.plugins = ps.Autos()
 	}
 
 	return l
@@ -202,9 +204,9 @@ func (l *Loader) addItem(path, base, name string) {
 	})
 }
 
-func (l *Loader) addPlugin(path, base string) {
+func (l *Loader) addPlugin(path, base, name string) {
 	l.entries = append(l.entries, Entry{
-		fmt.Sprintf("%s*", base),
+		fmt.Sprintf("%s • %s", base, name),
 		path,
 		base,
 		types.Plugin,
@@ -271,7 +273,7 @@ func (l *Loader) process(path, base string) string {
 						l.loadDir(dir) // load dir results
 					}
 
-					l.addPlugin(path, base)
+					l.addPlugin(path, base, p.Name)
 				})
 
 				return ""

@@ -4,31 +4,31 @@
 
 ### target-info
 ```toml
-[Autostart.Info]
-Name = "target-info"
-Pattern = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
-Commands = [
-  'target-info "{{FILE}}"',
+[auto.info]
+name = 'target-info'
+mask = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
+exec = [
+  'target-info "$FILE"'
 ]
 ```
 
 ### target-query
 ```toml
-[Hotkey.F7]
-Name = "target-query"
-Prompt = "Query"
-Commands = [
-  'target-query -j -f "{{VALUE}}" "{{BASE}}"',
+[hotkey.f7]
+name = 'target-query'
+mode = 'query'
+exec = [
+  'target-query -j -f "$INPUT" "$BASE"'
 ]
 ```
 
 ### target-shell
 ```toml
-[Hotkey.F8]
-Name = "target-shell"
-Prompt = "Shell"
-Commands = [
-  'target-shell -c="{{VALUE}}" "{{BASE}}"',
+[hotkey.f8]
+name = 'target-shell'
+mode = 'shell'
+exec = [
+  'target-shell -c="$INPUT" "$BASE"'
 ]
 ```
 
@@ -36,91 +36,91 @@ Commands = [
 
 ### JLECmd
 ```toml
-[Autostart.Jumplist]
-Name = "JLECmd"
-Pattern = '.*\.(automatic|custom)Destination-ms'
-Commands = [
-  'dotnet JLECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.jle]
+name = 'JLECmd'
+mask = '.*\.(automatic|custom)Destination-ms'
+exec = [
+  'dotnet JLECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### LECmd
 ```toml
-[Autostart.Link]
-Name = "LECmd"
-Pattern = '.*\.lnk'
-Commands = [
-  'dotnet LECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.le]
+name = 'LECmd'
+mask = '.*\.lnk'
+exec = [
+  'dotnet LECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### MFTECmd
 ```toml
-[Autostart.Filesystem]
-Name = "MFTECmd"
-Pattern = '\$(Boot|LogFile|J|MFT|SDS)'
-Commands = [
-  'dotnet MFTECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.mfte]
+name = 'MFTECmd'
+mask = '\$(Boot|LogFile|J|MFT|SDS)'
+exec = [
+  'dotnet MFTECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### PECmd
 ```toml
-[Autostart.Prefetch]
-Name = "PECmd"
-Pattern = '.*\.pf'
-Commands = [
-  'dotnet PECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.pe]
+name = 'PECmd'
+mask = '.*\.pf'
+exec = [
+  'dotnet PECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### RBCmd
 ```toml
-[Autostart.Trash]
-Name = "RBCmd"
-Pattern = '(INFO2|\$[0-9A-Z]{7}(\..+)?)$'
-Commands = [
-  'dotnet RBCmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
+[auto.rb]
+name = 'RBCmd'
+mask = '(INFO2|\$[0-9A-Z]{7}(\..+)?)$'
+exec = [
+  'dotnet RBCmd.dll -f "$FILE" --csv "$TEMP"'
 ]
 ```
 
 ### RECmd
 ```toml
-[Autostart.Registry]
-Name = "RECmd"
-Pattern = '.*\.dat'
-Commands = [
-  'dotnet RECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.re]
+name = 'RECmd'
+mask = '.*\.dat'
+exec = [
+  'dotnet RECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### SQLECmd
 ```toml
-[Autostart.Database]
-Name = "SQLECmd"
-Pattern = '.*\.db'
-Commands = [
-  'dotnet SQLECmd.dll -f "{{FILE}}" --json "{{TEMP}}"',
+[auto.sqle]
+name = 'SQLECmd'
+mask = '.*\.db'
+exec = [
+  'dotnet SQLECmd.dll -f "$FILE" --json "$TEMP"'
 ]
 ```
 
 ### SrumECmd
 ```toml
-[Autostart.Energy]
-Name = "SrumECmd"
-Pattern = 'SRUDB.dat'
-Commands = [
-  'dotnet SrumECmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
+[auto.srume]
+name = 'SrumECmd'
+mask = 'SRUDB.dat'
+exec = [
+  'dotnet SrumECmd.dll -f "$FILE" --csv "$TEMP"'
 ]
 ```
 
 ### WxTCmd
 ```toml
-[Autostart.Timeline]
-Name = "WxTCmd"
-Pattern = '.*\ActivitiesCache.db'
-Commands = [
-  'dotnet WxTCmd.dll -f "{{FILE}}" --csv "{{TEMP}}"',
+[auto.wxt]
+name = 'WxTCmd'
+mask = '.*\ActivitiesCache.db'
+exec = [
+  'dotnet WxTCmd.dll -f "$FILE" --csv "$TEMP"'
 ]
 ```
 
@@ -128,20 +128,20 @@ Commands = [
 
 ### capa
 ```toml
-[Autostart.Capa]
-Name = "capa"
-Pattern = '.*\.(bin|dll|exe|scr|sys)'
-Commands = [
-  'capa "{{FILE}}"',
+[auto.capa]
+name = 'capa'
+mask = '.*\.(bin|dll|exe|scr|sys)'
+exec = [
+  'capa "$FILE"'
 ]
 ```
 
 ### objdump
 ```toml
-[Autostart.Dump]
-Name = "objdump"
-Pattern = '.*\.(bin|dll|exe|scr|sys)'
-Commands = [
-  'objdump --disassemble "{{FILE}}"',
+[auto.obj]
+name = 'objdump'
+mask = '.*\.(bin|dll|exe|scr|sys)'
+exec = [
+  'objdump --disassemble "$FILE"'
 ]
 ```

@@ -316,14 +316,14 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						goto render
 					}
 
-					p, ok := ui.plugins.Hotkey[ev.Name()]
+					p, ok := ui.plugins.Hotkey[strings.ToLower(ev.Name())]
 
 					if !ok {
 						continue
 					}
 
 					go p.Execute(heap.Path, heap.Base, func(path, base, dir string) {
-						name := fmt.Sprintf("%s*", base)
+						name := fmt.Sprintf("%s • %s", base, p.Name)
 
 						if len(dir) > 0 {
 							hs.Open(dir)
@@ -335,8 +335,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						ui.overlay.SendInfo(fmt.Sprintf("%s executed", p.Name))
 					})
 
-					if len(p.Prompt) > 0 {
-						ui.change(mode.Mode(p.Prompt))
+					if len(p.Mode) > 0 {
+						ui.change(mode.Mode(p.Mode))
 					}
 
 				case tcell.KeyUp:
@@ -651,7 +651,7 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 			ui.root.Sync() // prevent hiccups
 		}
 
-		title = fmt.Sprintf("%s — %s", title, heap)
+		title = fmt.Sprintf("%s • %s", title, heap)
 	}
 
 	ui.root.SetTitle(title)

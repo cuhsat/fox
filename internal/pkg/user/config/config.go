@@ -12,9 +12,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
-const (
-	Filename = ".foxrc"
-)
+const Filename = ".foxrc"
 
 func Get() *viper.Viper {
 	return viper.GetViper()
@@ -49,10 +47,14 @@ func Load(flg *pflag.FlagSet) {
 
 	err := cfg.ReadInConfig()
 
-	var e viper.ConfigFileNotFoundError
+	if err != nil {
+		var e viper.ConfigFileNotFoundError
 
-	if err != nil && errors.Is(err, &e) {
-		cfg.ReadConfig(strings.NewReader(configs.Config))
+		if errors.Is(err, &e) {
+			cfg.ReadConfig(strings.NewReader(configs.Config))
+		} else {
+			sys.Panic(err)
+		}
 	}
 }
 
