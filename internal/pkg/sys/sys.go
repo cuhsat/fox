@@ -137,6 +137,7 @@ func Open(name string) File {
 	vtl, ok := files[name]
 
 	if ok {
+		vtl.Seek(0, io.SeekStart)
 		return vtl // virtual file
 	}
 

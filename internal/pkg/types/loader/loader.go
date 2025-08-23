@@ -27,13 +27,11 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
 )
 
-const (
-	Stdin = "-"
-)
+const Stdin = "-"
 
 type Loader struct {
-	plugins []plugins.Plugin // automatic plugins
-	entries []Entry          // temporary entries
+	plugins []plugins.Plugin // auto plugins
+	entries []Entry          // temp entries
 }
 
 type Entry struct {
