@@ -9,7 +9,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
-// Bootstraps all.
+// Start fox.
 func main() {
 	sys.Setup()
 
