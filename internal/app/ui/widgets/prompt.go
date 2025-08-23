@@ -19,11 +19,11 @@ const (
 )
 
 const (
-	filter  = '❯'
-	numbers = 'N'
-	wrap    = 'W'
-	follow  = 'T'
-	off     = '·'
+	filter = '❯'
+	navi   = 'N'
+	wrap   = 'W'
+	follow = 'T'
+	off    = '·'
 )
 
 type Prompt struct {
@@ -230,8 +230,8 @@ func (p *Prompt) fmtStatus(n, m int) string {
 		sb.WriteString(fmt.Sprintf(" %d ", n))
 	}
 
-	if p.ctx.IsNumbers() {
-		sb.WriteRune(numbers)
+	if p.ctx.IsNavi() {
+		sb.WriteRune(navi)
 	} else {
 		sb.WriteRune(off)
 	}

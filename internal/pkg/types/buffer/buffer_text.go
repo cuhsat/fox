@@ -33,7 +33,7 @@ func (tl TextLine) String() string {
 func Text(ctx *Context) (buf TextBuffer) {
 	buf.N = text.Dec(ctx.Heap.Count())
 
-	if ctx.Numbers {
+	if ctx.Navi {
 		ctx.W -= 2 + buf.N
 		ctx.H -= 1
 	}

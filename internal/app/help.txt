@@ -17,10 +17,10 @@ GLOBAL:
   Ctrl + g             Switch to GREP mode
   Ctrl + f             Switch to FOX mode
   Ctrl + x             Switch to HEX mode
+  Ctrl + n             Toggle navigation
+  Ctrl + w             Toggle text wrap
   Ctrl + p             Toggle head pinned
   Ctrl + t             Toggle tail follow
-  Ctrl + n             Toggle line numbers
-  Ctrl + w             Toggle text wrap
   Ctrl + j             Decrease context
   Ctrl + k             Increase context
   Ctrl + o             Open file(s)

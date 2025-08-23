@@ -233,7 +233,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				pageW := w - 1 // minus text abbreviation
 				pageH := h - 2 // minus title and status
 
-				if ui.ctx.IsNumbers() {
+				if ui.ctx.IsNavi() {
 					pageW -= text.Dec(heap.Count()) + 1
 				}
 
@@ -433,7 +433,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					ui.ctx.ToggleFollow()
 
 				case tcell.KeyCtrlN:
-					ui.ctx.ToggleNumbers()
+					ui.ctx.ToggleNavi()
 					ui.view.Preserve()
 
 				case tcell.KeyCtrlW:

@@ -91,7 +91,7 @@ func (ctx *Context) Theme() string {
 	return ctx.theme
 }
 
-func (ctx *Context) IsNumbers() bool {
+func (ctx *Context) IsNavi() bool {
 	return ctx.n.Load()
 }
 
@@ -136,7 +136,7 @@ func (ctx *Context) ChangeTheme(t string) {
 	ctx.Unlock()
 }
 
-func (ctx *Context) ToggleNumbers() {
+func (ctx *Context) ToggleNavi() {
 	ctx.n.Store(!ctx.n.Load())
 }
 
@@ -164,7 +164,7 @@ func (ctx *Context) Save() {
 
 	cfg.Set("ai.model", ctx.Model())
 	cfg.Set("ui.theme", ctx.Theme())
-	cfg.Set("ui.state.n", ctx.IsNumbers())
+	cfg.Set("ui.state.n", ctx.IsNavi())
 	cfg.Set("ui.state.w", ctx.IsWrap())
 	cfg.Set("ui.state.t", ctx.IsFollow())
 

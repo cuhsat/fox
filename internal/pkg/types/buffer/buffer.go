@@ -38,8 +38,8 @@ type Context struct {
 	Heap *heap.Heap
 
 	Context bool
-	Numbers bool
 	Pinned  bool
+	Navi    bool
 	Wrap    bool
 
 	Nr int
@@ -53,8 +53,8 @@ type Context struct {
 func NewContext(h *heap.Heap) *Context {
 	return &Context{
 		Context: true,
-		Numbers: true,
 		Pinned:  false,
+		Navi:    true,
 		Wrap:    false,
 		Heap:    h,
 		X:       0,
@@ -71,7 +71,7 @@ func (ctx *Context) Hash() string {
 		ctx.Heap.LastFilter().Context.A,
 		ctx.Heap.Len(),
 		ctx.Context,
-		ctx.Numbers,
+		ctx.Navi,
 		ctx.Wrap,
 		ctx.W,
 		ctx.H,

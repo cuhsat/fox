@@ -17,8 +17,8 @@ func (v *View) textRender(p *panel) {
 	buf := buffer.Text(&buffer.Context{
 		Heap:    v.heap,
 		Context: v.heap.HasContext(),
-		Numbers: v.ctx.IsNumbers(),
 		Pinned:  v.ctx.IsPinned(),
+		Navi:    v.ctx.IsNavi(),
 		Wrap:    v.ctx.IsWrap(),
 		Nr:      v.nr,
 		X:       v.delta.X,
@@ -62,7 +62,7 @@ func (v *View) textRender(p *panel) {
 		}
 
 		// line number
-		if v.ctx.IsNumbers() {
+		if v.ctx.IsNavi() {
 			v.print(lineX, lineY, line.Nr, themes.Subtext0)
 			lineX += len(line.Nr) + 1
 		}
@@ -84,7 +84,7 @@ func (v *View) textRender(p *panel) {
 		partX := p.X + part.X
 		partY := p.Y + part.Y
 
-		if v.ctx.IsNumbers() {
+		if v.ctx.IsNavi() {
 			partX += buf.N + 1
 		}
 
@@ -93,7 +93,7 @@ func (v *View) textRender(p *panel) {
 	}
 
 	// render scrollbars
-	if v.ctx.IsNumbers() {
+	if v.ctx.IsNavi() {
 		w := p.W - 1
 		h := p.H - 1
 		x := p.X

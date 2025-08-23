@@ -13,13 +13,13 @@ const (
 
 func (v *View) hexRender(p *panel) {
 	buf := buffer.Hex(&buffer.Context{
-		Heap:    v.heap,
-		Numbers: v.ctx.IsNumbers(),
-		Wrap:    v.ctx.IsWrap(),
-		X:       v.delta.X,
-		Y:       v.delta.Y,
-		W:       p.W - (ruleW * 2),
-		H:       p.H,
+		Heap: v.heap,
+		Navi: v.ctx.IsNavi(),
+		Wrap: v.ctx.IsWrap(),
+		X:    v.delta.X,
+		Y:    v.delta.Y,
+		W:    p.W - (ruleW * 2),
+		H:    p.H,
 	})
 
 	y := p.Y
