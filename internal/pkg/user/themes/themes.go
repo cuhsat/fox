@@ -16,22 +16,22 @@ type Themes struct {
 }
 
 type Theme struct {
-	Name     string `toml:"Name"`
-	Base     Style  `toml:"Base"`
-	Surface0 Style  `toml:"Surface0"`
-	Surface1 Style  `toml:"Surface1"`
-	Surface2 Style  `toml:"Surface2"`
-	Surface3 Style  `toml:"Surface3"`
-	Overlay0 Style  `toml:"Overlay0"`
-	Overlay1 Style  `toml:"Overlay1"`
-	Subtext0 Style  `toml:"Subtext0"`
-	Subtext1 Style  `toml:"Subtext1"`
-	Subtext2 Style  `toml:"Subtext2"`
+	Name     string `toml:"name"`
+	Base     Style  `toml:"base"`
+	Surface0 Style  `toml:"surface0"`
+	Surface1 Style  `toml:"surface1"`
+	Surface2 Style  `toml:"surface2"`
+	Surface3 Style  `toml:"surface3"`
+	Overlay0 Style  `toml:"overlay0"`
+	Overlay1 Style  `toml:"overlay1"`
+	Subtext0 Style  `toml:"subtext0"`
+	Subtext1 Style  `toml:"subtext1"`
+	Subtext2 Style  `toml:"subtext2"`
 }
 
 type Style struct {
-	Fg int32 `toml:"Fg"`
-	Bg int32 `toml:"Bg"`
+	Fg int32 `toml:"fg"`
+	Bg int32 `toml:"bg"`
 }
 
 func New() *Themes {

@@ -21,18 +21,18 @@ var (
 type Func func(path, base, dir string)
 
 type Plugins struct {
-	Autostart map[string]Plugin `toml:"Autostart"`
-	Hotkey    map[string]Plugin `toml:"Hotkey"`
+	Autostart map[string]Plugin `toml:"autostart"`
+	Hotkey    map[string]Plugin `toml:"hotkey"`
 }
 
 type Plugin struct {
 	re *regexp.Regexp
 
-	Name     string   `toml:"Name"`
-	Prompt   string   `toml:"Prompt"`
-	Pattern  string   `toml:"Pattern"`
-	Options  string   `toml:"Options"`
-	Commands []string `toml:"Commands"`
+	Name     string   `toml:"name"`
+	Prompt   string   `toml:"prompt"`
+	Pattern  string   `toml:"pattern"`
+	Options  string   `toml:"options"`
+	Commands []string `toml:"commands"`
 }
 
 func New() *Plugins {
