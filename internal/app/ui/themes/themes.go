@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Fallback = "Examiner-Dark"
+	Default = "examiner-dark"
 )
 
 var (
@@ -294,7 +294,7 @@ func (t *Themes) Load(name string) {
 	t.index = -1
 
 	if len(name) == 0 {
-		name = Fallback
+		name = Default
 	}
 
 	for i, n := range t.names {

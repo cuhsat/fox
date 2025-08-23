@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,6 +12,7 @@ import (
 	"github.com/cuhsat/fox/internal/app/ai"
 	"github.com/cuhsat/fox/internal/app/ai/agent"
 	"github.com/cuhsat/fox/internal/app/ui"
+	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/cmd/actions"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -227,7 +226,6 @@ func Execute() error {
 
 func init() {
 	flg := flags.Get()
-	cfg := viper.GetViper()
 
 	Fox.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
@@ -259,7 +257,7 @@ func init() {
 	Fox.Flags().IntVarP(&flg.AI.Seed, "seed", "", 8211, "option for random seed")
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
-	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", "", "sets the used UI theme")
+	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", themes.Default, "sets the used UI theme")
 
 	Fox.Flags().StringVarP(&flg.Bag.Path, "file", "f", flags.BagName, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
@@ -299,36 +297,7 @@ func init() {
 	Fox.AddCommand(actions.Hash)
 	Fox.AddCommand(actions.Strings)
 
-	cfg.SetConfigPermissions(0600)
-	cfg.SetConfigName(".foxrc")
-	cfg.SetConfigType("toml")
-	cfg.AddConfigPath("$HOME")
-
-	cfg.AutomaticEnv()
-	cfg.SetEnvPrefix("FOX")
-	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	cfg.BindPFlag("ai.model", Fox.Flags().Lookup("model"))
-	cfg.BindPFlag("ai.num_ctx", Fox.Flags().Lookup("num-ctx"))
-	cfg.BindPFlag("ai.temp", Fox.Flags().Lookup("temp"))
-	cfg.BindPFlag("ai.topp", Fox.Flags().Lookup("topp"))
-	cfg.BindPFlag("ai.topk", Fox.Flags().Lookup("topk"))
-	cfg.BindPFlag("ai.seed", Fox.Flags().Lookup("seed"))
-
-	cfg.BindPFlag("ui.theme", Fox.Flags().Lookup("theme"))
-
-	if err := cfg.ReadInConfig(); err != nil {
-		var e viper.ConfigFileNotFoundError
-
-		if errors.As(err, &e) {
-			cfg.ReadConfig(strings.NewReader(config.Default))
-		}
-	}
-
-	// viper.WatchConfig()
-	// viper.OnConfigChange(func(e fsnotify.Event) {
-	// 	fmt.Println("Config file changed:", e.Name)
-	// })
+	config.Load(Fox.Flags())
 }
 
 func exec(args []string) {

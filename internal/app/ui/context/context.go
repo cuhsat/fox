@@ -6,7 +6,6 @@ import (
 	"sync/atomic"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
@@ -24,14 +23,14 @@ type Context struct {
 	model string
 	theme string
 
-	p atomic.Bool
-	t atomic.Bool
 	n atomic.Bool
 	w atomic.Bool
+	t atomic.Bool
+	p atomic.Bool
 }
 
 func New(root tcell.Screen) *Context {
-	cfg := viper.GetViper()
+	cfg := config.Get()
 	ctx := &Context{
 		// screen
 		Root: root,
@@ -47,22 +46,22 @@ func New(root tcell.Screen) *Context {
 		theme: cfg.GetString("ui.theme"),
 	}
 
-	ctx.p.Store(false)
-	ctx.t.Store(cfg.GetBool("ui.state.t"))
 	ctx.n.Store(cfg.GetBool("ui.state.n"))
 	ctx.w.Store(cfg.GetBool("ui.state.w"))
+	ctx.t.Store(cfg.GetBool("ui.state.t"))
+	ctx.p.Store(false)
 
 	s := strings.ToUpper(flags.Get().UI.State)
 
 	// precede flags
 	if strings.ContainsRune(s, '-') {
-		ctx.t.Store(false)
 		ctx.n.Store(false)
 		ctx.w.Store(false)
+		ctx.t.Store(false)
 	} else if len(s) > 0 {
-		ctx.t.Store(strings.ContainsRune(s, 'T'))
 		ctx.n.Store(strings.ContainsRune(s, 'N'))
 		ctx.w.Store(strings.ContainsRune(s, 'W'))
+		ctx.t.Store(strings.ContainsRune(s, 'T'))
 	}
 
 	return ctx
@@ -92,20 +91,20 @@ func (ctx *Context) Theme() string {
 	return ctx.theme
 }
 
-func (ctx *Context) IsPinned() bool {
-	return ctx.p.Load()
-}
-
-func (ctx *Context) IsFollow() bool {
-	return ctx.t.Load()
-}
-
 func (ctx *Context) IsNumbers() bool {
 	return ctx.n.Load()
 }
 
 func (ctx *Context) IsWrap() bool {
 	return ctx.w.Load()
+}
+
+func (ctx *Context) IsFollow() bool {
+	return ctx.t.Load()
+}
+
+func (ctx *Context) IsPinned() bool {
+	return ctx.p.Load()
 }
 
 func (ctx *Context) ForceRender() {
@@ -137,20 +136,20 @@ func (ctx *Context) ChangeTheme(t string) {
 	ctx.Unlock()
 }
 
-func (ctx *Context) TogglePinned() {
-	ctx.p.Store(!ctx.p.Load())
-}
-
-func (ctx *Context) ToggleFollow() {
-	ctx.t.Store(!ctx.t.Load())
-}
-
 func (ctx *Context) ToggleNumbers() {
 	ctx.n.Store(!ctx.n.Load())
 }
 
 func (ctx *Context) ToggleWrap() {
 	ctx.w.Store(!ctx.w.Load())
+}
+
+func (ctx *Context) ToggleFollow() {
+	ctx.t.Store(!ctx.t.Load())
+}
+
+func (ctx *Context) TogglePinned() {
+	ctx.p.Store(!ctx.p.Load())
 }
 
 func (ctx *Context) Background(fn func()) {
@@ -161,13 +160,13 @@ func (ctx *Context) Background(fn func()) {
 }
 
 func (ctx *Context) Save() {
-	cfg := viper.GetViper()
+	cfg := config.Get()
 
 	cfg.Set("ai.model", ctx.Model())
 	cfg.Set("ui.theme", ctx.Theme())
-	cfg.Set("ui.state.t", ctx.IsFollow())
 	cfg.Set("ui.state.n", ctx.IsNumbers())
 	cfg.Set("ui.state.w", ctx.IsWrap())
+	cfg.Set("ui.state.t", ctx.IsFollow())
 
 	if !flags.Get().Opt.Readonly {
 		config.Save()

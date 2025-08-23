@@ -1,9 +1,9 @@
-# Available model names ("" to disable):
+# Available model names:
 #
 #  https://ollama.com/library
 #
 [ai]
-model = 'mistral'
+model = '' # Disabled
 num_ctx = 4096
 seed = 8211
 temp = '0.2'
@@ -29,54 +29,9 @@ topp = '0.5'
 #  Monochrome
 #
 [ui]
-theme = 'Examiner-Dark'
+theme = 'examiner-dark'
 
 [ui.state]
 n = true
 t = false
 w = false
-
-[theme.custom]
-
-# Theme name
-name = "Custom"
-
-# Basic text area
-base.fg = 0x000000
-base.bg = 0x000000
-
-# Top and bottom lines
-surface0.fg = 0x000000
-surface0.bg = 0x000000
-
-# Informational areas
-surface1.fg = 0x000000
-surface1.bg = 0x000000
-
-# Filename
-surface2.fg = 0x000000
-surface2.bg = 0x000000
-
-# Mode indicator
-surface3.fg = 0x000000
-surface3.bg = 0x000000
-
-# Error messages
-overlay0.fg = 0x000000
-overlay0.bg = 0x000000
-
-# Status messages
-overlay1.fg = 0x000000
-overlay1.bg = 0x000000
-
-# Line numbers and file offsets
-subtext0.fg = 0x000000
-subtext0.bg = 0x000000
-
-# Vertical liness
-subtext1.fg = 0x000000
-subtext1.bg = 0x000000
-
-# Text highlights
-subtext2.fg = 0x000000
-subtext2.bg = 0x000000
