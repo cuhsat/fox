@@ -11,7 +11,6 @@ indent_size = 4
 
 [{Makefile,*.go,.gitmodules}]
 indent_style = tab
-indent_size = 4
 
 [go.{mod,work,work.sum,sum}]
 charset = unset
@@ -23,5 +22,3 @@ indent_size = unset
 
 [*.md]
 trim_trailing_whitespace = false
-
-eclint_indent_style = unset

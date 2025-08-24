@@ -28,14 +28,15 @@ func Load(flg *pflag.FlagSet) {
 	cfg.AddConfigPath("$HOME")
 
 	// setup command line flags
-	cfg.BindPFlag("ai.model", flg.Lookup("model"))
-	cfg.BindPFlag("ai.num_ctx", flg.Lookup("num-ctx"))
-	cfg.BindPFlag("ai.temp", flg.Lookup("temp"))
-	cfg.BindPFlag("ai.topp", flg.Lookup("topp"))
-	cfg.BindPFlag("ai.topk", flg.Lookup("topk"))
-	cfg.BindPFlag("ai.seed", flg.Lookup("seed"))
+	_ = cfg.BindPFlag("ai.model", flg.Lookup("model"))
+	_ = cfg.BindPFlag("ai.num_ctx", flg.Lookup("num-ctx"))
+	_ = cfg.BindPFlag("ai.temp", flg.Lookup("temp"))
+	_ = cfg.BindPFlag("ai.topp", flg.Lookup("topp"))
+	_ = cfg.BindPFlag("ai.topk", flg.Lookup("topk"))
+	_ = cfg.BindPFlag("ai.seed", flg.Lookup("seed"))
+	_ = cfg.BindPFlag("ui.theme", flg.Lookup("theme"))
 
-	cfg.BindPFlag("ui.theme", flg.Lookup("theme"))
+	// setup defaults
 	cfg.SetDefault("ui.state.n", true)
 	cfg.SetDefault("ui.state.w", false)
 	cfg.SetDefault("ui.state.t", false)
@@ -51,7 +52,7 @@ func Load(flg *pflag.FlagSet) {
 		var e viper.ConfigFileNotFoundError
 
 		if errors.Is(err, &e) {
-			cfg.ReadConfig(strings.NewReader(configs.Config))
+			_ = cfg.ReadConfig(strings.NewReader(configs.Config))
 		} else {
 			sys.Panic(err)
 		}
