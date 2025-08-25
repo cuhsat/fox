@@ -34,10 +34,10 @@ func (v *View) hexRender(p *panel) {
 		v.print(p.X+0, y, line.Nr, themes.Subtext0)
 
 		// print hex values
-		v.print(p.X+11, y, line.Hex, themes.Base)
+		v.print(p.X+11, y, line.Hex, themes.Terminal)
 
 		// print text value
-		v.print(p.X+62, y, line.Str, themes.Base)
+		v.print(p.X+62, y, line.Str, themes.Terminal)
 
 		// print separators on top
 		v.print(p.X+9, y, "│", themes.Subtext1)
@@ -59,6 +59,6 @@ func (v *View) hexRender(p *panel) {
 		}
 
 		// vertical scrollbar
-		v.ctx.Root.SetContent(p.W-1, p.Y+scrollY, '│', nil, themes.Base)
+		v.ctx.Root.SetContent(p.W-1, p.Y+scrollY, '│', nil, themes.Terminal)
 	}
 }

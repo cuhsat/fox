@@ -72,7 +72,7 @@ func (v *View) textRender(p *panel) {
 			if agent && strings.HasPrefix(line.Str, text.PS1) {
 				color = themes.Subtext2
 			} else {
-				color = themes.Base
+				color = themes.Terminal
 			}
 
 			v.print(lineX, lineY, line.Str, color)
@@ -122,11 +122,11 @@ func (v *View) textRender(p *panel) {
 		v.ctx.Root.SetContent(x+w, y+h, '┘', nil, themes.Subtext1)
 
 		// horizontal scrollbar
-		v.ctx.Root.SetContent(x+scrollX+0, y+h, '─', nil, themes.Base)
-		v.ctx.Root.SetContent(x+scrollX+1, y+h, '─', nil, themes.Base)
+		v.ctx.Root.SetContent(x+scrollX+0, y+h, '─', nil, themes.Terminal)
+		v.ctx.Root.SetContent(x+scrollX+1, y+h, '─', nil, themes.Terminal)
 
 		// vertical scrollbar
-		v.ctx.Root.SetContent(x+w, y+scrollY, '│', nil, themes.Base)
+		v.ctx.Root.SetContent(x+w, y+scrollY, '│', nil, themes.Terminal)
 	}
 }
 

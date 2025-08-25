@@ -4,29 +4,23 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type Themes struct {
-	Themes map[string]Theme `mapstructure:"Theme"`
-}
-
-type Theme struct {
-	Name     string
-	Base     Style
-	Surface0 Style
-	Surface1 Style
-	Surface2 Style
-	Surface3 Style
-	Overlay0 Style
-	Overlay1 Style
-	Subtext0 Style
-	Subtext1 Style
-	Subtext2 Style
-}
-
-type Style struct {
-	Fg int32
-	Bg int32
+	Themes map[string]struct {
+		Name     string
+		Terminal [2]int32
+		Surface0 [2]int32
+		Surface1 [2]int32
+		Surface2 [2]int32
+		Surface3 [2]int32
+		Overlay0 [2]int32
+		Overlay1 [2]int32
+		Subtext0 [2]int32
+		Subtext1 [2]int32
+		Subtext2 [2]int32
+	} `mapstructure:"Theme"`
 }
 
 func New() *Themes {
@@ -34,18 +28,11 @@ func New() *Themes {
 
 	cfg := viper.New()
 
-	cfg.AddConfigPath("$HOME/.config/fox")
-	cfg.SetConfigName("themes")
-	cfg.SetConfigType("toml")
-	cfg.SetConfigPermissions(0600)
-
-	err := cfg.ReadInConfig()
-
-	if err != nil {
+	if !user.LoadConfig(cfg, "themes") {
 		return nil
 	}
 
-	err = cfg.Unmarshal(ts)
+	err := cfg.Unmarshal(ts)
 
 	if err != nil {
 		sys.Error(err)

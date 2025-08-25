@@ -106,7 +106,7 @@ func create() *UI {
 	}
 
 	root.SetCursorStyle(widgets.Cursor, themes.Cursor)
-	root.SetStyle(themes.Base)
+	root.SetStyle(themes.Terminal)
 	root.Sync()
 
 	ui.render(nil)
@@ -323,7 +323,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					}
 
 					go p.Execute(heap.Path, heap.Base, func(path, base, dir string) {
-						name := fmt.Sprintf("%s • %s", base, p.Name)
+						name := fmt.Sprintf("%s — %s", base, p.Name)
 
 						if len(dir) > 0 {
 							hs.Open(dir)
@@ -402,7 +402,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				case tcell.KeyCtrlCarat:
 					ui.ctx.ChangeTheme(ui.themes.Cycle())
 
-					ui.root.Fill(' ', themes.Base)
+					ui.root.Fill(' ', themes.Terminal)
 					ui.root.Show()
 					ui.root.SetCursorStyle(widgets.Cursor, themes.Cursor)
 
@@ -651,11 +651,11 @@ func (ui *UI) render(hs *heapset.HeapSet) {
 			ui.root.Sync() // prevent hiccups
 		}
 
-		title = fmt.Sprintf("%s • %s", title, heap)
+		title = fmt.Sprintf("%s — %s", title, heap)
 	}
 
 	ui.root.SetTitle(title)
-	ui.root.SetStyle(themes.Base)
+	ui.root.SetStyle(themes.Terminal)
 	ui.root.Clear()
 
 	x, y := 0, 0

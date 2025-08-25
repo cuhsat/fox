@@ -15,7 +15,7 @@ const (
 
 var (
 	Cursor   tcell.Color
-	Base     tcell.Style
+	Terminal tcell.Style
 	Surface0 tcell.Style
 	Surface1 tcell.Style
 	Surface2 tcell.Style
@@ -39,7 +39,7 @@ func New(name string) *Themes {
 	t := Themes{
 		palettes: map[string]palette{
 			"Examiner-Dark": {
-				0x777777, 0x111111, // Base
+				0x777777, 0x111111, // Terminal
 				0x333333, 0x333333, // Surface0
 				0xeeeeee, 0x333333, // Surface1
 				0xeeeeee, 0x333333, // Surface2
@@ -52,7 +52,7 @@ func New(name string) *Themes {
 			},
 
 			"Examiner-Light": {
-				0x888888, 0xeeeeee, // Base
+				0x888888, 0xeeeeee, // Terminal
 				0xcccccc, 0xcccccc, // Surface0
 				0x111111, 0xcccccc, // Surface1
 				0x111111, 0xcccccc, // Surface2
@@ -65,7 +65,7 @@ func New(name string) *Themes {
 			},
 
 			"Catppuccin-Latte": {
-				0x4c4f69, 0xeff1f5, // Base
+				0x4c4f69, 0xeff1f5, // Terminal
 				0xacb0be, 0xccd0da, // Surface0
 				0x4c4f69, 0xbcc0cc, // Surface1
 				0x4c4f69, 0xccd0da, // Surface2
@@ -78,7 +78,7 @@ func New(name string) *Themes {
 			},
 
 			"Catppuccin-Frappe": {
-				0xa5adce, 0x303446, // Base
+				0xa5adce, 0x303446, // Terminal
 				0x626880, 0x414559, // Surface0
 				0xc6d0f5, 0x51576d, // Surface1
 				0xc6d0f5, 0x414559, // Surface2
@@ -91,7 +91,7 @@ func New(name string) *Themes {
 			},
 
 			"Catppuccin-Macchiato": {
-				0xa5adcb, 0x24273a, // Base
+				0xa5adcb, 0x24273a, // Terminal
 				0x5b6078, 0x363a4f, // Surface0
 				0xcad3f5, 0x494d64, // Surface1
 				0xcad3f5, 0x363a4f, // Surface2
@@ -104,7 +104,7 @@ func New(name string) *Themes {
 			},
 
 			"Catppuccin-Mocha": {
-				0xa6adc8, 0x1e1e2e, // Base
+				0xa6adc8, 0x1e1e2e, // Terminal
 				0x585b70, 0x313244, // Surface0
 				0xcdd6f4, 0x45475a, // Surface1
 				0xcdd6f4, 0x313244, // Surface2
@@ -117,7 +117,7 @@ func New(name string) *Themes {
 			},
 
 			"Solarized-Dark": {
-				0x93a1a1, 0x002b36, // Base
+				0x93a1a1, 0x002b36, // Terminal
 				0x073642, 0x073642, // Surface0
 				0xfdf6e3, 0x073642, // Surface1
 				0xfdf6e3, 0x073642, // Surface2
@@ -130,7 +130,7 @@ func New(name string) *Themes {
 			},
 
 			"Solarized-Light": {
-				0x586e75, 0xfdf6e3, // Base
+				0x586e75, 0xfdf6e3, // Terminal
 				0xeee8d5, 0xeee8d5, // Surface0
 				0x002b36, 0xeee8d5, // Surface1
 				0x002b36, 0xeee8d5, // Surface2
@@ -143,7 +143,7 @@ func New(name string) *Themes {
 			},
 
 			"VSCode-Dark": {
-				0xdee1e6, 0x282828, // Base
+				0xdee1e6, 0x282828, // Terminal
 				0xdee1e6, 0x313131, // Surface0
 				0xdee1e6, 0x444444, // Surface1
 				0xdee1e6, 0x313131, // Surface2
@@ -156,7 +156,7 @@ func New(name string) *Themes {
 			},
 
 			"VSCode-Light": {
-				0x343434, 0xe7e7e7, // Base
+				0x343434, 0xe7e7e7, // Terminal
 				0x343434, 0xdfdfdf, // Surface0
 				0x343434, 0xcfcfcf, // Surface1
 				0x343434, 0xdfdfdf, // Surface2
@@ -169,7 +169,7 @@ func New(name string) *Themes {
 			},
 
 			"Monokai": {
-				0x7f8490, 0x222327, // Base
+				0x7f8490, 0x222327, // Terminal
 				0x595f6f, 0x2c2e34, // Surface0
 				0xe2e2e3, 0x414550, // Surface1
 				0xe2e2e3, 0x2c2e34, // Surface2
@@ -182,7 +182,7 @@ func New(name string) *Themes {
 			},
 
 			"Darcula": {
-				0x727272, 0x2b2b2b, // Base
+				0x727272, 0x2b2b2b, // Terminal
 				0x393939, 0x393939, // Surface0
 				0x727272, 0x393939, // Surface1
 				0x727272, 0x393939, // Surface2
@@ -195,7 +195,7 @@ func New(name string) *Themes {
 			},
 
 			"Nord": {
-				0xd8dee9, 0x2e3440, // Base
+				0xd8dee9, 0x2e3440, // Terminal
 				0xeceff4, 0x3b4252, // Surface0
 				0xeceff4, 0x4c566a, // Surface1
 				0xeceff4, 0x3b4252, // Surface2
@@ -208,7 +208,7 @@ func New(name string) *Themes {
 			},
 
 			"Matrix": {
-				0x008f11, 0x0d0208, // Base
+				0x008f11, 0x0d0208, // Terminal
 				0x003b00, 0x0d0208, // Surface0
 				0x00ff41, 0x0d0208, // Surface1
 				0x00ff41, 0x0d0208, // Surface2
@@ -221,7 +221,7 @@ func New(name string) *Themes {
 			},
 
 			"Monochrome": {
-				0xffffff, 0x000000, // Base
+				0xffffff, 0x000000, // Terminal
 				0xffffff, 0x000000, // Surface0
 				0xffffff, 0x000000, // Surface1
 				0xffffff, 0x000000, // Surface2
@@ -260,16 +260,16 @@ func New(name string) *Themes {
 			t.names = append(t.names, tt.Name)
 
 			t.palettes[tt.Name] = palette{
-				tt.Base.Fg, tt.Base.Bg,
-				tt.Surface0.Fg, tt.Surface0.Bg,
-				tt.Surface1.Fg, tt.Surface1.Bg,
-				tt.Surface2.Fg, tt.Surface2.Bg,
-				tt.Surface3.Fg, tt.Surface3.Bg,
-				tt.Overlay0.Fg, tt.Overlay0.Bg,
-				tt.Overlay1.Fg, tt.Overlay1.Bg,
-				tt.Subtext0.Fg, tt.Subtext0.Bg,
-				tt.Subtext1.Fg, tt.Subtext1.Bg,
-				tt.Subtext2.Fg, tt.Subtext2.Bg,
+				tt.Terminal[0], tt.Terminal[1],
+				tt.Surface0[0], tt.Surface0[1],
+				tt.Surface1[0], tt.Surface1[1],
+				tt.Surface2[0], tt.Surface2[1],
+				tt.Surface3[0], tt.Surface3[1],
+				tt.Overlay0[0], tt.Overlay0[1],
+				tt.Overlay1[0], tt.Overlay1[1],
+				tt.Subtext0[0], tt.Subtext0[1],
+				tt.Subtext1[0], tt.Subtext1[1],
+				tt.Subtext2[0], tt.Subtext2[1],
 			}
 		}
 	}
@@ -314,7 +314,7 @@ func (t *Themes) Load(name string) {
 
 	Cursor = tcell.NewHexColor(p[4])
 
-	Base = newStyle(p[0], p[1])
+	Terminal = newStyle(p[0], p[1])
 	Surface0 = newStyle(p[2], p[3])
 	Surface1 = newStyle(p[4], p[5])
 	Surface2 = newStyle(p[6], p[7])

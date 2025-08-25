@@ -8,8 +8,8 @@ import (
 
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai"
-	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
 type LLM struct {
@@ -33,18 +33,18 @@ func New() *LLM {
 func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
 	llm.AddUser(fmt.Sprintf(app.Prompt, query, lines))
 
-	flg := flags.Get().AI
+	cfg := config.Get()
 	ctx := context.Background()
 	req := &api.ChatRequest{
 		Model:     ai.Model,
 		KeepAlive: ai.Alive,
 		Messages:  llm.history,
 		Options: map[string]any{
-			"num_ctx":     flg.NumCtx,
-			"temperature": flg.Temp,
-			"seed":        flg.Seed,
-			"top_k":       flg.TopK,
-			"top_p":       flg.TopP,
+			"num_ctx":     cfg.GetInt("num_ctx"),
+			"temperature": cfg.GetFloat64("temp"),
+			"seed":        cfg.GetInt("seed"),
+			"top_k":       cfg.GetInt("top_k"),
+			"top_p":       cfg.GetFloat64("top_p"),
 		},
 	}
 

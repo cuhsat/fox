@@ -204,7 +204,7 @@ func (l *Loader) addItem(path, base, name string) {
 
 func (l *Loader) addPlugin(path, base, name string) {
 	l.entries = append(l.entries, Entry{
-		fmt.Sprintf("%s • %s", base, name),
+		fmt.Sprintf("%s — %s", base, name),
 		path,
 		base,
 		types.Plugin,

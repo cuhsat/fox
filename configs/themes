@@ -13,33 +13,13 @@
 #
 [theme.custom]
 name = 'custom'
-
-base.fg = 0xFFFFFF
-base.bg = 0x000000
-
-surface0.fg = 0xFFFFFF
-surface0.bg = 0x000000
-
-surface1.fg = 0xFFFFFF
-surface1.bg = 0x000000
-
-surface2.fg = 0xFFFFFF
-surface2.bg = 0x000000
-
-surface3.fg = 0xFFFFFF
-surface3.bg = 0x000000
-
-overlay0.fg = 0xFFFFFF
-overlay0.bg = 0x000000
-
-overlay1.fg = 0xFFFFFF
-overlay1.bg = 0x000000
-
-subtext0.fg = 0xFFFFFF
-subtext0.bg = 0x000000
-
-subtext1.fg = 0xFFFFFF
-subtext1.bg = 0x000000
-
-subtext2.fg = 0xFFFFFF
-subtext2.bg = 0x000000
+terminal = [ 0xFFFFFF, 0x000000 ]
+surface0 = [ 0xFFFFFF, 0x000000 ]
+surface1 = [ 0xFFFFFF, 0x000000 ]
+surface2 = [ 0xFFFFFF, 0x000000 ]
+surface3 = [ 0xFFFFFF, 0x000000 ]
+overlay0 = [ 0xFFFFFF, 0x000000 ]
+overlay1 = [ 0xFFFFFF, 0x000000 ]
+subtext0 = [ 0xFFFFFF, 0x000000 ]
+subtext1 = [ 0xFFFFFF, 0x000000 ]
+subtext2 = [ 0xFFFFFF, 0x000000 ]

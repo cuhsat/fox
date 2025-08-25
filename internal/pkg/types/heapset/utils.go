@@ -59,6 +59,10 @@ func (hs *HeapSet) Merge() bool {
 	return true
 }
 
+func (hs *HeapSet) Sort() bool {
+	return true
+}
+
 func (hs *HeapSet) Counts() {
 	hs.newUtil("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())

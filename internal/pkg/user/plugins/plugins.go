@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 var Input chan string
@@ -35,18 +36,11 @@ func New() *Plugins {
 
 	cfg := viper.New()
 
-	cfg.AddConfigPath("$HOME/.config/fox")
-	cfg.SetConfigName("plugins")
-	cfg.SetConfigType("toml")
-	cfg.SetConfigPermissions(0600)
-
-	err := cfg.ReadInConfig()
-
-	if err != nil {
+	if !user.LoadConfig(cfg, "plugins") {
 		return nil
 	}
 
-	err = cfg.Unmarshal(ps)
+	err := cfg.Unmarshal(ps)
 
 	if err != nil {
 		sys.Error(err)

@@ -3,6 +3,7 @@ package bag
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"hash"
 	"os"
@@ -21,7 +22,7 @@ type Bag struct {
 	Mode flags.BagMode // bag mode
 
 	file *os.File // file handle
-	key  string   // sign phrase
+	key  string   // key phrase
 	url  string   // url address
 	ws   []writer // writers
 }
@@ -49,43 +50,45 @@ type meta struct {
 func New() *Bag {
 	var ws []writer
 
-	bag := flags.Get().Bag
+	flg := flags.Get().Bag
 
-	if len(bag.Path) == 0 {
-		bag.Path = flags.BagName
+	path := flg.Path
+
+	if len(path) == 0 {
+		path = flags.BagName
 	}
 
-	switch bag.Mode {
+	switch flg.Mode {
 	case flags.BagModeNone:
 	case flags.BagModeSqlite:
 		ws = append(ws, NewSqliteWriter())
-		bag.Path += ".sqlite3"
+		path += ".sqlite3"
 	case flags.BagModeJsonl:
 		ws = append(ws, NewJsonWriter(false))
-		bag.Path += ".jsonl"
+		path += ".jsonl"
 	case flags.BagModeJson:
 		ws = append(ws, NewJsonWriter(true))
-		bag.Path += ".json"
+		path += ".json"
 	case flags.BagModeXml:
 		ws = append(ws, NewXmlWriter())
-		bag.Path += ".xml"
+		path += ".xml"
 	case flags.BagModeText:
 		ws = append(ws, NewTextWriter())
-		bag.Path += ".bag"
+		path += ".bag"
 	default:
 		ws = append(ws, NewRawWriter())
-		bag.Path += ".txt"
+		path += ".txt"
 	}
 
-	if len(bag.Url) > 0 {
-		ws = append(ws, NewEcsWriter(bag.Url))
+	if len(flg.Url) > 0 {
+		ws = append(ws, NewEcsWriter(flg.Url))
 	}
 
 	return &Bag{
-		Path: bag.Path,
-		Mode: bag.Mode,
-		key:  bag.Sign,
-		url:  bag.Url,
+		Path: path,
+		Mode: flg.Mode,
+		key:  flg.Key,
+		url:  flg.Url,
 		file: nil,
 		ws:   ws,
 	}
@@ -150,7 +153,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		w.Flush()
 	}
 
-	if bag.file != nil && len(bag.key) > 0 {
+	if bag.file != nil {
 		bag.sign()
 	}
 
@@ -180,14 +183,11 @@ func (bag *Bag) init() {
 
 func (bag *Bag) sign() {
 	var imp hash.Hash
-	var ext string
 
-	if len(bag.key) > 0 && bag.key != "-" {
+	if len(bag.key) > 0 {
 		imp = hmac.New(sha256.New, []byte(bag.key))
-		ext = ".hmac-sha256"
 	} else {
 		imp = sha256.New()
-		ext = ".sha256"
 	}
 
 	buf, err := os.ReadFile(bag.Path)
@@ -199,9 +199,9 @@ func (bag *Bag) sign() {
 
 	imp.Write(buf)
 
-	sum := fmt.Appendf(nil, "%x  %s\n", imp.Sum(nil), bag.Path)
+	sum := base64.StdEncoding.EncodeToString(imp.Sum(nil))
 
-	err = os.WriteFile(bag.Path+ext, sum, 0600)
+	err = os.WriteFile(bag.Path+".sig", []byte(sum), 0600)
 
 	if err != nil {
 		sys.Error(err)
