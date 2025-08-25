@@ -1,7 +1,10 @@
 package bag
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"fmt"
+	"hash"
 	"os"
 	"os/user"
 	"time"
@@ -11,7 +14,6 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
-	file "github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type Bag struct {
@@ -19,7 +21,7 @@ type Bag struct {
 	Mode flags.BagMode // bag mode
 
 	file *os.File // file handle
-	sign string   // sign phrase
+	key  string   // sign phrase
 	url  string   // url address
 	ws   []writer // writers
 }
@@ -82,7 +84,7 @@ func New() *Bag {
 	return &Bag{
 		Path: bag.Path,
 		Mode: bag.Mode,
-		sign: bag.Sign,
+		key:  bag.Sign,
 		url:  bag.Url,
 		file: nil,
 		ws:   ws,
@@ -94,6 +96,12 @@ func (bag *Bag) String() string {
 		return bag.Path
 	} else {
 		return bag.url
+	}
+}
+
+func (bag *Bag) Close() {
+	if bag.file != nil {
+		_ = bag.file.Close()
 	}
 }
 
@@ -142,17 +150,11 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		w.Flush()
 	}
 
-	if bag.file != nil && len(bag.sign) > 0 {
-		file.Sign(bag.Path, bag.sign)
+	if bag.file != nil && len(bag.key) > 0 {
+		bag.sign()
 	}
 
 	return len(bag.ws) > 0
-}
-
-func (bag *Bag) Close() {
-	if bag.file != nil {
-		_ = bag.file.Close()
-	}
 }
 
 func (bag *Bag) init() {
@@ -174,6 +176,38 @@ func (bag *Bag) init() {
 	for _, w := range bag.ws {
 		w.Init(bag.file, old, title)
 	}
+}
+
+func (bag *Bag) sign() {
+	var imp hash.Hash
+	var ext string
+
+	if len(bag.key) > 0 && bag.key != "-" {
+		imp = hmac.New(sha256.New, []byte(bag.key))
+		ext = ".hmac-sha256"
+	} else {
+		imp = sha256.New()
+		ext = ".sha256"
+	}
+
+	buf, err := os.ReadFile(bag.Path)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	imp.Write(buf)
+
+	sum := fmt.Appendf(nil, "%x  %s\n", imp.Sum(nil), bag.Path)
+
+	err = os.WriteFile(bag.Path+ext, sum, 0600)
+
+	if err != nil {
+		sys.Error(err)
+	}
+
+	return
 }
 
 func utc(t time.Time) string {

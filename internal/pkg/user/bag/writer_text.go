@@ -32,7 +32,7 @@ func (w *TextWrite) Start() {
 }
 
 func (w *TextWrite) Flush() {
-	w.write("%s\n", strings.Repeat("-", width))
+	//
 }
 
 func (w *TextWrite) WriteMeta(meta meta) {

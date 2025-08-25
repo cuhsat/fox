@@ -11,10 +11,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/user"
 )
-
-const Filename = ".fox_history"
 
 type History struct {
 	sync.RWMutex
@@ -31,8 +28,6 @@ func New() *History {
 		lines: make([]string, 0),
 	}
 
-	_, p := user.File(Filename)
-
 	var m int
 
 	if !flags.Get().Opt.Readonly {
@@ -41,7 +36,7 @@ func New() *History {
 		m = os.O_RDONLY
 	}
 
-	h.file, err = os.OpenFile(p, m, 0600)
+	h.file, err = os.OpenFile(sys.Config("history"), m, 0600)
 
 	if err != nil {
 		sys.Error(err)

@@ -5,15 +5,15 @@ import (
 )
 
 var (
-	//go:embed fox_history
+	//go:embed foxrc
+	Default string
+
+	//go:embed history
 	History string
 
-	//go:embed fox_plugins
+	//go:embed plugins
 	Plugins string
 
-	//go:embed fox_themes
+	//go:embed themes
 	Themes string
-
-	//go:embed foxrc
-	Config string
 )

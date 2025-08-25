@@ -9,22 +9,16 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 
 	mem "github.com/cuhsat/memfile"
 
 	"github.com/cuhsat/fox/internal/app"
-	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
-const (
-	Dump = ".fox_dump"
-)
-
-var (
-	files = make(map[string]*mem.File)
-)
+var fs = make(map[string]*mem.File)
 
 type File = mem.Fileable
 
@@ -134,7 +128,7 @@ func Piped(file File) bool {
 }
 
 func Open(name string) File {
-	vtl, ok := files[name]
+	vtl, ok := fs[name]
 
 	if ok {
 		vtl.Seek(0, io.SeekStart)
@@ -155,33 +149,13 @@ func Create(name string) File {
 	uniq := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
 	file := mem.New(uniq)
 
-	files[uniq] = file
+	fs[uniq] = file
 
 	return file
 }
 
-func TempFile() File {
-	tmp, err := os.CreateTemp("", "fox-*")
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return tmp
-}
-
-func TempDir() string {
-	tmp, err := os.MkdirTemp("", "fox-*")
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return tmp
-}
-
 func Exists(name string) bool {
-	_, ok := files[name]
+	_, ok := fs[name]
 
 	if ok {
 		return true
@@ -193,15 +167,19 @@ func Exists(name string) bool {
 }
 
 func Persist(name string) string {
-	f, ok := files[name]
+	f, ok := fs[name]
 
 	if !ok {
 		return name // already persistent
 	}
 
-	t := TempFile()
+	t, err := os.CreateTemp(Cache(), "fox-*")
 
-	_, err := f.WriteTo(t)
+	if err != nil {
+		Panic(err)
+	}
+
+	_, err = f.WriteTo(t)
 
 	if err != nil {
 		Panic(err)
@@ -210,16 +188,30 @@ func Persist(name string) string {
 	return t.Name()
 }
 
-func Trace(err any, stack any) {
-	if !flags.Get().Opt.Readonly {
-		return // prevent dump
-	}
-
-	s := fmt.Sprintf("%+v\n\n%s", err, stack)
-
-	err = os.WriteFile(Dump, []byte(s), 0600)
+func Config(name string) string {
+	dir, err := os.UserHomeDir()
 
 	if err != nil {
-		Exit(err)
+		Panic(err)
 	}
+
+	return filepath.Join(dir, ".config", "fox", name)
+}
+
+func Cache() string {
+	dir, err := os.UserHomeDir()
+
+	if err != nil {
+		Panic(err)
+	}
+
+	tmp := filepath.Join(dir, ".cache", "fox")
+
+	err = os.MkdirAll(tmp, 0700)
+
+	if err != nil {
+		Panic(err)
+	}
+
+	return tmp
 }

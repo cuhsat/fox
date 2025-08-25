@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"os"
 	"regexp"
 	"strings"
 
@@ -8,8 +9,6 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
-
-const Filename = ".fox_plugins"
 
 var Input chan string
 
@@ -36,9 +35,10 @@ func New() *Plugins {
 
 	cfg := viper.New()
 
-	cfg.SetConfigName(Filename)
+	cfg.AddConfigPath("$HOME/.config/fox")
+	cfg.SetConfigName("plugins")
 	cfg.SetConfigType("toml")
-	cfg.AddConfigPath("$HOME")
+	cfg.SetConfigPermissions(0600)
 
 	err := cfg.ReadInConfig()
 
@@ -92,7 +92,7 @@ func (p *Plugin) Execute(file, base string, fn Callback) {
 	// create temp dir if necessary
 	for _, cmd := range p.Exec {
 		if strings.Contains(cmd, "$TEMP") {
-			temp = sys.TempDir()
+			temp, _ = os.MkdirTemp(sys.Cache(), "plugin-*")
 			break
 		}
 	}

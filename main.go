@@ -1,28 +1,30 @@
 // The Swiss Army Knife for examining text files.
+//
+// Copyright 2025 Christian Uhsat. All rights reserved.
+// Use of this source code is governed by the GPL-3.0
+// license that can be found in the LICENSE.md file.
+//
+// For more information, please consult:
+//
+//	https://github.com/cuhsat/fox
 package main
 
 import (
-	"os"
 	"runtime/debug"
 
 	"github.com/cuhsat/fox/internal/cmd"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
-// Start fox.
+// Main start and catch.
 func main() {
-	sys.Setup()
-
 	defer func() {
 		if err := recover(); err != nil {
 			sys.Trace(err, debug.Stack())
-			sys.Print(err)
 		}
-
-		sys.Log.Close()
 	}()
 
-	_ = os.Remove(sys.Dump)
+	sys.Setup()
 
 	_ = cmd.Execute()
 }

@@ -7,17 +7,9 @@ import (
 	"time"
 )
 
-const (
-	Prefix = "fox:"
-)
+const Prefix = "fox:"
 
-var (
-	Log *logger // global logger
-)
-
-type logger struct {
-	f File // log file handle
-}
+var Log *logger
 
 func Setup() {
 	Log = &logger{f: Stderr()}
@@ -25,12 +17,12 @@ func Setup() {
 	log.SetOutput(Log)
 }
 
-func (l logger) Name() string {
-	return l.f.Name()
+type logger struct {
+	f File // log file handle
 }
 
-func (l logger) Close() {
-	_ = l.f.Close()
+func (l logger) Name() string {
+	return l.f.Name()
 }
 
 func (l logger) Write(b []byte) (int, error) {
@@ -41,12 +33,16 @@ func (l logger) Write(b []byte) (int, error) {
 	return fmt.Fprintf(l.f, "[%s] %s", ts, string(b))
 }
 
-func Print(v ...any) {
-	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %s", v...))
+func Trace(v any, stack any) {
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %+v\n\n%s", v, stack))
 }
 
 func Debug(v ...any) {
-	_, _ = fmt.Fprintln(os.Stdout, fmt.Sprintf(Prefix+" %#v", v...))
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %#v", v...))
+}
+
+func Print(v ...any) {
+	_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf(Prefix+" %s", v...))
 }
 
 func Error(v ...any) {

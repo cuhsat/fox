@@ -6,8 +6,6 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
-const Filename = ".fox_themes"
-
 type Themes struct {
 	Themes map[string]Theme `mapstructure:"Theme"`
 }
@@ -36,9 +34,10 @@ func New() *Themes {
 
 	cfg := viper.New()
 
-	cfg.SetConfigName(Filename)
+	cfg.AddConfigPath("$HOME/.config/fox")
+	cfg.SetConfigName("themes")
 	cfg.SetConfigType("toml")
-	cfg.AddConfigPath("$HOME")
+	cfg.SetConfigPermissions(0600)
 
 	err := cfg.ReadInConfig()
 

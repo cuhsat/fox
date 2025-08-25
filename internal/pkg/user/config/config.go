@@ -1,7 +1,8 @@
 package config
 
 import (
-	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/pflag"
@@ -9,10 +10,7 @@ import (
 
 	"github.com/cuhsat/fox/configs"
 	"github.com/cuhsat/fox/internal/pkg/sys"
-	"github.com/cuhsat/fox/internal/pkg/user"
 )
-
-const Filename = ".foxrc"
 
 func Get() *viper.Viper {
 	return viper.GetViper()
@@ -20,12 +18,6 @@ func Get() *viper.Viper {
 
 func Load(flg *pflag.FlagSet) {
 	cfg := Get()
-
-	// setup config file
-	cfg.SetConfigPermissions(0600)
-	cfg.SetConfigName(Filename)
-	cfg.SetConfigType("toml")
-	cfg.AddConfigPath("$HOME")
 
 	// setup command line flags
 	_ = cfg.BindPFlag("ai.model", flg.Lookup("model"))
@@ -46,29 +38,30 @@ func Load(flg *pflag.FlagSet) {
 	cfg.SetEnvPrefix("FOX")
 	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	err := cfg.ReadInConfig()
+	// setup default config
+	_ = cfg.ReadConfig(strings.NewReader(configs.Default))
 
-	if err != nil {
-		var e viper.ConfigFileNotFoundError
+	// setup user config
+	cfg.AddConfigPath("$HOME/.config/fox")
+	cfg.SetConfigName("foxrc")
+	cfg.SetConfigType("toml")
+	cfg.SetConfigPermissions(0600)
 
-		if errors.Is(err, &e) {
-			_ = cfg.ReadConfig(strings.NewReader(configs.Config))
-		} else {
-			sys.Panic(err)
-		}
-	}
+	_ = cfg.MergeInConfig()
 }
 
 func Save() {
-	path := Get().ConfigFileUsed()
+	cfg := sys.Config("foxrc")
 
-	if len(path) == 0 {
-		_, path = user.File(Filename)
-	}
-
-	err := Get().WriteConfigAs(path)
+	err := os.MkdirAll(filepath.Dir(cfg), 0700)
 
 	if err != nil {
-		sys.Error(err)
+		sys.Exit(err)
+	}
+
+	err = Get().WriteConfigAs(cfg)
+
+	if err != nil {
+		sys.Exit(err)
 	}
 }
