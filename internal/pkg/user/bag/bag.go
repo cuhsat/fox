@@ -123,16 +123,6 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
-	mod := time.Time.UTC(time.Now())
-
-	fi, err := os.Stat(h.Base)
-
-	if err == nil {
-		mod = fi.ModTime()
-	} else {
-		sys.Error(err)
-	}
-
 	for _, w := range bag.ws {
 		w.Start()
 
@@ -142,8 +132,8 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 			size:     h.Len(),
 			hash:     sum,
 			filters:  h.Patterns(),
-			bagged:   time.Now(),
-			modified: mod,
+			bagged:   now(),
+			modified: mod(h),
 		})
 
 		for _, str := range *h.FMap() {
@@ -208,6 +198,26 @@ func (bag *Bag) sign() {
 	}
 
 	return
+}
+
+func now() time.Time {
+	return time.Now().UTC()
+}
+
+func mod(h *heap.Heap) time.Time {
+	mt := now()
+
+	if h.Type == types.Regular {
+		fi, err := os.Stat(h.Base)
+
+		if err == nil {
+			mt = fi.ModTime()
+		} else {
+			sys.Error(err)
+		}
+	}
+
+	return mt
 }
 
 func utc(t time.Time) string {
