@@ -60,7 +60,7 @@ func (hs *HeapSet) Merge() bool {
 }
 
 func (hs *HeapSet) Sort() bool {
-	return true
+	return true // TODO
 }
 
 func (hs *HeapSet) Counts() {

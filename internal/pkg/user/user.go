@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -35,7 +36,7 @@ func LoadConfig(cfg *viper.Viper, name string) bool {
 }
 
 func SaveConfig(cfg *viper.Viper, name string) bool {
-	path := sys.Config(name)
+	path := Config(name)
 
 	err := os.MkdirAll(filepath.Dir(path), 0700)
 
@@ -50,4 +51,70 @@ func SaveConfig(cfg *viper.Viper, name string) bool {
 	}
 
 	return true
+}
+
+func TempDir(prefix string) string {
+	tmp, err := os.MkdirTemp(Cache(), fmt.Sprintf("%s-*", prefix))
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	return tmp
+}
+
+func TempFile(prefix string) *os.File {
+	tmp, err := os.CreateTemp(Cache(), fmt.Sprintf("%s-*", prefix))
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	return tmp
+}
+
+func Persist(name string) string {
+	f, ok := sys.Memory(name)
+
+	if !ok {
+		return name // regular file
+	}
+
+	tmp := TempFile("fox")
+
+	_, err := tmp.WriteTo(f)
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	return f.Name()
+}
+
+func Config(name string) string {
+	dir, err := os.UserHomeDir()
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	return filepath.Join(dir, ".config", "fox", name)
+}
+
+func Cache() string {
+	dir, err := os.UserHomeDir()
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	tmp := filepath.Join(dir, ".cache", "fox")
+
+	err = os.MkdirAll(tmp, 0700)
+
+	if err != nil {
+		sys.Panic(err)
+	}
+
+	return tmp
 }

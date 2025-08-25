@@ -11,6 +11,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/user"
 )
 
 type History struct {
@@ -36,7 +37,7 @@ func New() *History {
 		m = os.O_RDONLY
 	}
 
-	h.file, err = os.OpenFile(sys.Config("history"), m, 0600)
+	h.file, err = os.OpenFile(user.Config("history"), m, 0600)
 
 	if err != nil {
 		sys.Error(err)

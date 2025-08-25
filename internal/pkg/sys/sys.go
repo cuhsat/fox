@@ -9,7 +9,6 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 
 	mem "github.com/cuhsat/memfile"
@@ -128,17 +127,17 @@ func Piped(file File) bool {
 }
 
 func Open(name string) File {
-	vtl, ok := fs[name]
+	mf, ok := fs[name]
 
 	if ok {
-		vtl.Seek(0, io.SeekStart)
-		return vtl // virtual file
+		mf.Seek(0, io.SeekStart)
+		return mf // memory file
 	}
 
-	reg, err := os.OpenFile(name, os.O_RDONLY, 0400)
+	rf, err := os.OpenFile(name, os.O_RDONLY, 0400)
 
 	if err == nil {
-		return reg // regular file
+		return rf // regular file
 	}
 
 	Panic(err)
@@ -166,52 +165,8 @@ func Exists(name string) bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-func Persist(name string) string {
+func Memory(name string) (File, bool) {
 	f, ok := fs[name]
 
-	if !ok {
-		return name // already persistent
-	}
-
-	t, err := os.CreateTemp(Cache(), "fox-*")
-
-	if err != nil {
-		Panic(err)
-	}
-
-	_, err = f.WriteTo(t)
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return t.Name()
-}
-
-func Config(name string) string {
-	dir, err := os.UserHomeDir()
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return filepath.Join(dir, ".config", "fox", name)
-}
-
-func Cache() string {
-	dir, err := os.UserHomeDir()
-
-	if err != nil {
-		Panic(err)
-	}
-
-	tmp := filepath.Join(dir, ".cache", "fox")
-
-	err = os.MkdirAll(tmp, 0700)
-
-	if err != nil {
-		Panic(err)
-	}
-
-	return tmp
+	return f, ok
 }

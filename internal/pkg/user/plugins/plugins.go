@@ -1,7 +1,6 @@
 package plugins
 
 import (
-	"os"
 	"regexp"
 	"strings"
 
@@ -86,15 +85,15 @@ func (p *Plugin) Execute(file, base string, fn Callback) {
 	// create temp dir if necessary
 	for _, cmd := range p.Exec {
 		if strings.Contains(cmd, "$TEMP") {
-			temp, _ = os.MkdirTemp(sys.Cache(), "plugin-*")
+			temp = user.TempDir("plugin")
 			break
 		}
 	}
 
 	// replace and persist
 	rep := strings.NewReplacer(
-		"$BASE", sys.Persist(base),
-		"$FILE", sys.Persist(file),
+		"$BASE", user.Persist(base),
+		"$FILE", user.Persist(file),
 		"$TEMP", temp,
 		"$INPUT", val,
 	)
