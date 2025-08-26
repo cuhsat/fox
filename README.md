@@ -18,6 +18,7 @@ go install github.com/cuhsat/fox@latest
 * Path matching and globbing
 * Unicode multi-byte support
 * [Bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) filtering
+* Timestamps are normalized to UTC
 * Build-in scroll past end ability
 * Build-in timestamped input history
 * Build-in regular expression filtering
@@ -38,7 +39,7 @@ go install github.com/cuhsat/fox@latest
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
 * Evidence bag formats: `raw`, `text`, `JSON`, `JSONL`, `XML`, `SQLite3`
 * Evidence bag chain of custody signing via `HMAC-SHA256`
-* Evidence streaming to server in [Elastic Common Schema 9.0](https://www.elastic.co/docs/reference/ecs)
+* Evidence streaming to server in [Elastic Common Schema 9.1](https://www.elastic.co/docs/reference/ecs)
 * Terminal interface compatible with many terminals
   * Support for copy and bracketed paste
   * Support for mouse scrolling

@@ -16,8 +16,9 @@ type Flags struct {
 
 	// evidence bag
 	Bag struct {
+		Case string
+		File string
 		Mode BagMode
-		Path string
 		Key  string
 		Url  string
 		No   bool

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -79,6 +80,7 @@ UI flags:
       --theme=THEME        sets the used UI theme
 
 Evidence:
+  -N  --case=NAME          evidence bag case name (default: YYYY-MM-DD)
   -f, --file=FILE          evidence bag file name (default: "evidence")
       --mode=MODE          evidence bag file mode (default: "raw")
                              NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
@@ -156,6 +158,10 @@ var Fox = &cobra.Command{
 		if flg.Opt.Readonly {
 			flg.Opt.NoPlugins = true
 			flg.Bag.No = true
+		}
+
+		if len(flg.Bag.Case) == 0 {
+			flg.Bag.Case = time.Now().Format("2006-01-02")
 		}
 
 		if flg.Bag.No {
@@ -258,7 +264,8 @@ func init() {
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", themes.Default, "sets the used UI theme")
 
-	Fox.Flags().StringVarP(&flg.Bag.Path, "file", "f", flags.BagName, "evidence bag file name")
+	Fox.Flags().StringVarP(&flg.Bag.Case, "case", "N", "", "evidence bag case name")
+	Fox.Flags().StringVarP(&flg.Bag.File, "file", "f", flags.BagFile, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "url to also send evidence data too")

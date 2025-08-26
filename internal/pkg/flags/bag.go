@@ -7,7 +7,7 @@ import (
 type BagMode string
 
 const (
-	BagName = "evidence"
+	BagFile = "evidence"
 )
 
 const (

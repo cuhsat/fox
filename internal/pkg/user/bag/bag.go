@@ -8,6 +8,7 @@ import (
 	"hash"
 	"os"
 	"os/user"
+	"path/filepath"
 	"time"
 
 	"github.com/cuhsat/fox/internal/app"
@@ -18,10 +19,11 @@ import (
 )
 
 type Bag struct {
-	Path string        // bag path
-	Mode flags.BagMode // bag mode
+	Path string        // file path
+	Mode flags.BagMode // file mode
 
 	file *os.File // file handle
+	name string   // case name
 	key  string   // key phrase
 	url  string   // url address
 	ws   []writer // writers
@@ -39,6 +41,7 @@ type writer interface {
 
 type meta struct {
 	user     *user.User
+	name     string
 	path     string
 	size     int64
 	hash     []byte
@@ -52,10 +55,10 @@ func New() *Bag {
 
 	flg := flags.Get().Bag
 
-	path := flg.Path
+	path := flg.File
 
 	if len(path) == 0 {
-		path = flags.BagName
+		path = flags.BagFile
 	}
 
 	switch flg.Mode {
@@ -87,6 +90,7 @@ func New() *Bag {
 	return &Bag{
 		Path: path,
 		Mode: flg.Mode,
+		name: flg.Case,
 		key:  flg.Key,
 		url:  flg.Url,
 		file: nil,
@@ -123,12 +127,19 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 		sys.Error(err)
 	}
 
+	abs, err := filepath.Abs(h.String())
+
+	if err != nil {
+		sys.Error(err)
+	}
+
 	for _, w := range bag.ws {
 		w.Start()
 
 		w.WriteMeta(meta{
 			user:     usr,
-			path:     h.String(),
+			name:     bag.name,
+			path:     abs,
 			size:     h.Len(),
 			hash:     sum,
 			filters:  h.Patterns(),

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -14,19 +13,20 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
+const Version = "9.1.0"
+
 type EcsWriter struct {
 	url   string    // export url
-	title string    // export title
 	entry *ecsEntry // current entry
 }
 
+// https://www.elastic.co/docs/reference/ecs/ecs-field-reference
 type ecsEntry struct {
 	Timestamp time.Time         `json:"@timestamp"`
 	Message   string            `json:"message"`
 	Labels    map[string]string `json:"labels"`
 
 	Agent struct {
-		Name    string `json:"name"`
 		Type    string `json:"type"`
 		Version string `json:"version"`
 	} `json:"agent"`
@@ -37,7 +37,6 @@ type ecsEntry struct {
 
 	File struct {
 		Mtime time.Time `json:"mtime"`
-		Name  string    `json:"name"`
 		Path  string    `json:"path"`
 		Size  int64     `json:"size"`
 
@@ -58,17 +57,16 @@ func NewEcsWriter(url string) *EcsWriter {
 	}
 }
 
-func (w *EcsWriter) Init(_ *os.File, _ bool, title string) {
-	w.title = title
+func (w *EcsWriter) Init(_ *os.File, _ bool, _ string) {
+	//
 }
 
 func (w *EcsWriter) Start() {
 	w.entry = new(ecsEntry)
 	w.entry.Labels = make(map[string]string)
 
-	w.entry.Ecs.Version = "9.0.0"
+	w.entry.Ecs.Version = Version
 
-	w.entry.Agent.Name = w.title
 	w.entry.Agent.Type = app.Product
 	w.entry.Agent.Version = app.Version[1:]
 }
@@ -96,11 +94,11 @@ func (w *EcsWriter) Flush() {
 }
 
 func (w *EcsWriter) WriteMeta(meta meta) {
+	w.entry.Labels["case"] = meta.name
 	w.entry.Labels["filters"] = strings.Join(meta.filters, " > ")
 
 	w.entry.Timestamp = meta.bagged.UTC()
 
-	w.entry.File.Name = filepath.Base(meta.path)
 	w.entry.File.Path = meta.path
 	w.entry.File.Size = meta.size
 	w.entry.File.Mtime = meta.modified.UTC()

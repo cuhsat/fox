@@ -9,14 +9,12 @@ import (
 	"hash"
 	"hash/crc32"
 	"hash/crc64"
-	"io"
 	"strings"
 
 	"github.com/eciavatta/sdhash"
 	"github.com/glaslos/ssdeep"
 	"github.com/glaslos/tlsh"
 
-	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
 )
 
@@ -68,26 +66,7 @@ func (h *Heap) HashSum(algo string) ([]byte, error) {
 
 	imp.Reset()
 
-	var f sys.File
-
-	// use deflate file not archive
-	if h.Type == types.Deflate {
-		f = sys.Open(h.Path)
-	} else {
-		f = sys.Open(h.Base)
-	}
-
-	defer func(f sys.File) {
-		_ = f.Close()
-	}(f)
-
-	b, err := io.ReadAll(f)
-
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = imp.Write(b)
+	_, err := imp.Write(*h.MMap())
 
 	if err != nil {
 		return nil, err

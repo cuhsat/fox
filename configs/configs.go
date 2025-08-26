@@ -5,15 +5,12 @@ import (
 )
 
 var (
-	//go:embed foxrc
+	//go:embed default.yaml
 	Default string
 
-	//go:embed history
-	History string
-
-	//go:embed plugins
+	//go:embed plugins.yaml
 	Plugins string
 
-	//go:embed themes
+	//go:embed themes.yaml
 	Themes string
 )

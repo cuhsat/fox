@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -23,21 +24,26 @@ type History struct {
 }
 
 func New() *History {
-	var err error
-
 	h := History{
 		lines: make([]string, 0),
 	}
 
-	var m int
-
-	if !flags.Get().Opt.Readonly {
-		m = os.O_CREATE | os.O_APPEND | os.O_RDWR
-	} else {
-		m = os.O_RDONLY
+	if flags.Get().Opt.Readonly {
+		return &h
 	}
 
-	h.file, err = os.OpenFile(user.Config("history"), m, 0600)
+	cfg := user.Config("history")
+
+	// create config directory
+	err := os.MkdirAll(filepath.Dir(cfg), 0700)
+
+	if err != nil {
+		sys.Error(err)
+		return &h
+	}
+
+	// create config file
+	h.file, err = os.OpenFile(cfg, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
 
 	if err != nil {
 		sys.Error(err)
@@ -54,9 +60,7 @@ func New() *History {
 		}
 	}
 
-	err = s.Err()
-
-	if err != nil {
+	if err = s.Err(); err != nil {
 		sys.Error(err)
 	}
 
