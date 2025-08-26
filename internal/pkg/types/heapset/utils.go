@@ -41,26 +41,18 @@ func (hs *HeapSet) Merge() bool {
 		return false
 	}
 
-	hs.Lock()
-
-	hs.heaps = append(heaps, heap.New(
+	hs.atomicAdd(heap.New(
 		"Merged",
 		f.Name(),
 		f.Name(),
 		types.Ignore,
 	))
 
-	hs.Unlock()
-
 	atomic.StoreInt32(hs.index, hs.Len()-1)
 
 	hs.LoadHeap()
 
 	return true
-}
-
-func (hs *HeapSet) Sort() bool {
-	return true // TODO
 }
 
 func (hs *HeapSet) Counts() {
