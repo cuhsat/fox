@@ -130,7 +130,7 @@ func Open(name string) File {
 	mf, ok := fs[name]
 
 	if ok {
-		mf.Seek(0, io.SeekStart)
+		_, _ = mf.Seek(0, io.SeekStart)
 		return mf // memory file
 	}
 

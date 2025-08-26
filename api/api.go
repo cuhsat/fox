@@ -12,5 +12,5 @@ var (
 	SchemaSql string
 
 	//go:embed evidence.schema.xsd
-	SchemaXdd string
+	SchemaXsd string
 )
