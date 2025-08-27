@@ -13,7 +13,7 @@
 
 # Build directory
 bin/
-!test/testdata/bin
+!testdata/bin
 
 # Goreleaser dist
 dist/

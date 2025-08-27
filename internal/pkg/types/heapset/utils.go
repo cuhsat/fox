@@ -77,7 +77,7 @@ func (hs *HeapSet) Strings(n, m int) {
 	hs.newUtil("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
-		for v := range h.Strings(n, m) {
+		for v := range h.Strings(n, m, true) {
 			sb.WriteString(strings.TrimSpace(v.Str))
 			sb.WriteRune('\n')
 		}

@@ -89,6 +89,7 @@ var Strings = &cobra.Command{
 					for s := range h.Strings(
 						flg.Strings.Min,
 						flg.Strings.Max,
+						flg.Strings.Patterns,
 					) {
 						if !flg.NoLine {
 							fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
