@@ -80,10 +80,10 @@ type Flags struct {
 
 	// strings command
 	Strings struct {
-		Ascii    bool
-		Min      int
-		Max      int
-		Patterns bool
+		Ascii bool
+		Ioc   bool
+		Min   int
+		Max   int
 	}
 
 	Credits bool

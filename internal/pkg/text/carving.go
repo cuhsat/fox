@@ -10,24 +10,35 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/flags"
 )
 
-// Patterns based on https://github.com/AndrewRathbun/DFIRRegex
-var Patterns = map[string]string{
-	"Hex": "#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})",
-	//"Base64":   "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?",
-	//"Filename": "[^\\\\\\/:*?\"<>|\\r\\n]+$",
-	//"URL":           "(https?:\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()!@:%_\\+.~#?&\\/\\/=]*)",
-	"IPv4": "\\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\b",
-	//"IPv6":          "(([a-fA-F0-9]{1,4}:){7,7}[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,7}:|([a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,5}(:[a-fA-F0-9]{1,4}){1,2}|([a-fA-F0-9]{1,4}:){1,4}(:[a-fA-F0-9]{1,4}){1,3}|([a-fA-F0-9]{1,4}:){1,3}(:[a-fA-F0-9]{1,4}){1,4}|([a-fA-F0-9]{1,4}:){1,2}(:[a-fA-F0-9]{1,4}){1,5}|[a-fA-F0-9]{1,4}:((:[a-fA-F0-9]{1,4}){1,6})|:((:[a-fA-F0-9]{1,4}){1,7}|:)|fe80:(:[a-fA-F0-9]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([a-fA-F0-9]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
-	"MAC":           "([a-fA-F0-9]{2}[:-]){5}([a-fA-F0-9]{2})",
-	"Hash (MD5)":    "[a-fA-F0-9]{32}",
-	"Hash (SHA1)":   "[a-fA-F0-9]{40}",
-	"Hash (SHA256)": "[a-fA-F0-9]{64}",
-	"Hash (SHA512)": "[a-fA-F0-9]{128}",
-	//"Password":      "(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}",
-	//"Email":         "(([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)(\\s*;\\s*|\\s*$))*",
-	//"Phone":         "(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}",
-	//"Credit Card":   "(4[0-9]{12}(?:[0-9]{3})?$)|(^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$)|(3[47][0-9]{13})|(^3(?:0[0-5]|[68][0-9])[0-9]{11}$)|(^6(?:011|5[0-9]{2})[0-9]{12}$)|(^(?:2131|1800|35\\d{3})\\d{11}$)",
-	//"Social Security": "(?!0{3})(?!6{3})[0-8]\\d{2}-(?!0{2})\\d{2}-(?!0{4})\\d{4}",
+// https://github.com/AndrewRathbun/DFIRRegex
+var patterns = []struct {
+	ioc string
+	re  *regexp.Regexp
+}{
+	{
+		ioc: "IPv4",
+		re:  regexp.MustCompile("\\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\b"),
+	},
+	{
+		ioc: "IPv6",
+		re:  regexp.MustCompile("(([a-fA-F0-9]{1,4}:){7,7}[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,7}:|([a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,5}(:[a-fA-F0-9]{1,4}){1,2}|([a-fA-F0-9]{1,4}:){1,4}(:[a-fA-F0-9]{1,4}){1,3}|([a-fA-F0-9]{1,4}:){1,3}(:[a-fA-F0-9]{1,4}){1,4}|([a-fA-F0-9]{1,4}:){1,2}(:[a-fA-F0-9]{1,4}){1,5}|[a-fA-F0-9]{1,4}:((:[a-fA-F0-9]{1,4}){1,6})|:((:[a-fA-F0-9]{1,4}){1,7}|:)|fe80:(:[a-fA-F0-9]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([a-fA-F0-9]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"),
+	},
+	{
+		ioc: "MAC",
+		re:  regexp.MustCompile("([a-fA-F0-9]{2}[:-]){5}([a-fA-F0-9]{2})"),
+	},
+	// {
+	// 	ioc: "URL",
+	// 	re:  regexp.MustCompile("[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"),
+	// },
+	// {
+	// 	ioc: "Mail",
+	// 	re:  regexp.MustCompile("(([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)(\\s*;\\s*|\\s*$))*"),
+	// },
+	{
+		ioc: "....",
+		re:  regexp.MustCompile(".*"),
+	},
 }
 
 type String struct {
@@ -35,36 +46,7 @@ type String struct {
 	Str string
 }
 
-func Recognize(ch <-chan String, str chan<- String) {
-	defer close(str)
-
-	ps := make(map[string]*regexp.Regexp, len(Patterns))
-
-	// compile patterns
-	for k, v := range Patterns {
-		ps[k] = regexp.MustCompile(v)
-	}
-
-	var ok bool
-
-	for s := range ch {
-		ok = false
-
-		for k, v := range ps {
-			if v.MatchString(s.Str) {
-				str <- String{s.Off, fmt.Sprintf("%s (%s)", s.Str, k)}
-				ok = true
-				break
-			}
-		}
-
-		if !ok {
-			str <- s
-		}
-	}
-}
-
-func Carve(ch <-chan byte, str chan<- String, n, m int) {
+func Carve(in <-chan byte, out chan<- String, n, m int) {
 	var rs []rune
 	var off int
 
@@ -74,20 +56,20 @@ func Carve(ch <-chan byte, str chan<- String, n, m int) {
 			s := string(rs)
 
 			if len(strings.TrimSpace(s)) > 0 {
-				str <- String{o, s}
+				out <- String{o, s}
 			}
 		}
 
 		rs = rs[:0]
 	}
 
-	defer close(str)
+	defer close(out)
 	defer flush()
 
 	flg := flags.Get().Strings
 	buf := make([]byte, 4)
 
-	for b := range ch {
+	for b := range in {
 		buf[0] = b
 		off++
 
@@ -115,7 +97,7 @@ func Carve(ch <-chan byte, str chan<- String, n, m int) {
 				for i := 1; i < k; i++ {
 					off++
 
-					if b, ok := <-ch; ok {
+					if b, ok := <-in; ok {
 						buf[i] = b
 					} else {
 						break
@@ -131,6 +113,19 @@ func Carve(ch <-chan byte, str chan<- String, n, m int) {
 				rs = append(rs, r)
 			} else {
 				flush()
+			}
+		}
+	}
+}
+
+func Match(in <-chan String, out chan<- String) {
+	defer close(out)
+
+	for s := range in {
+		for _, p := range patterns {
+			if p.re.MatchString(s.Str) {
+				out <- String{s.Off, fmt.Sprintf("%-4s  %s", p.ioc, s.Str)}
+				break
 			}
 		}
 	}

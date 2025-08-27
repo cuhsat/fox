@@ -36,7 +36,7 @@ func (h *Heap) Entropy(n, m float64) float64 {
 	return v
 }
 
-func (h *Heap) Strings(n, m int, p bool) <-chan text.String {
+func (h *Heap) Strings(n, m int, i bool) <-chan text.String {
 	str := make(chan text.String)
 	ioc := make(chan text.String)
 	ch := make(chan byte, 1024)
@@ -44,10 +44,10 @@ func (h *Heap) Strings(n, m int, p bool) <-chan text.String {
 	go h.stream(ch)
 	go text.Carve(ch, str, n, m)
 
-	if !p {
+	if !i {
 		return str
 	} else {
-		go text.Recognize(str, ioc)
+		go text.Match(str, ioc)
 		return ioc
 	}
 }

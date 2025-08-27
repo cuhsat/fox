@@ -37,10 +37,10 @@ Strings:
   -a, --ascii              only ASCII strings
   -n, --min=NUMBER         minimum length (default: 3)
   -m, --max=NUMBER         maximum length (default: Unlimited)
-  -P, --patterns           check for known patterns
+  -i, --ioc                check strings for IOC patterns
 
 Example:
-  $ fox strings -n=8 malware.exe
+  $ fox strings -in=8 malware.exe
 
 Type "fox help" for more help...
 `
@@ -89,7 +89,7 @@ var Strings = &cobra.Command{
 					for s := range h.Strings(
 						flg.Strings.Min,
 						flg.Strings.Max,
-						flg.Strings.Patterns,
+						flg.Strings.Ioc,
 					) {
 						if !flg.NoLine {
 							fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
@@ -113,5 +113,5 @@ func init() {
 	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "n", 3, "minimum length")
 	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", math.MaxInt, "maximum length")
 	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "only ASCII strings")
-	Strings.Flags().BoolVarP(&flg.Strings.Patterns, "patterns", "P", false, "check for known patterns")
+	Strings.Flags().BoolVarP(&flg.Strings.Ioc, "ioc", "i", false, "check strings for IOC patterns")
 }
