@@ -3,23 +3,15 @@ package sys
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
-	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
 
-	mem "github.com/cuhsat/memfile"
-
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
-
-var fs = make(map[string]*mem.File)
-
-type File = mem.Fileable
 
 func Exit(v ...any) {
 	Print(v...)
@@ -124,49 +116,4 @@ func Piped(file File) bool {
 	}
 
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
-}
-
-func Open(name string) File {
-	mf, ok := fs[name]
-
-	if ok {
-		_, _ = mf.Seek(0, io.SeekStart)
-		return mf // memory file
-	}
-
-	rf, err := os.OpenFile(name, os.O_RDONLY, 0400)
-
-	if err == nil {
-		return rf // regular file
-	}
-
-	Panic(err)
-	return nil
-}
-
-func Create(name string) File {
-	uniq := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
-	file := mem.New(uniq)
-
-	fs[uniq] = file
-
-	return file
-}
-
-func Exists(name string) bool {
-	_, ok := fs[name]
-
-	if ok {
-		return true
-	}
-
-	_, err := os.Stat(name)
-
-	return !errors.Is(err, os.ErrNotExist)
-}
-
-func Memory(name string) (File, bool) {
-	f, ok := fs[name]
-
-	return f, ok
 }
