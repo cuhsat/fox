@@ -10,8 +10,8 @@ go install github.com/cuhsat/fox@latest
 
 ## Key Features
 * Standalone native `AMD64` and `ARM64` binaries
-* Available for [Windows, Linux, macOS](https://github.com/cuhsat/fox/releases)
-* Available as `apk`, `deb`, `rpm` packages
+* Available for Windows, Linux, macOS
+* Available as `.apk`, `.deb`, `.rpm` packages
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * In-memory virtual filesystem
@@ -27,7 +27,7 @@ go install github.com/cuhsat/fox@latest
 * Built-in canonical `hexdump` of files
 * Built-in `wc` like counts with Shannon entropy
 * Built-in `ASCII` and `Unicode` string carving
-* Built-in IoC detector for `UUID`, `IPv4`, `IPv6`, `MAC`, `URL`, `Mail`
+* Built-in IoC detection of `UUID`, `IPv4`, `IPv6`, `MAC`, `URL`, `Mail`
 * Built-in parser for Windows event log `EVTX` files
 * Built-in sniffer for `CSV` delimiter formats
 * Built-in formating of: `CSV`, `JSON`, `JSONL` data
