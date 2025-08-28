@@ -6,7 +6,7 @@
 //
 // For more information, please consult:
 //
-//	https://forensic-examiner.eu
+//	forensic-examiner.eu
 package main
 
 import (
