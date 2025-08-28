@@ -2,72 +2,132 @@ package text
 
 import (
 	"fmt"
-	"math"
+	"regexp"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
-	"github.com/mattn/go-runewidth"
+	"github.com/cuhsat/fox/internal/pkg/flags"
 )
 
-const (
-	PS1 = "❯"
-)
-
-func Dec(n int) int {
-	return int(math.Log10(float64(n))) + 1
+type String struct {
+	Off int
+	Str string
 }
 
-func Len(s string) (l int) {
-	return runewidth.StringWidth(s)
-}
+func Carve(in <-chan byte, out chan<- String, n, m int) {
+	var rs []rune
+	var off int
 
-func Abr(s string, w int) string {
-	if Len(s) > w {
-		s = runewidth.TruncateLeft(s, Len(s)-w, "…")
-	}
+	flush := func() {
+		if len(rs) >= n && len(rs) <= m {
+			o := max(off-(len(rs)+1), 0)
+			s := string(rs)
 
-	return s
-}
-
-func Pad(s string, w int) string {
-	return runewidth.FillRight(s, w)
-}
-
-func Trim(s string, l, r int) string {
-	s = runewidth.TruncateLeft(s, l, "")
-	s = runewidth.Truncate(s, r, "")
-
-	return s
-}
-
-func Title(s string, w int) (r string) {
-	if w < 0 {
-		w = 4 + len(s)
-	}
-
-	l := strings.Repeat("─", w-2)
-
-	r += fmt.Sprintf("┌%s┐\n", l)
-	r += fmt.Sprintf("│ %-*s │\n", w-4, s)
-	r += fmt.Sprintf("└%s┘", l)
-
-	return
-}
-
-func SplitQuoted(s string) (r []string) {
-	n := 0
-
-	for _, s := range strings.FieldsFunc(s, func(r rune) bool {
-		switch r {
-		case '"':
-			n += 1
-		case ' ':
-			return n%2 == 0
+			if len(strings.TrimSpace(s)) > 0 {
+				out <- String{o, s}
+			}
 		}
 
-		return false
-	}) {
-		r = append(r, strings.ReplaceAll(s, "\"", ""))
+		rs = rs[:0]
 	}
 
-	return
+	defer close(out)
+	defer flush()
+
+	flg := flags.Get().Strings
+	buf := make([]byte, 4)
+
+	for b := range in {
+		buf[0] = b
+		off++
+
+		if flg.Ascii {
+			if b >= MinASCII && b <= MaxASCII {
+				rs = append(rs, rune(b))
+			} else {
+				flush()
+			}
+		} else {
+			l := 1
+			k := 1
+
+			if b&0x80 == 0 {
+				k = 1
+			} else if b&0xE0 == 0xC0 {
+				k = 2
+			} else if b&0xF0 == 0xE0 {
+				k = 3
+			} else if b&0xF8 == 0xF0 {
+				k = 4
+			}
+
+			if k > 1 {
+				for i := 1; i < k; i++ {
+					off++
+
+					if b, ok := <-in; ok {
+						buf[i] = b
+					} else {
+						break
+					}
+
+					l++
+				}
+			}
+
+			r, _ := utf8.DecodeRune(buf[:l])
+
+			if r != utf8.RuneError && unicode.IsPrint(r) {
+				rs = append(rs, r)
+			} else {
+				flush()
+			}
+		}
+	}
+}
+
+func Match(in <-chan String, out chan<- String) {
+	defer close(out)
+
+	for s := range in {
+		for _, p := range []struct {
+			ioc string
+			re  *regexp.Regexp
+		}{
+			{
+				ioc: "ipv4",
+				re:  regexp.MustCompile("\\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\b"),
+			},
+			{
+				ioc: "ipv6",
+				re:  regexp.MustCompile("(([a-fA-F0-9]{1,4}:){7,7}[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,7}:|([a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}|([a-fA-F0-9]{1,4}:){1,5}(:[a-fA-F0-9]{1,4}){1,2}|([a-fA-F0-9]{1,4}:){1,4}(:[a-fA-F0-9]{1,4}){1,3}|([a-fA-F0-9]{1,4}:){1,3}(:[a-fA-F0-9]{1,4}){1,4}|([a-fA-F0-9]{1,4}:){1,2}(:[a-fA-F0-9]{1,4}){1,5}|[a-fA-F0-9]{1,4}:((:[a-fA-F0-9]{1,4}){1,6})|:((:[a-fA-F0-9]{1,4}){1,7}|:)|fe80:(:[a-fA-F0-9]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([a-fA-F0-9]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"),
+			},
+			{
+				ioc: "mac",
+				re:  regexp.MustCompile("([a-fA-F0-9]{2}[:-]){5}([a-fA-F0-9]{2})"),
+			},
+			{
+				ioc: "mail",
+				re:  regexp.MustCompile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}\\b"),
+			},
+			{
+				ioc: "url",
+				re:  regexp.MustCompile("[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"),
+			},
+			{
+				ioc: "guid",
+				re:  regexp.MustCompile("[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}"),
+			},
+			{
+				ioc: "data",
+				re:  regexp.MustCompile(".*"),
+			},
+		} {
+			if p.re.MatchString(s.Str) {
+				out <- String{s.Off, fmt.Sprintf("%-4s  %s", p.ioc, s.Str)}
+				break
+			}
+		}
+	}
 }

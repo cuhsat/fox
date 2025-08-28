@@ -36,7 +36,7 @@ func Call(cmds []string) File {
 				break
 			}
 
-			_, _ = f.WriteString(text.UnEscape(stdout.String()))
+			_, _ = f.WriteString(text.Unescape(stdout.String()))
 		}
 	}
 

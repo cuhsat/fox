@@ -2,5 +2,6 @@ Hello World
 127.0.0.1
 2001:0db8:85a3:08d3:1319:8a2e:0370:7344
 00:80:41:ae:fd:7e
+test@example.org
 https://examplg.org
-test@example.de
+550e8400-e29b-11d4-a716-446655440000

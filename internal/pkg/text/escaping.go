@@ -11,7 +11,7 @@ const (
 	ESC = 27
 )
 
-func UnEscape(s string) string {
+func Unescape(s string) string {
 	var sb strings.Builder
 
 	ch := make(chan rune)

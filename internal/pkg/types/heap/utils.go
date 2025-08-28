@@ -37,19 +37,21 @@ func (h *Heap) Entropy(n, m float64) float64 {
 }
 
 func (h *Heap) Strings(n, m int, i bool) <-chan text.String {
+	ch := make(chan byte, 1024)
+
 	str := make(chan text.String)
 	ioc := make(chan text.String)
-	ch := make(chan byte, 1024)
 
 	go h.stream(ch)
 	go text.Carve(ch, str, n, m)
 
 	if !i {
 		return str
-	} else {
-		go text.Match(str, ioc)
-		return ioc
 	}
+
+	go text.Match(str, ioc)
+
+	return ioc
 }
 
 func (h *Heap) stream(ch chan<- byte) {
