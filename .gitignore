@@ -13,7 +13,6 @@
 
 # Build directory
 bin/
-!testdata/bin
 
 # Goreleaser dist
 dist/
@@ -25,14 +24,11 @@ go.work.sum
 # IDEs
 .idea/
 
+# Todo list
+TODO.md
+
 # MacOS crap
 .DS_Store
 
-# Error dump
-.*dump
-
-# Evidence files
+# Evidence bags
 /evidence*
-
-# Todo files
-/TODO*

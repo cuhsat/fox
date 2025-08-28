@@ -2,8 +2,9 @@
 
 The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLMs**, to leverage your forensic examining process.
 
-![](assets/live.png "Live Demo")
+![](assets/live.png "Preview")
 
+## Installation
 ```console
 go install github.com/cuhsat/fox@latest
 ```
