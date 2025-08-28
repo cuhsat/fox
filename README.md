@@ -9,8 +9,9 @@ go install github.com/cuhsat/fox@latest
 ```
 
 ## Key Features
-* Available for [Windows, Linux, macOS](https://github.com/cuhsat/fox/releases)
 * Standalone native `AMD64` and `ARM64` binaries
+* Available for [Windows, Linux, macOS](https://github.com/cuhsat/fox/releases)
+* Available as `apk`, `deb`, `rpm` packages
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * In-memory virtual filesystem
@@ -45,7 +46,7 @@ go install github.com/cuhsat/fox@latest
   * Support for copy and bracketed paste
   * Support for mouse scrolling
   * Suspend to shell capability
-  * Configurable color [themes](THEMES.md)
+  * Customizable color [themes](THEMES.md)
 
 ## License
 🦊 is released under the [GPL-3.0](LICENSE.md).
