@@ -34,10 +34,10 @@ Global:
       --no-line            don't print line numbers
 
 Strings:
-  -a, --ascii              only ASCII strings
+  -i, --ioc                search for IoC patterns
+  -a, --ascii              carve only ASCII strings
   -n, --min=NUMBER         minimum length (default: 3)
   -m, --max=NUMBER         maximum length (default: Unlimited)
-  -i, --ioc                check strings for IOC patterns
 
 Example:
   $ fox strings -in=8 malware.exe
@@ -110,8 +110,8 @@ func init() {
 	Strings.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Strings.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Strings.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
+	Strings.Flags().BoolVarP(&flg.Strings.Ioc, "ioc", "i", false, "search for IoC patterns")
+	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "carve only ASCII strings")
 	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "n", 3, "minimum length")
 	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", math.MaxInt, "maximum length")
-	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "only ASCII strings")
-	Strings.Flags().BoolVarP(&flg.Strings.Ioc, "ioc", "i", false, "check strings for IOC patterns")
 }

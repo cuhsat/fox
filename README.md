@@ -25,7 +25,7 @@ go install github.com/cuhsat/fox@latest
 * Build-in dynamic context window
 * Build-in canonical `hexdump` of files
 * Build-in `wc` like counts with Shannon entropy
-* Build-in `ASCII` and `Unicode` string carving 
+* Build-in `ASCII` and `Unicode` IoC string carving
 * Build-in parser for Windows event log `EVTX` files
 * Build-in sniffer for `CSV` delimiter formats
 * Build-in formating of: `CSV`, `JSON`, `JSONL` data
