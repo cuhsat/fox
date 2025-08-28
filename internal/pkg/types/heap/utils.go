@@ -2,6 +2,7 @@ package heap
 
 import (
 	"math"
+	"regexp"
 
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
@@ -36,7 +37,7 @@ func (h *Heap) Entropy(n, m float64) float64 {
 	return v
 }
 
-func (h *Heap) Strings(n, m int, i bool) <-chan text.String {
+func (h *Heap) Strings(n, m int, i bool, re *regexp.Regexp) <-chan text.String {
 	ch := make(chan byte, 1024)
 
 	str := make(chan text.String)
@@ -45,11 +46,11 @@ func (h *Heap) Strings(n, m int, i bool) <-chan text.String {
 	go h.stream(ch)
 	go text.Carve(ch, str, n, m)
 
-	if !i {
+	if !i && re == nil {
 		return str
 	}
 
-	go text.Match(str, ioc)
+	go text.Match(str, ioc, i, re)
 
 	return ioc
 }

@@ -3,6 +3,7 @@ package heapset
 import (
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"sync/atomic"
 
@@ -73,11 +74,11 @@ func (hs *HeapSet) Entropy(n, m float64) {
 	})
 }
 
-func (hs *HeapSet) Strings(n, m int) {
+func (hs *HeapSet) Strings(n, m int, i bool, re *regexp.Regexp) {
 	hs.newUtil("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
-		for v := range h.Strings(n, m, true) {
+		for v := range h.Strings(n, m, i, re) {
 			sb.WriteString(strings.TrimSpace(v.Str))
 			sb.WriteRune('\n')
 		}

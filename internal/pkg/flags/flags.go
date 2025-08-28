@@ -1,6 +1,8 @@
 package flags
 
 import (
+	"regexp"
+
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
 )
 
@@ -80,10 +82,11 @@ type Flags struct {
 
 	// strings command
 	Strings struct {
-		Ascii bool
 		Ioc   bool
+		Re    *regexp.Regexp
 		Min   int
 		Max   int
+		Ascii bool
 	}
 
 	Credits bool

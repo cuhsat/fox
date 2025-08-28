@@ -156,6 +156,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 		hs.Strings(
 			flg.Strings.Min,
 			flg.Strings.Max,
+			flg.Strings.Ioc,
+			flg.Strings.Re,
 		)
 	case types.Hash:
 		hs.HashSum(
@@ -281,7 +283,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					ui.change(mode.Default)
 
 				case tcell.KeyF3:
-					hs.Strings(3, math.MaxInt)
+					hs.Strings(3, math.MaxInt, true, nil)
 					ui.change(mode.Default)
 
 				case tcell.KeyF4:

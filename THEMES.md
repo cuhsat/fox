@@ -1,6 +1,6 @@
 # Themes
 
-Build-in themes:
+Built-in themes:
 * `Examiner-Dark`
 * `Examiner-Light`
 * `Catppuccin-Latte`

@@ -82,8 +82,8 @@ UI flags:
 Evidence:
   -N  --case=NAME          evidence bag case name (default: YYYY-MM-DD)
   -f, --file=FILE          evidence bag file name (default: "evidence")
-      --mode=MODE          evidence bag file mode (default: "raw")
-                             NONE, RAW, TEST, JSON, JSONL, XML, SQLITE
+      --mode=MODE          evidence bag file mode (default: "raw"):
+                             NONE, RAW, TEXT, JSON, JSONL, XML, SQLITE
 
   -k, --key=KEYPHRASE      key phrase to sign evidence bag via HMAC-SHA256
   -u, --url=URL            url to also send evidence data too

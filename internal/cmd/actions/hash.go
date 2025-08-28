@@ -40,7 +40,7 @@ Hash:
       CRC32-IEEE, CRC64-ECMA, CRC64-ISO
 
 Example:
-  $ fox hash -t=SHA3 artifacts.zip
+  $ fox hash -t=tlsh artifacts.zip
 
 Type "fox help" for more help...
 `

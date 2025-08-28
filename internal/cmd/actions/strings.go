@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -34,10 +35,14 @@ Global:
       --no-line            don't print line numbers
 
 Strings:
-  -i, --ioc                search for IoC patterns
-  -a, --ascii              carve only ASCII strings
+  -i, --ioc                detect built-in IoCs
+  -e, --regexp=PATTERN     search for pattern
   -n, --min=NUMBER         minimum length (default: 3)
   -m, --max=NUMBER         maximum length (default: Unlimited)
+  -a, --ascii              only carve ASCII strings
+
+    Built-in IoC patterns:
+      UUID, IPv4, IPv6, MAC, URL, Mail
 
 Example:
   $ fox strings -in=8 malware.exe
@@ -55,6 +60,16 @@ var Strings = &cobra.Command{
 
 		flg.Opt.NoConvert = true
 		flg.Opt.NoPlugins = true
+
+		re, err := cmd.Flags().GetString("regex")
+
+		if len(re) > 0 {
+			flg.Strings.Re, err = regexp.Compile(re)
+
+			if err != nil {
+				sys.Exit(err)
+			}
+		}
 
 		if flg.Strings.Min <= 0 {
 			sys.Exit("min must be greater than 0")
@@ -90,6 +105,7 @@ var Strings = &cobra.Command{
 						flg.Strings.Min,
 						flg.Strings.Max,
 						flg.Strings.Ioc,
+						flg.Strings.Re,
 					) {
 						if !flg.NoLine {
 							fmt.Printf("%08x  %s\n", s.Off, strings.TrimSpace(s.Str))
@@ -110,8 +126,9 @@ func init() {
 	Strings.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
 	Strings.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Strings.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
-	Strings.Flags().BoolVarP(&flg.Strings.Ioc, "ioc", "i", false, "search for IoC patterns")
-	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "carve only ASCII strings")
+	Strings.Flags().BoolVarP(&flg.Strings.Ioc, "ioc", "i", false, "detect built-in IoCs")
+	Strings.Flags().StringP("regex", "e", "", "search for specific pattern")
 	Strings.Flags().IntVarP(&flg.Strings.Min, "min", "n", 3, "minimum length")
 	Strings.Flags().IntVarP(&flg.Strings.Max, "max", "m", math.MaxInt, "maximum length")
+	Strings.Flags().BoolVarP(&flg.Strings.Ascii, "ascii", "a", false, "only carve ASCII strings")
 }
