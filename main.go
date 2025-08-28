@@ -6,7 +6,7 @@
 //
 // For more information, please consult:
 //
-//	https://github.com/cuhsat/fox
+//	https://forensic-examiner.eu
 package main
 
 import (
