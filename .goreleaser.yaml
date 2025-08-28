@@ -63,6 +63,10 @@ nfpms:
       - apk
       - deb
       - rpm
+    provides:
+      - fox
+    suggests:
+      - ollama
     section: utils
     contents:
       - src: ./LICENSE.md
