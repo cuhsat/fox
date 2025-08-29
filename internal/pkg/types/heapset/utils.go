@@ -56,13 +56,15 @@ func (hs *HeapSet) Merge() bool {
 	return true
 }
 
-func (hs *HeapSet) Counts() {
+func (hs *HeapSet) Counts() *HeapSet {
 	hs.newUtil("counts", func(h *heap.Heap) string {
 		return fmt.Sprintf("%8dL %8dB  %s\n", h.Count(), h.Len(), h.String())
 	})
+
+	return hs
 }
 
-func (hs *HeapSet) Entropy(n, m float64) {
+func (hs *HeapSet) Entropy(n, m float64) *HeapSet {
 	hs.newUtil("entropy", func(h *heap.Heap) string {
 		v := h.Entropy(n, m)
 
@@ -72,9 +74,11 @@ func (hs *HeapSet) Entropy(n, m float64) {
 
 		return fmt.Sprintf("%.10f  %s\n", v, h.String())
 	})
+
+	return hs
 }
 
-func (hs *HeapSet) Strings(n, m int, i bool, re *regexp.Regexp) {
+func (hs *HeapSet) Strings(n, m int, i bool, re *regexp.Regexp) *HeapSet {
 	hs.newUtil("strings", func(h *heap.Heap) string {
 		var sb strings.Builder
 
@@ -85,9 +89,11 @@ func (hs *HeapSet) Strings(n, m int, i bool, re *regexp.Regexp) {
 
 		return sb.String()
 	})
+
+	return hs
 }
 
-func (hs *HeapSet) HashSum(algo string) {
+func (hs *HeapSet) HashSum(algo string) *HeapSet {
 	hs.newUtil(algo, func(h *heap.Heap) string {
 		sum, err := h.HashSum(algo)
 
@@ -102,6 +108,8 @@ func (hs *HeapSet) HashSum(algo string) {
 			return fmt.Sprintf("%x  %s\n", sum, h.String())
 		}
 	})
+
+	return hs
 }
 
 func (hs *HeapSet) newUtil(s string, fn util) {

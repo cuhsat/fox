@@ -146,23 +146,23 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 	switch invoke {
 	case types.Counts:
-		hs.Counts()
+		hs.Counts().CloseOther()
 	case types.Entropy:
 		hs.Entropy(
 			flg.Entropy.Min,
 			flg.Entropy.Max,
-		)
+		).CloseOther()
 	case types.Strings:
 		hs.Strings(
 			flg.Strings.Min,
 			flg.Strings.Max,
 			flg.Strings.Ioc,
 			flg.Strings.Re,
-		)
+		).CloseOther()
 	case types.Hash:
 		hs.HashSum(
 			flg.Hash.Algo.String(),
-		)
+		).CloseOther()
 	case types.None:
 		// normal
 	}
