@@ -8,7 +8,7 @@
 name = 'target-info'
 mask = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 exec = [
-  'target-info "$FILE"'
+  'target-info "FILE"'
 ]
 ```
 
@@ -18,7 +18,7 @@ exec = [
 name = 'target-query'
 mode = 'query'
 exec = [
-  'target-query -j -f "$INPUT" "$BASE"'
+  'target-query -j -f "INPUT" "BASE"'
 ]
 ```
 
@@ -28,7 +28,7 @@ exec = [
 name = 'target-shell'
 mode = 'shell'
 exec = [
-  'target-shell -c="$INPUT" "$BASE"'
+  'target-shell -c="INPUT" "BASE"'
 ]
 ```
 
@@ -40,7 +40,7 @@ exec = [
 name = 'JLECmd'
 mask = '.*\.(automatic|custom)Destination-ms'
 exec = [
-  'dotnet JLECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet JLECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -50,7 +50,7 @@ exec = [
 name = 'LECmd'
 mask = '.*\.lnk'
 exec = [
-  'dotnet LECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet LECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -58,9 +58,9 @@ exec = [
 ```toml
 [auto.mfte]
 name = 'MFTECmd'
-mask = '\$(Boot|LogFile|J|MFT|SDS)'
+mask = '\(Boot|LogFile|J|MFT|SDS)'
 exec = [
-  'dotnet MFTECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet MFTECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -70,7 +70,7 @@ exec = [
 name = 'PECmd'
 mask = '.*\.pf'
 exec = [
-  'dotnet PECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet PECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -78,9 +78,9 @@ exec = [
 ```toml
 [auto.rb]
 name = 'RBCmd'
-mask = '(INFO2|\$[0-9A-Z]{7}(\..+)?)$'
+mask = '(INFO2|\[0-9A-Z]{7}(\..+)?)'
 exec = [
-  'dotnet RBCmd.dll -f "$FILE" --csv "$TEMP"'
+  'dotnet RBCmd.dll -f "FILE" --csv "TEMP"'
 ]
 ```
 
@@ -90,7 +90,7 @@ exec = [
 name = 'RECmd'
 mask = '.*\.dat'
 exec = [
-  'dotnet RECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet RECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -100,7 +100,7 @@ exec = [
 name = 'SQLECmd'
 mask = '.*\.db'
 exec = [
-  'dotnet SQLECmd.dll -f "$FILE" --json "$TEMP"'
+  'dotnet SQLECmd.dll -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -110,7 +110,7 @@ exec = [
 name = 'SrumECmd'
 mask = 'SRUDB.dat'
 exec = [
-  'dotnet SrumECmd.dll -f "$FILE" --csv "$TEMP"'
+  'dotnet SrumECmd.dll -f "FILE" --csv "TEMP"'
 ]
 ```
 
@@ -120,7 +120,7 @@ exec = [
 name = 'WxTCmd'
 mask = '.*\ActivitiesCache.db'
 exec = [
-  'dotnet WxTCmd.dll -f "$FILE" --csv "$TEMP"'
+  'dotnet WxTCmd.dll -f "FILE" --csv "TEMP"'
 ]
 ```
 
@@ -132,9 +132,7 @@ exec = [
 name = 'fact'
 mask = '.*\.(dd|img|raw)'
 exec = [
-  'sudo fmount "$FILE"',
-  'sudo ffind',
-  'sudo flog -D logstash'
+  'sudo fmount "FILE" | ffind | flog -D logstash'
 ]
 ```
 
@@ -146,7 +144,7 @@ exec = [
 name = 'capa'
 mask = '.*\.(bin|dll|exe|scr|sys)'
 exec = [
-  'capa "$FILE"'
+  'capa "FILE"'
 ]
 ```
 
@@ -156,6 +154,6 @@ exec = [
 name = 'objdump'
 mask = '.*\.(bin|dll|exe|scr|sys)'
 exec = [
-  'objdump --disassemble "$FILE"'
+  'objdump --disassemble "FILE"'
 ]
 ```

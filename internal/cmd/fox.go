@@ -132,7 +132,7 @@ var Fox = &cobra.Command{
 
 		// print credits
 		if flg.Credits {
-			fmt.Printf("%s <%s>\n\n\t- SOLI DEO GLORIA\n", app.Author, app.Email)
+			fmt.Printf("%s <%s>\n- Soli Deo Gloria\n", app.Author, app.Email)
 			os.Exit(0)
 		}
 

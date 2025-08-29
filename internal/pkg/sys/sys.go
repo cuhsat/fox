@@ -8,8 +8,9 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/rainu/go-command-chain"
+
 	"github.com/cuhsat/fox/internal/app"
-	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
 func Exit(v ...any) {
@@ -17,39 +18,19 @@ func Exit(v ...any) {
 	os.Exit(1)
 }
 
-func Call(cmds []string) File {
-	f := Create("stdout")
+func Exec(cmds []string) File {
+	f := Create("exec")
 	defer f.Close()
 
-	var pipe io.ReadCloser = os.Stdin
-
 	for _, cmd := range cmds {
-		args := text.SplitQuoted(cmd)
+		err := cmdchain.Builder().JoinShellCmd(cmd).
+			Finalize().WithOutput(f).Run()
 
-		if len(args) > 0 {
-			//var stdout, stderr bytes.Buffer
-
-			cmd := exec.Command(args[0], args[1:]...)
-			//cmd.Stdout = &stdout
-			//cmd.Stderr = &stderr
-
-			cmd.Stdin = pipe
-
-			pipe, _ = cmd.StdoutPipe()
-
-			if cmd.Run() != nil {
-				break
-			}
-
-			_ = pipe.Close()
-
-			//_, _ = f.WriteString(text.Unescape(stdout.String()))
+		if err != nil {
+			Error(err)
+			break
 		}
 	}
-
-	b, _ := io.ReadAll(pipe)
-
-	_, _ = f.WriteString(text.Unescape(string(b)))
 
 	return f
 }

@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -75,7 +76,7 @@ func (p *Plugin) Match(mask string) bool {
 }
 
 func (p *Plugin) Execute(file, base string, fn Callback) {
-	var val, temp string
+	var val, dir string
 
 	// blocking call
 	if len(p.Mode) > 0 {
@@ -83,26 +84,25 @@ func (p *Plugin) Execute(file, base string, fn Callback) {
 	}
 
 	// create temp dir if necessary
-	for _, cmd := range p.Exec {
-		if strings.Contains(cmd, "$TEMP") {
-			temp = user.TempDir("plugin")
-			break
-		}
+	if slices.ContainsFunc(p.Exec, func(s string) bool {
+		return strings.Contains(s, "TEMP")
+	}) {
+		dir = user.TempDir("plugin")
 	}
 
 	// replace and persist
 	rep := strings.NewReplacer(
-		"$BASE", user.Persist(base),
-		"$FILE", user.Persist(file),
-		"$TEMP", temp,
-		"$INPUT", val,
+		"BASE", user.Persist(base),
+		"FILE", user.Persist(file),
+		"TEMP", dir,
+		"INPUT", val,
 	)
 
-	cmds := make([]string, len(p.Exec))
+	cmds := make([]string, 0)
 
 	for _, cmd := range p.Exec {
 		cmds = append(cmds, rep.Replace(cmd))
 	}
 
-	fn(sys.Call(cmds).Name(), base, temp)
+	fn(sys.Exec(cmds).Name(), base, dir)
 }

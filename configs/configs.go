@@ -5,12 +5,12 @@ import (
 )
 
 var (
-	//go:embed default.yaml
+	//go:embed default.toml
 	Default string
 
-	//go:embed plugins.yaml
+	//go:embed plugins.toml
 	Plugins string
 
-	//go:embed themes.yaml
+	//go:embed themes.toml
 	Themes string
 )

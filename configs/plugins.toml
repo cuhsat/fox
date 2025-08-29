@@ -1,18 +1,18 @@
 # Available variables (all):
 #
-#  $FILE    file path
-#  $BASE    base path
-#  $TEMP    new temporary folder
+#  FILE    file path
+#  BASE    base path
+#  TEMP    new temporary folder
 #
 # Available variables (only hotkey):
 #
-#  $INPUT   user input
+#  INPUT   user input
 #
 [auto.info]
 name = 'target-info'
 mask = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 exec = [
-  'target-info "$FILE"'
+  'target-info "FILE"'
 ]
 
 # Available hotkeys:
@@ -23,5 +23,5 @@ exec = [
 name = 'target-query'
 mode = 'query'
 exec = [
-  'target-query -j -f "$INPUT" "$BASE"'
+  'target-query -j -f "INPUT" "BASE"'
 ]

@@ -71,6 +71,8 @@ func (v *View) textRender(p *panel) {
 		if len(line.Str) > 0 {
 			if agent && strings.HasPrefix(line.Str, text.PS1) {
 				color = themes.Subtext2
+			} else if i == 1 && v.ctx.IsPinned() {
+				color = themes.Subtext0
 			} else {
 				color = themes.Terminal
 			}

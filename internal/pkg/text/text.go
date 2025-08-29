@@ -52,22 +52,3 @@ func Title(s string, w int) (r string) {
 
 	return
 }
-
-func SplitQuoted(s string) (r []string) {
-	n := 0
-
-	for _, s := range strings.FieldsFunc(s, func(r rune) bool {
-		switch r {
-		case '"':
-			n += 1
-		case ' ':
-			return n%2 == 0
-		}
-
-		return false
-	}) {
-		r = append(r, strings.ReplaceAll(s, "\"", ""))
-	}
-
-	return
-}
