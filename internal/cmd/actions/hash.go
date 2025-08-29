@@ -21,6 +21,9 @@ Display file hash or checksums.
 Usage:
   fox hash [FLAG ...] PATH ...
 
+Alias:
+	sum, ha
+
 Positional arguments:
   Path(s) to open
 
@@ -46,10 +49,11 @@ Type "fox help" for more help...
 `
 
 var Hash = &cobra.Command{
-	Use:   "hash",
-	Short: "display file hash or checksums",
-	Long:  "display file hash or checksums",
-	Args:  cobra.ArbitraryArgs,
+	Use:     "hash",
+	Short:   "display file hash or checksums",
+	Long:    "display file hash or checksums",
+	Args:    cobra.ArbitraryArgs,
+	Aliases: []string{"sum", "ha"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 

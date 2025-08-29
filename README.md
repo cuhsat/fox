@@ -1,6 +1,6 @@
 ![](assets/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLMs**, to leverage your forensic examining process.
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** or **strings** with the possibilities of modern **LLMs**, to leverage your forensic examination process.
 
 ![](assets/preview.png "Preview")
 
@@ -12,7 +12,7 @@ go install github.com/cuhsat/fox@latest
 ## Key Features
 * Standalone native `AMD64` and `ARM64` binaries
 * Available for Windows, Linux, macOS
-* Available as `.apk`, `.deb`, `.rpm` packages
+* Available as `.apk`, `.deb`, `.rpm` package
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
 * In-memory virtual filesystem

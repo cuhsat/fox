@@ -20,6 +20,9 @@ Display line and byte counts.
 Usage:
   fox counts [FLAG ...] PATH ...
 
+Alias:
+	co, wc
+
 Positional arguments:
   Path(s) to open
 
@@ -33,10 +36,11 @@ Type "fox help" for more help...
 `
 
 var Counts = &cobra.Command{
-	Use:   "counts",
-	Short: "display line and byte counts",
-	Long:  "display line and byte counts",
-	Args:  cobra.ArbitraryArgs,
+	Use:     "counts",
+	Short:   "display line and byte counts",
+	Long:    "display line and byte counts",
+	Args:    cobra.ArbitraryArgs,
+	Aliases: []string{"co", "wc"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 

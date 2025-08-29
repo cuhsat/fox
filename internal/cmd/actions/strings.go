@@ -26,6 +26,9 @@ Display ASCII and Unicode strings.
 Usage:
   fox strings [FLAG ...] PATH ...
 
+Alias:
+	carve, st
+
 Positional arguments:
   Path(s) to open
 
@@ -51,10 +54,11 @@ Type "fox help" for more help...
 `
 
 var Strings = &cobra.Command{
-	Use:   "strings",
-	Short: "display ASCII and Unicode strings",
-	Long:  "display ASCII and Unicode strings",
-	Args:  cobra.ArbitraryArgs,
+	Use:     "strings",
+	Short:   "display ASCII and Unicode strings",
+	Long:    "display ASCII and Unicode strings",
+	Args:    cobra.ArbitraryArgs,
+	Aliases: []string{"carve", "st"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 

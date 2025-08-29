@@ -21,6 +21,9 @@ Display file entropy.
 Usage:
   fox entropy [FLAG ...] PATH ...
 
+Alias:
+	en
+
 Positional arguments:
   Path(s) to open
 
@@ -38,10 +41,11 @@ Type "fox help" for more help...
 `
 
 var Entropy = &cobra.Command{
-	Use:   "entropy",
-	Short: "display file entropy",
-	Long:  "display file entropy",
-	Args:  cobra.ArbitraryArgs,
+	Use:     "entropy",
+	Short:   "display file entropy",
+	Long:    "display file entropy",
+	Aliases: []string{"en"},
+	Args:    cobra.ArbitraryArgs,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 

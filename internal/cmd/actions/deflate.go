@@ -22,6 +22,9 @@ Deflate compressed files.
 Usage:
   fox deflate [FLAG ...] PATH...
 
+Alias:
+	extract, unzip, de
+
 Positional arguments:
   Path(s) to open
 
@@ -40,10 +43,11 @@ Type "fox help" for more help...
 `
 
 var Deflate = &cobra.Command{
-	Use:   "deflate",
-	Short: "deflate compressed files",
-	Long:  "deflate compressed files",
-	Args:  cobra.ArbitraryArgs,
+	Use:     "deflate",
+	Short:   "deflate compressed files",
+	Long:    "deflate compressed files",
+	Args:    cobra.ArbitraryArgs,
+	Aliases: []string{"extract", "unzip", "de"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 

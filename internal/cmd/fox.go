@@ -112,9 +112,6 @@ Standard:
 Example: print matching lines
   $ fox -pe "John Doe" ./**/*
 
-Example: print content hashes
-  $ fox hash -pt sha1 files.zip
-
 Example: print first sector in hex
   $ fox -pxhc=512 image.dd > mbr
 
@@ -301,6 +298,8 @@ func init() {
 	Fox.AddCommand(actions.Entropy)
 	Fox.AddCommand(actions.Hash)
 	Fox.AddCommand(actions.Strings)
+
+	Fox.Flags()
 
 	config.Load(Fox.Flags())
 }
