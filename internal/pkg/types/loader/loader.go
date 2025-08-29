@@ -1,6 +1,7 @@
 package loader
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -64,7 +65,17 @@ func (l *Loader) Init(paths []string) []Entry {
 			break
 		}
 
+		_, err := os.Stat(path)
+
+		if errors.Is(err, os.ErrNotExist) {
+			sys.Error(fmt.Errorf("%s does not exist", path))
+		}
+
 		l.loadPath(path)
+	}
+
+	if len(l.entries) == 0 && len(paths) > 0 {
+		sys.Exit("could not load any files")
 	}
 
 	return l.entries
