@@ -124,6 +124,20 @@ exec = [
 ]
 ```
 
+## Forensic Artifacts Collecting Toolkit
+
+### pipeline
+```toml
+[auto.fact]
+name = 'fact'
+mask = '.*\.(dd|img|raw)'
+exec = [
+  'sudo fmount "$FILE"',
+  'sudo ffind',
+  'sudo flog -D logstash'
+]
+```
+
 ## Reverse Engineering
 
 ### capa

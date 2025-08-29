@@ -2,7 +2,6 @@ package sys
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -22,23 +21,35 @@ func Call(cmds []string) File {
 	f := Create("stdout")
 	defer f.Close()
 
+	var pipe io.ReadCloser = os.Stdin
+
 	for _, cmd := range cmds {
 		args := text.SplitQuoted(cmd)
 
 		if len(args) > 0 {
-			var stdout, stderr bytes.Buffer
+			//var stdout, stderr bytes.Buffer
 
 			cmd := exec.Command(args[0], args[1:]...)
-			cmd.Stdout = &stdout
-			cmd.Stderr = &stderr
+			//cmd.Stdout = &stdout
+			//cmd.Stderr = &stderr
+
+			cmd.Stdin = pipe
+
+			pipe, _ = cmd.StdoutPipe()
 
 			if cmd.Run() != nil {
 				break
 			}
 
-			_, _ = f.WriteString(text.Unescape(stdout.String()))
+			_ = pipe.Close()
+
+			//_, _ = f.WriteString(text.Unescape(stdout.String()))
 		}
 	}
+
+	b, _ := io.ReadAll(pipe)
+
+	_, _ = f.WriteString(text.Unescape(string(b)))
 
 	return f
 }
