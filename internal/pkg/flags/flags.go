@@ -65,6 +65,7 @@ type Flags struct {
 
 	// deflate command
 	Deflate struct {
+		List bool
 		Path string
 		Pass string
 	}
