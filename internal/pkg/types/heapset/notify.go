@@ -1,22 +1,25 @@
 package heapset
 
 import (
+	"os"
 	"path/filepath"
 	"sync/atomic"
+	"time"
 
-	mem "github.com/cuhsat/memfile"
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
+
+var watched = make(map[sys.File]time.Time)
 
 func (hs *HeapSet) SetCallbacks(fn1, fn2 Callback) {
 	hs.error = fn1
 	hs.watch = fn2
 }
 
-func (hs *HeapSet) notifyHeap(name string) {
-	if name == sys.Log.Name() {
+func (hs *HeapSet) notifyHeap(path string) {
+	if path == sys.Log.Name() {
 		if hs.error != nil {
 			hs.error() // raise error
 		}
@@ -24,7 +27,7 @@ func (hs *HeapSet) notifyHeap(name string) {
 		return
 	}
 
-	idx, ok := hs.findByPath(name)
+	idx, ok := hs.findByPath(path)
 
 	if ok && idx == atomic.LoadInt32(hs.index) {
 		h := hs.atomicGet(idx)
@@ -36,20 +39,19 @@ func (hs *HeapSet) notifyHeap(name string) {
 	}
 }
 
-func (hs *HeapSet) watchFile(name string) {
-	switch f := sys.Open(name); f.(type) {
+func (hs *HeapSet) watchFile(path string) {
+	switch f := sys.Open(path); f.(type) {
 
 	// regular file
-	case nil:
-		if err := hs.watcher.Add(filepath.Dir(name)); err != nil {
+	case *os.File:
+		if err := hs.watcher.Add(filepath.Dir(path)); err != nil {
 			sys.Error(err)
 		}
 
 	// memory file
-	case *mem.File:
-		f.(*mem.File).SetNotify(func(name string) {
-			hs.notifyHeap(name)
-		})
+	case sys.File:
+		fi, _ := f.Stat()
+		watched[f] = fi.ModTime()
 	}
 }
 
@@ -66,5 +68,20 @@ func (hs *HeapSet) watchFiles() {
 				sys.Error(err)
 			}
 		}
+	}
+}
+
+func (hs *HeapSet) pollFiles() {
+	for {
+		for f, t := range watched {
+			fi, _ := f.Stat()
+
+			if fi.ModTime().After(t) {
+				watched[f] = t
+				hs.notifyHeap(f.Name())
+			}
+		}
+
+		time.Sleep(time.Millisecond * 200)
 	}
 }

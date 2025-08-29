@@ -6,7 +6,6 @@ require (
 	github.com/0xrawsec/golang-evtx v1.2.9
 	github.com/andybalholm/brotli v1.2.0
 	github.com/bmatcuk/doublestar/v4 v4.9.1
-	github.com/cuhsat/memfile v0.5.7
 	github.com/cuhsat/zip v0.5.2
 	github.com/eciavatta/sdhash v0.0.0-20210117153940-a7b55306eeff
 	github.com/edsrzf/mmap-go v1.2.0
@@ -19,6 +18,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/nwaples/rardecode v1.1.3
 	github.com/philippgille/chromem-go v0.7.0
+	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.7
 	github.com/spf13/viper v1.20.1
@@ -32,7 +32,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/sagikazarmark/locafero v0.10.0 // indirect
 	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
-	github.com/spf13/afero v1.14.0 // indirect
 	github.com/spf13/cast v1.9.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect

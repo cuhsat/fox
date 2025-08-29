@@ -45,6 +45,7 @@ func New(paths []string) *HeapSet {
 		index:   new(int32),
 	}
 
+	go hs.pollFiles()
 	go hs.watchFiles()
 
 	hs.watchFile(sys.Log.Name())

@@ -74,18 +74,18 @@ func TempFile(prefix string) *os.File {
 }
 
 func Persist(name string) string {
-	f, ok := sys.Memory(name)
+	f, ok := sys.Open(name).(sys.File)
 
 	if !ok {
 		return name // regular file
 	}
 
-	tmp := TempFile("fox")
+	t := TempFile("fox")
 
-	_, err := tmp.WriteTo(f)
+	_, err := t.WriteTo(f)
 
 	if err != nil {
-		sys.Panic(err)
+		sys.Error(err)
 	}
 
 	return f.Name()

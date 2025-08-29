@@ -122,11 +122,11 @@ func (v *View) textRender(p *panel) {
 		v.ctx.Root.SetContent(x+w, y+h, '┘', nil, themes.Subtext1)
 
 		// horizontal scrollbar
-		v.ctx.Root.SetContent(x+scrollX+0, y+h, '─', nil, themes.Terminal)
-		v.ctx.Root.SetContent(x+scrollX+1, y+h, '─', nil, themes.Terminal)
+		v.ctx.Root.SetContent(x+scrollX+0, y+h, '━', nil, themes.Terminal)
+		v.ctx.Root.SetContent(x+scrollX+1, y+h, '━', nil, themes.Terminal)
 
 		// vertical scrollbar
-		v.ctx.Root.SetContent(x+w, y+scrollY, '│', nil, themes.Terminal)
+		v.ctx.Root.SetContent(x+w, y+scrollY, '┃', nil, themes.Terminal)
 	}
 }
 

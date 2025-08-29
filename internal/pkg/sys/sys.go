@@ -117,3 +117,19 @@ func Piped(file File) bool {
 
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
+
+func Map(file File) ([]byte, error) {
+	b, err := io.ReadAll(file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}

@@ -5,7 +5,6 @@ import (
 	"runtime"
 	"sync"
 
-	mem "github.com/cuhsat/memfile"
 	"github.com/edsrzf/mmap-go"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
@@ -93,7 +92,7 @@ func (h *Heap) String() string {
 	case types.Regular:
 		return h.Path
 	case types.Stdin:
-		return "-"
+		return "pipe"
 	default:
 		return h.Title
 	}
@@ -160,15 +159,13 @@ func (h *Heap) Reload() {
 		case *os.File:
 			m, err = mmap.Map(f, mmap.RDONLY, 0)
 
-			if err != nil {
-				sys.Error(err)
-			}
-
 		// memory file
-		case *mem.File:
-			m = make(mmap.MMap, h.size)
+		case sys.File:
+			m, err = sys.Map(f)
+		}
 
-			copy(m, f.MMap())
+		if err != nil {
+			sys.Error(err)
 		}
 
 		h.mmap = &m

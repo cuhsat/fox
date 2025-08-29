@@ -1,28 +1,23 @@
 package sys
 
 import (
-	"errors"
-	"fmt"
-	"io"
-	"math/rand"
 	"os"
 
-	mem "github.com/cuhsat/memfile"
+	"github.com/spf13/afero"
 )
 
-var fs = make(map[string]*mem.File)
+var fs = afero.NewMemMapFs()
 
-type File = mem.Fileable
+type File = afero.File
 
-func Open(name string) File {
-	mf, ok := fs[name]
+func Open(path string) File {
+	mf, err := fs.Open(path)
 
-	if ok {
-		_, _ = mf.Seek(0, io.SeekStart)
+	if err == nil {
 		return mf // memory file
 	}
 
-	rf, err := os.OpenFile(name, os.O_RDONLY, 0400)
+	rf, err := os.OpenFile(path, os.O_RDONLY, 0400)
 
 	if err == nil {
 		return rf // regular file
@@ -32,29 +27,28 @@ func Open(name string) File {
 	return nil
 }
 
-func Create(name string) File {
-	uniq := fmt.Sprintf("fox://%d/%s", rand.Uint64(), name)
-	file := mem.New(uniq)
+func Create(path string) File {
+	f, err := fs.Create(path)
 
-	fs[uniq] = file
+	if err != nil {
+		Panic(err)
+	}
 
-	return file
+	return f
 }
 
-func Exists(name string) bool {
-	_, ok := fs[name]
+func Exists(path string) bool {
+	_, err := fs.Stat(path)
 
-	if ok {
+	if err == nil {
 		return true
 	}
 
-	_, err := os.Stat(name)
+	_, err = os.Stat(path)
 
-	return !errors.Is(err, os.ErrNotExist)
-}
+	if err == nil {
+		return true
+	}
 
-func Memory(name string) (File, bool) {
-	f, ok := fs[name]
-
-	return f, ok
+	return false
 }

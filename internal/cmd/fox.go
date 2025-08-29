@@ -110,7 +110,7 @@ Standard:
       --version            shows the version
 
 Example: print matching lines
-  $ fox -pe "John Doe" ./**/*.evtx
+  $ fox -pe "John Doe" ./**/*
 
 Example: print content hashes
   $ fox hash -pt sha1 files.zip
@@ -119,7 +119,7 @@ Example: print first sector in hex
   $ fox -pxhc=512 image.dd > mbr
 
 Example: print log file analysis
-  $ fox -pq="analyse this" log.xz
+  $ fox -pq="analyse this" log.evtx
 
 Type "fox help COMMAND" for more help...
 `, app.Version)
