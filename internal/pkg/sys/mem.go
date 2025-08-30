@@ -3,15 +3,20 @@ package sys
 import (
 	"os"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/afero"
+
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
-var fs = afero.NewMemMapFs()
+var Watcher, _ = fsnotify.NewBufferedWatcher(1024)
+
+var mem = fs.NewNotifyFs(afero.NewMemMapFs(), Watcher)
 
 type File = afero.File
 
 func Open(path string) File {
-	mf, err := fs.Open(path)
+	mf, err := mem.Open(path)
 
 	if err == nil {
 		return mf // memory file
@@ -28,7 +33,7 @@ func Open(path string) File {
 }
 
 func Create(path string) File {
-	f, err := fs.Create(path)
+	f, err := mem.Create(path)
 
 	if err != nil {
 		Panic(err)
@@ -38,7 +43,7 @@ func Create(path string) File {
 }
 
 func Exists(path string) bool {
-	_, err := fs.Stat(path)
+	_, err := mem.Stat(path)
 
 	if err == nil {
 		return true

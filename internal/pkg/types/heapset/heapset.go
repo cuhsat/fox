@@ -6,8 +6,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/fsnotify/fsnotify"
-
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -22,8 +20,7 @@ type Each func(int, *heap.Heap)
 type HeapSet struct {
 	sync.RWMutex
 
-	loader  *loader.Loader    // file loader
-	watcher *fsnotify.Watcher // file watcher
+	loader *loader.Loader // file loader
 
 	error Callback // error callback
 	watch Callback // watch callback
@@ -33,22 +30,14 @@ type HeapSet struct {
 }
 
 func New(paths []string) *HeapSet {
-	w, err := fsnotify.NewWatcher()
-
-	if err != nil {
-		sys.Error(err)
-	}
-
 	hs := HeapSet{
-		watcher: w,
-		loader:  loader.New(),
-		index:   new(int32),
+		loader: loader.New(),
+		index:  new(int32),
 	}
 
-	go hs.pollFiles()
 	go hs.watchFiles()
 
-	hs.watchFile(sys.Log.Name())
+	hs.addFile(sys.Log.Name())
 
 	for _, e := range hs.loader.Init(paths) {
 		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
@@ -207,7 +196,7 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 func (hs *HeapSet) LoadHeap() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	hs.watchFile(h.Ensure().Path)
+	hs.addFile(h.Ensure().Path)
 
 	return h
 }
@@ -251,8 +240,6 @@ func (hs *HeapSet) CloseOther() {
 }
 
 func (hs *HeapSet) ThrowAway() {
-	_ = hs.watcher.Close()
-
 	hs.Lock()
 
 	for _, h := range hs.heaps {
