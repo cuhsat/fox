@@ -15,7 +15,7 @@ go install github.com/cuhsat/fox@latest
 * Available as `.apk`, `.deb`, `.rpm` package
 * Multi core data handling for fast response times
 * Memory mapped lazy loaded file handling
-* In-memory virtual filesystem
+* In-memory forensic filesystem
 * Prohibited file write access
 * Path matching and globbing
 * Unicode multi-byte support

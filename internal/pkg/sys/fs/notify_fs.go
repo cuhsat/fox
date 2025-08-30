@@ -9,20 +9,19 @@ import (
 )
 
 type NotifyFs struct {
-	base afero.Fs
-
-	watcher *fsnotify.Watcher
+	base  afero.Fs
+	watch *fsnotify.Watcher
 }
 
 func NewNotifyFs(base afero.Fs, watcher *fsnotify.Watcher) afero.Fs {
-	return &NotifyFs{base: base, watcher: watcher}
+	return &NotifyFs{base: base, watch: watcher}
 }
 
 func (fs *NotifyFs) Chmod(name string, mode os.FileMode) error {
 	err := fs.base.Chmod(name, mode)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Chmod,
 		}
@@ -35,7 +34,7 @@ func (fs *NotifyFs) Chown(name string, uid, gid int) error {
 	err := fs.base.Chown(name, uid, gid)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Chmod,
 		}
@@ -48,7 +47,7 @@ func (fs *NotifyFs) Chtimes(name string, atime time.Time, mtime time.Time) error
 	err := fs.base.Chtimes(name, atime, mtime)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Chmod,
 		}
@@ -63,20 +62,20 @@ func (fs *NotifyFs) Create(name string) (afero.File, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Create,
 		}
 	}
 
-	return &NotifyFile{f, fs.watcher}, nil
+	return &NotifyFile{f, fs.watch}, nil
 }
 
 func (fs *NotifyFs) Mkdir(name string, perm os.FileMode) error {
 	err := fs.base.Mkdir(name, perm)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Create,
 		}
@@ -89,7 +88,7 @@ func (fs *NotifyFs) MkdirAll(path string, perm os.FileMode) error {
 	err := fs.base.MkdirAll(path, perm)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: path,
 			Op:   fsnotify.Remove,
 		}
@@ -109,7 +108,7 @@ func (fs *NotifyFs) Open(name string) (afero.File, error) {
 		return nil, err
 	}
 
-	return &NotifyFile{f, fs.watcher}, nil
+	return &NotifyFile{f, fs.watch}, nil
 }
 
 func (fs *NotifyFs) OpenFile(name string, flag int, perm os.FileMode) (afero.File, error) {
@@ -119,14 +118,14 @@ func (fs *NotifyFs) OpenFile(name string, flag int, perm os.FileMode) (afero.Fil
 		return nil, err
 	}
 
-	return &NotifyFile{f, fs.watcher}, nil
+	return &NotifyFile{f, fs.watch}, nil
 }
 
 func (fs *NotifyFs) Remove(name string) error {
 	err := fs.base.Remove(name)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: name,
 			Op:   fsnotify.Remove,
 		}
@@ -139,7 +138,7 @@ func (fs *NotifyFs) RemoveAll(path string) error {
 	err := fs.base.Remove(path)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: path,
 			Op:   fsnotify.Remove,
 		}
@@ -152,7 +151,7 @@ func (fs *NotifyFs) Rename(oldname, newname string) error {
 	err := fs.base.Rename(oldname, newname)
 
 	if err == nil {
-		fs.watcher.Events <- fsnotify.Event{
+		fs.watch.Events <- fsnotify.Event{
 			Name: oldname,
 			Op:   fsnotify.Rename,
 		}

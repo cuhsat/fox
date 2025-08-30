@@ -8,9 +8,8 @@ import (
 )
 
 type NotifyFile struct {
-	base afero.File
-
-	watcher *fsnotify.Watcher
+	base  afero.File
+	watch *fsnotify.Watcher
 }
 
 func (f *NotifyFile) Close() error {
@@ -53,7 +52,7 @@ func (f *NotifyFile) Truncate(size int64) error {
 	err := f.base.Truncate(size)
 
 	if err == nil {
-		f.watcher.Events <- fsnotify.Event{
+		f.watch.Events <- fsnotify.Event{
 			Name: f.base.Name(),
 			Op:   fsnotify.Write,
 		}
@@ -66,7 +65,7 @@ func (f *NotifyFile) Write(p []byte) (n int, err error) {
 	n, err = f.base.Write(p)
 
 	if err == nil {
-		f.watcher.Events <- fsnotify.Event{
+		f.watch.Events <- fsnotify.Event{
 			Name: f.base.Name(),
 			Op:   fsnotify.Write,
 		}
@@ -79,7 +78,7 @@ func (f *NotifyFile) WriteAt(p []byte, off int64) (n int, err error) {
 	n, err = f.base.WriteAt(p, off)
 
 	if err == nil {
-		f.watcher.Events <- fsnotify.Event{
+		f.watch.Events <- fsnotify.Event{
 			Name: f.base.Name(),
 			Op:   fsnotify.Write,
 		}
@@ -92,7 +91,7 @@ func (f *NotifyFile) WriteString(s string) (ret int, err error) {
 	ret, err = f.base.WriteString(s)
 
 	if err == nil {
-		f.watcher.Events <- fsnotify.Event{
+		f.watch.Events <- fsnotify.Event{
 			Name: f.base.Name(),
 			Op:   fsnotify.Write,
 		}
