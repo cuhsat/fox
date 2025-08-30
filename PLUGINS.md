@@ -132,7 +132,7 @@ exec = [
 name = 'fact'
 mask = '.*\.(dd|img|raw)'
 exec = [
-  'sudo fmount "FILE" | ffind | flog -D logstash'
+  'sudo fmount "FILE" | ffind | flog -D TEMP'
 ]
 ```
 

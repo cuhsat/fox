@@ -13,14 +13,14 @@ import (
 
 const (
 	short = 2 // seconds
-	long  = 4 // seconds
+	long  = 2 // seconds
 )
 
 type Overlay struct {
 	base
-	m      sync.RWMutex
-	ch     chan message
-	buffer *message
+	m   sync.RWMutex
+	ch  chan message
+	buf *message
 }
 
 type message struct {
@@ -39,7 +39,7 @@ func NewOverlay(ctx *context.Context) *Overlay {
 
 func (o *Overlay) Render(x, y, w, _ int) {
 	o.m.RLock()
-	msg := o.buffer
+	msg := o.buf
 	o.m.RUnlock()
 
 	if msg != nil {
@@ -50,13 +50,13 @@ func (o *Overlay) Render(x, y, w, _ int) {
 func (o *Overlay) Listen() {
 	for msg := range o.ch {
 		o.m.Lock()
-		o.buffer = &msg
+		o.buf = &msg
 		o.m.Unlock()
 
 		time.Sleep(msg.t * time.Second)
 
 		o.m.Lock()
-		o.buffer = nil
+		o.buf = nil
 		o.m.Unlock()
 
 		o.ctx.ForceRender()
