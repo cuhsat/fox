@@ -9,6 +9,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
@@ -119,7 +120,7 @@ func (h *Heap) Reload() {
 	h.Lock()
 
 	if h.file == nil {
-		h.file = sys.OpenThrough(h.Path)
+		h.file = fs.Open(h.Path)
 	}
 
 	fi, err := h.file.Stat()

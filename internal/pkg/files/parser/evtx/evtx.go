@@ -5,6 +5,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 const (
@@ -18,10 +19,10 @@ func Detect(path string) bool {
 }
 
 func Parse(path string) string {
-	f := sys.OpenThrough(path)
+	f := fs.Open(path)
 	defer f.Close()
 
-	t := sys.CreateMem(path)
+	t := fs.Create(path)
 	defer t.Close()
 
 	r, err := evtx.New(f)

@@ -4,8 +4,35 @@ import (
 	"os"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/afero"
 )
+
+var Watcher, _ = fsnotify.NewBufferedWatcher(2048)
+
+var ffs = NewForensicFs(
+	afero.NewReadOnlyFs(
+		afero.NewOsFs(),
+	),
+	NewNotifyFs(
+		afero.NewMemMapFs(),
+		Watcher,
+	),
+)
+
+func Open(path string) afero.File {
+	f, _ := ffs.Open(path)
+	return f
+}
+
+func Create(path string) afero.File {
+	f, _ := ffs.Create(path)
+	return f
+}
+
+func Exists(path string) bool {
+	return ffs.Exists(path)
+}
 
 type ForensicFs struct {
 	base  afero.Fs
@@ -96,13 +123,13 @@ func (fs *ForensicFs) Exists(name string) bool {
 	_, err := fs.layer.Stat(name)
 
 	if err == nil {
-		return true
+		return true // layer stat
 	}
 
 	_, err = fs.base.Stat(name)
 
 	if err == nil {
-		return true
+		return true // base stat
 	}
 
 	return false

@@ -10,6 +10,7 @@ import (
 	"github.com/cuhsat/fox/internal/app/ai/agent/rag"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
@@ -28,7 +29,7 @@ type Agent struct {
 
 func New() *Agent {
 	a := &Agent{
-		File: sys.CreateMem("agent"),
+		File: fs.Create("/fox/agent"),
 
 		llm: llm.New(),
 		rag: rag.New(),

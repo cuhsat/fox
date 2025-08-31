@@ -14,6 +14,7 @@ import (
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
@@ -162,7 +163,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 }
 
 func (bag *Bag) init() {
-	old := sys.Exists(bag.Path)
+	old := fs.Exists(bag.Path)
 
 	if bag.Mode != flags.BagModeNone {
 		var err error

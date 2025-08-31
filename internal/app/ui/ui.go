@@ -20,6 +20,7 @@ import (
 	"github.com/cuhsat/fox/internal/app/ui/widgets"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
@@ -483,7 +484,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					}
 
 				case tcell.KeyCtrlB:
-					if sys.Exists(bg.Path) {
+					if fs.Exists(bg.Path) {
 						ui.view.Reset()
 						hs.OpenFile(bg.Path, bg.Path, bg.Path, types.Ignore)
 					} else {

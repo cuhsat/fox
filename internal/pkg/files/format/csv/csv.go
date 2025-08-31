@@ -7,6 +7,7 @@ import (
 	"github.com/jfyne/csvd"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
@@ -15,10 +16,10 @@ func Detect(path string) bool {
 }
 
 func Format(path string) string {
-	f := sys.OpenThrough(path)
+	f := fs.Open(path)
 	defer f.Close()
 
-	t := sys.CreateMem(path)
+	t := fs.Create(path)
 	defer t.Close()
 
 	r := csvd.NewReader(f)

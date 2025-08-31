@@ -9,6 +9,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func Detect(path string) bool {
@@ -18,7 +19,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path, _ string) (i []*files.Item) {
-	a := sys.OpenThrough(path)
+	a := fs.Open(path)
 	defer a.Close()
 
 	r, err := cabfile.New(a)
@@ -40,7 +41,7 @@ func Deflate(path, _ string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.CreateMem(filepath.Join(path, s))
+		t := fs.Create(filepath.Join(path, s))
 
 		_, err = io.Copy(t, h)
 		_ = t.Close()

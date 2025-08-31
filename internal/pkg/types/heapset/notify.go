@@ -7,6 +7,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func (hs *HeapSet) SetCallbacks(fn1, fn2 Callback) {
@@ -15,7 +16,7 @@ func (hs *HeapSet) SetCallbacks(fn1, fn2 Callback) {
 }
 
 func (hs *HeapSet) addFile(path string) {
-	err := sys.Watcher.Add(filepath.Dir(path))
+	err := fs.Watcher.Add(filepath.Dir(path))
 
 	if err != nil {
 		sys.Error(err)
@@ -25,7 +26,7 @@ func (hs *HeapSet) addFile(path string) {
 func (hs *HeapSet) watchFiles() {
 	for {
 		select {
-		case ev, ok := <-sys.Watcher.Events:
+		case ev, ok := <-fs.Watcher.Events:
 			if !ok || !ev.Has(fsnotify.Write) {
 				continue
 			}
@@ -51,7 +52,7 @@ func (hs *HeapSet) watchFiles() {
 				continue
 			}
 
-		case err, ok := <-sys.Watcher.Errors:
+		case err, ok := <-fs.Watcher.Errors:
 			if ok {
 				sys.Error(err)
 			}

@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 type Item struct {
@@ -17,7 +18,7 @@ type Deflate func(string, string) []*Item
 func HasMagic(p string, o int, m []byte) bool {
 	buf := make([]byte, o+len(m))
 
-	f := sys.OpenThrough(p)
+	f := fs.Open(p)
 	defer f.Close()
 
 	fi, err := f.Stat()

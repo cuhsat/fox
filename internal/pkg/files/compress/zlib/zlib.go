@@ -7,6 +7,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func Detect(path string) bool {
@@ -25,7 +26,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-	a := sys.OpenThrough(path)
+	a := fs.Open(path)
 	defer a.Close()
 
 	r, err := zlib.NewReader(a)
@@ -37,7 +38,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	t := sys.CreateMem(path)
+	t := fs.Create(path)
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

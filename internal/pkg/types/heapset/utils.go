@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
@@ -15,7 +16,7 @@ import (
 type util func(h *heap.Heap) string
 
 func (hs *HeapSet) Merge() bool {
-	f := sys.CreateMem("Merged")
+	f := fs.Create("/fox/merged")
 
 	hs.RLock()
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/loader"
@@ -36,8 +37,6 @@ func New(paths []string) *HeapSet {
 	}
 
 	go hs.watchFiles()
-
-	hs.addFile(sys.Log.Name())
 
 	for _, e := range hs.loader.Init(paths) {
 		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
@@ -105,7 +104,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		f := sys.CreateMem("Help")
+		f := fs.Create("/fox/help")
 		_, _ = f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
 		hs.atomicAdd(heap.New(
@@ -122,7 +121,7 @@ func (hs *HeapSet) OpenHelp() {
 }
 
 func (hs *HeapSet) OpenFile(path, base, title string, tp types.Heap) {
-	if !sys.Exists(path) {
+	if !fs.Exists(path) {
 		return
 	}
 

@@ -9,9 +9,13 @@ import (
 	"runtime"
 
 	"github.com/rainu/go-command-chain"
+	"github.com/spf13/afero"
 
 	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
+
+type File = afero.File
 
 func Exit(v ...any) {
 	Print(v...)
@@ -19,7 +23,7 @@ func Exit(v ...any) {
 }
 
 func Exec(cmds []string) File {
-	f := CreateMem("exec")
+	f := fs.Create("/fox/exec")
 	defer f.Close()
 
 	for _, cmd := range cmds {
@@ -62,7 +66,7 @@ func Stdin() File {
 		Panic("Device mode is invalid")
 	}
 
-	f := CreateMem("stdin")
+	f := fs.Create("/fox/stdin")
 
 	go func(f File) {
 		r := bufio.NewReader(os.Stdin)
@@ -92,11 +96,11 @@ func Stdin() File {
 }
 
 func Stdout() File {
-	return CreateMem("stdout")
+	return fs.Create("/fox/stdout")
 }
 
 func Stderr() File {
-	return CreateMem("stderr")
+	return fs.Create("/fox/stderr")
 }
 
 func Piped(file File) bool {

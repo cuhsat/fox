@@ -9,6 +9,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func Detect(path string) bool {
@@ -49,7 +50,7 @@ func Deflate(path, pass string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.CreateMem(filepath.Join(path, f.Name))
+		t := fs.Create(filepath.Join(path, f.Name))
 
 		_, err = io.Copy(t, a)
 

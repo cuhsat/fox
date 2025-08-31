@@ -9,6 +9,7 @@ import (
 
 	"github.com/cuhsat/fox/internal/pkg/files"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func Detect(path string) bool {
@@ -18,7 +19,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path, pass string) (i []*files.Item) {
-	a := sys.OpenThrough(path)
+	a := fs.Open(path)
 	defer a.Close()
 
 	r, err := rardecode.NewReader(a, pass)
@@ -44,7 +45,7 @@ func Deflate(path, pass string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.CreateMem(filepath.Join(path, h.Name))
+		t := fs.Create(filepath.Join(path, h.Name))
 
 		_, err = io.Copy(t, r)
 		_ = t.Close()

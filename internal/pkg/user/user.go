@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 func LoadConfig(cfg *viper.Viper, name string) bool {
@@ -74,7 +75,7 @@ func TempFile(prefix string) *os.File {
 }
 
 func Persist(name string) string {
-	f, ok := sys.OpenThrough(name).(sys.File)
+	f, ok := fs.Open(name).(sys.File)
 
 	if !ok {
 		return name // regular file
