@@ -30,9 +30,9 @@ go install github.com/cuhsat/fox@latest
 * Built-in `ASCII` and `Unicode` string carving
 * Built-in IoC detection of `UUID`, `IPv4`, `IPv6`, `MAC`, `URL`, `Mail`
 * Built-in parser for Linux systemd `journal` files
-* Built-in parser for Windows event log `EVTX` files
-* Built-in sniffer for `CSV` delimiter formats
-* Built-in formating of: `CSV`, `JSON`, `JSONL` data
+* Built-in parser for Windows event log `evtx` files
+* Built-in sniffer for `csv` delimiter formats
+* Built-in formating of: `csv`, `json`, `jsonl` data
 * Built-in extraction of: `cab`, `rar`, `tar`, `zip`
 * Built-in deflation of: `brotli`, `bzip2`, `gzip`, `lz4`, `xz`, `zlib`, `zstd`
 * Built-in cryptographic hashes: `MD5`, `SHA1`, `SHA256`, `SHA3`, `SHA3-224`, `SHA3-256`, `SHA3-384`, `SHA3-512`
@@ -41,7 +41,7 @@ go install github.com/cuhsat/fox@latest
 * Built-in in-memory RAG database for document embeddings
 * Built-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *Mistral* or *DeepSeek R1*
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
-* Evidence bag formats: `raw`, `text`, `JSON`, `JSONL`, `XML`, `SQLite3`
+* Evidence bag formats: `raw`, `text`, `json`, `jsonl`, `xml`, `sqlite3`
 * Evidence bag chain of custody signing via `HMAC-SHA256`
 * Evidence streaming to server in [Elastic Common Schema 9.1](https://www.elastic.co/docs/reference/ecs)
 * Terminal interface compatible with many terminals
