@@ -18,14 +18,6 @@ const (
 	Cursor = tcell.CursorStyleBlinkingBar
 )
 
-const (
-	filter = '❯'
-	navi   = 'N'
-	wrap   = 'W'
-	follow = 'T'
-	off    = '·'
-)
-
 type Prompt struct {
 	base
 	lock      atomic.Bool
@@ -207,7 +199,7 @@ func (p *Prompt) fmtInput(fs []string) string {
 			sb.WriteRune(' ')
 			sb.WriteString(f)
 			sb.WriteRune(' ')
-			sb.WriteRune(filter)
+			sb.WriteRune(p.ctx.Icon.Grep)
 		}
 	}
 
@@ -225,27 +217,27 @@ func (p *Prompt) fmtStatus(n, m int) string {
 	var sb strings.Builder
 
 	if m > 0 {
-		sb.WriteString(fmt.Sprintf(" %d × %d ", n, m))
+		sb.WriteString(fmt.Sprintf(" %d %c %d ", n, p.ctx.Icon.Size, m))
 	} else {
 		sb.WriteString(fmt.Sprintf(" %d ", n))
 	}
 
 	if p.ctx.IsNavi() {
-		sb.WriteRune(navi)
+		sb.WriteRune('N')
 	} else {
-		sb.WriteRune(off)
+		sb.WriteRune(p.ctx.Icon.None)
 	}
 
 	if p.ctx.IsWrap() {
-		sb.WriteRune(wrap)
+		sb.WriteRune('W')
 	} else {
-		sb.WriteRune(off)
+		sb.WriteRune(p.ctx.Icon.None)
 	}
 
 	if p.ctx.IsFollow() {
-		sb.WriteRune(follow)
+		sb.WriteRune('T')
 	} else {
-		sb.WriteRune(off)
+		sb.WriteRune(p.ctx.Icon.None)
 	}
 
 	sb.WriteRune(' ')

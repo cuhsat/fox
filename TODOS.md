@@ -1,11 +1,9 @@
 # TODOS
 
 ## Bug Fixes
-- Fix backspace (Windows)
-- Fix icon file count
-- Fix icon filter
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with runewidth
+- Fix partial highlighting
 
 ## Features
 - Add possibility to read *systemd journal* files
@@ -21,6 +19,8 @@
   - https://hjr265.me/blog/adding-icons-for-go-built-windows-executable/
 - Add `Ctrl` + `Backspace` to delete word
 - Add *Splunk* export
+  - https://github.com/ZachtimusPrime/Go-Splunk-HTTP
+  - https://blogs.perficient.com/2024/09/19/splunk-cloud-http-event-collector-setup-guide/
   - Flag `--ecs` converts to *ECS*
   - Flag `-L` alias for `--url=...` `--ecs`
 - Add scan with *Yara* rules
@@ -33,6 +33,13 @@
   - Subpage with screenshots of themes
 
 ## Ideas
+- Add color to output
+  - https://github.com/logrusorgru/aurora
+  - https://github.com/cyucelen/marker
+- Add readline standards
+  - https://github.com/chzyer/readline
+- Use reflow algos?
+  - https://github.com/muesli/reflow
 - Horizontal scrollable input field
 - Parallel, multiple filters?
 - Autocomplete inputs from history?
@@ -54,6 +61,9 @@
   - `{}[]<>()““‘‘:;`
 
 ## Misc
+- Optimize speed
+  - https://dev.to/moseeh_52/efficient-file-reading-in-go-mastering-bufionewscanner-vs-osreadfile-4h05
+  - https://dave.cheney.net/high-performance-json.html
 - Add something about *MITRE* to the readme
 - Add more debug prints?
 - Create a separate repository for code?

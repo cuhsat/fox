@@ -8,6 +8,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 
 	"github.com/cuhsat/fox/internal/pkg/flags"
+	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
@@ -16,6 +17,7 @@ type Context struct {
 	sync.RWMutex
 
 	Root tcell.Screen
+	Icon *text.Icon
 
 	mode mode.Mode
 	last mode.Mode
@@ -35,6 +37,9 @@ func New(root tcell.Screen) *Context {
 		// screen
 		Root: root,
 
+		// icons
+		Icon: text.Icons(),
+
 		// modes
 		mode: mode.Default,
 		last: mode.Default,
@@ -51,9 +56,9 @@ func New(root tcell.Screen) *Context {
 	ctx.t.Store(cfg.GetBool("ui.state.t"))
 	ctx.p.Store(false)
 
+	// precede flags
 	s := strings.ToUpper(flags.Get().UI.State)
 
-	// precede flags
 	if strings.ContainsRune(s, '-') {
 		ctx.n.Store(false)
 		ctx.w.Store(false)

@@ -30,7 +30,7 @@ type base struct {
 }
 
 func (b *base) blank(x, y, w int, sty tcell.Style) {
-	for i := 0; i < w; i++ {
+	for i := range w {
 		b.ctx.Root.SetContent(x+i, y, ' ', nil, sty)
 	}
 }

@@ -276,31 +276,33 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					ui.view.LoadState(heap.Path)
 
 				case tcell.KeyF1:
+					ui.view.Reset()
+					hs.OpenHelp()
+
+				case tcell.KeyF2:
 					hs.Counts()
 					ui.change(mode.Default)
 
-				case tcell.KeyF2:
+				case tcell.KeyF3:
 					hs.Entropy(0.0, 1.0)
 					ui.change(mode.Default)
 
-				case tcell.KeyF3:
+				case tcell.KeyF4:
 					hs.Strings(3, math.MaxInt, true, nil)
 					ui.change(mode.Default)
 
-				case tcell.KeyF4:
+				case tcell.KeyF5:
 					hs.HashSum(types.MD5)
 					ui.change(mode.Default)
 
-				case tcell.KeyF5:
+				case tcell.KeyF6:
 					hs.HashSum(types.SHA1)
 					ui.change(mode.Default)
 
-				case tcell.KeyF6:
+				case tcell.KeyF7:
 					hs.HashSum(types.SHA256)
 					ui.change(mode.Default)
 
-				case tcell.KeyF7:
-					fallthrough
 				case tcell.KeyF8:
 					fallthrough
 				case tcell.KeyF9:
@@ -326,7 +328,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 					}
 
 					go p.Execute(heap.Path, heap.Base, func(path, base, dir string) {
-						name := fmt.Sprintf("%s — %s", base, p.Name)
+						name := fmt.Sprintf("%s %c %s", base, ui.ctx.Icon.HSep, p.Name)
 
 						if len(dir) > 0 {
 							hs.Open(dir)
@@ -491,10 +493,6 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						ui.overlay.SendError(fmt.Sprintf("%s not found", bg.Path))
 					}
 
-				case tcell.KeyCtrlH:
-					ui.view.Reset()
-					hs.OpenHelp()
-
 				case tcell.KeyCtrlD:
 					ui.view.Reset()
 					hs.OpenLog()
@@ -569,7 +567,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				case tcell.KeyDelete:
 					ui.prompt.DelRune(false)
 
-				case tcell.KeyBackspace2:
+				case tcell.KeyBackspace, tcell.KeyBackspace2:
 					if len(ui.prompt.Value()) > 0 {
 						ui.prompt.DelRune(true)
 					} else if ui.ctx.Mode().Prompt() {

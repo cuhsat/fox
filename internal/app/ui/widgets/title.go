@@ -35,7 +35,7 @@ func (t *Title) Render(hs *heapset.HeapSet, x, y, w, _ int) int {
 	var c string
 
 	if n > 1 {
-		c = fmt.Sprintf(" %d ∣ %d ", i, n)
+		c = fmt.Sprintf(" %d %c %d ", i, t.ctx.Icon.VSep, n)
 	}
 
 	// render blank line

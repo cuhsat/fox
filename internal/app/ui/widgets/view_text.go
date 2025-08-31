@@ -44,7 +44,8 @@ func (v *View) textRender(p *panel) {
 
 	i := 0
 
-	agent := v.heap.Type == types.Agent
+	llm := v.heap.Type == types.Agent
+	ps1 := string(text.Icons().Ps1)
 
 	// render lines
 	var color tcell.Style
@@ -69,7 +70,7 @@ func (v *View) textRender(p *panel) {
 
 		// text value
 		if len(line.Str) > 0 {
-			if agent && strings.HasPrefix(line.Str, text.PS1) {
+			if llm && strings.HasPrefix(line.Str, ps1) {
 				color = themes.Subtext2
 			} else if i == 1 && v.ctx.IsPinned() {
 				color = themes.Subtext0

@@ -47,7 +47,7 @@ func (a *Agent) Close() {
 }
 
 func (a *Agent) PS1(query string) {
-	_, _ = a.File.WriteString(fmt.Sprintf("%s %s\n", text.PS1, query))
+	_, _ = a.File.WriteString(fmt.Sprintf("%c %s\n", text.Icons().Ps1, query))
 }
 
 func (a *Agent) Ask(query string, h *heap.Heap) {

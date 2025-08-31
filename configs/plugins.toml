@@ -17,9 +17,9 @@ exec = [
 
 # Available hotkeys:
 #
-#  F7 to F12
+#  F8 to F12
 #
-[hotkey.f7]
+[hotkey.f8]
 name = 'target-query'
 mode = 'query'
 exec = [

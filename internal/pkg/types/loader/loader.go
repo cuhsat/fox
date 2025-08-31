@@ -24,6 +24,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/files/parser/evtx"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
+	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
 )
@@ -215,7 +216,7 @@ func (l *Loader) addItem(path, base string) {
 
 func (l *Loader) addPlugin(path, base, name string) {
 	l.entries = append(l.entries, Entry{
-		fmt.Sprintf("%s — %s", base, name),
+		fmt.Sprintf("%s %c %s", base, text.Icons().HSep, name),
 		path,
 		base,
 		types.Plugin,

@@ -14,7 +14,7 @@ exec = [
 
 ### target-query
 ```toml
-[hotkey.f7]
+[hotkey.f8]
 name = 'target-query'
 mode = 'query'
 exec = [
@@ -24,7 +24,7 @@ exec = [
 
 ### target-shell
 ```toml
-[hotkey.f8]
+[hotkey.f9]
 name = 'target-shell'
 mode = 'shell'
 exec = [

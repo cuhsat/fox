@@ -78,6 +78,7 @@ AI model:
 UI flags:
       --state={N|W|T|-}    sets the used UI state flags
       --theme=THEME        sets the used UI theme
+      --legacy             don't use any unicode decorations (ISO 8859-1)
 
 Evidence:
   -N  --case=NAME          evidence bag case name (default: YYYY-MM-DD)
@@ -260,6 +261,7 @@ func init() {
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", themes.Default, "sets the used UI theme")
+	Fox.Flags().BoolVarP(&flg.UI.Legacy, "legacy", "", false, "don't use any unicode decorations")
 
 	Fox.Flags().StringVarP(&flg.Bag.Case, "case", "N", "", "evidence bag case name")
 	Fox.Flags().StringVarP(&flg.Bag.File, "file", "f", flags.BagFile, "evidence bag file name")

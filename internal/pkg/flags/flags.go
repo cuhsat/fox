@@ -48,9 +48,10 @@ type Flags struct {
 
 	// ui flags
 	UI struct {
-		Theme string
-		State string
-		Mode  mode.Mode
+		Theme  string
+		State  string
+		Legacy bool
+		Mode   mode.Mode
 	}
 
 	// alias flags

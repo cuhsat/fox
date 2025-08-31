@@ -30,14 +30,14 @@ GLOBAL:
   Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard
   Ctrl + z             Suspend to shell
-  Ctrl + h             Show help message
-  F1                   Show file(s) counts
-  F2                   Show file(s) entropy
-  F3                   Show file(s) strings
-  F4                   Show file(s) MD5
-  F5                   Show file(s) SHA1
-  F6                   Show file(s) SHA256
-  F7 - F12             Execute plugin(s)
+  F1                   Show help message
+  F2                   Show file(s) counts
+  F3                   Show file(s) entropy
+  F4                   Show file(s) strings
+  F5                   Show file(s) MD5
+  F6                   Show file(s) SHA1
+  F7                   Show file(s) SHA256
+  F8 - F12             Execute plugin
 
 LESS:
   Enter                Scroll one line down

@@ -5,12 +5,33 @@ import (
 	"math"
 	"strings"
 
+	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/mattn/go-runewidth"
 )
 
-const (
-	PS1 = "❯"
-)
+// Unicode icons
+var UnicodeIcons = Icon{
+	None: '·',
+	HSep: '—',
+	VSep: '∣',
+	Size: '×',
+	Grep: '❯',
+	Ps1:  '❯',
+}
+
+// Default icons
+var DefaultIcons = Icon{
+	None: '·',
+	HSep: '-',
+	VSep: '|',
+	Size: 'x',
+	Grep: '>',
+	Ps1:  '>',
+}
+
+type Icon struct {
+	None, HSep, VSep, Size, Grep, Ps1 rune
+}
 
 func Dec(n int) int {
 	return int(math.Log10(float64(n))) + 1
@@ -51,4 +72,12 @@ func Title(s string, w int) (r string) {
 	r += fmt.Sprintf("└%s┘", l)
 
 	return
+}
+
+func Icons() *Icon {
+	if !flags.Get().UI.Legacy {
+		return &UnicodeIcons
+	} else {
+		return &DefaultIcons
+	}
 }
