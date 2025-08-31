@@ -2,8 +2,8 @@ package tar
 
 import (
 	"archive/tar"
-	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/files"
@@ -17,7 +17,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path, _ string) (i []*files.Item) {
-	a := sys.Open(path)
+	a := sys.OpenThrough(path)
 	defer a.Close()
 
 	r := tar.NewReader(a)
@@ -38,7 +38,7 @@ func Deflate(path, _ string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.Create(fmt.Sprintf("%s/%s", path, h.Name))
+		t := sys.CreateMem(filepath.Join(path, h.Name))
 
 		_, err = io.Copy(t, r)
 		_ = t.Close()

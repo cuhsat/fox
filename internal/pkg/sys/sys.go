@@ -19,7 +19,7 @@ func Exit(v ...any) {
 }
 
 func Exec(cmds []string) File {
-	f := Create("exec")
+	f := CreateMem("exec")
 	defer f.Close()
 
 	for _, cmd := range cmds {
@@ -62,7 +62,7 @@ func Stdin() File {
 		Panic("Device mode is invalid")
 	}
 
-	f := Create("stdin")
+	f := CreateMem("stdin")
 
 	go func(f File) {
 		r := bufio.NewReader(os.Stdin)
@@ -92,11 +92,11 @@ func Stdin() File {
 }
 
 func Stdout() File {
-	return Create("stdout")
+	return CreateMem("stdout")
 }
 
 func Stderr() File {
-	return Create("stderr")
+	return CreateMem("stderr")
 }
 
 func Piped(file File) bool {

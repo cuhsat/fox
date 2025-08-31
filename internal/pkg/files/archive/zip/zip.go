@@ -1,8 +1,8 @@
 package zip
 
 import (
-	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/cuhsat/zip/pkg/zip"
@@ -49,7 +49,7 @@ func Deflate(path, pass string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.Create(fmt.Sprintf("%s/%s", path, f.Name))
+		t := sys.CreateMem(filepath.Join(path, f.Name))
 
 		_, err = io.Copy(t, a)
 

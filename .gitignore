@@ -24,11 +24,8 @@ go.work.sum
 # IDEs
 .idea/
 
-# Todo list
-TODO.md
-
 # MacOS crap
 .DS_Store
 
 # Evidence bags
-/evidence*
+evidence*

@@ -15,7 +15,7 @@ import (
 type util func(h *heap.Heap) string
 
 func (hs *HeapSet) Merge() bool {
-	f := sys.Create("Merged")
+	f := sys.CreateMem("Merged")
 
 	hs.RLock()
 

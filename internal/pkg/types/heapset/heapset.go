@@ -105,7 +105,7 @@ func (hs *HeapSet) OpenHelp() {
 	if !ok {
 		idx = hs.Len()
 
-		f := sys.Create("Help")
+		f := sys.CreateMem("Help")
 		_, _ = f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
 
 		hs.atomicAdd(heap.New(
@@ -196,7 +196,9 @@ func (hs *HeapSet) NextHeap() *heap.Heap {
 func (hs *HeapSet) LoadHeap() *heap.Heap {
 	h := hs.atomicGet(atomic.LoadInt32(hs.index))
 
-	hs.addFile(h.Ensure().Path)
+	if h.Ensure().Type == types.Regular {
+		hs.addFile(h.Path) // watch file
+	}
 
 	return h
 }

@@ -174,7 +174,7 @@ func (l *Loader) loadArchive(path, base string, fn files.Deflate) {
 			continue
 		}
 
-		l.addItem(i.Path, base, i.Name)
+		l.addItem(i.Path, base)
 	}
 }
 
@@ -204,9 +204,9 @@ func (l *Loader) addFile(path, base string) {
 	})
 }
 
-func (l *Loader) addItem(path, base, name string) {
+func (l *Loader) addItem(path, base string) {
 	l.entries = append(l.entries, Entry{
-		filepath.Join(base, name),
+		path,
 		path,
 		base,
 		types.Deflate,

@@ -28,7 +28,7 @@ type Agent struct {
 
 func New() *Agent {
 	a := &Agent{
-		File: sys.Create("agent"),
+		File: sys.CreateMem("agent"),
 
 		llm: llm.New(),
 		rag: rag.New(),

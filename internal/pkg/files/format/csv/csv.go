@@ -15,10 +15,10 @@ func Detect(path string) bool {
 }
 
 func Format(path string) string {
-	f := sys.Open(path)
+	f := sys.OpenThrough(path)
 	defer f.Close()
 
-	t := sys.Create(path)
+	t := sys.CreateMem(path)
 	defer t.Close()
 
 	r := csvd.NewReader(f)

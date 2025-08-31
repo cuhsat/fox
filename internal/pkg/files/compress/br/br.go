@@ -16,12 +16,12 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-	a := sys.Open(path)
+	a := sys.OpenThrough(path)
 	defer a.Close()
 
 	r := brotli.NewReader(a)
 
-	t := sys.Create(path)
+	t := sys.CreateMem(path)
 	defer t.Close()
 
 	_, err := io.Copy(t, r)

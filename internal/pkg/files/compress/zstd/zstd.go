@@ -16,7 +16,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path string) string {
-	a := sys.Open(path)
+	a := sys.OpenThrough(path)
 	defer a.Close()
 
 	r, err := zstd.NewReader(a)
@@ -28,7 +28,7 @@ func Deflate(path string) string {
 
 	defer r.Close()
 
-	t := sys.Create(path)
+	t := sys.CreateMem(path)
 	defer t.Close()
 
 	_, err = io.Copy(t, r)

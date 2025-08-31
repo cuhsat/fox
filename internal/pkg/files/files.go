@@ -17,7 +17,7 @@ type Deflate func(string, string) []*Item
 func HasMagic(p string, o int, m []byte) bool {
 	buf := make([]byte, o+len(m))
 
-	f := sys.Open(p)
+	f := sys.OpenThrough(p)
 	defer f.Close()
 
 	fi, err := f.Stat()

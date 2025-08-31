@@ -1,8 +1,8 @@
 package rar
 
 import (
-	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/nwaples/rardecode"
@@ -18,7 +18,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path, pass string) (i []*files.Item) {
-	a := sys.Open(path)
+	a := sys.OpenThrough(path)
 	defer a.Close()
 
 	r, err := rardecode.NewReader(a, pass)
@@ -44,7 +44,7 @@ func Deflate(path, pass string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.Create(fmt.Sprintf("%s/%s", path, h.Name))
+		t := sys.CreateMem(filepath.Join(path, h.Name))
 
 		_, err = io.Copy(t, r)
 		_ = t.Close()

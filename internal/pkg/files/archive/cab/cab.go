@@ -1,8 +1,8 @@
 package cab
 
 import (
-	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/google/go-cabfile/cabfile"
@@ -18,7 +18,7 @@ func Detect(path string) bool {
 }
 
 func Deflate(path, _ string) (i []*files.Item) {
-	a := sys.Open(path)
+	a := sys.OpenThrough(path)
 	defer a.Close()
 
 	r, err := cabfile.New(a)
@@ -40,7 +40,7 @@ func Deflate(path, _ string) (i []*files.Item) {
 			continue
 		}
 
-		t := sys.Create(fmt.Sprintf("%s/%s", path, s))
+		t := sys.CreateMem(filepath.Join(path, s))
 
 		_, err = io.Copy(t, h)
 		_ = t.Close()
