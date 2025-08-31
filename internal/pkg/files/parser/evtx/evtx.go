@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	LF = 0xa
+	lf = 0xa
 )
 
 func Detect(path string) bool {
@@ -41,7 +41,7 @@ func Parse(path string) string {
 			sys.Error(err)
 		}
 
-		_, err = t.Write([]byte{LF})
+		_, err = t.Write([]byte{lf})
 
 		if err != nil {
 			sys.Error(err)

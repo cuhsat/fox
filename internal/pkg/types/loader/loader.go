@@ -22,6 +22,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/files/compress/zstd"
 	"github.com/cuhsat/fox/internal/pkg/files/format/csv"
 	"github.com/cuhsat/fox/internal/pkg/files/parser/evtx"
+	"github.com/cuhsat/fox/internal/pkg/files/parser/journal"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
@@ -266,6 +267,10 @@ func (l *Loader) process(path, base string) string {
 		// check for parser
 		if evtx.Detect(path) {
 			path = evtx.Parse(path)
+		}
+
+		if journal.Detect(path) {
+			path = journal.Parse(path)
 		}
 
 		// check for format

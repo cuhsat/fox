@@ -29,6 +29,7 @@ go install github.com/cuhsat/fox@latest
 * Built-in `wc` like counts with Shannon entropy
 * Built-in `ASCII` and `Unicode` string carving
 * Built-in IoC detection of `UUID`, `IPv4`, `IPv6`, `MAC`, `URL`, `Mail`
+* Built-in parser for Linux systemd `journal` files
 * Built-in parser for Windows event log `EVTX` files
 * Built-in sniffer for `CSV` delimiter formats
 * Built-in formating of: `CSV`, `JSON`, `JSONL` data

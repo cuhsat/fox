@@ -6,8 +6,6 @@
 - Fix partial highlighting
 
 ## Features
-- Add possibility to read *systemd journal* files
-  - https://github.com/Velocidex/go-journalctl
 - Add super timeline per group regex
   - Define *(Minimal) Common Log Format*
   - Close all other regular heaps
