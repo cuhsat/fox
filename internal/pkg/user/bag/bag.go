@@ -19,6 +19,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/text"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/url"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/xml"
+	"github.com/cuhsat/fox/internal/pkg/files/schema/ecs"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
@@ -26,29 +27,19 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
-type Writer interface {
-	Init(file *os.File, old bool, title string)
-
-	Start()
-	Flush()
-
-	WriteMeta(meta evidence.Meta)
-	WriteLine(nr, grp int, s string)
-}
-
 type Bag struct {
 	Path string        // file path
 	Mode flags.BagMode // file mode
 
-	file *os.File // file handle
-	name string   // case name
-	key  string   // key phrase
-	url  string   // url address
-	ws   []Writer // writers
+	file *os.File          // file handle
+	name string            // case name
+	key  string            // key phrase
+	url  string            // url address
+	ws   []evidence.Writer // writers
 }
 
 func New() *Bag {
-	var ws []Writer
+	var ws []evidence.Writer
 
 	flg := flags.Get().Bag
 
@@ -86,7 +77,11 @@ func New() *Bag {
 	}
 
 	if len(flg.Url) > 0 {
-		ws = append(ws, url.New(flg.Url))
+		if flg.Ecs {
+			ws = append(ws, url.New(flg.Url, ecs.New()))
+		} else {
+			ws = append(ws, url.New(flg.Url, evidence.New()))
+		}
 	}
 
 	return &Bag{
@@ -136,7 +131,7 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 	}
 
 	for _, w := range bag.ws {
-		w.Start()
+		w.Begin()
 
 		w.WriteMeta(evidence.Meta{
 			User:     usr,
@@ -180,7 +175,7 @@ func (bag *Bag) init() {
 	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", app.Version)
 
 	for _, w := range bag.ws {
-		w.Init(bag.file, old, title)
+		w.Open(bag.file, old, title)
 	}
 }
 

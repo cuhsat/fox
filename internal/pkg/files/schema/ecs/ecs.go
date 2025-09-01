@@ -1,6 +1,6 @@
-// Package format ECS specification:
+// Package ecs specification:
 // https://www.elastic.co/docs/reference/ecs/ecs-field-reference
-package format
+package ecs
 
 import (
 	"encoding/json"
@@ -59,10 +59,10 @@ func New() *Ecs {
 func (ecs *Ecs) String() string {
 	buf, err := json.Marshal(ecs)
 
-	if err != nil {
-		return err.Error()
-	} else {
+	if err == nil {
 		return string(buf)
+	} else {
+		return err.Error()
 	}
 }
 
@@ -81,6 +81,6 @@ func (ecs *Ecs) SetMeta(meta evidence.Meta) {
 	ecs.User.FullName = meta.User.Name
 }
 
-func (ecs *Ecs) AddLine(nr, grp int, s string) {
-	ecs.Message += fmt.Sprintf("%d:%d: %s\n", nr, grp, s)
+func (ecs *Ecs) AddLine(nr, grp int, str string) {
+	ecs.Message += fmt.Sprintf("%d:%d: %s\n", nr, grp, str)
 }

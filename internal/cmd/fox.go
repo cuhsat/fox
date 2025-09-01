@@ -87,8 +87,8 @@ Evidence:
                              NONE, RAW, TEXT, JSON, JSONL, XML, SQLITE
 
   -k, --key=KEYPHRASE      key phrase to sign evidence bag via HMAC-SHA256
-  -u, --url=URL            forward evidence data to URL also
-      --url-ecs            convert evidence data to ECS
+  -u, --url=URL            forward evidence data to URL address
+      --ecs                convert evidence data to ECS schema
 
 Disable:
   -R, --readonly           don't write any new files
@@ -99,7 +99,7 @@ Disable:
       --no-bag             don't write any bags
 
 Aliases:
-  -L, --logstash           short for --url=http://localhost:8080 --url-ecs
+  -L, --logstash           short for --url=http://localhost:8080 --ecs
   -T, --text               short for --mode=text
   -j, --json               short for --mode=json
   -J, --jsonl              short for --mode=jsonl
@@ -270,7 +270,7 @@ func init() {
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to URL also")
-	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "url-ecs", "", false, "convert evidence data to ECS")
+	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "convert evidence data to ECS")
 
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
 
