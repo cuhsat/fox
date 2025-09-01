@@ -103,11 +103,15 @@ func (h *Heap) Ensure() *Heap {
 	if h.file == nil {
 		h.Reload()
 
-		fs := flags.Get().Filters
+		filters := flags.Get().Filters
 
 		// apply global filters once
-		for _, f := range fs.Patterns {
-			h.AddFilter(f, fs.Before, fs.After)
+		for _, filter := range filters.Patterns {
+			h.AddFilter(
+				filter,
+				filters.Before,
+				filters.After,
+			)
 		}
 	}
 

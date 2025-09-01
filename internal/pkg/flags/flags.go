@@ -23,7 +23,7 @@ type Flags struct {
 		Mode BagMode
 		Key  string
 		Url  string
-		No   bool
+		Ecs  bool
 	}
 
 	// optional flags
@@ -33,6 +33,7 @@ type Flags struct {
 		NoConvert bool
 		NoDeflate bool
 		NoPlugins bool
+		NoBag     bool
 	}
 
 	// ai flags

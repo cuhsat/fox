@@ -9,8 +9,7 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-// Unicode icons
-var UnicodeIcons = Icon{
+var unicodeIcons = Icon{
 	None: '·',
 	HSep: '—',
 	VSep: '∣',
@@ -19,9 +18,8 @@ var UnicodeIcons = Icon{
 	Ps1:  '❯',
 }
 
-// Default icons
-var DefaultIcons = Icon{
-	None: '·',
+var defaultIcons = Icon{
+	None: '.',
 	HSep: '-',
 	VSep: '|',
 	Size: 'x',
@@ -76,8 +74,8 @@ func Title(s string, w int) (r string) {
 
 func Icons() *Icon {
 	if !flags.Get().UI.Legacy {
-		return &UnicodeIcons
+		return &unicodeIcons
 	} else {
-		return &DefaultIcons
+		return &defaultIcons
 	}
 }

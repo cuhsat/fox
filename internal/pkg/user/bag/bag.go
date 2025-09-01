@@ -12,12 +12,29 @@ import (
 	"time"
 
 	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/json"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/raw"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/sqlite"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/text"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/url"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/xml"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
+
+type Writer interface {
+	Init(file *os.File, old bool, title string)
+
+	Start()
+	Flush()
+
+	WriteMeta(meta evidence.Meta)
+	WriteLine(nr, grp int, s string)
+}
 
 type Bag struct {
 	Path string        // file path
@@ -27,32 +44,11 @@ type Bag struct {
 	name string   // case name
 	key  string   // key phrase
 	url  string   // url address
-	ws   []writer // writers
-}
-
-type writer interface {
-	Init(file *os.File, old bool, title string)
-
-	Start()
-	Flush()
-
-	WriteMeta(meta meta)
-	WriteLine(nr, grp int, s string)
-}
-
-type meta struct {
-	user     *user.User
-	name     string
-	path     string
-	size     int64
-	hash     []byte
-	filters  []string
-	bagged   time.Time
-	modified time.Time
+	ws   []Writer // writers
 }
 
 func New() *Bag {
-	var ws []writer
+	var ws []Writer
 
 	flg := flags.Get().Bag
 
@@ -65,27 +61,32 @@ func New() *Bag {
 	switch flg.Mode {
 	case flags.BagModeNone:
 	case flags.BagModeSqlite:
-		ws = append(ws, NewSqliteWriter())
-		path += ".sqlite3"
+		ws = append(ws, sqlite.New())
+		path += sqlite.Ext
+
 	case flags.BagModeJsonl:
-		ws = append(ws, NewJsonWriter(false))
-		path += ".jsonl"
+		ws = append(ws, json.New(false))
+		path += json.ExtPretty
+
 	case flags.BagModeJson:
-		ws = append(ws, NewJsonWriter(true))
-		path += ".json"
+		ws = append(ws, json.New(true))
+		path += json.Ext
+
 	case flags.BagModeXml:
-		ws = append(ws, NewXmlWriter())
-		path += ".xml"
+		ws = append(ws, xml.New())
+		path += xml.Ext
+
 	case flags.BagModeText:
-		ws = append(ws, NewTextWriter())
-		path += ".bag"
+		ws = append(ws, text.New())
+		path += text.Ext
+
 	default:
-		ws = append(ws, NewRawWriter())
-		path += ".txt"
+		ws = append(ws, raw.New())
+		path += raw.Ext
 	}
 
 	if len(flg.Url) > 0 {
-		ws = append(ws, NewEcsWriter(flg.Url))
+		ws = append(ws, url.New(flg.Url))
 	}
 
 	return &Bag{
@@ -137,15 +138,15 @@ func (bag *Bag) Put(h *heap.Heap) bool {
 	for _, w := range bag.ws {
 		w.Start()
 
-		w.WriteMeta(meta{
-			user:     usr,
-			name:     bag.name,
-			path:     abs,
-			size:     h.Len(),
-			hash:     sum,
-			filters:  h.Patterns(),
-			bagged:   now(),
-			modified: mod(h),
+		w.WriteMeta(evidence.Meta{
+			User:     usr,
+			Name:     bag.name,
+			Path:     abs,
+			Size:     h.Len(),
+			Hash:     sum,
+			Filters:  h.Patterns(),
+			Bagged:   now(),
+			Modified: mod(h),
 		})
 
 		for _, str := range *h.FMap() {
@@ -230,8 +231,4 @@ func mod(h *heap.Heap) time.Time {
 	}
 
 	return mt
-}
-
-func utc(t time.Time) string {
-	return t.UTC().Format(time.RFC3339)
 }

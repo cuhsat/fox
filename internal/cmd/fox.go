@@ -87,8 +87,8 @@ Evidence:
                              NONE, RAW, TEXT, JSON, JSONL, XML, SQLITE
 
   -k, --key=KEYPHRASE      key phrase to sign evidence bag via HMAC-SHA256
-  -u, --url=URL            url to also send evidence data too
-      --no-bag             don't write an evidence bag
+  -u, --url=URL            forward evidence data to URL also
+      --url-ecs            convert evidence data to ECS
 
 Disable:
   -R, --readonly           don't write any new files
@@ -96,9 +96,10 @@ Disable:
       --no-convert         don't convert automatically
       --no-deflate         don't deflate automatically
       --no-plugins         don't run any plugins
+      --no-bag             don't write any bags
 
 Aliases:
-  -L, --logstash           short for --url=http://localhost:8080
+  -L, --logstash           short for --url=http://localhost:8080 --url-ecs
   -T, --text               short for --mode=text
   -j, --json               short for --mode=json
   -J, --jsonl              short for --mode=jsonl
@@ -155,14 +156,14 @@ var Fox = &cobra.Command{
 
 		if flg.Opt.Readonly {
 			flg.Opt.NoPlugins = true
-			flg.Bag.No = true
+			flg.Opt.NoBag = true
 		}
 
 		if len(flg.Bag.Case) == 0 {
 			flg.Bag.Case = time.Now().Format("2006-01-02")
 		}
 
-		if flg.Bag.No {
+		if flg.Opt.NoBag {
 			flg.Bag.Mode = flags.BagModeNone
 		}
 
@@ -188,6 +189,7 @@ var Fox = &cobra.Command{
 
 		if flg.Alias.Logstash {
 			flg.Bag.Url = flags.BagUrlLogstash
+			flg.Bag.Ecs = true
 		}
 
 		// explicit set UI mode
@@ -267,8 +269,8 @@ func init() {
 	Fox.Flags().StringVarP(&flg.Bag.File, "file", "f", flags.BagFile, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
-	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "url to also send evidence data too")
-	Fox.Flags().BoolVarP(&flg.Bag.No, "no-bag", "", false, "don't write an evidence bag")
+	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to URL also")
+	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "url-ecs", "", false, "convert evidence data to ECS")
 
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
 
@@ -277,6 +279,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoConvert, "no-convert", "", false, "don't convert automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
+	Fox.Flags().BoolVarP(&flg.Opt.NoBag, "no-bag", "", false, "don't write an evidence bag")
 
 	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for --url=http://localhost:8080")
 	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for --mode=text")

@@ -1,8 +1,9 @@
 # TODOS
 
 ## Bug Fixes
+- image not bicubic
 - Fix hex bug when tab to smaller file
-- Fix wrap to wrap with runewidth
+- Fix wrap to wrap with rune width
 - Fix partial highlighting
 
 ## Features
@@ -10,16 +11,10 @@
   - Define *(Minimal) Common Log Format*
   - Close all other regular heaps
   - Sort lines by timestamp
-- Add icon and version information (Windows)
-  - https://github.com/josephspurrier/goversioninfo
-  - https://github.com/tc-hib/go-winres
-  - https://hjr265.me/blog/adding-icons-for-go-built-windows-executable/
 - Add `Ctrl` + `Backspace` to delete word
 - Add *Splunk* export
   - https://github.com/ZachtimusPrime/Go-Splunk-HTTP
   - https://blogs.perficient.com/2024/09/19/splunk-cloud-http-event-collector-setup-guide/
-  - Flag `--ecs` converts to *ECS*
-  - Flag `-L` alias for `--url=...` `--ecs`
 - Add scan with *Yara* rules
 - Add documentation
   - Manpage
