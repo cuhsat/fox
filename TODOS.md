@@ -11,6 +11,7 @@
   - Close all other regular heaps
   - Sort lines by timestamp
 - Add icon and version information (Windows)
+  - https://github.com/josephspurrier/goversioninfo
   - https://github.com/tc-hib/go-winres
   - https://hjr265.me/blog/adding-icons-for-go-built-windows-executable/
 - Add `Ctrl` + `Backspace` to delete word
