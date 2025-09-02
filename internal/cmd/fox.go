@@ -89,6 +89,7 @@ Evidence:
   -k, --key=KEYPHRASE      key phrase to sign evidence bag via HMAC-SHA256
   -u, --url=URL            forward evidence data to URL address
       --ecs                convert evidence data to ECS schema
+      --hec                convert evidence data to HEC schema
 
 Disable:
   -R, --readonly           don't write any new files
@@ -99,12 +100,13 @@ Disable:
       --no-bag             don't write any bags
 
 Aliases:
-  -L, --logstash           short for --url=http://localhost:8080 --ecs
-  -T, --text               short for --mode=text
-  -j, --json               short for --mode=json
-  -J, --jsonl              short for --mode=jsonl
-  -S, --sqlite             short for --mode=sqlite
-  -X, --xml                short for --mode=xml
+  -L, --logstash           short for: --url=http://localhost:8080 --ecs
+  -S, --splunk             short for: --url=http://localhost:8088 --hec
+  -T, --text               short for: --mode=text
+  -j, --json               short for: --mode=json
+  -J, --jsonl              short for: --mode=jsonl
+  -s, --sqlite             short for: --mode=sqlite
+  -X, --xml                short for: --mode=xml
 
 Standard:
       --help               shows this message
@@ -192,6 +194,11 @@ var Fox = &cobra.Command{
 			flg.Bag.Ecs = true
 		}
 
+		if flg.Alias.Splunk {
+			flg.Bag.Url = flags.BagUrlSplunk
+			flg.Bag.Hec = true
+		}
+
 		// explicit set UI mode
 		if flg.Hex {
 			flg.UI.Mode = mode.Hex
@@ -270,7 +277,8 @@ func init() {
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
 	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to URL also")
-	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "convert evidence data to ECS")
+	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "convert evidence data to ECS schema")
+	Fox.Flags().BoolVarP(&flg.Bag.Hec, "hec", "", false, "convert evidence data to HEC schema")
 
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
 
@@ -281,18 +289,20 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
 	Fox.Flags().BoolVarP(&flg.Opt.NoBag, "no-bag", "", false, "don't write an evidence bag")
 
-	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for --url=http://localhost:8080")
-	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for --mode=text")
-	Fox.Flags().BoolVarP(&flg.Alias.Json, "json", "j", false, "short for --mode=json")
-	Fox.Flags().BoolVarP(&flg.Alias.Jsonl, "jsonl", "J", false, "short for --mode=jsonl")
-	Fox.Flags().BoolVarP(&flg.Alias.Sqlite, "sqlite", "S", false, "short for --mode=sqlite")
-	Fox.Flags().BoolVarP(&flg.Alias.Xml, "xml", "X", false, "short for --mode=xml")
+	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for: --url=http://localhost:8080 --ecs")
+	Fox.Flags().BoolVarP(&flg.Alias.Splunk, "splunk", "S", false, "short for: --url=http://localhost:8088 --hec")
+	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for: --mode=text")
+	Fox.Flags().BoolVarP(&flg.Alias.Json, "json", "j", false, "short for: --mode=json")
+	Fox.Flags().BoolVarP(&flg.Alias.Jsonl, "jsonl", "J", false, "short for: --mode=jsonl")
+	Fox.Flags().BoolVarP(&flg.Alias.Sqlite, "sqlite", "s", false, "short for: --mode=sqlite")
+	Fox.Flags().BoolVarP(&flg.Alias.Xml, "xml", "X", false, "short for: --mode=xml")
 
 	Fox.PersistentFlags().BoolVarP(&flg.Credits, "credits", "", false, "shows the credits")
 	Fox.PersistentFlags().BoolP("version", "", false, "shows the version")
 	Fox.PersistentFlags().BoolP("help", "", false, "shows this message")
 
 	Fox.MarkFlagsMutuallyExclusive("head", "tail")
+	Fox.MarkFlagsMutuallyExclusive("ecs", "hec")
 
 	Fox.SetErrPrefix(sys.Prefix)
 	Fox.SetHelpTemplate(Usage)

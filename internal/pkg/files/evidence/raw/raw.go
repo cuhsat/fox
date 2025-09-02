@@ -28,8 +28,8 @@ func (w *Writer) Flush() {}
 
 func (w *Writer) WriteMeta(_ evidence.Meta) {}
 
-func (w *Writer) WriteLine(_, _ int, s string) {
-	_, err := fmt.Fprintln(w.file, s)
+func (w *Writer) WriteLine(_, _ int, str string) {
+	_, err := fmt.Fprintln(w.file, str)
 
 	if err != nil {
 		sys.Error(err)

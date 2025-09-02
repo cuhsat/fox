@@ -107,6 +107,6 @@ func (w *Writer) WriteMeta(meta evidence.Meta) {
 	w.entry.Metadata.User.Name = meta.User.Name
 }
 
-func (w *Writer) WriteLine(nr, grp int, s string) {
-	w.entry.Lines = append(w.entry.Lines, line{nr, grp, s})
+func (w *Writer) WriteLine(nr, grp int, str string) {
+	w.entry.Lines = append(w.entry.Lines, line{nr, grp, str})
 }

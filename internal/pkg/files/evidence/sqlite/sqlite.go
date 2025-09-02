@@ -145,8 +145,8 @@ func (w *Writer) WriteMeta(meta evidence.Meta) {
 
 }
 
-func (w *Writer) WriteLine(nr, grp int, s string) {
-	w.entry.file.lines = append(w.entry.file.lines, value{nr, grp, s})
+func (w *Writer) WriteLine(nr, grp int, str string) {
+	w.entry.file.lines = append(w.entry.file.lines, value{nr, grp, str})
 }
 
 func (w *Writer) insert(table string, v ...any) int64 {

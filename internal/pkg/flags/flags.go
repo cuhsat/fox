@@ -24,6 +24,7 @@ type Flags struct {
 		Key  string
 		Url  string
 		Ecs  bool
+		Hec  bool
 	}
 
 	// optional flags
@@ -58,6 +59,7 @@ type Flags struct {
 	// alias flags
 	Alias struct {
 		Logstash bool
+		Splunk   bool
 		Text     bool
 		Json     bool
 		Jsonl    bool

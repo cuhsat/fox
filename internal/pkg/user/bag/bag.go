@@ -20,6 +20,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/url"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/xml"
 	"github.com/cuhsat/fox/internal/pkg/files/schema/ecs"
+	"github.com/cuhsat/fox/internal/pkg/files/schema/hec"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
@@ -79,6 +80,8 @@ func New() *Bag {
 	if len(flg.Url) > 0 {
 		if flg.Ecs {
 			ws = append(ws, url.New(flg.Url, ecs.New()))
+		} else if flg.Hec {
+			ws = append(ws, url.New(flg.Url, hec.New()))
 		} else {
 			ws = append(ws, url.New(flg.Url, evidence.New()))
 		}
