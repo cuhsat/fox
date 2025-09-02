@@ -12,9 +12,6 @@
   - Close all other regular heaps
   - Sort lines by timestamp
 - Add `Ctrl` + `Backspace` to delete word
-- Add *Splunk* export
-  - https://github.com/ZachtimusPrime/Go-Splunk-HTTP
-  - https://blogs.perficient.com/2024/09/19/splunk-cloud-http-event-collector-setup-guide/
 - Add scan with *Yara* rules
 - Add documentation
   - Manpage

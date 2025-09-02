@@ -25,7 +25,7 @@ type Plugin struct {
 
 	Name string
 	Mode string
-	Mask string
+	Path string
 	Exec []string
 }
 
@@ -59,7 +59,7 @@ func (ps *Plugins) Autos() []Plugin {
 
 	for key := range ps.Auto {
 		p := ps.Auto[key]
-		p.re = regexp.MustCompile(p.Mask)
+		p.re = regexp.MustCompile(p.Path)
 
 		as = append(as, p)
 	}
@@ -67,9 +67,9 @@ func (ps *Plugins) Autos() []Plugin {
 	return as
 }
 
-func (p *Plugin) Match(mask string) bool {
+func (p *Plugin) Match(path string) bool {
 	if p.re != nil {
-		return p.re.MatchString(mask)
+		return p.re.MatchString(path)
 	} else {
 		return false
 	}

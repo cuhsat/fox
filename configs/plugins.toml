@@ -10,7 +10,7 @@
 #
 [auto.info]
 name = 'target-info'
-mask = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
+path = '.*\.(dd|img|raw|ad1|asdf|E0?|00?)'
 exec = [
   'target-info "FILE"'
 ]
