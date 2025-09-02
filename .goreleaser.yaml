@@ -2,8 +2,8 @@ version: 2
 
 before:
   hooks:
+    - go generate ./...
     - go mod tidy
-    - go generate
 
 builds:
   - env:
