@@ -1,5 +1,4 @@
-// Package hec specification:
-// https://docs.splunk.com/Documentation/Splunk/latest/Data/FormateventsforHTTPEventCollector
+// Package hec specification: https://docs.splunk.com/Documentation/Splunk/latest/Data/FormateventsforHTTPEventCollector
 package hec
 
 import (

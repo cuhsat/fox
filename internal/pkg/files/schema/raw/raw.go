@@ -9,7 +9,7 @@ import (
 type Raw evidence.Evidence
 
 func New() *Raw {
-	return &Raw{}
+	return new(Raw)
 }
 
 func (raw *Raw) String() string {

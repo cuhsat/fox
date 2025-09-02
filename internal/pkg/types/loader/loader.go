@@ -27,21 +27,15 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
+	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/user/plugins"
 )
 
 const Stdin = "-"
 
 type Loader struct {
-	plugins []plugins.Plugin // auto plugins
-	entries []Entry          // temp entries
-}
-
-type Entry struct {
-	Name string     // entry name
-	Path string     // entry file path
-	Base string     // entry file base
-	Type types.Heap // entry heap type
+	plugins []*plugins.Plugin // auto plugins
+	heaps   []*heap.Heap      // temp heaps
 }
 
 func New() *Loader {
@@ -56,7 +50,7 @@ func New() *Loader {
 	return l
 }
 
-func (l *Loader) Init(paths []string) []Entry {
+func (l *Loader) Load(paths []string) []*heap.Heap {
 	if sys.Piped(os.Stdin) {
 		paths = append(paths, Stdin)
 	}
@@ -76,19 +70,19 @@ func (l *Loader) Init(paths []string) []Entry {
 		l.loadPath(path)
 	}
 
-	if len(l.entries) == 0 && len(paths) > 0 {
+	if len(l.heaps) == 0 && len(paths) > 0 {
 		sys.Exit("could not load any files")
 	}
 
-	return l.entries
+	return l.heaps
 }
 
-func (l *Loader) Load(path string) []Entry {
-	l.entries = l.entries[:0] // reset
+func (l *Loader) Open(path string) []*heap.Heap {
+	l.heaps = l.heaps[:0] // reset
 
 	l.loadPath(path)
 
-	return l.entries
+	return l.heaps
 }
 
 func (l *Loader) loadPath(path string) {
@@ -183,12 +177,12 @@ func (l *Loader) loadArchive(path, base string, fn files.Deflate) {
 func (l *Loader) addPipe() {
 	pipe := sys.Stdin().Name()
 
-	l.entries = append(l.entries, Entry{
+	l.heaps = append(l.heaps, heap.New(
 		"",
 		pipe,
 		pipe,
 		types.Stdin,
-	})
+	))
 }
 
 func (l *Loader) addFile(path, base string) {
@@ -198,30 +192,30 @@ func (l *Loader) addFile(path, base string) {
 		t = types.Deflate
 	}
 
-	l.entries = append(l.entries, Entry{
+	l.heaps = append(l.heaps, heap.New(
 		base,
 		path,
 		base,
 		t,
-	})
+	))
 }
 
 func (l *Loader) addItem(path, base string) {
-	l.entries = append(l.entries, Entry{
+	l.heaps = append(l.heaps, heap.New(
 		path,
 		path,
 		base,
 		types.Deflate,
-	})
+	))
 }
 
 func (l *Loader) addPlugin(path, base, name string) {
-	l.entries = append(l.entries, Entry{
+	l.heaps = append(l.heaps, heap.New(
 		fmt.Sprintf("%s %c %s", base, text.Icons().HSep, name),
 		path,
 		base,
 		types.Plugin,
-	})
+	))
 }
 
 func (l *Loader) deflate(path, base string) string {

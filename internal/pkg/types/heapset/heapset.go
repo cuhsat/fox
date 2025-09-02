@@ -38,8 +38,8 @@ func New(paths []string) *HeapSet {
 
 	go hs.watchFiles()
 
-	for _, e := range hs.loader.Init(paths) {
-		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
+	for _, h := range hs.loader.Load(paths) {
+		hs.atomicAdd(h)
 	}
 
 	if hs.Len() == 0 {
@@ -74,8 +74,8 @@ func (hs *HeapSet) Heap() (int32, *heap.Heap) {
 }
 
 func (hs *HeapSet) Open(path string) {
-	for _, e := range hs.loader.Load(path) {
-		hs.atomicAdd(heap.New(e.Name, e.Path, e.Base, e.Type))
+	for _, h := range hs.loader.Open(path) {
+		hs.atomicAdd(h)
 	}
 }
 

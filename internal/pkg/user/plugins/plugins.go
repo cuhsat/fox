@@ -54,14 +54,14 @@ func Close() {
 	close(Input)
 }
 
-func (ps *Plugins) Autos() []Plugin {
-	as := make([]Plugin, len(ps.Auto))
+func (ps *Plugins) Autos() []*Plugin {
+	as := make([]*Plugin, len(ps.Auto))
 
 	for key := range ps.Auto {
 		p := ps.Auto[key]
 		p.re = regexp.MustCompile(p.Path)
 
-		as = append(as, p)
+		as = append(as, &p)
 	}
 
 	return as
