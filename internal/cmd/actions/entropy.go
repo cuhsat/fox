@@ -15,7 +15,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var EntropyUsage = app.Ascii + `
+var EntropyUsage = app.Art + `
 Display file entropy.
 
 Usage:

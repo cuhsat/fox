@@ -15,7 +15,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var HashUsage = app.Ascii + `
+var HashUsage = app.Art + `
 Display file hash or checksums.
 
 Usage:

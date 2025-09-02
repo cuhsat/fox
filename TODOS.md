@@ -1,7 +1,7 @@
 # TODOS
 
 ## Bug Fixes
-- image not bicubic
+- Fix mouse inputs chars (Windows)
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with rune width
 - Fix partial highlighting

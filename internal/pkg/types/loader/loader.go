@@ -34,8 +34,8 @@ import (
 const Stdin = "-"
 
 type Loader struct {
-	plugins []*plugins.Plugin // auto plugins
-	heaps   []*heap.Heap      // temp heaps
+	plugins []plugins.Plugin // auto plugins
+	heaps   []*heap.Heap     // temp heaps
 }
 
 func New() *Loader {

@@ -25,7 +25,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
-var Usage = fmt.Sprintf(app.Ascii+`
+var Usage = fmt.Sprintf(app.Art+`
 The Swiss Army Knife for examining text files (%s)
 
 Usage:
@@ -47,7 +47,8 @@ Print:
       --no-line            don't print line numbers
 
 Deflate:
-      --pass=PASSWORD      decrypt with password (only RAR, ZIP)
+  -P, --pwd=PASSWORD       password for decryption (only RAR, ZIP)
+
 
 Hex display:
   -x, --hex                show file in canonical hex
@@ -84,15 +85,16 @@ Evidence bag:
   -N  --case=NAME          evidence bag case name (default: YYYY-MM-DD)
   -f, --file=FILE          evidence bag file name (default: "evidence")
       --mode=MODE          evidence bag file mode (default: "plain"):
-                             NONE, PLAIN, TEXT, JSON, JSONL, XML, SQLITE
+
+                             none, plain, text, json, jsonl, xml, sqlite
 
   -k, --key=PHRASE         key phrase to sign evidence bag via HMAC-SHA256
 
-Evidence stream:
-  -u, --url=URL            forward evidence data to server address
-      --auth=TOKEN         forward evidence data using auth token
-      --ecs                convert evidence data to ECS schema
-      --hec                convert evidence data to HEC schema
+Evidence url:
+  -u, --url=SERVER         forward evidence to server address
+  -a, --auth=TOKEN         forward evidence using auth token
+      --ecs                use ECS schema for evidence
+      --hec                use HEC schema for evidence
 
 Disable:
   -R, --readonly           don't write any new files
@@ -100,7 +102,6 @@ Disable:
       --no-convert         don't convert automatically
       --no-deflate         don't deflate automatically
       --no-plugins         don't run any plugins
-      --no-bag             don't write any bags
 
 Aliases:
   -L, --logstash           short for: --ecs --url=http://localhost:8080
@@ -161,15 +162,11 @@ var Fox = &cobra.Command{
 
 		if flg.Opt.Readonly {
 			flg.Opt.NoPlugins = true
-			flg.Opt.NoBag = true
+			flg.Bag.Mode = flags.BagModeNone
 		}
 
 		if len(flg.Bag.Case) == 0 {
 			flg.Bag.Case = time.Now().Format("2006-01-02")
-		}
-
-		if flg.Opt.NoBag {
-			flg.Bag.Mode = flags.BagModeNone
 		}
 
 		if flg.Alias.Text {
@@ -246,7 +243,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Fox.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
 
-	Fox.PersistentFlags().StringVarP(&flg.Deflate.Pass, "pass", "", "", "decrypt with password (only RAR, ZIP)")
+	Fox.PersistentFlags().StringVarP(&flg.Deflate.Pass, "pass", "P", "", "password for decryption")
 
 	Fox.Flags().BoolVarP(&flg.Hex, "hex", "x", false, "show file in canonical hex")
 
@@ -279,10 +276,10 @@ func init() {
 	Fox.Flags().StringVarP(&flg.Bag.File, "file", "f", flags.BagFile, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
-	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to server address")
-	Fox.Flags().StringVarP(&flg.Bag.Auth, "auth", "", "", "forward evidence data using auth token")
-	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "convert evidence data to ECS schema")
-	Fox.Flags().BoolVarP(&flg.Bag.Hec, "hec", "", false, "convert evidence data to HEC schema")
+	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence to server address")
+	Fox.Flags().StringVarP(&flg.Bag.Auth, "auth", "a", "", "forward evidence using auth token")
+	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "use ECS schema for evidence")
+	Fox.Flags().BoolVarP(&flg.Bag.Hec, "hec", "", false, "use HEC schema for evidence")
 
 	Fox.Flags().Lookup("mode").NoOptDefVal = string(flags.BagModeText)
 
@@ -291,7 +288,6 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoConvert, "no-convert", "", false, "don't convert automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
-	Fox.Flags().BoolVarP(&flg.Opt.NoBag, "no-bag", "", false, "don't write an evidence bag")
 
 	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for: --ecs --url=http://localhost:8080")
 	Fox.Flags().BoolVarP(&flg.Alias.Splunk, "splunk", "S", false, "short for: --hec --url=http://localhost:8088/...")

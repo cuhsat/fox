@@ -105,7 +105,7 @@ func (hs *HeapSet) OpenHelp() {
 		idx = hs.Len()
 
 		f := fs.Create("/fox/help")
-		_, _ = f.WriteString(fmt.Sprintf(app.Ascii+app.Help, app.Version))
+		_, _ = f.WriteString(fmt.Sprintf(app.Art+app.Help, app.Version))
 
 		hs.atomicAdd(heap.New(
 			"Keymap",

@@ -210,7 +210,7 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 			case *tcell.EventError:
 				ui.change(mode.Less)
-
+				ui.view.Reset()
 				hs.OpenLog()
 
 				ui.overlay.SendError("An error occurred")

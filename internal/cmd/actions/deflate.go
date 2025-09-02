@@ -16,7 +16,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var DeflateUsage = app.Ascii + `
+var DeflateUsage = app.Art + `
 Deflate compressed files.
 
 Usage:
@@ -34,10 +34,10 @@ Global:
 Deflate:
   -l, --list               don't deflate, only list files
   -d, --dir[=PATH]         deflate into directory (default: .)
-      --pass=PASSWORD      decrypt with password (RAR and ZIP only)
+  -P, --pwd=PASSWORD       password for decryption (only RAR, ZIP)
 
 Example:
-  $ fox deflate --pass=infected ioc.zip
+  $ fox deflate --pwd=infected ioc.zip
 
 Type "fox help" for more help...
 `

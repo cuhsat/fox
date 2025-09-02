@@ -26,7 +26,7 @@ func (w *Writer) Open(f *os.File, old bool, title string) {
 	w.file = f
 
 	if !old {
-		w.write("%s\n%s\n", app.Ascii, title)
+		w.write("%s\n%s\n", app.Art, title)
 	}
 }
 

@@ -20,7 +20,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var StringsUsage = app.Ascii + `
+var StringsUsage = app.Art + `
 Display ASCII and Unicode strings.
 
 Usage:

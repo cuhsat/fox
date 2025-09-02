@@ -11,8 +11,8 @@ const (
 )
 
 var (
-	//go:embed ascii.txt
-	Ascii string
+	//go:embed art.txt
+	Art string
 
 	//go:embed help.txt
 	Help string
