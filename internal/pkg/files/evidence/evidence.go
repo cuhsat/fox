@@ -1,7 +1,6 @@
 package evidence
 
 import (
-	"encoding/json"
 	"os"
 	"os/user"
 	"time"
@@ -14,51 +13,29 @@ type Writer interface {
 	Flush()
 
 	WriteMeta(meta Meta)
-	WriteLine(nr, grp int, s string)
+	WriteLine(nr, grp int, str string)
 }
 
 type Evidence struct {
-	Meta  Meta
-	Lines []Line
+	Meta  Meta   `json:"meta"`
+	Lines []Line `json:"lines"`
 }
 
 type Meta struct {
-	User     *user.User
-	Name     string
-	Path     string
-	Size     int64
-	Hash     []byte
-	Filters  []string
-	Bagged   time.Time
-	Modified time.Time
+	User     *user.User `json:"user"`
+	Name     string     `json:"name"`
+	Path     string     `json:"path"`
+	Size     int64      `json:"size"`
+	Hash     []byte     `json:"hash"`
+	Filters  []string   `json:"filters"`
+	Bagged   time.Time  `json:"bagged"`
+	Modified time.Time  `json:"modified"`
 }
 
 type Line struct {
-	Nr  int
-	Grp int
-	Str string
-}
-
-func New() *Evidence {
-	return new(Evidence)
-}
-
-func (e *Evidence) String() string {
-	buf, err := json.Marshal(e)
-
-	if err == nil {
-		return string(buf)
-	} else {
-		return err.Error()
-	}
-}
-
-func (e *Evidence) SetMeta(meta Meta) {
-	e.Meta = meta
-}
-
-func (e *Evidence) AddLine(nr, grp int, str string) {
-	e.Lines = append(e.Lines, Line{nr, grp, str})
+	Nr  int    `json:"nr"`
+	Grp int    `json:"grp"`
+	Str string `json:"str"`
 }
 
 func Utc(t time.Time) string {

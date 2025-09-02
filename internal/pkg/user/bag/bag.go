@@ -14,13 +14,14 @@ import (
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/json"
-	"github.com/cuhsat/fox/internal/pkg/files/evidence/raw"
+	"github.com/cuhsat/fox/internal/pkg/files/evidence/plain"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/sqlite"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/text"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/url"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/xml"
 	"github.com/cuhsat/fox/internal/pkg/files/schema/ecs"
 	"github.com/cuhsat/fox/internal/pkg/files/schema/hec"
+	"github.com/cuhsat/fox/internal/pkg/files/schema/raw"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
@@ -73,8 +74,8 @@ func New() *Bag {
 		path += text.Ext
 
 	default:
-		ws = append(ws, raw.New())
-		path += raw.Ext
+		ws = append(ws, plain.New())
+		path += plain.Ext
 	}
 
 	if len(flg.Url) > 0 {
@@ -83,7 +84,7 @@ func New() *Bag {
 		} else if flg.Hec {
 			ws = append(ws, url.New(flg.Url, hec.New()))
 		} else {
-			ws = append(ws, url.New(flg.Url, evidence.New()))
+			ws = append(ws, url.New(flg.Url, raw.New()))
 		}
 	}
 

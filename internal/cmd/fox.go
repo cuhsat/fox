@@ -80,14 +80,17 @@ UI flags:
       --theme=THEME        sets the used UI theme
       --legacy             don't use any unicode decorations (ISO 8859-1)
 
-Evidence:
+Evidence bag:
   -N  --case=NAME          evidence bag case name (default: YYYY-MM-DD)
   -f, --file=FILE          evidence bag file name (default: "evidence")
-      --mode=MODE          evidence bag file mode (default: "raw"):
-                             NONE, RAW, TEXT, JSON, JSONL, XML, SQLITE
+      --mode=MODE          evidence bag file mode (default: "plain"):
+                             NONE, PLAIN, TEXT, JSON, JSONL, XML, SQLITE
 
-  -k, --key=KEYPHRASE      key phrase to sign evidence bag via HMAC-SHA256
-  -u, --url=URL            forward evidence data to URL address
+  -k, --key=PHRASE         key phrase to sign evidence bag via HMAC-SHA256
+
+Evidence stream:
+  -u, --url=URL            forward evidence data to server address
+      --auth=TOKEN         forward evidence data using auth token
       --ecs                convert evidence data to ECS schema
       --hec                convert evidence data to HEC schema
 
@@ -276,7 +279,8 @@ func init() {
 	Fox.Flags().StringVarP(&flg.Bag.File, "file", "f", flags.BagFile, "evidence bag file name")
 	Fox.Flags().VarP(&flg.Bag.Mode, "mode", "", "evidence bag file mode")
 	Fox.Flags().StringVarP(&flg.Bag.Key, "key", "k", "", "key phrase to sign evidence bag via HMAC-SHA256")
-	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to URL also")
+	Fox.Flags().StringVarP(&flg.Bag.Url, "url", "u", "", "forward evidence data to server address")
+	Fox.Flags().StringVarP(&flg.Bag.Auth, "auth", "", "", "forward evidence data using auth token")
 	Fox.Flags().BoolVarP(&flg.Bag.Ecs, "ecs", "", false, "convert evidence data to ECS schema")
 	Fox.Flags().BoolVarP(&flg.Bag.Hec, "hec", "", false, "convert evidence data to HEC schema")
 
@@ -300,6 +304,8 @@ func init() {
 	Fox.PersistentFlags().BoolVarP(&flg.Credits, "credits", "", false, "shows the credits")
 	Fox.PersistentFlags().BoolP("version", "", false, "shows the version")
 	Fox.PersistentFlags().BoolP("help", "", false, "shows this message")
+
+	Fox.MarkFlagsRequiredTogether("hec", "auth")
 
 	Fox.MarkFlagsMutuallyExclusive("head", "tail")
 	Fox.MarkFlagsMutuallyExclusive("ecs", "hec")

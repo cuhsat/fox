@@ -23,6 +23,7 @@ type Flags struct {
 		Mode BagMode
 		Key  string
 		Url  string
+		Auth string
 		Ecs  bool
 		Hec  bool
 	}

@@ -4,34 +4,36 @@ package hec
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
+	"github.com/cuhsat/fox/internal/pkg/flags"
 )
 
 type Hec struct {
-	Time       int    `json:"time"`
+	Time       int64  `json:"time"`
 	Source     string `json:"source"`
 	Sourcetype string `json:"sourcetype"`
-	Index      string `json:"index"`
+	Index      string `json:"index,omitempty"`
 
 	Event struct {
-		Lines []line `json:"lines"`
+		User string `json:"user"`
+		Path string `json:"path"`
+		Hash string `json:"hash"`
+		Time int64  `json:"time"`
+		Size int64  `json:"size"`
+
+		Lines []string `json:"lines"`
 	} `json:"event"`
 }
 
-type line []struct {
-	Nr   int    `json:"nr"`
-	Grp  int    `json:"grp"`
-	Data string `json:"data"`
-}
-
 func New() *Hec {
-	hec := new(Hec)
-
-	hec.Source = app.Product
-
-	return hec
+	return &Hec{
+		Source:     app.Product,
+		Sourcetype: "_json",
+	}
 }
 
 func (hec *Hec) String() string {
@@ -44,12 +46,26 @@ func (hec *Hec) String() string {
 	}
 }
 
-func (hec *Hec) SetMeta(meta evidence.Meta) {
-	hec.Time = 0
-	hec.Sourcetype = meta.Path
-	hec.Index = meta.Name
+func (hec *Hec) Headers() map[string]string {
+	token := strings.ToLower(flags.Get().Bag.Auth)
+
+	return map[string]string{
+		"Content-Type":  "application/json",
+		"Authorization": fmt.Sprintf("Splunk %s", token),
+	}
 }
 
-func (hec *Hec) AddLine(nr, grp int, str string) {
-	hec.Event.Lines = append(hec.Event.Lines, line{nr, grp, str})
+func (hec *Hec) SetMeta(meta evidence.Meta) {
+	hec.Time = meta.Bagged.UnixMilli()
+	hec.Index = meta.Name
+
+	hec.Event.User = fmt.Sprintf("%s (%s)", meta.User.Username, meta.User.Name)
+	hec.Event.Path = meta.Path
+	hec.Event.Hash = fmt.Sprintf("%x", meta.Hash)
+	hec.Event.Time = meta.Modified.UnixMilli()
+	hec.Event.Size = meta.Size
+}
+
+func (hec *Hec) AddLine(nr, _ int, str string) {
+	hec.Event.Lines = append(hec.Event.Lines, fmt.Sprintf("%d: %s\n", nr, str))
 }

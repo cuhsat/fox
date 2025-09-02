@@ -30,18 +30,18 @@ type Ecs struct {
 
 	File struct {
 		Mtime time.Time `json:"mtime"`
-		Path  string    `json:"Path"`
-		Size  int64     `json:"Size"`
+		Path  string    `json:"path"`
+		Size  int64     `json:"size"`
 
 		Hash struct {
 			Sha256 string `json:"sha256"`
-		} `json:"Hash"`
+		} `json:"hash"`
 	} `json:"file"`
 
 	User struct {
-		Name     string `json:"Name"`
+		Name     string `json:"name"`
 		FullName string `json:"full_name"`
-	} `json:"User"`
+	} `json:"user"`
 }
 
 func New() *Ecs {
@@ -66,9 +66,15 @@ func (ecs *Ecs) String() string {
 	}
 }
 
+func (ecs *Ecs) Headers() map[string]string {
+	return map[string]string{
+		"Content-Type": "application/json",
+	}
+}
+
 func (ecs *Ecs) SetMeta(meta evidence.Meta) {
 	ecs.Labels["case"] = meta.Name
-	ecs.Labels["Filters"] = strings.Join(meta.Filters, " > ")
+	ecs.Labels["filters"] = strings.Join(meta.Filters, " > ")
 
 	ecs.Timestamp = meta.Bagged.UTC()
 
@@ -81,6 +87,6 @@ func (ecs *Ecs) SetMeta(meta evidence.Meta) {
 	ecs.User.FullName = meta.User.Name
 }
 
-func (ecs *Ecs) AddLine(nr, grp int, str string) {
-	ecs.Message += fmt.Sprintf("%d:%d: %s\n", nr, grp, str)
+func (ecs *Ecs) AddLine(nr, _ int, str string) {
+	ecs.Message += fmt.Sprintf("%d: %s\n", nr, str)
 }

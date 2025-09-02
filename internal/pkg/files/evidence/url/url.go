@@ -11,15 +11,13 @@ import (
 )
 
 type Url struct {
+	c   *http.Client  // http client
 	url string        // export url
 	scm schema.Schema // export schema
 }
 
 func New(url string, scm schema.Schema) *Url {
-	return &Url{
-		url: url,
-		scm: scm,
-	}
+	return &Url{new(http.Client), url, scm}
 }
 
 func (w *Url) Open(_ *os.File, _ bool, _ string) {}
@@ -27,7 +25,20 @@ func (w *Url) Open(_ *os.File, _ bool, _ string) {}
 func (w *Url) Begin() {}
 
 func (w *Url) Flush() {
-	res, err := http.Post(w.url, "application/json", strings.NewReader(w.scm.String()))
+	body := strings.NewReader(w.scm.String())
+
+	req, err := http.NewRequest("POST", w.url, body)
+
+	if err != nil {
+		sys.Error(err)
+		return
+	}
+
+	for k, v := range w.scm.Headers() {
+		req.Header.Set(k, v)
+	}
+
+	res, err := w.c.Do(req)
 
 	if err != nil {
 		sys.Error(err)
@@ -36,7 +47,7 @@ func (w *Url) Flush() {
 
 	defer res.Body.Close()
 
-	if res.StatusCode < 200 || res.StatusCode > 299 {
+	if res.StatusCode != 200 {
 		sys.Error(http.StatusText(res.StatusCode))
 	}
 }
