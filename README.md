@@ -43,7 +43,8 @@ go install github.com/cuhsat/fox@latest
 * [Plugin](PLUGINS.md) support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
 * Evidence bag formats: `raw`, `text`, `json`, `jsonl`, `xml`, `sqlite3`
 * Evidence bag chain of custody signing via `HMAC-SHA256`
-* Evidence streaming to server in [Elastic Common Schema 9.1](https://www.elastic.co/docs/reference/ecs)
+* Evidence sending using [Elastic Common Schema 9.1](https://www.elastic.co/docs/reference/ecs)
+* Evidence sending using [Splunk HTTP Event Collector 1.0](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput)
 * Terminal interface compatible with many terminals
   * Support for copy and bracketed paste
   * Support for mouse scrolling

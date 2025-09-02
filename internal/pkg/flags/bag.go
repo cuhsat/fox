@@ -21,7 +21,7 @@ const (
 
 const (
 	BagUrlLogstash = "http://localhost:8080"
-	BagUrlSplunk   = "http://localhost:8088"
+	BagUrlSplunk   = "http://localhost:8088/services/collector/event/1.0"
 )
 
 func (bm *BagMode) String() string {

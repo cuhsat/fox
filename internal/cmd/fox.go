@@ -100,8 +100,8 @@ Disable:
       --no-bag             don't write any bags
 
 Aliases:
-  -L, --logstash           short for: --url=http://localhost:8080 --ecs
-  -S, --splunk             short for: --url=http://localhost:8088 --hec
+  -L, --logstash           short for: --ecs --url=http://localhost:8080
+  -S, --splunk             short for: --hec --url=http://localhost:8088/...
   -T, --text               short for: --mode=text
   -j, --json               short for: --mode=json
   -J, --jsonl              short for: --mode=jsonl
@@ -289,8 +289,8 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
 	Fox.Flags().BoolVarP(&flg.Opt.NoBag, "no-bag", "", false, "don't write an evidence bag")
 
-	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for: --url=http://localhost:8080 --ecs")
-	Fox.Flags().BoolVarP(&flg.Alias.Splunk, "splunk", "S", false, "short for: --url=http://localhost:8088 --hec")
+	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for: --ecs --url=http://localhost:8080")
+	Fox.Flags().BoolVarP(&flg.Alias.Splunk, "splunk", "S", false, "short for: --hec --url=http://localhost:8088/...")
 	Fox.Flags().BoolVarP(&flg.Alias.Text, "text", "T", false, "short for: --mode=text")
 	Fox.Flags().BoolVarP(&flg.Alias.Json, "json", "j", false, "short for: --mode=json")
 	Fox.Flags().BoolVarP(&flg.Alias.Jsonl, "jsonl", "J", false, "short for: --mode=jsonl")
