@@ -339,7 +339,7 @@ func exec(args []string) {
 		if h.Type != types.Stdin {
 			ctx := buffer.NewContext(h)
 
-			if !flg.NoFile {
+			if hs.Len() > 1 && !flg.NoFile {
 				fmt.Println(text.Title(h.String(), buffer.TermW))
 			}
 
