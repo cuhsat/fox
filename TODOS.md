@@ -11,15 +11,14 @@
   - Define *(Minimal) Common Log Format*
   - Close all other regular heaps
   - Sort lines by timestamp
-- Add `Ctrl` + `Backspace` to delete word
 - Add scan with *Yara* rules
 - Add documentation
-  - Manpage
-  - *Bash* and *Zsh* autocompletion files
-    - https://applejag.eu/blog/go-spf13-cobra-custom-flag-types/
-    - https://cobra.dev/docs/how-to-guides/shell-completion/
-    - https://github.com/spf13/cobra/blob/v1.8.0/site/content/completions/_index.md#completions-for-flags
   - Subpage with screenshots of themes
+    - Manpage
+    - *Bash* and *Zsh* autocompletion files
+      - https://applejag.eu/blog/go-spf13-cobra-custom-flag-types/
+      - https://cobra.dev/docs/how-to-guides/shell-completion/
+      - https://github.com/spf13/cobra/blob/v1.8.0/site/content/completions/_index.md#completions-for-flags
 
 ## Ideas
 - Add color to output

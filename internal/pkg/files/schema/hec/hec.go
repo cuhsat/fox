@@ -65,6 +65,6 @@ func (hec *Hec) SetMeta(meta evidence.Meta) {
 	hec.Event.Size = meta.Size
 }
 
-func (hec *Hec) AddLine(nr, _ int, str string) {
-	hec.Event.Lines = append(hec.Event.Lines, fmt.Sprintf("%d: %s\n", nr, str))
+func (hec *Hec) AddLine(_, _ int, str string) {
+	hec.Event.Lines = append(hec.Event.Lines, fmt.Sprintf("%s\n", str))
 }

@@ -86,6 +86,6 @@ func (ecs *Ecs) SetMeta(meta evidence.Meta) {
 	ecs.User.FullName = meta.User.Name
 }
 
-func (ecs *Ecs) AddLine(nr, _ int, str string) {
-	ecs.Message += fmt.Sprintf("%d: %s\n", nr, str)
+func (ecs *Ecs) AddLine(_, _ int, str string) {
+	ecs.Message += fmt.Sprintf("%s\n", str)
 }
