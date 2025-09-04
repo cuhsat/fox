@@ -1,25 +1,12 @@
-# Available theme zones:
-#
-#  base        Terminal
-#  surface0    Info panes
-#  surface1    Info areas
-#  surface2    Current file
-#  surface3    Current mode
-#  overlay0    Failure messages
-#  overlay1    Success messages
-#  subtext0    Navigation items
-#  subtext1    Separator lines
-#  subtext2    Highlights
-#
 [theme.custom]
 name = 'custom'
-terminal = [ 0xFFFFFF, 0x000000 ]
-surface0 = [ 0xFFFFFF, 0x000000 ]
-surface1 = [ 0xFFFFFF, 0x000000 ]
-surface2 = [ 0xFFFFFF, 0x000000 ]
-surface3 = [ 0xFFFFFF, 0x000000 ]
-overlay0 = [ 0xFFFFFF, 0x000000 ]
-overlay1 = [ 0xFFFFFF, 0x000000 ]
-subtext0 = [ 0xFFFFFF, 0x000000 ]
-subtext1 = [ 0xFFFFFF, 0x000000 ]
-subtext2 = [ 0xFFFFFF, 0x000000 ]
+terminal = [ 0xFFFFFF, 0x000000 ] # base
+surface0 = [ 0xFFFFFF, 0x000000 ] # info panes
+surface1 = [ 0xFFFFFF, 0x000000 ] # info areas
+surface2 = [ 0xFFFFFF, 0x000000 ] # current file
+surface3 = [ 0xFFFFFF, 0x000000 ] # current mode
+overlay0 = [ 0xFFFFFF, 0x000000 ] # failure messages
+overlay1 = [ 0xFFFFFF, 0x000000 ] # success messages
+subtext0 = [ 0xFFFFFF, 0x000000 ] # navigation items
+subtext1 = [ 0xFFFFFF, 0x000000 ] # separator lines
+subtext2 = [ 0xFFFFFF, 0x000000 ] # highlights

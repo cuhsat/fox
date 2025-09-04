@@ -1,37 +1,39 @@
 package raw
 
 import (
-	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 )
 
-type Raw evidence.Evidence
+type Raw struct {
+	headers map[string]string
+	content strings.Builder
+}
 
 func New() *Raw {
-	return new(Raw)
+	return &Raw{
+		headers: map[string]string{
+			"Content-Type": "text/plain",
+		},
+	}
 }
 
 func (raw *Raw) String() string {
-	buf, err := json.Marshal(raw)
-
-	if err == nil {
-		return string(buf)
-	} else {
-		return err.Error()
-	}
+	return raw.content.String()
 }
 
 func (raw *Raw) Headers() map[string]string {
-	return map[string]string{
-		"Content-Type": "application/json",
-	}
+	return raw.headers
 }
 
 func (raw *Raw) SetMeta(meta evidence.Meta) {
-	raw.Meta = meta
+	raw.headers["x-evidence-path"] = meta.Path
+	raw.headers["x-evidence-hash"] = fmt.Sprintf("%x", meta.Hash)
 }
 
-func (raw *Raw) AddLine(nr, grp int, str string) {
-	raw.Lines = append(raw.Lines, evidence.Line{Nr: nr, Grp: grp, Str: str})
+func (raw *Raw) AddLine(_, _ int, str string) {
+	raw.content.WriteString(str)
+	raw.content.WriteRune('\n')
 }

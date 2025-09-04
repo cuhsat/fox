@@ -5,8 +5,15 @@
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with rune width
 - Fix partial highlighting
+- Refactor UI to state machine
 
 ## Features
+- Add `find` command abilities?
+- Add `CMD` command mode like vim?
+  - Also per plugin
+  - Examples
+    - `open ...`
+    - `set model mistral`
 - Add super timeline per group regex
   - Define *(Minimal) Common Log Format*
   - Close all other regular heaps

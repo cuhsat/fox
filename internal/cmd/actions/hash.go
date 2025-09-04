@@ -86,7 +86,7 @@ var Hash = &cobra.Command{
 				sum, err := h.HashSum(algo)
 
 				if err != nil {
-					sys.Exit(err)
+					sys.Exit(fmt.Sprintf("could not compute hash: %s", err.Error()))
 				}
 
 				switch algo {

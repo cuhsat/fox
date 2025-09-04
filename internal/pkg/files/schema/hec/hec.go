@@ -59,10 +59,10 @@ func (hec *Hec) SetMeta(meta evidence.Meta) {
 	hec.Index = meta.Name
 
 	hec.Event.User = fmt.Sprintf("%s (%s)", meta.User.Username, meta.User.Name)
-	hec.Event.Path = meta.Path
 	hec.Event.Hash = fmt.Sprintf("%x", meta.Hash)
 	hec.Event.Time = meta.Modified.UnixMilli()
 	hec.Event.Size = meta.Size
+	hec.Event.Path = meta.Path
 }
 
 func (hec *Hec) AddLine(_, _ int, str string) {

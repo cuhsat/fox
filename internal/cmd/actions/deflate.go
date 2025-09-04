@@ -95,7 +95,7 @@ var Deflate = &cobra.Command{
 					err := os.MkdirAll(sub, 0700)
 
 					if err != nil {
-						sys.Exit(err)
+						sys.Exit(fmt.Sprintf("could not create path: %s", err.Error()))
 					}
 				}
 
@@ -105,7 +105,7 @@ var Deflate = &cobra.Command{
 				err := os.WriteFile(path, *h.MMap(), 0600)
 
 				if err != nil {
-					sys.Exit(err)
+					sys.Exit(fmt.Sprintf("could not deflate file: %s", err.Error()))
 				}
 
 				// calculate hash
@@ -113,7 +113,7 @@ var Deflate = &cobra.Command{
 					sum, err := h.HashSum(types.SHA256)
 
 					if err != nil {
-						sys.Exit(err)
+						sys.Exit(fmt.Sprintf("could not compute hash: %s", err.Error()))
 					}
 
 					fmt.Printf("%x  %s\n", sum, path)

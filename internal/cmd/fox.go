@@ -123,7 +123,7 @@ Example: print matching lines
 Example: print first sector in hex
   $ fox -pxhc=512 image.dd > mbr
 
-Example: print log file analysis
+Example: print event log analysis
   $ fox -pq="analyse this" log.evtx
 
 Type "fox help COMMAND" for more help...

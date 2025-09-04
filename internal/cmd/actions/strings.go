@@ -71,7 +71,7 @@ var Strings = &cobra.Command{
 			flg.Strings.Re, err = regexp.Compile(re)
 
 			if err != nil {
-				sys.Exit(err)
+				sys.Exit(fmt.Sprintf("could not compile regex: %s", err.Error()))
 			}
 		}
 

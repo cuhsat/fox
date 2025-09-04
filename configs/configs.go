@@ -1,8 +1,6 @@
 package configs
 
-import (
-	_ "embed"
-)
+import _ "embed"
 
 var (
 	//go:embed default.toml

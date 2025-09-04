@@ -1,12 +1,12 @@
-# Available variables (all):
+# available variables:
 #
-#  FILE    file path
-#  BASE    base path
-#  TEMP    new temporary folder
+#  FILE path
+#  BASE path
+#  TEMP folder (will be created)
 #
-# Available variables (only hotkey):
+# additional variables for hotkeys:
 #
-#  INPUT   user input
+#  INPUT by user
 #
 [auto.info]
 name = 'target-info'
@@ -15,7 +15,7 @@ exec = [
   'target-info "FILE"'
 ]
 
-# Available hotkeys:
+# available hotkeys:
 #
 #  F8 to F12
 #

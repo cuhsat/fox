@@ -142,7 +142,6 @@ func (w *Writer) WriteMeta(meta evidence.Meta) {
 
 	w.entry.user.login = meta.User.Username
 	w.entry.user.name = meta.User.Name
-
 }
 
 func (w *Writer) WriteLine(nr, grp int, str string) {
