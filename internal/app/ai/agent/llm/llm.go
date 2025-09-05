@@ -40,11 +40,11 @@ func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
 		KeepAlive: ai.Alive,
 		Messages:  llm.history,
 		Options: map[string]any{
-			"num_ctx":     cfg.GetInt("num_ctx"),
-			"temperature": cfg.GetFloat64("temp"),
-			"seed":        cfg.GetInt("seed"),
-			"top_k":       cfg.GetInt("top_k"),
-			"top_p":       cfg.GetFloat64("top_p"),
+			"num_ctx":     cfg.GetInt("ai.num_ctx"),
+			"temperature": cfg.GetFloat64("ai.temp"),
+			"seed":        cfg.GetInt("ai.seed"),
+			"top_k":       cfg.GetInt("ai.top_k"),
+			"top_p":       cfg.GetFloat64("ai.top_p"),
 		},
 	}
 
