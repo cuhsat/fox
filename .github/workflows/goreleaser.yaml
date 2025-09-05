@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-go@v5
       -
         name: Set up Go versioninfo
-        run:
+        run: |
           go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
           go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
       -
