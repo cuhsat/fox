@@ -42,17 +42,27 @@ func Map(m *mmap.MMap) *SMap {
 	l := len(*m)
 
 	var i, j int
-	var a, b byte
+	var a, b, c byte
 
 	for ; i < l; i++ {
-		a = (*m)[i]
-		b = (*m)[min(i+1, l-1)]
+		a = (*m)[max(i-1, 0)]
+		b = (*m)[i]
+		c = (*m)[min(i+1, l-1)]
 
-		if a == LF || (a == CR && b != LF) {
-			*s = append(*s, String{
-				Nr:  len(*s) + 1,
-				Str: string((*m)[j:i]),
-			})
+		if b == LF || (b == CR && c != LF) {
+			if a == CR {
+				// windows
+				*s = append(*s, String{
+					Nr:  len(*s) + 1,
+					Str: string((*m)[j : i-1]),
+				})
+			} else {
+				// posix
+				*s = append(*s, String{
+					Nr:  len(*s) + 1,
+					Str: string((*m)[j:i]),
+				})
+			}
 
 			j = i + 1
 		}
