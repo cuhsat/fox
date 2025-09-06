@@ -1,11 +1,9 @@
 # TODOS
 
 ## Bug Fixes
-- Fix mouse inputs chars (Windows)
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with rune width
 - Fix partial highlighting
-- Fix AI lookup (Windows)
 
 ## Features
 - Add auto pulling for models (embed and model)
