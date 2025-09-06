@@ -1,4 +1,4 @@
-//go:generate goversioninfo -arm=true -icon docs/img/fox.ico version.json
+//go:generate goversioninfo -arm -64 -icon docs/img/fox.ico version.json
 package main
 
 import (

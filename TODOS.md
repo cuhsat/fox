@@ -1,13 +1,19 @@
 # TODOS
 
 ## Bug Fixes
+- Pin head breaks highlights
 - Fix mouse inputs chars (Windows)
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with rune width
 - Fix partial highlighting
-- Refactor UI to state machine
+- Fix AI lookup (Windows)
 
 ## Features
+- Add auto pulling for models (embed and model)
+- Add alternative key binding for goto
+- Refactor UI to state machine
+  - Add key chains
+  - Remap key bindings
 - Add `find` command abilities?
 - Add `CMD` command mode like vim?
   - Also per plugin
@@ -20,12 +26,11 @@
   - Sort lines by timestamp
 - Add scan with *Yara* rules
 - Add documentation
-  - Subpage with screenshots of themes
-    - Manpage
-    - *Bash* and *Zsh* autocompletion files
-      - https://applejag.eu/blog/go-spf13-cobra-custom-flag-types/
-      - https://cobra.dev/docs/how-to-guides/shell-completion/
-      - https://github.com/spf13/cobra/blob/v1.8.0/site/content/completions/_index.md#completions-for-flags
+  - Manpage
+  - *Bash* and *Zsh* autocompletion files
+    - https://applejag.eu/blog/go-spf13-cobra-custom-flag-types/
+    - https://cobra.dev/docs/how-to-guides/shell-completion/
+    - https://github.com/spf13/cobra/blob/v1.8.0/site/content/completions/_index.md#completions-for-flags
 
 ## Ideas
 - Add color to output
@@ -61,10 +66,6 @@
   - https://dave.cheney.net/high-performance-json.html
 - Add something about *MITRE* to the readme
 - Add more debug prints?
-- Create a separate repository for code?
-  - Forensic File System?
-  - Hashes?
-- Check how to use `SFTP` and `HTTP` filesystems with afero
 
 ## Resources
 

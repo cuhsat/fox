@@ -1,6 +1,7 @@
 package smap
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"regexp"
@@ -12,15 +13,7 @@ import (
 	"github.com/edsrzf/mmap-go"
 )
 
-const (
-	HT = 0x09
-	LF = 0x0a
-	CR = 0x0d
-)
-
-const (
-	Tab = "    "
-)
+const Tab = "    "
 
 type action func(ch chan<- String, c *chunk)
 
@@ -39,38 +32,15 @@ type chunk struct {
 
 func Map(m *mmap.MMap) *SMap {
 	s := new(SMap)
-	l := len(*m)
 
-	var i, j int
-	var a, b byte
+	scanner := bufio.NewScanner(bytes.NewReader(*m))
 
-	for ; i < l; i++ {
-		a = (*m)[i]
-		b = (*m)[min(i+1, l-1)]
-
-		if a == LF || (a == CR && b != LF) {
-			if (*m)[max(i-1, 0)] == CR {
-				// windows
-				*s = append(*s, String{
-					Nr:  len(*s) + 1,
-					Str: string((*m)[j : i-1]),
-				})
-			} else {
-				// posix
-				*s = append(*s, String{
-					Nr:  len(*s) + 1,
-					Str: string((*m)[j:i]),
-				})
-			}
-
-			j = i + 1
-		}
+	for scanner.Scan() {
+		*s = append(*s, String{
+			Nr:  len(*s) + 1,
+			Str: scanner.Text(),
+		})
 	}
-
-	*s = append(*s, String{
-		Nr:  len(*s) + 1,
-		Str: string((*m)[j:]),
-	})
 
 	return s
 }
@@ -89,7 +59,7 @@ func (s *SMap) String() string {
 func (s *SMap) Render() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
-			ch <- String{s.Nr, s.Grp, exp(s.Str)}
+			ch <- String{s.Nr, s.Grp, expand(s.Str)}
 		}
 	}, len(*s))
 }
@@ -119,7 +89,7 @@ func (s *SMap) Wrap(w int) *SMap {
 		var l string
 
 		for _, s := range (*s)[c.min:c.max] {
-			i, l = 0, exp(s.Str)
+			i, l = 0, expand(s.Str)
 
 			for i < len(l)-w {
 				ch <- String{s.Nr, s.Grp, l[i : i+w]}
@@ -231,6 +201,6 @@ func sort(ch <-chan String) *SMap {
 	return &s
 }
 
-func exp(s string) string {
-	return strings.ReplaceAll(s, string(byte(HT)), Tab)
+func expand(s string) string {
+	return strings.ReplaceAll(s, "\t", Tab)
 }
