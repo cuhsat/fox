@@ -1,7 +1,6 @@
 # TODOS
 
 ## Bug Fixes
-- Pin head breaks highlights
 - Fix mouse inputs chars (Windows)
 - Fix hex bug when tab to smaller file
 - Fix wrap to wrap with rune width
