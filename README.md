@@ -1,6 +1,6 @@
 ![](docs/img/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the possibilities of modern **LLMs**, to leverage your forensic examination process. Read more about it's features at [forensic-examiner.eu ❯](https://forensic-examiner.eu)
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the possibilities of modern **LLMs**, to leverage your forensic examination process.
 
 ![](docs/img/demo.png)
 
@@ -20,7 +20,7 @@ go install github.com/cuhsat/fox@latest
 * Path matching and globbing
 * Unicode multi-byte support
 * [Bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) filtering
-* Timestamps are normalized to UTC
+* UTC normalized timestamps
 * Built-in scroll past end ability
 * Built-in timestamped input history
 * Built-in regular expression filtering
