@@ -6,6 +6,9 @@
 - Fix partial highlighting
 
 ## Features
+- Add parser to fox
+  - Pull Model
+  - Use Model
 - Add auto pulling for models (embed and model)
 - Add alternative key binding for goto
 - Refactor UI to state machine

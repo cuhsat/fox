@@ -2,14 +2,11 @@
 
 The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the possibilities of modern **LLMs**, to leverage your forensic examination process.
 
+For more information, please see [forensic-examiner.eu](https://forensic-examiner.eu).
+
 ![](docs/img/demo.png)
 
-## Installation
-```console
-go install github.com/cuhsat/fox@latest
-```
-
-## Key Features
+## Features
 * Standalone native `AMD64` and `ARM64` binaries
 * Available for Windows, Linux, macOS
 * Available as `.apk`, `.deb`, `.rpm` package
@@ -39,7 +36,7 @@ go install github.com/cuhsat/fox@latest
 * Built-in similarity hashes: `SDHASH`, `SSDEEP`, `TLSH`
 * Built-in checksums: `CRC32-IEEE`, `CRC64-ECMA`, `CRC64-ISO`
 * Built-in in-memory RAG database for document embeddings
-* Built-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *Mistral* or *DeepSeek R1*
+* Built-in AI agent using local [Ollama LLMs](https://ollama.com/search) like *DeepSeek R1*
 * Plugin support for e.g. the [Dissect](https://docs.dissect.tools) framework or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
 * Evidence bag formats: `plain`, `text`, `json`, `jsonl`, `xml`, `sqlite3`
 * Evidence bag chain of custody signing via `HMAC-SHA256`
@@ -50,6 +47,22 @@ go install github.com/cuhsat/fox@latest
     * Support for mouse scrolling
     * Suspend to shell capability
     * Customizable color themes
+
+## Install
+```console
+go install github.com/cuhsat/fox@latest
+```
+
+## Build
+How to build a full-featured version:
+```console
+go build main.go -o fox
+```
+
+How to build a `minimal` version (**UI** and **AI** stripped):
+```console
+go build -tags minimal main.go -o fox
+```
 
 ## License
 🦊 is released under the [GPL-3.0](LICENSE.md).
