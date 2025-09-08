@@ -12,7 +12,7 @@
 - Add auto pulling for models (embed and model)
 - Add alternative key binding for goto
 - Refactor UI to state machine
-  - Add key chains
+  - Add keychains
   - Remap key bindings
 - Add `find` command abilities?
 - Add `CMD` command mode like vim?
