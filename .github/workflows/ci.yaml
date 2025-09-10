@@ -38,8 +38,8 @@ jobs:
       -
         name: Run builds
         run: |
-          go build main.go -o fox
-          go build -tags minimal main.go -o fox
+          go build -o fox main.go
+          go build -o fox -tags minimal main.go
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
