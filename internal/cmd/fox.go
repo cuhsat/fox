@@ -155,6 +155,8 @@ var Fox = &cobra.Command{
 		}
 
 		if flg.Opt.Raw {
+			flg.NoFile = true
+			flg.NoLine = true
 			flg.Opt.NoConvert = true
 			flg.Opt.NoDeflate = true
 			flg.Opt.NoPlugins = true
@@ -345,12 +347,16 @@ func exec(args []string) {
 
 			if len(flg.AI.Query) > 0 {
 				agent.New().Ask(flg.AI.Query, h)
-			} else if len(flg.Filters.Patterns) > 0 {
+			} else if flg.Hex {
+				ctx.W = buffer.TermW
+
+				for l := range buffer.Hex(ctx).Lines {
+					fmt.Println(l)
+				}
+			} else {
 				if ctx.Heap.Len() == 0 {
 					return // ignore empty files
 				}
-
-				flg := flags.Get()
 
 				for l := range buffer.Text(ctx).Lines {
 					if l.Nr == "--" {
@@ -359,21 +365,11 @@ func exec(args []string) {
 						}
 					} else {
 						if !flg.NoLine {
-							fmt.Printf("%s:%s\n", l.Nr, l)
+							fmt.Printf("%s %s\n", l.Nr, l)
 						} else {
 							fmt.Println(l)
 						}
 					}
-				}
-			} else if flg.Hex {
-				ctx.W = buffer.TermW
-
-				for l := range buffer.Hex(ctx).Lines {
-					fmt.Println(l)
-				}
-			} else {
-				if h.Len() > 0 {
-					fmt.Print(string(*h.MMap()))
 				}
 			}
 		}

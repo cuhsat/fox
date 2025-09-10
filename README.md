@@ -59,7 +59,7 @@ How to build a full-featured version:
 go build main.go -o fox
 ```
 
-How to build a `minimal` version (**UI** and **AI** stripped):
+How to build a `minimal` version (AI and UI stripped):
 ```console
 go build -tags minimal main.go -o fox
 ```
