@@ -2,6 +2,8 @@
 
 package ai
 
+var Model = ""
+
 func IsAvailable() bool {
 	return false
 }

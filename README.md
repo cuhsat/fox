@@ -56,12 +56,12 @@ go install github.com/cuhsat/fox@latest
 ## Build
 How to build a full-featured version:
 ```console
-go build main.go -o fox
+go build -o fox main.go
 ```
 
 How to build a `minimal` version (AI and UI stripped):
 ```console
-go build -tags minimal main.go -o fox
+go build -o fox -tags minimal main.go
 ```
 
 ## License

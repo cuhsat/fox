@@ -9,10 +9,7 @@ import (
 	"github.com/ollama/ollama/api"
 )
 
-var (
-	Model = "" // disabled by default
-	Alive = &api.Duration{Duration: time.Minute * 10}
-)
+var Model = "" // disabled by default
 
 func IsAvailable() bool {
 	client, err := api.ClientFromEnvironment()
@@ -48,7 +45,7 @@ func Load(model string) {
 
 		_ = client.Chat(ctx, &api.ChatRequest{
 			Model:     Model,
-			KeepAlive: Alive,
+			KeepAlive: &api.Duration{Duration: time.Minute * 15},
 		}, func(cr api.ChatResponse) error {
 			return nil // preloaded model
 		})

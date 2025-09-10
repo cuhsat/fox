@@ -3,6 +3,7 @@ package llm
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ollama/ollama/api"
 
@@ -37,7 +38,7 @@ func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
 	ctx := context.Background()
 	req := &api.ChatRequest{
 		Model:     ai.Model,
-		KeepAlive: ai.Alive,
+		KeepAlive: &api.Duration{Duration: time.Minute * 10},
 		Messages:  llm.history,
 		Options: map[string]any{
 			"num_ctx":     cfg.GetInt("ai.num_ctx"),
