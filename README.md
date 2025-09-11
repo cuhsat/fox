@@ -8,18 +8,15 @@ Visit [forensic-examiner.eu](https://forensic-examiner.eu) for more information.
 
 ## Key Features
 * In-memory read-only filesystem abstraction
-* Unicode multibyte support with [bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) detection
-* Built-in cryptography and similarity hashes
+* Multibyte Unicode support with [bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) detection
 * Built-in `grep`, `hexdump`, `strings` and `wc` like abilities
 * Built-in parsing of Linux Journals and Windows Event Logs
-* Auto deflation and extraction of many archive formats
-* Auto formating of CSV, JSON and JSON Lines data
-* Evidence streaming using [ECS](https://www.elastic.co/docs/reference/ecs)
-or [Splunk HEC](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput)
+* Built-in cryptography and similarity hashes
+* Deflation and extraction of many archive formats
+* Evidence streaming using [Splunk HEC](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput) or [ECS](https://www.elastic.co/docs/reference/ecs)
 * Evidence bag with Chain of Custody signing
-* Plugin support for e.g. [Dissect](https://docs.dissect.tools) or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
-* Advanced AI agent using local [Ollama LLMs](https://ollama.com/search) like *DeepSeek R1*
-* Terminal UI compatible with many terminals
+* Integrated plugin support for e.g. [Dissect](https://docs.dissect.tools) or [Eric Zimmerman's tools](https://ericzimmerman.github.io/)
+* Integrated agent using [Ollama LLMs](https://ollama.com/search) like *DeepSeek R1*
 
 ## Install
 Install directly using Go:
