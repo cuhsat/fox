@@ -21,14 +21,14 @@ GLOBAL:
   Ctrl + w             Toggle text wrap
   Ctrl + p             Toggle head pinned
   Ctrl + t             Toggle tail follow
-  Ctrl + j             Decrease context
   Ctrl + k             Increase context
+  Ctrl + j             Decrease context
   Ctrl + o             Open file(s)
   Ctrl + a             Merge files
   Ctrl + q             Close file
-  Ctrl + b             Open evidence bag
-  Ctrl + s             Save evidence bag
   Ctrl + c             Copy to clipboard
+  Ctrl + s             Save evidence bag
+  Ctrl + b             Open evidence bag
   Ctrl + z             Suspend to shell
   F1                   Show help message
   F2                   Show file(s) counts
