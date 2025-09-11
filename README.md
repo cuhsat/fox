@@ -2,7 +2,7 @@
 
 The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the possibilities of modern **LLMs**, to leverage your forensic examination process. Standalone native binaries are available for Windows, Linux and macOS.
 
-Specifications at [forensic-examiner.eu](https://forensic-examiner.eu).
+Specifications under [forensic-examiner.eu](https://forensic-examiner.eu).
 
 ![](docs/img/demo.png)
 
@@ -11,7 +11,7 @@ Specifications at [forensic-examiner.eu](https://forensic-examiner.eu).
 * Multibyte support with [bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) detection
 * Built-in `grep`, `hexdump`, `strings` and `wc` like abilities
 * Built-in parsing of Linux Journals and Windows Event Logs
-* Built-in various cryptography and similarity hashes
+* Built-in popular cryptography and similarity hashes
 * Deflation and extraction of many archive formats
 * Evidence streaming using [Splunk HEC](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput) or [ECS](https://www.elastic.co/docs/reference/ecs)
 * Evidence bag with Chain of Custody signing
