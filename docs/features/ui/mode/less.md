@@ -13,4 +13,4 @@ Mode specific keys:
 | *Any other key*  | Switch to [GREP](grep.md) mode |
 
 ## Example
-![](../../../../img/ui/modes/less.png "LESS")
+![](../../../../images/ui/modes/less.png "LESS")

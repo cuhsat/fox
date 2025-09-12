@@ -21,46 +21,46 @@ subtext2 = [ 0xFFFFFF, 0x000000 ] # highlights
 ## Built-in themes
 
 ### Examiner Dark
-![](../img/ui/themes/examiner-dark.png "Examiner-Dark")
+![](../images/ui/themes/examiner-dark.png "Examiner-Dark")
 
 ### Examiner Light
-![](../img/ui/themes/examiner-light.png "Examiner-Light")
+![](../images/ui/themes/examiner-light.png "Examiner-Light")
 
 ### Catppuccin Latte
-![](../img/ui/themes/catppuccin-latte.png "Catppuccin-Latte")
+![](../images/ui/themes/catppuccin-latte.png "Catppuccin-Latte")
 
 ### Catppuccin Frappe
-![](../img/ui/themes/catppuccin-frappe.png "Catppuccin-Frappe")
+![](../images/ui/themes/catppuccin-frappe.png "Catppuccin-Frappe")
 
 ### Catppuccin Macchiato
-![](../img/ui/themes/catppuccin-macchiato.png "Catppuccin-Macchiato")
+![](../images/ui/themes/catppuccin-macchiato.png "Catppuccin-Macchiato")
 
 ### Catppuccin Mocha
-![](../img/ui/themes/catppuccin-mocha.png "Catppuccin-Mocha")
+![](../images/ui/themes/catppuccin-mocha.png "Catppuccin-Mocha")
 
 ### Solarized Dark
-![](../img/ui/themes/solarized-dark.png "Solarized-Dark")
+![](../images/ui/themes/solarized-dark.png "Solarized-Dark")
 
 ### Solarized Light
-![](../img/ui/themes/solarized-light.png "Solarized-Light")
+![](../images/ui/themes/solarized-light.png "Solarized-Light")
 
 ### VSCode Dark
-![](../img/ui/themes/vscode-dark.png "VSCode-Dark")
+![](../images/ui/themes/vscode-dark.png "VSCode-Dark")
 
 ### VSCode Light
-![](../img/ui/themes/vscode-light.png "VSCode-Light")
+![](../images/ui/themes/vscode-light.png "VSCode-Light")
 
 ### Monokai
-![](../img/ui/themes/monokai.png "Monokai")
+![](../images/ui/themes/monokai.png "Monokai")
 
 ### Darcula
-![](../img/ui/themes/darcula.png "Darcula")
+![](../images/ui/themes/darcula.png "Darcula")
 
 ### Nord
-![](../img/ui/themes/nord.png "Nord")
+![](../images/ui/themes/nord.png "Nord")
 
 ### Matrix
-![](../img/ui/themes/matrix.png "Matrix")
+![](../images/ui/themes/matrix.png "Matrix")
 
 ### Monochrome
-![](../img/ui/themes/monochrome.png "Monochrome")
+![](../images/ui/themes/monochrome.png "Monochrome")

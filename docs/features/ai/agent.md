@@ -12,4 +12,4 @@ The given context will be split by lines and all lines will be embedded with the
 
 ## Example
 
-![Agent](../../../img/ui/modes/fox.png)
+![Agent](../../../images/ui/modes/fox.png)

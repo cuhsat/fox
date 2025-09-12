@@ -6,67 +6,69 @@ site_url: https://forensic-examiner.eu
 repo_name: /cuhsat/fox
 repo_url: https://github.com/cuhsat/fox
 
+remote_branch: docs
+
 copyright: 🦊 by Hinterland Forensics 2025
 
 nav:
-  - Home: text/index.md
+  - Home: index.md
 
   - Basics:
-    - Install: text/basics/install.md
-    - Tutorial: text/basics/tutorial.md
+    - Install: basics/install.md
+    - Tutorial: basics/tutorial.md
     - Usage:
-        - fox: text/basics/usage/fox.md
-        - fox counts: text/basics/usage/counts.md
-        - fox deflate: text/basics/usage/deflate.md
-        - fox entropy: text/basics/usage/entropy.md
-        - fox hash: text/basics/usage/hash.md
-        - fox strings: text/basics/usage/strings.md
+        - fox: basics/usage/fox.md
+        - fox counts: basics/usage/counts.md
+        - fox deflate: basics/usage/deflate.md
+        - fox entropy: basics/usage/entropy.md
+        - fox hash: basics/usage/hash.md
+        - fox strings: basics/usage/strings.md
 
   - Features:
-    - Loader: text/features/loader.md
-    - Memory: text/features/memory.md
+    - Loader: features/loader.md
+    - Memory: features/memory.md
 
     - Files:
-        - csv: text/features/files/csv.md
-        - json: text/features/files/json.md
-        - evtx: text/features/files/evtx.md
+        - csv: features/files/csv.md
+        - json: features/files/json.md
+        - evtx: features/files/evtx.md
         - journal: text/features/files/journal.md
 
     - Utils:
-        - Hashes: text/features/utils/hashes.md
-        - Strings: text/features/utils/strings.md
-        - Entropy: text/features/utils/entropy.md
-        - Counts: text/features/utils/counts.md
+        - Hashes: features/utils/hashes.md
+        - Strings: features/utils/strings.md
+        - Entropy: features/utils/entropy.md
+        - Counts: features/utils/counts.md
 
     - AI:
-      - Agent: text/features/ai/agent.md
+      - Agent: features/ai/agent.md
 
     - UI:
-      - Terminal: text/features/ui/terminal.md
-      - Unicode: text/features/ui/unicode.md
-      - Keymap:  text/features/ui/keymap.md
+      - Terminal: features/ui/terminal.md
+      - Unicode: features/ui/unicode.md
+      - Keymap:  features/ui/keymap.md
       - Mode:
-        - Less: text/features/ui/mode/less.md
-        - Grep: text/features/ui/mode/grep.md
-        - Hex: text/features/ui/mode/hex.md
-        - Fox: text/features/ui/mode/fox.md
+        - Less: features/ui/mode/less.md
+        - Grep: features/ui/mode/grep.md
+        - Hex: features/ui/mode/hex.md
+        - Fox: features/ui/mode/fox.md
 
-    - Evidence: text/features/evidence.md
+    - Evidence: features/evidence.md
 
-  - Plugins: text/plugins.md
-  - Themes: text/themes.md
-  - Building: text/building.md
-  - License: text/license.md
+  - Plugins: plugins.md
+  - Themes: themes.md
+  - Building: building.md
+  - License: license.md
 
 theme:
   name: material
-  logo: img/fox.svg
+  logo: images/fox.svg
   font:
     text: Roboto
     code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
-  favicon: img/fox.ico
+  favicon: images/fox.ico
   features:
     - header.autohide
     - navigation.path
@@ -92,7 +94,7 @@ extra:
       name: GitHub
 
 extra_css:
-  - css/fox.css
+  - styles/fox.css
 
 plugins:
   - privacy

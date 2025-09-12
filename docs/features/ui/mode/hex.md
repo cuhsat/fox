@@ -12,4 +12,4 @@ Mode specific keys:
 | <kbd>Space</kbd> | Scroll one page down |
 
 ## Example
-![](../../../../img/ui/modes/hex.png "HEX")
+![](../../../../images/ui/modes/hex.png "HEX")

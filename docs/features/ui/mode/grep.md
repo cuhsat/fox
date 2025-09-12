@@ -29,4 +29,4 @@ Mode specific keys:
 | *Any other key*                    | Define **Regular Expression**  |
 
 ## Example
-![](../../../../img/ui/modes/grep.png "GREP")
+![](../../../../images/ui/modes/grep.png "GREP")
