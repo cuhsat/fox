@@ -25,6 +25,10 @@ go.work.sum
 # IDEs
 .idea/
 
+# MkDocs
+.cache/
+.venv/
+
 # MacOS crap
 .DS_Store
 

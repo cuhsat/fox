@@ -1,0 +1,99 @@
+site_name: Forensic Examiner
+site_description: The Swiss Army Knife for examining text files.
+site_author: Christian Uhsat
+site_url: https://forensic-examiner.eu
+
+repo_name: /cuhsat/fox
+repo_url: https://github.com/cuhsat/fox
+
+copyright: 🦊 by Hinterland Forensics 2025
+
+nav:
+  - Home: text/index.md
+
+  - Basics:
+    - Install: text/basics/install.md
+    - Tutorial: text/basics/tutorial.md
+    - Usage:
+        - fox: text/basics/usage/fox.md
+        - fox counts: text/basics/usage/counts.md
+        - fox deflate: text/basics/usage/deflate.md
+        - fox entropy: text/basics/usage/entropy.md
+        - fox hash: text/basics/usage/hash.md
+        - fox strings: text/basics/usage/strings.md
+
+  - Features:
+    - Loader: text/features/loader.md
+    - Memory: text/features/memory.md
+
+    - Files:
+        - csv: text/features/files/csv.md
+        - json: text/features/files/json.md
+        - evtx: text/features/files/evtx.md
+        - journal: text/features/files/journal.md
+
+    - Utils:
+        - Hashes: text/features/utils/hashes.md
+        - Strings: text/features/utils/strings.md
+        - Entropy: text/features/utils/entropy.md
+        - Counts: text/features/utils/counts.md
+
+    - AI:
+      - Agent: text/features/ai/agent.md
+
+    - UI:
+      - Terminal: text/features/ui/terminal.md
+      - Unicode: text/features/ui/unicode.md
+      - Keymap:  text/features/ui/keymap.md
+      - Mode:
+        - Less: text/features/ui/mode/less.md
+        - Grep: text/features/ui/mode/grep.md
+        - Hex: text/features/ui/mode/hex.md
+        - Fox: text/features/ui/mode/fox.md
+
+    - Evidence: text/features/evidence.md
+
+  - Plugins: text/plugins.md
+  - Themes: text/themes.md
+  - Building: text/building.md
+  - License: text/license.md
+
+theme:
+  name: material
+  logo: img/fox.svg
+  font:
+    text: Roboto
+    code: Roboto Mono
+  icon:
+    repo: fontawesome/brands/github
+  favicon: img/fox.ico
+  features:
+    - header.autohide
+    - navigation.path
+    - navigation.indexes
+  palette:
+    primary: custom
+    accent: custom
+
+extra:
+  homepage: https://forensic-examiner.eu
+  generator: false
+  social:
+    - icon: fontawesome/solid/envelope
+      link: mailto:christian@uhsat.de
+      name: Mail
+
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/cuhsat
+      name: LinkedIn
+
+    - icon: fontawesome/brands/github
+      link: https://github.com/cuhsat
+      name: GitHub
+
+extra_css:
+  - css/fox.css
+
+plugins:
+  - privacy
+  - offline
