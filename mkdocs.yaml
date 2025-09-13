@@ -73,6 +73,8 @@ theme:
     - header.autohide
     - navigation.path
     - navigation.indexes
+    - search.suggest
+    - search.highlight
   palette:
     primary: custom
     accent: custom
@@ -97,5 +99,6 @@ extra_css:
   - styles/fox.css
 
 plugins:
+  - search
   - privacy
   - offline
