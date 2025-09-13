@@ -19,19 +19,16 @@ jobs:
         with:
           fetch-depth: 0
       -
-        name: Set up Version
-        run: sed -i 's/v0.0.0/${{ github.ref_name }}/' version.json
-      -
-        name: Set up Syft
+        name: Setup Syft
         uses: anchore/sbom-action/download-syft@v0
       -
-        name: Set up Cosign
+        name: Setup Cosign
         uses: sigstore/cosign-installer@v3
       -
-        name: Set up Go
+        name: Setup Go
         uses: actions/setup-go@v5
       -
-        name: Set up Go versioninfo
+        name: Setup Go versioninfo
         run: |
           go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
           go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
@@ -59,20 +56,35 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Configure Git Credentials
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      -
+        name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: actions/setup-python@v5
+      -
+        name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v4
+      -
+        name: Setup environment
+        run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      -
+        name: Setup cache
+        uses: actions/cache@v4
         with:
           key: mkdocs-material-${{ env.cache_id }}
           path: ~/.cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+      -
+        name: Setup packages
+        run: pip install mkdocs-material
+      -
+        name: Deploy site
+        run: mkdocs gh-deploy --force

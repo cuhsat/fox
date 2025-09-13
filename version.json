@@ -1,35 +1,35 @@
 {
-    // "FixedFileInfo": {
-    //     "FileVersion": {
-    //         "Major": 2,
-    //         "Minor": 0,
-    //         "Patch": 0,
-    //         "Build": 0
-    //     },
-    //     "ProductVersion": {
-    //         "Major": 2,
-    //         "Minor": 0,
-    //         "Patch": 0,
-    //         "Build": 0
-    //     },
-    //     "FileFlagsMask": "3f",
-    //     "FileFlags ": "00",
-    //     "FileOS": "040004",
-    //     "FileType": "01",
-    //     "FileSubType": "00"
-    // },
+    "FixedFileInfo": {
+        "FileVersion": {
+            "Major": 2,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "ProductVersion": {
+            "Major": 2,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "FileFlagsMask": "3f",
+        "FileFlags ": "00",
+        "FileOS": "040004",
+        "FileType": "01",
+        "FileSubType": "00"
+    },
     "StringFileInfo": {
         "Comments": "",
         "CompanyName": "Forensic Examiner",
         "FileDescription": "The Swiss Army Knife for examining text files.",
-        "FileVersion": "v0.0.0",
+        "FileVersion": "v2.0.0",
         "InternalName": "fox",
         "LegalCopyright": "GPL-3.0",
         "LegalTrademarks": "",
         "OriginalFilename": "fox.exe",
         "PrivateBuild": "",
         "ProductName": "Forensic Examiner",
-        "ProductVersion": "v0.0.0",
+        "ProductVersion": "v2.0.0",
         "SpecialBuild": ""
     },
     "VarFileInfo": {

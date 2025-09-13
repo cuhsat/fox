@@ -11,7 +11,7 @@ The **lower area** of the terminal shows the current mode, any applied filters, 
 - `W` - wrap text
 - `T` - tail file
 
-![](../../../images/ui.png)
+![](../../../images/demo.png)
 
 ## Features
 Advanced terminal features:
