@@ -63,8 +63,8 @@ Available evidence bag modes:
 ### Evidence URL
 - `-u`, `--url=SERVER` — forward evidence to server address
 - `-a`, `--auth=TOKEN` — forward evidence using auth token
-- `--ecs` — use **[ECS](https://www.elastic.co/docs/reference/ecs)** schema for evidence
-- `--hec` — use **[HEC](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput)** schema for evidence
+- `--ecs` — use **[ECS](https://forensic-examiner.eu/features/evidence.html#ecs-schema)** schema for evidence
+- `--hec` — use **[HEC](https://forensic-examiner.eu/features/evidence.html#hec-schema)** schema for evidence
 
 ### Disable
 - `-R`, `--readonly` — don't write any new files

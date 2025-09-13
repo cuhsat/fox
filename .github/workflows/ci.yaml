@@ -19,6 +19,9 @@ jobs:
         with:
           fetch-depth: 0
       -
+        name: Set up Version
+        run: sed -i 's/v0.0.0/${{ github.ref_name }}/' version.json
+      -
         name: Set up Syft
         uses: anchore/sbom-action/download-syft@v0
       -
