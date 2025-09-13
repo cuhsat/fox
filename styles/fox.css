@@ -1,0 +1,26 @@
+:root > * {
+    --md-primary-fg-color:        #333;
+    --md-primary-fg-color--light: #333;
+    --md-primary-fg-color--dark:  #333;
+}
+
+:root > * {
+    --md-accent-fg-color:        #0f88cd;
+    --md-accent-fg-color--light: #0f88cd;
+    --md-accent-fg-color--dark:  #0f88cd;
+}
+
+:root > * {
+    --md-header-bg-color:       #333;
+    --md-header-bg-color--dark: #333;
+}
+
+:root > * {
+  --md-footer-bg-color:       #333;
+  --md-footer-bg-color--dark: #333;
+}
+
+.md-content a {
+    text-decoration: underline #0f88cd;
+    text-underline-offset: 0.3em;
+}
