@@ -11,17 +11,17 @@
 
 ## Navigation
 
-| Key                                                  | Action                     |
-|------------------------------------------------------|----------------------------|
-| <kbd>Tab</kbd>                                       | Load next file             |
-| <kbd>Shift</kbd> + <kbd>Tab</kbd>                    | Load prev file             |
-| <kbd>Shift</kbd> + <kbd>Up</kbd>                     | Scroll page up             |
-| <kbd>Shift</kbd> + <kbd>Down</kbd>                   | Scroll page down           |
-| <kbd>Shift</kbd> + <kbd>Left</kbd>                   | Scroll page left           |
-| <kbd>Shift</kbd> + <kbd>Right</kbd>                  | Scroll page right          |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Up</kbd>   | Scroll to start            |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Down</kbd> | Scroll to end              |
-| <kbd>Ctrl</kbd> + <kbd>Space</kbd>                   | Scroll to `+` / `-` `LINE` |
+| Key                                                                   | Action                     |
+|-----------------------------------------------------------------------|----------------------------|
+| <kbd>Shift</kbd> + <kbd>Up</kbd>                                      | Scroll page up             |
+| <kbd>Shift</kbd> + <kbd>Down</kbd>                                    | Scroll page down           |
+| <kbd>Shift</kbd> + <kbd>Left</kbd>                                    | Scroll page left           |
+| <kbd>Shift</kbd> + <kbd>Right</kbd>                                   | Scroll page right          |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Up</kbd>                    | Scroll to start            |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Down</kbd>                  | Scroll to end              |
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd>                                    | Scroll to `+` / `-` `LINE` |
+| <kbd>Ctrl</kbd> + <kbd>Right</kbd> / <kbd>Tab</kbd>                   | Load next file             |
+| <kbd>Ctrl</kbd> + <kbd>Left</kbd> / <kbd>Shift</kbd> + <kbd>Tab</kbd> | Load prev file             |
 
 ## Workbench
 

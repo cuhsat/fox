@@ -11,7 +11,7 @@ The **lower area** of the terminal shows the current mode, any applied filters, 
 - `W` - wrap text
 - `T` - tail file
 
-![](../../../images/demo.png)
+![](../../images/terminal.png)
 
 ## Features
 Advanced terminal features:
@@ -33,7 +33,7 @@ All user input will be saved in a timestamped history file located under `~/.con
 ```
 
 ## Config
-All **AI** and **UI** settings will saved in a configuration file located under `~/.config/fox/foxrc`.
+All **AI** and **UI** settings will be saved in a configuration file located under `~/.config/fox/foxrc`.
 
 > To prevent the config file of being written, use the `--readonly` flag.
 

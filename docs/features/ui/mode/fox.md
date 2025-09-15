@@ -20,4 +20,4 @@ Mode specific keys:
 | *Any other key*                    | Define **LLM** prompt          |
 
 ## Example
-![](../../../../images/ui/modes/fox.png "FOX")
+![](../../../images/modes/fox.png "FOX")

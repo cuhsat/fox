@@ -21,46 +21,46 @@ subtext2 = [ 0xFFFFFF, 0x000000 ] # highlights
 ## Built-in themes
 
 ### Examiner Dark
-![](../images/ui/themes/examiner-dark.png "Examiner-Dark")
+![](images/themes/examiner-dark.png "Examiner-Dark")
 
 ### Examiner Light
-![](../images/ui/themes/examiner-light.png "Examiner-Light")
+![](images/themes/examiner-light.png "Examiner-Light")
 
 ### Catppuccin Latte
-![](../images/ui/themes/catppuccin-latte.png "Catppuccin-Latte")
+![](images/themes/catppuccin-latte.png "Catppuccin-Latte")
 
 ### Catppuccin Frappe
-![](../images/ui/themes/catppuccin-frappe.png "Catppuccin-Frappe")
+![](images/themes/catppuccin-frappe.png "Catppuccin-Frappe")
 
 ### Catppuccin Macchiato
-![](../images/ui/themes/catppuccin-macchiato.png "Catppuccin-Macchiato")
+![](images/themes/catppuccin-macchiato.png "Catppuccin-Macchiato")
 
 ### Catppuccin Mocha
-![](../images/ui/themes/catppuccin-mocha.png "Catppuccin-Mocha")
+![](images/themes/catppuccin-mocha.png "Catppuccin-Mocha")
 
 ### Solarized Dark
-![](../images/ui/themes/solarized-dark.png "Solarized-Dark")
+![](images/themes/solarized-dark.png "Solarized-Dark")
 
 ### Solarized Light
-![](../images/ui/themes/solarized-light.png "Solarized-Light")
+![](images/themes/solarized-light.png "Solarized-Light")
 
 ### VSCode Dark
-![](../images/ui/themes/vscode-dark.png "VSCode-Dark")
+![](images/themes/vscode-dark.png "VSCode-Dark")
 
 ### VSCode Light
-![](../images/ui/themes/vscode-light.png "VSCode-Light")
+![](images/themes/vscode-light.png "VSCode-Light")
 
 ### Monokai
-![](../images/ui/themes/monokai.png "Monokai")
+![](images/themes/monokai.png "Monokai")
 
 ### Darcula
-![](../images/ui/themes/darcula.png "Darcula")
+![](images/themes/darcula.png "Darcula")
 
 ### Nord
-![](../images/ui/themes/nord.png "Nord")
+![](images/themes/nord.png "Nord")
 
 ### Matrix
-![](../images/ui/themes/matrix.png "Matrix")
+![](images/themes/matrix.png "Matrix")
 
 ### Monochrome
-![](../images/ui/themes/monochrome.png "Monochrome")
+![](images/themes/monochrome.png "Monochrome")
