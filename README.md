@@ -1,6 +1,10 @@
 ![](docs/fox.png "Forensic Examiner")
 
-The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the abilities of modern **LLMs**, to leverage your forensic examination process. Standalone native binaries are available for Windows, Linux and macOS. **[❯ forensic-examiner.eu](https://forensic-examiner.eu)**
+The Swiss Army Knife for examining text files. Combining the power of many traditional tools like **grep**, **hexdump** and **strings** with the abilities of modern **LLMs**, to leverage your forensic examination process. Standalone native binaries are available for Windows, Linux and macOS.
+
+<div align="center">
+  <a href="https://forensic-examiner.eu">❯ forensic-examiner.eu</a>
+</div>
 
 ![](docs/images/terminal.png)
 
