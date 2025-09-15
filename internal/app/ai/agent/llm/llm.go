@@ -59,7 +59,7 @@ func (llm *LLM) Use(model string, fn api.PullProgressFunc) error {
 }
 
 func (llm *LLM) Ask(model, query, lines string, fn api.ChatResponseFunc) error {
-	llm.AddUser(fmt.Sprintf(info.Prompt, query, lines))
+	llm.AddUser(fmt.Sprintf(fox.Prompt, query, lines))
 
 	cfg := config.Get()
 	ctx := context.Background()

@@ -50,7 +50,7 @@ func Shell() {
 		}
 	}
 
-	fmt.Println(info.Product, info.Version)
+	fmt.Println(fox.Product, fox.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shell, "-l") // login shell

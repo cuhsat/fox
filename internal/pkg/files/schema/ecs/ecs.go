@@ -49,8 +49,8 @@ func New() *Ecs {
 
 	ecs.Ecs.Version = Version
 
-	ecs.Agent.Type = info.Product
-	ecs.Agent.Version = info.Version[1:]
+	ecs.Agent.Type = fox.Product
+	ecs.Agent.Version = fox.Version[1:]
 
 	return ecs
 }

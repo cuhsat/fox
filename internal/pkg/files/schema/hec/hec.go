@@ -30,7 +30,7 @@ type Hec struct {
 
 func New() *Hec {
 	return &Hec{
-		Source:     info.Product,
+		Source:     fox.Product,
 		Sourcetype: "_json",
 	}
 }

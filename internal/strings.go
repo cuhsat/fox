@@ -1,4 +1,4 @@
-package info
+package fox
 
 import (
 	_ "embed"
@@ -12,15 +12,15 @@ const (
 )
 
 var (
-	//go:embed text/ascii.txt
+	//go:embed res/ascii.txt
 	Ascii string
 
-	//go:embed text/help.txt
+	//go:embed res/help.txt
 	Help string
 
-	//go:embed text/prompt.txt
+	//go:embed res/prompt.txt
 	Prompt string
 
-	//go:embed text/version.txt
+	//go:embed res/version.txt
 	Version string
 )

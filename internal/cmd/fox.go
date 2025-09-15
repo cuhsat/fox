@@ -26,7 +26,7 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
-var Usage = fmt.Sprintf(info.Ascii+`
+var Usage = fmt.Sprintf(fox.Ascii+`
 The Swiss Army Knife for examining text files (%s)
 By %s <%s>
 
@@ -129,20 +129,20 @@ Example: print event log analysis
   $ fox -pq="analyse this" log.evtx
 
 Type "fox help COMMAND" for more help...
-`, info.Version, info.Author, info.Website)
+`, fox.Version, fox.Author, fox.Website)
 
 var Fox = &cobra.Command{
 	Use:     "fox",
 	Short:   "The Swiss Army Knife for examining text files",
 	Long:    "The Swiss Army Knife for examining text files",
 	Args:    cobra.ArbitraryArgs,
-	Version: info.Version,
+	Version: fox.Version,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
 		// print credits
 		if flg.Credits {
-			fmt.Printf("%s <%s>\n- Soli Deo Gloria\n", info.Author, info.Email)
+			fmt.Printf("%s <%s>\n- Soli Deo Gloria\n", fox.Author, fox.Email)
 			os.Exit(0)
 		}
 
@@ -312,7 +312,7 @@ func init() {
 
 	Fox.SetErrPrefix(sys.Prefix)
 	Fox.SetHelpTemplate(Usage)
-	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", info.Product, info.Version))
+	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", fox.Product, fox.Version))
 
 	Fox.AddCommand(actions.Counts)
 	Fox.AddCommand(actions.Deflate)

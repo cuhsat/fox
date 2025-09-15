@@ -175,7 +175,7 @@ func (bag *Bag) init() {
 		}
 	}
 
-	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", info.Version)
+	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", fox.Version)
 
 	for _, w := range bag.ws {
 		w.Open(bag.file, old, title)

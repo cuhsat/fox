@@ -661,7 +661,7 @@ func (ui *UI) change(m mode.Mode) {
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) {
-	title := info.Product
+	title := fox.Product
 
 	if hs != nil {
 		_, heap := hs.Heap()
