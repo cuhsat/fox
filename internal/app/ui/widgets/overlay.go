@@ -7,7 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 )
 
@@ -29,7 +29,7 @@ type message struct {
 	t time.Duration
 }
 
-func NewOverlay(ctx *context.Context) *Overlay {
+func NewOverlay(ctx *app.Context) *Overlay {
 	return &Overlay{
 		base: base{ctx},
 

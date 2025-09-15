@@ -3,7 +3,7 @@ package widgets
 import (
 	"fmt"
 
-	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
@@ -14,7 +14,7 @@ type Title struct {
 	base
 }
 
-func NewTitle(ctx *context.Context) *Title {
+func NewTitle(ctx *app.Context) *Title {
 	return &Title{
 		base: base{ctx},
 	}

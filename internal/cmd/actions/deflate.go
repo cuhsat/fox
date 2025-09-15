@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -16,14 +16,14 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var DeflateUsage = app.Art + `
+var DeflateUsage = info.Ascii + `
 Deflate compressed files.
 
 Usage:
   fox deflate [FLAG ...] PATH...
 
 Alias:
-	extract, unzip, de
+  extract, unzip, de
 
 Positional arguments:
   Path(s) to open

@@ -4,7 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/mattn/go-runewidth"
 
-	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
@@ -26,7 +26,7 @@ type panel struct {
 }
 
 type base struct {
-	ctx *context.Context
+	ctx *app.Context
 }
 
 func (b *base) blank(x, y, w int, sty tcell.Style) {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 )
@@ -30,7 +30,7 @@ type Hec struct {
 
 func New() *Hec {
 	return &Hec{
-		Source:     app.Product,
+		Source:     info.Product,
 		Sourcetype: "_json",
 	}
 }

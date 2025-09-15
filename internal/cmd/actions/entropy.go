@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app/ui"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -15,14 +15,14 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var EntropyUsage = app.Art + `
+var EntropyUsage = info.Ascii + `
 Display file entropy.
 
 Usage:
   fox entropy [FLAG ...] PATH ...
 
 Alias:
-	en
+  en
 
 Positional arguments:
   Path(s) to open

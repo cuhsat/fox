@@ -7,47 +7,30 @@ import (
 	"time"
 
 	"github.com/ollama/ollama/api"
+
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/app/ai/agent"
 )
 
-var Model = "" // disabled by default
+func NewAgent(ctx *app.Context) *agent.Agent {
+	if len(ctx.Model()) == 0 {
+		return nil // no model set
+	}
 
-func IsAvailable() bool {
 	client, err := api.ClientFromEnvironment()
 
 	if err != nil {
-		return false
+		return nil // no client found
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctxTo, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	err = client.Heartbeat(ctx)
+	err = client.Heartbeat(ctxTo)
 
-	return err == nil
-}
-
-func Load(model string) {
-	if len(model) == 0 || !IsAvailable() {
-		return
+	if err != nil {
+		return nil // no server found
 	}
 
-	Model = model
-
-	go func() {
-		client, err := api.ClientFromEnvironment()
-
-		if err != nil {
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
-
-		_ = client.Chat(ctx, &api.ChatRequest{
-			Model:     Model,
-			KeepAlive: &api.Duration{Duration: time.Minute * 15},
-		}, func(cr api.ChatResponse) error {
-			return nil // preloaded model
-		})
-	}()
+	return agent.New(ctx)
 }

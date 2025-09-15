@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai"
 	"github.com/cuhsat/fox/internal/app/ai/agent"
@@ -25,8 +26,9 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
-var Usage = fmt.Sprintf(app.Art+`
+var Usage = fmt.Sprintf(info.Ascii+`
 The Swiss Army Knife for examining text files (%s)
+By %s <%s>
 
 Usage:
   fox [ACTION] [FLAG ...] [PATH ...]
@@ -127,20 +129,20 @@ Example: print event log analysis
   $ fox -pq="analyse this" log.evtx
 
 Type "fox help COMMAND" for more help...
-`, app.Version)
+`, info.Version, info.Author, info.Website)
 
 var Fox = &cobra.Command{
 	Use:     "fox",
 	Short:   "The Swiss Army Knife for examining text files",
 	Long:    "The Swiss Army Knife for examining text files",
 	Args:    cobra.ArbitraryArgs,
-	Version: app.Version,
+	Version: info.Version,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		flg := flags.Get()
 
 		// print credits
 		if flg.Credits {
-			fmt.Printf("%s <%s>\n- Soli Deo Gloria\n", app.Author, app.Email)
+			fmt.Printf("%s <%s>\n- Soli Deo Gloria\n", info.Author, info.Email)
 			os.Exit(0)
 		}
 
@@ -228,7 +230,7 @@ var Fox = &cobra.Command{
 			fmt.Print(Usage)
 			os.Exit(0)
 		} else {
-			exec(args)
+			run(args)
 		}
 	},
 	SilenceUsage: true,
@@ -310,7 +312,7 @@ func init() {
 
 	Fox.SetErrPrefix(sys.Prefix)
 	Fox.SetHelpTemplate(Usage)
-	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", app.Product, app.Version))
+	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", info.Product, info.Version))
 
 	Fox.AddCommand(actions.Counts)
 	Fox.AddCommand(actions.Deflate)
@@ -323,15 +325,16 @@ func init() {
 	config.Load(Fox.Flags())
 }
 
-func exec(args []string) {
-	flg := flags.Get()
+func run(args []string) {
+	var flg = flags.Get()
+	var agt *agent.Agent
 
 	if len(flg.AI.Query) > 0 {
-		if !ai.IsAvailable() {
-			sys.Exit("AI is not available")
-		}
+		agt = ai.NewAgent(app.NewContext(nil))
 
-		ai.Load(config.Get().GetString("ai.model"))
+		if agt == nil {
+			sys.Exit("Agent is not available")
+		}
 	}
 
 	hs := heapset.New(args)
@@ -339,26 +342,26 @@ func exec(args []string) {
 
 	hs.Each(func(_ int, h *heap.Heap) {
 		if h.Type != types.Stdin {
-			ctx := buffer.NewContext(h)
+			buf := buffer.NewContext(h)
 
 			if hs.Len() > 1 && !flg.NoFile {
 				fmt.Println(text.Title(h.String(), buffer.TermW))
 			}
 
 			if len(flg.AI.Query) > 0 {
-				agent.New().Ask(flg.AI.Query, h)
+				agt.Process(flg.AI.Query, h)
 			} else if flg.Hex {
-				ctx.W = buffer.TermW
+				buf.W = buffer.TermW
 
-				for l := range buffer.Hex(ctx).Lines {
+				for l := range buffer.Hex(buf).Lines {
 					fmt.Println(l)
 				}
 			} else {
-				if ctx.Heap.Len() == 0 {
+				if buf.Heap.Len() == 0 {
 					return // ignore empty files
 				}
 
-				for l := range buffer.Text(ctx).Lines {
+				for l := range buffer.Text(buf).Lines {
 					if l.Nr == "--" {
 						if !flg.NoLine {
 							fmt.Println("--")

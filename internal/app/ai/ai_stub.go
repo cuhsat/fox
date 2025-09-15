@@ -2,12 +2,11 @@
 
 package ai
 
-var Model = ""
+import (
+	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal/app/ai/agent"
+)
 
-func IsAvailable() bool {
-	return false
-}
-
-func Load(_ string) {
-	// blank
+func NewAgent(_ *app.Context) *agent.Agent {
+	return nil
 }

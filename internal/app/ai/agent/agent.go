@@ -3,58 +3,115 @@ package agent
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
+	"time"
 
+	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/ollama/ollama/api"
 
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai/agent/llm"
 	"github.com/cuhsat/fox/internal/app/ai/agent/rag"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/text"
-	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
 
 type Agent struct {
-	File sys.File // agent chat file
+	File sys.File
+	busy atomic.Bool
 
-	buf *heap.Heap // buffered heap
+	buf *heap.Heap
+	ctx *app.Context
+	llm *llm.LLM
+	rag *rag.RAG
 
-	llm *llm.LLM // agent llm
-	rag *rag.RAG // agent rag
-
-	ch chan string // answer channel
+	ch chan string
 }
 
-func New() *Agent {
+func New(ctx *app.Context) *Agent {
 	a := &Agent{
 		File: fs.Create("/fox/agent"),
 
-		llm: llm.New(),
+		ctx: ctx,
+		llm: llm.New(ctx.Model(), time.Minute*10),
 		rag: rag.New(),
 
 		ch: make(chan string, 64),
 	}
+
+	a.busy.Store(false)
 
 	go a.listen()
 
 	return a
 }
 
-func (a *Agent) Close() {
-	close(a.ch)
+func (a *Agent) IsBusy() bool {
+	return a.busy.Load()
 }
 
-func (a *Agent) PS1(query string) {
+func (a *Agent) String() string {
+	return fmt.Sprintf("Agent %c %s", text.Icons().HSep, a.ctx.Model())
+}
+
+func (a *Agent) Prompt(query string) {
 	_, _ = a.File.WriteString(fmt.Sprintf("%c %s\n", text.Icons().Ps1, query))
 }
 
-func (a *Agent) Ask(query string, h *heap.Heap) {
+func (a *Agent) Process(query string, h *heap.Heap) {
 	if h.Type != types.Agent {
 		a.buf = h // buffer last valid heap
 	}
 
+	if !a.load(query) {
+		a.query(query)
+	}
+}
+
+func (a *Agent) Close() {
+	close(a.ch)
+}
+
+func (a *Agent) load(query string) bool {
+	var model string
+
+	if !strings.HasPrefix(query, "use model") {
+		return false
+	}
+
+	model = strings.TrimPrefix(query, "use model")
+	model = strings.TrimSpace(model)
+
+	a.busy.Store(true)
+
+	err := a.llm.Use(model, func(res api.ProgressResponse) error {
+		if res.Completed >= res.Total {
+			a.busy.Store(false)
+		} else {
+			a.ch <- "."
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		a.busy.Store(false)
+		sys.Error(err)
+
+		return true
+	}
+
+	_, _ = a.File.WriteString(fmt.Sprintf("Using model %s\n", model))
+
+	a.ctx.ChangeModel(model)
+
+	return true
+}
+
+func (a *Agent) query(query string) {
 	col := a.rag.Embed(a.buf)
 
 	if col == nil {
@@ -67,15 +124,23 @@ func (a *Agent) Ask(query string, h *heap.Heap) {
 		return
 	}
 
-	a.llm.Ask(query, ctx, func(res api.ChatResponse) error {
-		if len(res.Message.Content) > 0 {
-			a.ch <- res.Message.Content
-		} else {
+	a.busy.Store(true)
+
+	err := a.llm.Ask(a.ctx.Model(), query, ctx, func(res api.ChatResponse) error {
+		if len(res.Message.Content) == 0 {
+			a.busy.Store(false)
 			a.ch <- "\n\n"
+		} else {
+			a.ch <- res.Message.Content
 		}
 
 		return nil
 	})
+
+	if err != nil {
+		a.busy.Store(false)
+		sys.Error(err)
+	}
 }
 
 func (a *Agent) listen() {
@@ -104,7 +169,7 @@ func (a *Agent) listen() {
 		sb.WriteString(s)
 
 		if end {
-			a.llm.AddSystem(sb.String())
+			a.llm.AddAssistant(sb.String())
 			sb.Reset()
 		}
 	}

@@ -1,7 +1,7 @@
 package widgets
 
 import (
-	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
@@ -31,7 +31,7 @@ type state struct {
 	delta point
 }
 
-func NewView(ctx *context.Context) *View {
+func NewView(ctx *app.Context) *View {
 	return &View{
 		cache: make(map[string]state),
 		base:  base{ctx},

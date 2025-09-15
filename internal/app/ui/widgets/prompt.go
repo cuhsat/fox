@@ -7,7 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/cuhsat/fox/internal/app/ui/context"
+	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
@@ -27,7 +27,7 @@ type Prompt struct {
 	cursorMax atomic.Int32
 }
 
-func NewPrompt(ctx *context.Context) *Prompt {
+func NewPrompt(ctx *app.Context) *Prompt {
 	p := Prompt{base: base{ctx}}
 
 	// defaults

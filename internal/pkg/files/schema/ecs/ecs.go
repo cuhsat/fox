@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 )
 
@@ -49,8 +49,8 @@ func New() *Ecs {
 
 	ecs.Ecs.Version = Version
 
-	ecs.Agent.Type = app.Product
-	ecs.Agent.Version = app.Version[1:]
+	ecs.Agent.Type = info.Product
+	ecs.Agent.Version = info.Version[1:]
 
 	return ecs
 }

@@ -1,4 +1,4 @@
-package context
+package app
 
 import (
 	"strings"
@@ -31,7 +31,7 @@ type Context struct {
 	p atomic.Bool
 }
 
-func New(root tcell.Screen) *Context {
+func NewContext(root tcell.Screen) *Context {
 	cfg := config.Get()
 	ctx := &Context{
 		// screen
@@ -133,6 +133,12 @@ func (ctx *Context) SwitchMode(m mode.Mode) bool {
 	ctx.Unlock()
 
 	return true
+}
+
+func (ctx *Context) ChangeModel(t string) {
+	ctx.Lock()
+	ctx.model = t
+	ctx.Unlock()
 }
 
 func (ctx *Context) ChangeTheme(t string) {

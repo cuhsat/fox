@@ -6,7 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -105,10 +105,10 @@ func (hs *HeapSet) OpenHelp() {
 		idx = hs.Len()
 
 		f := fs.Create("/fox/help")
-		_, _ = f.WriteString(fmt.Sprintf(app.Art+app.Help, app.Version))
+		_, _ = f.WriteString(fmt.Sprintf(info.Ascii+info.Help, info.Version))
 
 		hs.atomicAdd(heap.New(
-			"Keymap",
+			"Help",
 			f.Name(),
 			f.Name(),
 			types.Stdout,
@@ -158,18 +158,18 @@ func (hs *HeapSet) OpenPlugin(path, base, title string) {
 	hs.LoadHeap()
 }
 
-func (hs *HeapSet) OpenAgent(path string) {
-	idx, ok := hs.findByName("Agent")
+func (hs *HeapSet) OpenAgent(path, title string) {
+	idx, ok := hs.findByPath(path)
 
 	if !ok {
 		idx = hs.Len()
 
-		hs.atomicAdd(heap.New("Agent", path, path, types.Agent))
+		hs.atomicAdd(heap.New(title, path, path, types.Agent))
 	}
 
 	atomic.StoreInt32(hs.index, idx)
 
-	hs.LoadHeap()
+	hs.LoadHeap().Title = title
 }
 
 func (hs *HeapSet) PrevHeap() *heap.Heap {

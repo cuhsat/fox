@@ -11,7 +11,7 @@ import (
 	"github.com/rainu/go-command-chain"
 	"github.com/spf13/afero"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
@@ -50,7 +50,7 @@ func Shell() {
 		}
 	}
 
-	fmt.Println(app.Product, app.Version)
+	fmt.Println(info.Product, info.Version)
 	fmt.Println("Type 'exit' to return.")
 
 	cmd := exec.Command(shell, "-l") // login shell

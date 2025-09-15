@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
@@ -26,7 +26,7 @@ func (w *Writer) Open(f *os.File, old bool, title string) {
 	w.file = f
 
 	if !old {
-		w.write("%s\n%s\n", app.Art, title)
+		w.write("%s\n%s\n", info.Ascii, title)
 	}
 }
 

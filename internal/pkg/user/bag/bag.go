@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/json"
 	"github.com/cuhsat/fox/internal/pkg/files/evidence/plain"
@@ -175,7 +175,7 @@ func (bag *Bag) init() {
 		}
 	}
 
-	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", app.Version)
+	title := fmt.Sprintf("Forensic Examiner Evidence Bag (%s)", info.Version)
 
 	for _, w := range bag.ws {
 		w.Open(bag.file, old, title)

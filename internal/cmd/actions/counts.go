@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app/ui"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/types"
@@ -14,14 +14,14 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var CountsUsage = app.Art + `
+var CountsUsage = info.Ascii + `
 Display line and byte counts.
 
 Usage:
   fox counts [FLAG ...] PATH ...
 
 Alias:
-	co, wc
+  co, wc
 
 Positional arguments:
   Path(s) to open

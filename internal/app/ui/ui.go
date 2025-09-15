@@ -12,10 +12,10 @@ import (
 
 	_ "github.com/gdamore/tcell/v2/encoding"
 
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app"
 	"github.com/cuhsat/fox/internal/app/ai"
 	"github.com/cuhsat/fox/internal/app/ai/agent"
-	"github.com/cuhsat/fox/internal/app/ui/context"
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/app/ui/widgets"
 	"github.com/cuhsat/fox/internal/pkg/flags"
@@ -41,7 +41,7 @@ const (
 )
 
 type UI struct {
-	ctx *context.Context
+	ctx *app.Context
 
 	root tcell.Screen
 
@@ -89,14 +89,13 @@ func create() *UI {
 	root.EnableMouse(tcell.MouseDragEvents)
 	root.EnablePaste()
 
-	ctx := context.New(root)
+	ctx := app.NewContext(root)
 
 	ui := UI{
 		ctx: ctx,
 
 		root: root,
 
-		agent:   agent.New(),
 		themes:  themes.New(ctx.Theme()),
 		plugins: plugins.New(),
 
@@ -113,13 +112,15 @@ func create() *UI {
 	ui.render(nil)
 	ui.change(flags.Get().UI.Mode)
 
-	ai.Load(ctx.Model())
+	ui.agent = ai.NewAgent(ctx)
 
 	return &ui
 }
 
 func (ui *UI) delete() {
-	ui.agent.Close()
+	if ui.agent != nil {
+		ui.agent.Close()
+	}
 
 	if ui.plugins != nil {
 		plugins.Close()
@@ -377,6 +378,12 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						}
 					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollLeft(pageW)
+					} else if mods&tcell.ModCtrl != 0 {
+						if hs.Len() > 1 {
+							ui.view.SaveState(heap.Path)
+							heap = hs.PrevHeap()
+							ui.view.LoadState(heap.Path)
+						}
 					} else {
 						ui.view.ScrollLeft(delta)
 					}
@@ -390,6 +397,12 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 						}
 					} else if mods&tcell.ModShift != 0 {
 						ui.view.ScrollRight(pageW)
+					} else if mods&tcell.ModCtrl != 0 {
+						if hs.Len() > 1 {
+							ui.view.SaveState(heap.Path)
+							heap = hs.NextHeap()
+							ui.view.LoadState(heap.Path)
+						}
 					} else {
 						ui.view.ScrollRight(delta)
 					}
@@ -553,13 +566,16 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 					case mode.Fox:
 						ui.view.Reset()
-						ui.agent.PS1(v)
+						ui.agent.Prompt(v)
 						ui.ctx.Background(func() {
-							ui.prompt.Lock(true)
-							ui.agent.Ask(v, heap)
-							ui.prompt.Lock(false)
+							ui.agent.Process(v, heap)
+							heap.Title = ui.agent.String()
 						})
-						hs.OpenAgent(ui.agent.File.Name())
+
+						hs.OpenAgent(
+							ui.agent.File.Name(),
+							ui.agent.String(),
+						)
 
 					default:
 						plugins.Input <- v
@@ -617,8 +633,8 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 
 func (ui *UI) change(m mode.Mode) {
 	// check for examiner support
-	if m == mode.Fox && !ai.IsAvailable() {
-		ui.overlay.SendError("AI is not available")
+	if m == mode.Fox && ui.agent == nil {
+		ui.overlay.SendError("Agent is not available")
 		return
 	}
 
@@ -645,7 +661,7 @@ func (ui *UI) change(m mode.Mode) {
 }
 
 func (ui *UI) render(hs *heapset.HeapSet) {
-	title := app.Product
+	title := info.Product
 
 	if hs != nil {
 		_, heap := hs.Heap()

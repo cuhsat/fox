@@ -7,38 +7,65 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"github.com/cuhsat/fox/internal/app"
-	"github.com/cuhsat/fox/internal/app/ai"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
 type LLM struct {
 	client  *api.Client   // chat client
+	alive   *api.Duration // chat alive
 	history []api.Message // chat history
 }
 
-func New() *LLM {
+func New(model string, keep time.Duration) *LLM {
 	client, err := api.ClientFromEnvironment()
 
 	if err != nil {
 		sys.Panic(err)
 	}
 
+	alive := &api.Duration{Duration: keep}
+
+	// preload model
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+
+		_ = client.Chat(ctx, &api.ChatRequest{
+			Model:     model,
+			KeepAlive: alive,
+		}, func(cr api.ChatResponse) error {
+			return nil // preloaded model
+		})
+	}()
+
 	return &LLM{
 		client:  client,
+		alive:   alive,
 		history: make([]api.Message, 0),
 	}
 }
 
-func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
-	llm.AddUser(fmt.Sprintf(app.Prompt, query, lines))
+func (llm *LLM) Use(model string, fn api.PullProgressFunc) error {
+	llm.AddSystem(fmt.Sprintf("pull %s", model))
+
+	ctx := context.Background()
+	req := &api.PullRequest{
+		Model: model,
+	}
+
+	return llm.client.Pull(ctx, req, fn)
+}
+
+func (llm *LLM) Ask(model, query, lines string, fn api.ChatResponseFunc) error {
+	llm.AddUser(fmt.Sprintf(info.Prompt, query, lines))
 
 	cfg := config.Get()
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:     ai.Model,
-		KeepAlive: &api.Duration{Duration: time.Minute * 10},
+		Model:     model,
+		KeepAlive: llm.alive,
 		Messages:  llm.history,
 		Options: map[string]any{
 			"num_ctx":     cfg.GetInt("ai.num_ctx"),
@@ -49,11 +76,7 @@ func (llm *LLM) Ask(query, lines string, fn api.ChatResponseFunc) {
 		},
 	}
 
-	err := llm.client.Chat(ctx, req, fn)
-
-	if err != nil {
-		sys.Error(err)
-	}
+	return llm.client.Chat(ctx, req, fn)
 }
 
 func (llm *LLM) AddUser(content string) {
@@ -66,6 +89,13 @@ func (llm *LLM) AddUser(content string) {
 func (llm *LLM) AddSystem(content string) {
 	llm.history = append(llm.history, api.Message{
 		Role:    "system",
+		Content: content,
+	})
+}
+
+func (llm *LLM) AddAssistant(content string) {
+	llm.history = append(llm.history, api.Message{
+		Role:    "assistant",
 		Content: content,
 	})
 }

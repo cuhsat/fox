@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app/ui"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -20,14 +20,14 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var StringsUsage = app.Art + `
+var StringsUsage = info.Ascii + `
 Display ASCII and Unicode strings.
 
 Usage:
   fox strings [FLAG ...] PATH ...
 
 Alias:
-	carve, st
+  carve, st
 
 Positional arguments:
   Path(s) to open

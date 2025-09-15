@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cuhsat/fox/internal/app"
+	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/app/ui"
 	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
@@ -15,14 +15,14 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 )
 
-var HashUsage = app.Art + `
+var HashUsage = info.Ascii + `
 Display file hash or checksums.
 
 Usage:
   fox hash [FLAG ...] PATH ...
 
 Alias:
-	sum, ha
+  sum, ha
 
 Positional arguments:
   Path(s) to open

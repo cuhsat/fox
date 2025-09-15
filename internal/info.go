@@ -1,4 +1,4 @@
-package app
+package info
 
 import (
 	_ "embed"
@@ -6,20 +6,21 @@ import (
 
 const (
 	Product = "Forensic Examiner"
+	Website = "forensic-examiner.eu"
 	Author  = "Christian Uhsat"
 	Email   = "christian@uhsat.de"
 )
 
 var (
-	//go:embed art.txt
-	Art string
+	//go:embed text/ascii.txt
+	Ascii string
 
-	//go:embed help.txt
+	//go:embed text/help.txt
 	Help string
 
-	//go:embed prompt.txt
+	//go:embed text/prompt.txt
 	Prompt string
 
-	//go:embed version.txt
+	//go:embed text/version.txt
 	Version string
 )
