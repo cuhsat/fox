@@ -72,6 +72,7 @@ Available evidence bag modes:
 - `--no-convert` — don't convert automatically
 - `--no-deflate` — don't deflate automatically
 - `--no-plugins` — don't run any plugins
+- `--no-mouse` — don't use the mouse
 
 ### Aliases
 - `-L`, `--logstash` — short for: `--ecs --url=http://localhost:8080`

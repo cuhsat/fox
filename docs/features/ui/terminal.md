@@ -20,6 +20,8 @@ Advanced terminal features:
 - 2-axis mouse wheel scrolling
 - Scroll past end ability
 
+> To turn off mouse support, use the `--no-mouse` flag. 
+
 ## Themes
 The terminal user interface is fully customizable and has many popular color [themes](../../themes.md) are already integrated. Custom color themes can also be defined.
 
@@ -39,7 +41,7 @@ All **AI** and **UI** settings will be saved in a configuration file located und
 
 ```toml
 [ai]
-model = 'mistral'
+model = 'deepseek-r1'
 num_ctx = 4096
 seed = 8211
 temp = '0.2'

@@ -35,6 +35,7 @@ type Flags struct {
 		NoConvert bool
 		NoDeflate bool
 		NoPlugins bool
+		NoMouse   bool
 	}
 
 	// ai flags

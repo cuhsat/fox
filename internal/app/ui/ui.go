@@ -86,7 +86,10 @@ func create() *UI {
 		sys.Panic(err)
 	}
 
-	root.EnableMouse(tcell.MouseDragEvents)
+	if !flags.Get().Opt.NoMouse {
+		root.EnableMouse(tcell.MouseDragEvents)
+	}
+
 	root.EnablePaste()
 
 	ctx := app.NewContext(root)
@@ -219,6 +222,10 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 				ui.overlay.SendError("An error occurred")
 
 			case *tcell.EventMouse:
+				if flg.Opt.NoMouse {
+					continue
+				}
+
 				btns := ev.Buttons()
 
 				if btns&tcell.ButtonMiddle != 0 {

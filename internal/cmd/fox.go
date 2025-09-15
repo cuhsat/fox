@@ -104,6 +104,7 @@ Disable:
       --no-convert         don't convert automatically
       --no-deflate         don't deflate automatically
       --no-plugins         don't run any plugins
+      --no-mouse           don't use the mouse
 
 Aliases:
   -L, --logstash           short for: --ecs --url=http://localhost:8080
@@ -292,6 +293,7 @@ func init() {
 	Fox.Flags().BoolVarP(&flg.Opt.NoConvert, "no-convert", "", false, "don't convert automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoDeflate, "no-deflate", "", false, "don't deflate automatically")
 	Fox.Flags().BoolVarP(&flg.Opt.NoPlugins, "no-plugins", "", false, "don't run any plugins")
+	Fox.Flags().BoolVarP(&flg.Opt.NoMouse, "no-mouse", "", false, "don't use the mouse")
 
 	Fox.Flags().BoolVarP(&flg.Alias.Logstash, "logstash", "L", false, "short for: --ecs --url=http://localhost:8080")
 	Fox.Flags().BoolVarP(&flg.Alias.Splunk, "splunk", "S", false, "short for: --hec --url=http://localhost:8088/...")
