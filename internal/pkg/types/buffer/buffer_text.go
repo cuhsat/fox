@@ -45,8 +45,8 @@ func Text(ctx *Context) (buf TextBuffer) {
 	} else {
 		buf.FMap = ctx.Heap.FMap()
 
-		if ctx.Wrap && buf.FMap.CanIndent() {
-			buf.FMap = buf.FMap.Indent()
+		if ctx.Wrap && buf.FMap.CanFormat() {
+			buf.FMap = buf.FMap.Format()
 		} else if ctx.Wrap {
 			buf.FMap = buf.FMap.Wrap(ctx.W)
 		} else {

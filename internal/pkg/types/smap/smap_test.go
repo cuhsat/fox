@@ -61,8 +61,8 @@ func BenchmarkRender(b *testing.B) {
 	})
 }
 
-func BenchmarkIndent(b *testing.B) {
-	b.Run("Benchmark Indent", func(b *testing.B) {
+func BenchmarkFormat(b *testing.B) {
+	b.Run("Benchmark Format", func(b *testing.B) {
 		f, m, err := testdata("test.json")
 
 		if err != nil {
@@ -82,7 +82,7 @@ func BenchmarkIndent(b *testing.B) {
 		b.ResetTimer()
 
 		for b.Loop() {
-			s.Indent()
+			s.Format()
 		}
 	})
 }
@@ -179,12 +179,12 @@ func TestRender(t *testing.T) {
 	})
 }
 
-func TestIndent(t *testing.T) {
-	t.Run("Test Indent", func(t *testing.T) {
+func TestFormat(t *testing.T) {
+	t.Run("Test Format", func(t *testing.T) {
 		b := []byte(`[{"test":123}]`)
 		v := "[\n  {\n    \"test\": 123\n  }\n]\n"
 
-		s := Map((*mmap.MMap)(&b)).Indent()
+		s := Map((*mmap.MMap)(&b)).Format()
 
 		w, h := s.Size()
 

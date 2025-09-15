@@ -59,12 +59,12 @@ func (s *SMap) String() string {
 func (s *SMap) Render() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
-			ch <- String{s.Nr, s.Grp, expand(s.Str)}
+			ch <- String{s.Nr, s.Grp, indent(s.Str)}
 		}
 	}, len(*s))
 }
 
-func (s *SMap) Indent() *SMap {
+func (s *SMap) Format() *SMap {
 	return apply(func(ch chan<- String, c *chunk) {
 		var buf bytes.Buffer
 
@@ -89,7 +89,7 @@ func (s *SMap) Wrap(w int) *SMap {
 		var l string
 
 		for _, s := range (*s)[c.min:c.max] {
-			i, l = 0, expand(s.Str)
+			i, l = 0, indent(s.Str)
 
 			for i < len(l)-w {
 				ch <- String{s.Nr, s.Grp, l[i : i+w]}
@@ -139,7 +139,7 @@ func (s *SMap) Size() (w, h int) {
 	return
 }
 
-func (s *SMap) CanIndent() bool {
+func (s *SMap) CanFormat() bool {
 	if len(*s) == 0 {
 		return false
 	}
@@ -201,6 +201,6 @@ func sort(ch <-chan String) *SMap {
 	return &s
 }
 
-func expand(s string) string {
+func indent(s string) string {
 	return strings.ReplaceAll(s, "\t", Tab)
 }
