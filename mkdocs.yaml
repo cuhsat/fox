@@ -62,13 +62,13 @@ nav:
 
 theme:
   name: material
-  logo: images/fox.svg
+  logo: fox.svg
   font:
     text: Roboto
     code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
-  favicon: images/fox.ico
+  favicon: fox.ico
   features:
     - header.autohide
     - navigation.path
