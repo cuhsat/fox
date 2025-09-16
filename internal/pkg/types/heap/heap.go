@@ -17,6 +17,8 @@ import (
 type Heap struct {
 	sync.RWMutex
 
+	Cache sync.Map // render cache
+
 	Title string // heap title
 	Path  string // file path
 	Base  string // base path
@@ -26,16 +28,12 @@ type Heap struct {
 	mmap *mmap.MMap // memory map
 	smap *smap.SMap // string map
 
-	cache Cache // render cache
-
 	filters []*Filter // filters
 
 	hash Hash     // file hash sums
 	size int64    // file size
 	file sys.File // file handle
 }
-
-type Cache map[string]any
 
 func New(title, path, base string, ht types.Heap) *Heap {
 	heap := &Heap{
@@ -76,12 +74,6 @@ func (h *Heap) Count() int {
 	h.RLock()
 	defer h.RUnlock()
 	return len(*h.smap)
-}
-
-func (h *Heap) Cache() Cache {
-	h.RLock()
-	defer h.RUnlock()
-	return h.cache
 }
 
 func (h *Heap) Bytes() []byte {
@@ -143,11 +135,7 @@ func (h *Heap) Reload() {
 	h.hash = make(Hash, 14)
 
 	// invalidate cache
-	if h.cache != nil {
-		clear(h.cache)
-	}
-
-	h.cache = make(Cache, 4)
+	h.Cache.Clear()
 
 	if h.mmap != nil {
 		_ = h.mmap.Unmap()
@@ -198,8 +186,9 @@ func (h *Heap) Reload() {
 func (h *Heap) ThrowAway() {
 	h.Lock()
 
+	h.Cache.Clear()
+
 	clear(h.filters)
-	clear(h.cache)
 	clear(h.hash)
 
 	h.size = 0

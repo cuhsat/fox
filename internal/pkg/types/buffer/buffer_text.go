@@ -38,9 +38,9 @@ func Text(ctx *Context) (buf TextBuffer) {
 		ctx.H -= 1
 	}
 
-	cache, key := ctx.Heap.Cache(), ctx.Hash()
+	key := ctx.Hash()
 
-	if val, ok := cache[key]; ok {
+	if val, ok := ctx.Heap.Cache.Load(key); ok {
 		buf.FMap = val.(*smap.SMap)
 	} else {
 		buf.FMap = ctx.Heap.FMap()
@@ -53,7 +53,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 			buf.FMap = buf.FMap.Render()
 		}
 
-		cache[key] = buf.FMap
+		ctx.Heap.Cache.Store(key, buf.FMap)
 	}
 
 	buf.Y = ctx.Y

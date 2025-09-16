@@ -3,6 +3,7 @@ package llm
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/ollama/ollama/api"
@@ -13,6 +14,8 @@ import (
 )
 
 type LLM struct {
+	sync.RWMutex
+
 	client  *api.Client   // chat client
 	alive   *api.Duration // chat alive
 	history []api.Message // chat history
@@ -58,8 +61,9 @@ func (llm *LLM) Use(model string, fn api.PullProgressFunc) error {
 
 func (llm *LLM) Ask(model, query, lines string, fn api.ChatResponseFunc) error {
 	llm.AddSystem(fmt.Sprintf(fox.Prompt, lines))
-
 	llm.AddUser(query)
+
+	llm.RLock()
 
 	cfg := config.Get()
 	ctx := context.Background()
@@ -76,26 +80,28 @@ func (llm *LLM) Ask(model, query, lines string, fn api.ChatResponseFunc) error {
 		},
 	}
 
+	llm.RUnlock()
+
 	return llm.client.Chat(ctx, req, fn)
 }
 
 func (llm *LLM) AddUser(content string) {
-	llm.history = append(llm.history, api.Message{
-		Role:    "user",
-		Content: content,
-	})
+	llm.addMessage("user", content)
 }
 
 func (llm *LLM) AddSystem(content string) {
-	llm.history = append(llm.history, api.Message{
-		Role:    "system",
-		Content: content,
-	})
+	llm.addMessage("system", content)
 }
 
 func (llm *LLM) AddAssistant(content string) {
+	llm.addMessage("assistant", content)
+}
+
+func (llm *LLM) addMessage(role, content string) {
+	llm.Lock()
 	llm.history = append(llm.history, api.Message{
-		Role:    "assistant",
+		Role:    role,
 		Content: content,
 	})
+	llm.Unlock()
 }
