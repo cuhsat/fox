@@ -325,6 +325,8 @@ func init() {
 	Fox.Flags()
 
 	config.Load(Fox.Flags())
+
+	cobra.MousetrapHelpText = ""
 }
 
 func run(args []string) {

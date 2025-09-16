@@ -10,9 +10,13 @@
 package main
 
 import (
+	"os"
+	"os/exec"
 	"runtime/debug"
 
 	"github.com/cuhsat/fox/internal/cmd"
+	"github.com/inconshreveable/mousetrap"
+
 	"github.com/cuhsat/fox/internal/pkg/sys"
 )
 
@@ -24,7 +28,11 @@ func main() {
 		}
 	}()
 
-	sys.Setup()
-
-	_ = cmd.Execute()
+	if mousetrap.StartedByExplorer() {
+		fox, _ := os.Executable()
+		_ = exec.Command(`C:\WINDOWS\system32\cmd.exe`, "/K", fox).Run()
+	} else {
+		sys.Setup()
+		_ = cmd.Execute()
+	}
 }
