@@ -29,7 +29,7 @@ func New(model string, keep time.Duration) *LLM {
 
 	// preload model
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 		defer cancel()
 
 		_ = client.Chat(ctx, &api.ChatRequest{
@@ -48,8 +48,6 @@ func New(model string, keep time.Duration) *LLM {
 }
 
 func (llm *LLM) Use(model string, fn api.PullProgressFunc) error {
-	llm.AddSystem(fmt.Sprintf("pull %s", model))
-
 	ctx := context.Background()
 	req := &api.PullRequest{
 		Model: model,
@@ -59,7 +57,9 @@ func (llm *LLM) Use(model string, fn api.PullProgressFunc) error {
 }
 
 func (llm *LLM) Ask(model, query, lines string, fn api.ChatResponseFunc) error {
-	llm.AddUser(fmt.Sprintf(fox.Prompt, query, lines))
+	llm.AddSystem(fmt.Sprintf(fox.Prompt, lines))
+
+	llm.AddUser(query)
 
 	cfg := config.Get()
 	ctx := context.Background()

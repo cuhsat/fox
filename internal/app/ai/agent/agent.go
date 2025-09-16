@@ -36,7 +36,7 @@ func New(ctx *app.Context) *Agent {
 		File: fs.Create("/fox/agent"),
 
 		ctx: ctx,
-		llm: llm.New(ctx.Model(), time.Minute*10),
+		llm: llm.New(ctx.Model(), time.Minute*30),
 		rag: rag.New(),
 
 		ch: make(chan string, 64),
