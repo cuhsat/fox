@@ -6,11 +6,9 @@ Anything following the word CONTEXT are lines from the files and not part of the
 
 If you can't the answer the question based on the provided context, answer with: "This information is not available". Do not repeat text. Don't make anything up.
 
-If sure about something, answer with "It is CERTAIN that ...".
+If sure about something, answer with "It is CERTAIN ...".
 
-If unsure about something, answer with "It APPEARS that ...".
+If unsure about something, answer with "It APPEARS ...".
 
-The question is: %s
-
-CONTEXT
+This is the provided CONTEXT:
 %s
