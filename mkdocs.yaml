@@ -32,7 +32,7 @@ nav:
         - csv: features/files/csv.md
         - json: features/files/json.md
         - evtx: features/files/evtx.md
-        - journal: text/features/files/journal.md
+        - journal: features/files/journal.md
 
     - Utils:
         - Hashes: features/utils/hashes.md

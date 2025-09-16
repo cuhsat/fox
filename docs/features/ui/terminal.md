@@ -53,6 +53,6 @@ theme = 'Examiner-Dark'
 
 [ui.state]
 n = true
-t = false
+t = true
 w = true
 ```
