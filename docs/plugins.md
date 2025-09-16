@@ -81,7 +81,7 @@ exec = [
 name = 'JLECmd'
 path = '.*\.(automatic|custom)Destination-ms'
 exec = [
-  'dotnet JLECmd.dll -f "FILE" --json "TEMP"'
+  'JLECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -91,7 +91,7 @@ exec = [
 name = 'LECmd'
 path = '.*\.lnk'
 exec = [
-  'dotnet LECmd.dll -f "FILE" --json "TEMP"'
+  'LECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -101,7 +101,7 @@ exec = [
 name = 'MFTECmd'
 path = '\(Boot|LogFile|J|MFT|SDS)'
 exec = [
-  'dotnet MFTECmd.dll -f "FILE" --json "TEMP"'
+  'MFTECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -111,7 +111,7 @@ exec = [
 name = 'PECmd'
 path = '.*\.pf'
 exec = [
-  'dotnet PECmd.dll -f "FILE" --json "TEMP"'
+  'PECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -121,7 +121,7 @@ exec = [
 name = 'RBCmd'
 path = '(INFO2|\[0-9A-Z]{7}(\..+)?)'
 exec = [
-  'dotnet RBCmd.dll -f "FILE" --csv "TEMP"'
+  'RBCmd.exe -f "FILE" --csv "TEMP"'
 ]
 ```
 
@@ -131,7 +131,7 @@ exec = [
 name = 'RECmd'
 path = '.*\.dat'
 exec = [
-  'dotnet RECmd.dll -f "FILE" --json "TEMP"'
+  'RECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -141,7 +141,7 @@ exec = [
 name = 'SQLECmd'
 path = '.*\.db'
 exec = [
-  'dotnet SQLECmd.dll -f "FILE" --json "TEMP"'
+  'SQLECmd.exe -f "FILE" --json "TEMP"'
 ]
 ```
 
@@ -151,7 +151,7 @@ exec = [
 name = 'SrumECmd'
 path = 'SRUDB.dat'
 exec = [
-  'dotnet SrumECmd.dll -f "FILE" --csv "TEMP"'
+  'SrumECmd.exe -f "FILE" --csv "TEMP"'
 ]
 ```
 
@@ -161,7 +161,7 @@ exec = [
 name = 'WxTCmd'
 path = '.*\ActivitiesCache.db'
 exec = [
-  'dotnet WxTCmd.dll -f "FILE" --csv "TEMP"'
+  'WxTCmd.exe -f "FILE" --csv "TEMP"'
 ]
 ```
 
