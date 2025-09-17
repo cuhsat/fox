@@ -1,6 +1,7 @@
 package journal
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -28,7 +29,7 @@ func Parse(path string) string {
 		return path
 	}
 
-	for l := range j.GetLogs() {
+	for l := range j.GetLogs(context.Background()) {
 		_, err := t.WriteString(fmt.Sprintf("%v\n", l))
 
 		if err != nil {
