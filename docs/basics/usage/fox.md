@@ -7,7 +7,7 @@ fox [ACTION] [FLAG ...] [PATH ...]
 ```
 
 ### Actions
-`counts`, `deflate`, `entropy`, `hash`, `strings`
+`compare`, `counts`, `deflate`, `entropy`, `hash`, `strings`
 
 ### Arguments
 Path(s) to open or `-` for **STDIN**

@@ -2,13 +2,14 @@ package heapset
 
 import (
 	"fmt"
-	"io"
 	"regexp"
 	"strings"
 	"sync/atomic"
 
+	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
+	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 )
@@ -16,26 +17,21 @@ import (
 type util func(h *heap.Heap) string
 
 func (hs *HeapSet) Merge() bool {
-	f := fs.Create("/fox/merged")
-
-	hs.RLock()
-
 	var heaps []*heap.Heap
 
-	for _, h := range hs.heaps {
+	f := fs.Create("/fox/merged")
+
+	hs.Each(func(i int, h *heap.Heap) {
 		switch h.Type {
 		case types.Regular, types.Deflate:
-			_, _ = f.Write(h.Ensure().Bytes())
+			_, _ = f.Write(h.Bytes())
 			_, _ = f.WriteString("\n")
-
 			h.ThrowAway()
 
 		default:
 			heaps = append(heaps, h)
 		}
-	}
-
-	hs.RUnlock()
+	})
 
 	fi, _ := f.Stat()
 
@@ -43,18 +39,31 @@ func (hs *HeapSet) Merge() bool {
 		return false
 	}
 
-	hs.atomicAdd(heap.New(
-		"Merged",
-		f.Name(),
-		f.Name(),
-		types.Ignore,
-	))
-
-	atomic.StoreInt32(hs.index, hs.Len()-1)
-
-	hs.LoadHeap()
+	hs.newHeap("Merged", f, types.Ignore)
 
 	return true
+}
+
+func (hs *HeapSet) Compare() *HeapSet {
+	var heaps [2]*heap.Heap
+
+	hs.Each(func(i int, h *heap.Heap) {
+		if h.Type == types.Regular || h.Type == types.Deflate {
+			heaps[i] = h
+		}
+	})
+
+	f := fs.Create("/fox/compare")
+
+	_, _ = f.WriteString(text.Diff(
+		heaps[0].SMap().Lines(),
+		heaps[1].SMap().Lines(),
+		!flags.Get().NoLine,
+	))
+
+	hs.newHeap("Compare", f, types.Stdout)
+
+	return hs
 }
 
 func (hs *HeapSet) Counts() *HeapSet {
@@ -113,41 +122,36 @@ func (hs *HeapSet) HashSum(algo string) *HeapSet {
 	return hs
 }
 
-func (hs *HeapSet) newUtil(s string, fn util) {
+func (hs *HeapSet) newUtil(t string, fn util) {
 	f := sys.Stdout()
 
-	hs.RLock()
+	hs.Each(func(i int, h *heap.Heap) {
+		if h.Type == types.Regular || h.Type == types.Deflate {
+			_, err := f.WriteString(fn(h))
 
-	for _, h := range hs.heaps {
-		if !(h.Type == types.Regular || h.Type == types.Deflate) {
-			continue
+			if err != nil {
+				sys.Error(err)
+			}
 		}
-
-		if _, err := io.WriteString(f, fn(h.Ensure())); err != nil {
-			sys.Error(err)
-		}
-	}
-
-	hs.RUnlock()
+	})
 
 	_ = f.Close()
 
-	if idx, ok := hs.findByName(s); ok {
+	if idx, ok := hs.findByName(t); !ok {
+		hs.newHeap(t, f, types.Stdout)
+	} else {
 		h := hs.atomicGet(idx)
 		h.Path = f.Name()
 		h.Reload()
 
 		atomic.StoreInt32(hs.index, idx)
-	} else {
-		hs.atomicAdd(&heap.Heap{
-			Title: s,
-			Path:  f.Name(),
-			Base:  f.Name(),
-			Type:  types.Stdout,
-		})
-
-		atomic.StoreInt32(hs.index, hs.Len()-1)
-
-		hs.LoadHeap()
 	}
+}
+
+func (hs *HeapSet) newHeap(s string, f fs.File, t types.Heap) {
+	hs.atomicAdd(heap.New(s, f.Name(), f.Name(), t))
+
+	atomic.StoreInt32(hs.index, hs.Len()-1)
+
+	hs.LoadHeap()
 }

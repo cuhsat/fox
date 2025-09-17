@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/afero"
 )
 
+type File = afero.File
+
 var Watcher, _ = fsnotify.NewBufferedWatcher(2048)
 
 var ffs = NewForensicFs(
@@ -20,12 +22,12 @@ var ffs = NewForensicFs(
 	),
 )
 
-func Open(path string) afero.File {
+func Open(path string) File {
 	f, _ := ffs.Open(path)
 	return f
 }
 
-func Create(path string) afero.File {
+func Create(path string) File {
 	f, _ := ffs.Create(path)
 	return f
 }

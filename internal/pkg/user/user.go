@@ -75,7 +75,7 @@ func TempFile(prefix string) *os.File {
 }
 
 func Persist(name string) string {
-	f, ok := fs.Open(name).(sys.File)
+	f, ok := fs.Open(name).(fs.File)
 
 	if !ok {
 		return name // regular file

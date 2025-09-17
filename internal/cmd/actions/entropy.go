@@ -67,7 +67,7 @@ var Entropy = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Print(EntropyUsage)
-			os.Exit(0)
+			os.Exit(2)
 		} else if !flags.Get().Print {
 			ui.Start(args, types.Entropy)
 		} else {

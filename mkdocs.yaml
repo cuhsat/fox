@@ -18,6 +18,7 @@ nav:
     - Tutorial: basics/tutorial.md
     - Usage:
         - fox: basics/usage/fox.md
+        - fox compare: basics/usage/compare.md
         - fox counts: basics/usage/counts.md
         - fox deflate: basics/usage/deflate.md
         - fox entropy: basics/usage/entropy.md
@@ -35,6 +36,8 @@ nav:
         - journal: features/files/journal.md
 
     - Utils:
+        - Deflate: features/utils/deflate.md
+        - Compare: features/utils/compare.md
         - Hashes: features/utils/hashes.md
         - Strings: features/utils/strings.md
         - Entropy: features/utils/entropy.md

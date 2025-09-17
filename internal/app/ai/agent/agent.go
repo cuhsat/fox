@@ -20,7 +20,7 @@ import (
 )
 
 type Agent struct {
-	File sys.File
+	File fs.File
 	busy atomic.Bool
 
 	buf *heap.Heap

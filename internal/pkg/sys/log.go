@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"time"
+
+	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
 const Prefix = "fox:"
@@ -18,7 +20,7 @@ func Setup() {
 }
 
 type logger struct {
-	f File // log file handle
+	f fs.File // log file handle
 }
 
 func (l logger) Name() string {

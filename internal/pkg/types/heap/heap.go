@@ -30,9 +30,9 @@ type Heap struct {
 
 	filters []*Filter // filters
 
-	hash Hash     // file hash sums
-	size int64    // file size
-	file sys.File // file handle
+	hash Hash    // file hash sums
+	size int64   // file size
+	file fs.File // file handle
 }
 
 func New(title, path, base string, ht types.Heap) *Heap {
@@ -153,7 +153,7 @@ func (h *Heap) Reload() {
 			m, err = mmap.Map(f, mmap.RDONLY, 0)
 
 		// memory file
-		case sys.File:
+		case fs.File:
 			m, err = sys.Map(f)
 		}
 

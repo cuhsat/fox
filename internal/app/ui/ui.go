@@ -134,7 +134,7 @@ func (ui *UI) delete() {
 	ui.ctx.Save()
 }
 
-func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke types.Invoke) {
+func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, util types.Invoke) {
 	hs.SetCallbacks(func() {
 		_ = ui.root.PostEvent(tcell.NewEventError(nil))
 	}, func() {
@@ -147,31 +147,9 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 	go ui.root.ChannelEvents(events, closed)
 	go ui.overlay.Listen()
 
+	ui.invoke(hs, util)
+
 	flg := flags.Get()
-
-	switch invoke {
-	case types.Counts:
-		hs.Counts().CloseOther()
-	case types.Entropy:
-		hs.Entropy(
-			flg.Entropy.Min,
-			flg.Entropy.Max,
-		).CloseOther()
-	case types.Strings:
-		hs.Strings(
-			flg.Strings.Min,
-			flg.Strings.Max,
-			flg.Strings.Ioc,
-			flg.Strings.Re,
-		).CloseOther()
-	case types.Hash:
-		hs.HashSum(
-			flg.Hash.Algo.String(),
-		).CloseOther()
-	case types.None:
-		// normal
-	}
-
 	esc := false
 
 	for {
@@ -635,6 +613,35 @@ func (ui *UI) run(hs *heapset.HeapSet, hi *history.History, bg *bag.Bag, invoke 
 		render:
 			ui.render(hs)
 		}
+	}
+}
+
+func (ui *UI) invoke(hs *heapset.HeapSet, util types.Invoke) {
+	flg := flags.Get()
+
+	switch util {
+	case types.Compare:
+		hs.Compare().CloseOther()
+	case types.Counts:
+		hs.Counts().CloseOther()
+	case types.Entropy:
+		hs.Entropy(
+			flg.Entropy.Min,
+			flg.Entropy.Max,
+		).CloseOther()
+	case types.Strings:
+		hs.Strings(
+			flg.Strings.Min,
+			flg.Strings.Max,
+			flg.Strings.Ioc,
+			flg.Strings.Re,
+		).CloseOther()
+	case types.Hash:
+		hs.HashSum(
+			flg.Hash.Algo.String(),
+		).CloseOther()
+	case types.None:
+		// normal
 	}
 }
 

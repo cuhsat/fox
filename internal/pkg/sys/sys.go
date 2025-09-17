@@ -9,20 +9,17 @@ import (
 	"runtime"
 
 	"github.com/rainu/go-command-chain"
-	"github.com/spf13/afero"
 
 	"github.com/cuhsat/fox/internal"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
-
-type File = afero.File
 
 func Exit(v ...any) {
 	Print(v...)
 	os.Exit(1)
 }
 
-func Exec(cmds []string) File {
+func Exec(cmds []string) fs.File {
 	f := fs.Create("/fox/exec")
 	defer f.Close()
 
@@ -61,14 +58,14 @@ func Shell() {
 	_ = cmd.Run()
 }
 
-func Stdin() File {
+func Stdin() fs.File {
 	if !Piped(os.Stdin) {
 		Panic("Device mode is invalid")
 	}
 
 	f := fs.Create("/fox/stdin")
 
-	go func(f File) {
+	go func(f fs.File) {
 		r := bufio.NewReader(os.Stdin)
 
 		for {
@@ -95,15 +92,15 @@ func Stdin() File {
 	return f
 }
 
-func Stdout() File {
+func Stdout() fs.File {
 	return fs.Create("/fox/stdout")
 }
 
-func Stderr() File {
+func Stderr() fs.File {
 	return fs.Create("/fox/stderr")
 }
 
-func Piped(file File) bool {
+func Piped(file fs.File) bool {
 	fi, err := file.Stat()
 
 	if err != nil {
@@ -114,7 +111,7 @@ func Piped(file File) bool {
 	return (fi.Mode() & os.ModeCharDevice) != os.ModeCharDevice
 }
 
-func Map(file File) ([]byte, error) {
+func Map(file fs.File) ([]byte, error) {
 	b, err := io.ReadAll(file)
 
 	if err != nil {

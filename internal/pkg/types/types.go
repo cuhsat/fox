@@ -34,6 +34,7 @@ type Invoke int
 
 const (
 	None Invoke = iota
+	Compare
 	Counts
 	Entropy
 	Strings

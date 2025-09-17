@@ -45,6 +45,16 @@ func Map(m *mmap.MMap) *SMap {
 	return s
 }
 
+func (s *SMap) Lines() []string {
+	var r []string
+
+	for _, str := range *s {
+		r = append(r, str.Str)
+	}
+
+	return r
+}
+
 func (s *SMap) String() string {
 	var sb strings.Builder
 

@@ -37,6 +37,7 @@ Positional arguments:
   Path(s) to open or '-' for STDIN
 
 Actions:
+  compare                  compare two files
   counts                   display line and byte counts
   deflate                  deflate compressed files
   entropy                  display file entropy
@@ -229,7 +230,7 @@ var Fox = &cobra.Command{
 			ui.Start(args, types.None)
 		} else if len(args) == 0 {
 			fmt.Print(Usage)
-			os.Exit(0)
+			os.Exit(2)
 		} else {
 			run(args)
 		}
@@ -316,6 +317,7 @@ func init() {
 	Fox.SetHelpTemplate(Usage)
 	Fox.SetVersionTemplate(fmt.Sprintf("%s %s\n", fox.Product, fox.Version))
 
+	Fox.AddCommand(actions.Compare)
 	Fox.AddCommand(actions.Counts)
 	Fox.AddCommand(actions.Deflate)
 	Fox.AddCommand(actions.Entropy)

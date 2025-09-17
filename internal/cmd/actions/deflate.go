@@ -57,7 +57,7 @@ var Deflate = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Print(DeflateUsage)
-			os.Exit(0)
+			os.Exit(2)
 		} else if flags.Get().Deflate.List {
 			hs := heapset.New(args)
 			defer hs.ThrowAway()

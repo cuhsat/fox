@@ -40,7 +40,7 @@ Evidence can be streamed to an URL using the [Elastic Common Schema](https://www
   "@timestamp": "2025-09-07T15:45:00.190311Z",
   "message": "Hello World\n",
   "labels": {
-    "case": "2025-09-07",
+    "case": "demo-case",
     "filters": ""
   },
   "agent": {
@@ -66,7 +66,7 @@ Evidence can be streamed to an URL using the [Elastic Common Schema](https://www
 ```
 
 ### HEC Schema
-Evidence can be streamed to a [Splunk HTTP Event Collector](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput), an **Authorization Token** is required for this.
+Evidence can be streamed to a [Splunk HTTP Event Collector](https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput); an **Authorization Token** is required for this.
 
 > To use a local running **Splunk** instance, set the `-S` flag.
 
@@ -75,7 +75,7 @@ Evidence can be streamed to a [Splunk HTTP Event Collector](https://docs.splunk.
   "time": 1757260053699,
   "source": "Forensic Examiner",
   "sourcetype": "_json",
-  "index": "2025-09-07",
+  "index": "demo-case",
   "event": {
     "user": "jd (John Doe)",
     "path": "/hello.txt",
