@@ -14,6 +14,11 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 )
 
+const (
+	shellWin = `C:\WINDOWS\system32\cmd.exe`
+	shellLin = "/bin/sh"
+)
+
 func Exit(v ...any) {
 	Print(v...)
 	os.Exit(1)
@@ -36,14 +41,24 @@ func Exec(cmds []string) fs.File {
 	return f
 }
 
+func Trap() {
+	bin, _ := os.Executable()
+
+	err := exec.Command(shellWin, "/K", bin).Run()
+
+	if err != nil {
+		fmt.Printf("%s %s\n", Prefix, err.Error())
+	}
+}
+
 func Shell() {
 	shell := os.Getenv("SHELL")
 
 	if len(shell) == 0 {
 		if runtime.GOOS == "windows" {
-			shell = "CMD.EXE"
+			shell = shellWin
 		} else {
-			shell = "/bin/sh"
+			shell = shellLin
 		}
 	}
 
