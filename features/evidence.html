@@ -364,6 +364,8 @@
       
         
       
+        
+      
     
     
     
@@ -408,6 +410,29 @@
   
   <span class="md-ellipsis">
     fox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basics/usage/compare.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fox compare
     
   </span>
   
@@ -815,6 +840,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -845,6 +874,52 @@
             Utils
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utils/deflate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Deflate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utils/compare.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Compare
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1678,7 +1753,7 @@
   &quot;@timestamp&quot;: &quot;2025-09-07T15:45:00.190311Z&quot;,
   &quot;message&quot;: &quot;Hello World\n&quot;,
   &quot;labels&quot;: {
-    &quot;case&quot;: &quot;2025-09-07&quot;,
+    &quot;case&quot;: &quot;demo-case&quot;,
     &quot;filters&quot;: &quot;&quot;
   },
   &quot;agent&quot;: {
@@ -1703,7 +1778,7 @@
 }
 </code></pre>
 <h3 id="hec-schema">HEC Schema</h3>
-<p>Evidence can be streamed to a <a href="https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput">Splunk HTTP Event Collector</a>, an <strong>Authorization Token</strong> is required for this.</p>
+<p>Evidence can be streamed to a <a href="https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput">Splunk HTTP Event Collector</a>; an <strong>Authorization Token</strong> is required for this.</p>
 <blockquote>
 <p>To use a local running <strong>Splunk</strong> instance, set the <code>-S</code> flag.</p>
 </blockquote>
@@ -1711,7 +1786,7 @@
   &quot;time&quot;: 1757260053699,
   &quot;source&quot;: &quot;Forensic Examiner&quot;,
   &quot;sourcetype&quot;: &quot;_json&quot;,
-  &quot;index&quot;: &quot;2025-09-07&quot;,
+  &quot;index&quot;: &quot;demo-case&quot;,
   &quot;event&quot;: {
     &quot;user&quot;: &quot;jd (John Doe)&quot;,
     &quot;path&quot;: &quot;/hello.txt&quot;,

@@ -2,130 +2,142 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://forensic-examiner.eu/index.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/building.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/license.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/plugins.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/themes.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/install.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/tutorial.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
+    </url>
+    <url>
+         <loc>https://forensic-examiner.eu/basics/usage/compare.html</loc>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/counts.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/deflate.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/entropy.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/fox.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/hash.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/basics/usage/strings.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/evidence.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/loader.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/memory.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ai/agent.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/files/csv.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/files/evtx.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/files/journal.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/files/json.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/keymap.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/terminal.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/unicode.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/mode/fox.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/mode/grep.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/mode/hex.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/ui/mode/less.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
+    </url>
+    <url>
+         <loc>https://forensic-examiner.eu/features/utils/compare.html</loc>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/utils/counts.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
+    </url>
+    <url>
+         <loc>https://forensic-examiner.eu/features/utils/deflate.html</loc>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/utils/entropy.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/utils/hashes.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
     <url>
          <loc>https://forensic-examiner.eu/features/utils/strings.html</loc>
-         <lastmod>2025-09-16</lastmod>
+         <lastmod>2025-09-17</lastmod>
     </url>
 </urlset>
