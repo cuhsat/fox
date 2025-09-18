@@ -7,7 +7,7 @@ The Swiss Army Knife for examining text files. Combining the power of many tradi
 ## Key Features
 * Read-only in-memory filesystem abstraction
 * Multibyte support with [bidirectional character](https://nvd.nist.gov/vuln/detail/CVE-2021-42574) detection
-* Built-in `grep`, `hexdump`, `strings` and `wc` like abilities
+* Built-in `grep`, `hexdump`, `diff` and `strings` like abilities
 * Built-in parsing of Linux Journals and Windows Event Logs
 * Built-in popular cryptography and similarity hashes
 * Deflation and extraction of many archive formats

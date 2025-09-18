@@ -29,7 +29,11 @@ Positional arguments:
 
 Global:
   -p, --print              print directly to console
+      --no-file            don't print filenames
       --no-line            don't print line numbers
+
+Compare:
+  -g, --git                use the unified git diff format
 
 Example:
   $ fox compare server.log mirror.log
@@ -66,9 +70,11 @@ var Compare = &cobra.Command{
 			})
 
 			fmt.Print(text.Diff(
+				a[0].String(),
+				a[1].String(),
 				a[0].SMap().Lines(),
 				a[1].SMap().Lines(),
-				!flags.Get().NoLine,
+				flags.Get().Compare.Git,
 			))
 		}
 	},
@@ -79,5 +85,7 @@ func init() {
 
 	Compare.SetHelpTemplate(CompareUsage)
 	Compare.Flags().BoolVarP(&flg.Print, "print", "p", false, "print directly to console")
+	Compare.Flags().BoolVarP(&flg.NoFile, "no-file", "", false, "don't print filenames")
 	Compare.Flags().BoolVarP(&flg.NoLine, "no-line", "", false, "don't print line numbers")
+	Compare.Flags().BoolVarP(&flg.Compare.Git, "git", "g", false, "use the unified git diff format")
 }

@@ -68,6 +68,11 @@ type Flags struct {
 		Xml      bool
 	}
 
+	// compare command
+	Compare struct {
+		Git bool
+	}
+
 	// deflate command
 	Deflate struct {
 		List bool

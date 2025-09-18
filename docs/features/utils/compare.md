@@ -3,7 +3,9 @@ Two files can be compared with the [`fox compare`](../../basics/usage/compare.md
 
 ## Example
 ```console
-$ fox compare -p testdata/test.ioc testdata.diff
+$ fox compare -p testdata/test.ioc testdata/test.diff
+testdata/test.ioc
+testdata/test.diff
 - 1 Hello World
 + 1 Hello Earth
   2 127.0.0.1

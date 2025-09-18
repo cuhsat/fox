@@ -621,7 +621,9 @@ func (ui *UI) invoke(hs *heapset.HeapSet, util types.Invoke) {
 
 	switch util {
 	case types.Compare:
-		hs.Compare().CloseOther()
+		hs.Compare(
+			flg.Compare.Git,
+		).CloseOther()
 	case types.Counts:
 		hs.Counts().CloseOther()
 	case types.Entropy:

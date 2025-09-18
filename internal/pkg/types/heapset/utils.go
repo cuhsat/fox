@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/cuhsat/fox/internal/pkg/flags"
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/sys/fs"
 	"github.com/cuhsat/fox/internal/pkg/text"
@@ -44,7 +43,7 @@ func (hs *HeapSet) Merge() bool {
 	return true
 }
 
-func (hs *HeapSet) Compare() *HeapSet {
+func (hs *HeapSet) Compare(git bool) *HeapSet {
 	var heaps [2]*heap.Heap
 
 	hs.Each(func(i int, h *heap.Heap) {
@@ -56,9 +55,11 @@ func (hs *HeapSet) Compare() *HeapSet {
 	f := fs.Create("/fox/compare")
 
 	_, _ = f.WriteString(text.Diff(
+		heaps[0].String(),
+		heaps[1].String(),
 		heaps[0].SMap().Lines(),
 		heaps[1].SMap().Lines(),
-		!flags.Get().NoLine,
+		git,
 	))
 
 	hs.newHeap("Compare", f, types.Stdout)

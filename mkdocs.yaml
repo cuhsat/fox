@@ -3,12 +3,12 @@ site_description: The Swiss Army Knife for examining text files.
 site_author: Christian Uhsat
 site_url: https://forensic-examiner.eu
 
-repo_name: /cuhsat/fox
+repo_name: github.com/cuhsat/fox
 repo_url: https://github.com/cuhsat/fox
 
 remote_branch: docs
 
-copyright: 🦊 by Hinterland Forensics 2025
+copyright: 🦊 by Christian Uhsat 2025
 
 nav:
   - Home: index.md
