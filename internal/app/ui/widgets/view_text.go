@@ -10,11 +10,11 @@ import (
 	"github.com/cuhsat/fox/internal/app/ui/themes"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/pkg/types/page"
 )
 
 func (v *View) textRender(p *panel) {
-	buf := buffer.Text(&buffer.Context{
+	pg := page.Text(&page.Context{
 		Heap:    v.heap,
 		Context: v.heap.HasContext(),
 		Pinned:  v.ctx.IsPinned(),
@@ -28,11 +28,11 @@ func (v *View) textRender(p *panel) {
 		H:       p.H,
 	})
 
-	v.fmap = buf.FMap
+	v.fmap = pg.FMap
 
-	// set buffer bounds
-	v.last.X = max(buf.W-1, 0)
-	v.last.Y = max(buf.H-1, 0)
+	// set page bounds
+	v.last.X = max(pg.W-1, 0)
+	v.last.Y = max(pg.H-1, 0)
 
 	// set preserved line
 	if v.nr > 0 {
@@ -51,7 +51,7 @@ func (v *View) textRender(p *panel) {
 	// render lines
 	var color tcell.Style
 
-	for line := range buf.Lines {
+	for line := range pg.Lines {
 		lineX := p.X
 		lineY := p.Y + i
 
@@ -84,12 +84,12 @@ func (v *View) textRender(p *panel) {
 	}
 
 	// render parts on top
-	for part := range buf.Parts {
+	for part := range pg.Parts {
 		partX := p.X + part.X
 		partY := p.Y + part.Y
 
 		if v.ctx.IsNavi() {
-			partX += buf.N + 1
+			partX += pg.N + 1
 		}
 
 		// part value

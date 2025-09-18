@@ -15,9 +15,9 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
+	"github.com/cuhsat/fox/internal/pkg/types/page"
 )
 
 var StringsUsage = fox.Ascii + `
@@ -102,7 +102,7 @@ var Strings = &cobra.Command{
 			hs.Each(func(_ int, h *heap.Heap) {
 				if h.Type != types.Stdin {
 					if !flg.NoFile {
-						fmt.Println(text.Title(h.String(), buffer.TermW))
+						fmt.Println(text.Title(h.String(), page.TermW))
 					}
 
 					for s := range h.Strings(

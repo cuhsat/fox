@@ -1,4 +1,4 @@
-package buffer
+package page
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/types/smap"
 )
 
-type TextBuffer struct {
-	Buffer
+type TextPage struct {
+	Page
 	Y int
 	N int
 
@@ -30,50 +30,50 @@ func (tl TextLine) String() string {
 	return tl.Str
 }
 
-func Text(ctx *Context) (buf TextBuffer) {
-	buf.N = text.Dec(ctx.Heap.Count())
+func Text(ctx *Context) (page TextPage) {
+	page.N = text.Dec(ctx.Heap.Count())
 
 	if ctx.Navi {
-		ctx.W -= 2 + buf.N
+		ctx.W -= 2 + page.N
 		ctx.H -= 1
 	}
 
 	key := ctx.Hash()
 
 	if val, ok := ctx.Heap.Cache.Load(key); ok {
-		buf.FMap = val.(*smap.SMap)
+		page.FMap = val.(*smap.SMap)
 	} else {
-		buf.FMap = ctx.Heap.FMap()
+		page.FMap = ctx.Heap.FMap()
 
-		if ctx.Wrap && buf.FMap.CanFormat() {
-			buf.FMap = buf.FMap.Format(ctx.Space)
+		if ctx.Wrap && page.FMap.CanFormat() {
+			page.FMap = page.FMap.Format(ctx.Space)
 		} else if ctx.Wrap {
-			buf.FMap = buf.FMap.Wrap(ctx.Space, ctx.W)
+			page.FMap = page.FMap.Wrap(ctx.Space, ctx.W)
 		} else {
-			buf.FMap = buf.FMap.Render(ctx.Space)
+			page.FMap = page.FMap.Render(ctx.Space)
 		}
 
-		ctx.Heap.Cache.Store(key, buf.FMap)
+		ctx.Heap.Cache.Store(key, page.FMap)
 	}
 
-	buf.Y = ctx.Y
+	page.Y = ctx.Y
 
 	if ctx.Nr > 0 {
-		lastY := max(len(*buf.FMap)-1, 0)
+		lastY := max(len(*page.FMap)-1, 0)
 
 		// find the requested line
-		buf.Y, _ = buf.FMap.Find(ctx.Nr)
-		buf.Y = min(buf.Y, lastY)
+		page.Y, _ = page.FMap.Find(ctx.Nr)
+		page.Y = min(page.Y, lastY)
 	}
 
-	buf.W, buf.H = buf.FMap.Size()
+	page.W, page.H = page.FMap.Size()
 
-	buf.Lines = make(chan TextLine, Size)
-	buf.Parts = make(chan TextPart, Size)
+	page.Lines = make(chan TextLine, Size)
+	page.Parts = make(chan TextPart, Size)
 
 	go func() {
-		defer close(buf.Lines)
-		defer close(buf.Parts)
+		defer close(page.Lines)
+		defer close(page.Parts)
 
 		fs := ctx.Heap.Filters()
 
@@ -81,29 +81,29 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 		// pinned head
 		if ctx.Pinned {
-			n := fmt.Sprintf("%0*d", buf.N, 1)
+			n := fmt.Sprintf("%0*d", page.N, 1)
 			s := (*ctx.Heap.SMap())[0].Str
 			s = text.Trim(s, min(ctx.X, text.Len(s)), ctx.W)
 
-			buf.Lines <- TextLine{Line{n, 0, s}}
+			page.Lines <- TextLine{Line{n, 0, s}}
 		}
 
-		for y, str := range (*buf.FMap)[buf.Y:] {
+		for y, str := range (*page.FMap)[page.Y:] {
 			if y >= ctx.H {
 				return
 			}
 
 			// insert context separator
 			if ctx.Context && grp != str.Grp && num > 1 {
-				buf.Lines <- TextLine{Line{"--", str.Grp, ""}}
+				page.Lines <- TextLine{Line{"--", str.Grp, ""}}
 				num = 1
 				sep++
 			}
 
-			n := fmt.Sprintf("%0*d", buf.N, str.Nr)
+			n := fmt.Sprintf("%0*d", page.N, str.Nr)
 			s := text.Trim(str.Str, min(ctx.X, text.Len(str.Str)), ctx.W)
 
-			buf.Lines <- TextLine{Line{n, str.Grp, s}}
+			page.Lines <- TextLine{Line{n, str.Grp, s}}
 
 			if ctx.Pinned {
 				y++
@@ -111,7 +111,7 @@ func Text(ctx *Context) (buf TextBuffer) {
 
 			for _, f := range fs {
 				for _, i := range f.Regex.FindAllStringIndex(s, -1) {
-					buf.Parts <- TextPart{Part{
+					page.Parts <- TextPart{Part{
 						text.Len(s[:i[0]]),
 						y + sep,
 						str.Grp,

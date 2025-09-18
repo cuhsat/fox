@@ -1,4 +1,4 @@
-package buffer
+package page
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/text"
 )
 
-type HexBuffer struct {
-	Buffer
+type HexPage struct {
+	Page
 	Lines chan HexLine
 }
 
@@ -22,7 +22,7 @@ func (hl HexLine) String() string {
 	return fmt.Sprintf("%s %s|%-16s|", hl.Nr, hl.Hex, hl.Str)
 }
 
-func Hex(ctx *Context) (buf HexBuffer) {
+func Hex(ctx *Context) (page HexPage) {
 	var tail int
 
 	mmap := *ctx.Heap.MMap()
@@ -33,16 +33,16 @@ func Hex(ctx *Context) (buf HexBuffer) {
 		tail = max(int(ctx.Heap.Len())-limit.Bytes, 0)
 	}
 
-	buf.W, buf.H = ctx.W, len(mmap)/16
+	page.W, page.H = ctx.W, len(mmap)/16
 
 	if len(mmap)%16 > 0 {
-		buf.H++
+		page.H++
 	}
 
-	buf.Lines = make(chan HexLine, Size)
+	page.Lines = make(chan HexLine, Size)
 
 	go func() {
-		defer close(buf.Lines)
+		defer close(page.Lines)
 
 		mmap = mmap[ctx.Y*16:]
 
@@ -79,7 +79,7 @@ func Hex(ctx *Context) (buf HexBuffer) {
 			l.Hex = fmt.Sprintf("%-*s", 50, l.Hex)
 			l.Str = text.ToASCII(l.Str)
 
-			buf.Lines <- l
+			page.Lines <- l
 		}
 	}()
 

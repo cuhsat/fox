@@ -19,10 +19,10 @@ import (
 	"github.com/cuhsat/fox/internal/pkg/sys"
 	"github.com/cuhsat/fox/internal/pkg/text"
 	"github.com/cuhsat/fox/internal/pkg/types"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
 	"github.com/cuhsat/fox/internal/pkg/types/heap"
 	"github.com/cuhsat/fox/internal/pkg/types/heapset"
 	"github.com/cuhsat/fox/internal/pkg/types/mode"
+	"github.com/cuhsat/fox/internal/pkg/types/page"
 	"github.com/cuhsat/fox/internal/pkg/user/config"
 )
 
@@ -350,18 +350,18 @@ func run(args []string) {
 
 	hs.Each(func(_ int, h *heap.Heap) {
 		if h.Type != types.Stdin {
-			buf := buffer.NewContext(h)
+			buf := page.NewContext(h)
 
 			if hs.Len() > 1 && !flg.NoFile {
-				fmt.Println(text.Title(h.String(), buffer.TermW))
+				fmt.Println(text.Title(h.String(), page.TermW))
 			}
 
 			if len(flg.AI.Query) > 0 {
 				agt.Process(flg.AI.Query, h)
 			} else if flg.Hex {
-				buf.W = buffer.TermW
+				buf.W = page.TermW
 
-				for l := range buffer.Hex(buf).Lines {
+				for l := range page.Hex(buf).Lines {
 					fmt.Println(l)
 				}
 			} else {
@@ -369,7 +369,7 @@ func run(args []string) {
 					return // ignore empty files
 				}
 
-				for l := range buffer.Text(buf).Lines {
+				for l := range page.Text(buf).Lines {
 					if l.Nr == "--" {
 						if !flg.NoLine {
 							fmt.Println("--")

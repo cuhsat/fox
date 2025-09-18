@@ -1,4 +1,4 @@
-package buffer
+package page
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ const (
 	TermH = 24
 )
 
-type Buffer struct {
+type Page struct {
 	W int
 	H int
 }

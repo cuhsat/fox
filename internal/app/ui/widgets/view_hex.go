@@ -4,7 +4,7 @@ import (
 	"math"
 
 	"github.com/cuhsat/fox/internal/app/ui/themes"
-	"github.com/cuhsat/fox/internal/pkg/types/buffer"
+	"github.com/cuhsat/fox/internal/pkg/types/page"
 )
 
 const (
@@ -12,7 +12,7 @@ const (
 )
 
 func (v *View) hexRender(p *panel) {
-	buf := buffer.Hex(&buffer.Context{
+	pg := page.Hex(&page.Context{
 		Heap: v.heap,
 		Navi: v.ctx.IsNavi(),
 		Wrap: v.ctx.IsWrap(),
@@ -24,12 +24,12 @@ func (v *View) hexRender(p *panel) {
 
 	y := p.Y
 
-	// set buffer bounds
-	v.last.X = max(buf.W, 0)
-	v.last.Y = max(buf.H-p.H, 0)
+	// set page bounds
+	v.last.X = max(pg.W, 0)
+	v.last.Y = max(pg.H-p.H, 0)
 
-	// render buffer
-	for line := range buf.Lines {
+	// render page
+	for line := range pg.Lines {
 		// print offset number
 		v.print(p.X+0, y, line.Nr, themes.Subtext0)
 
