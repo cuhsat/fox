@@ -56,7 +56,7 @@ func BenchmarkRender(b *testing.B) {
 		b.ResetTimer()
 
 		for b.Loop() {
-			s.Render(4)
+			s.Render(2)
 		}
 	})
 }
@@ -82,7 +82,7 @@ func BenchmarkFormat(b *testing.B) {
 		b.ResetTimer()
 
 		for b.Loop() {
-			s.Format(4)
+			s.Format(2)
 		}
 	})
 }
@@ -108,7 +108,7 @@ func BenchmarkWrap(b *testing.B) {
 		b.ResetTimer()
 
 		for b.Loop() {
-			s.Wrap(4, 80)
+			s.Wrap(2, 80)
 		}
 	})
 }
@@ -163,13 +163,13 @@ func TestMap(t *testing.T) {
 func TestRender(t *testing.T) {
 	t.Run("Test Render", func(t *testing.T) {
 		b := []byte("\ttest\n")
-		v := "    test\n"
+		v := "  test\n"
 
-		s := Map((*mmap.MMap)(&b)).Render(4)
+		s := Map((*mmap.MMap)(&b)).Render(2)
 
 		w, h := s.Size()
 
-		if w != 8 || h != 1 {
+		if w != 6 || h != 1 {
 			t.Fatal("wrong length")
 		}
 
@@ -184,7 +184,7 @@ func TestFormat(t *testing.T) {
 		b := []byte(`[{"test":123}]`)
 		v := "[\n  {\n    \"test\": 123\n  }\n]\n"
 
-		s := Map((*mmap.MMap)(&b)).Format(4)
+		s := Map((*mmap.MMap)(&b)).Format(2)
 
 		w, h := s.Size()
 
@@ -203,7 +203,7 @@ func TestWrap(t *testing.T) {
 		b := []byte(`testtest`)
 		v := "test\ntest\n"
 
-		s := Map((*mmap.MMap)(&b)).Wrap(4, 4)
+		s := Map((*mmap.MMap)(&b)).Wrap(2, 4)
 
 		w, h := s.Size()
 
