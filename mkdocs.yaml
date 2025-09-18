@@ -8,8 +8,8 @@ repo_url: https://github.com/cuhsat/fox
 
 remote_branch: docs
 
-copyright: 🦊 forensic-examiner.eu
-s
+copyright: 🦊 forensic-examiner.eu is released under the GPL-3.0
+
 nav:
   - Home: index.md
 
