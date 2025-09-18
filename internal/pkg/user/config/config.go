@@ -28,6 +28,7 @@ func Load(flg *pflag.FlagSet) {
 	_ = cfg.BindPFlag("ai.topk", flg.Lookup("topk"))
 	_ = cfg.BindPFlag("ai.seed", flg.Lookup("seed"))
 	_ = cfg.BindPFlag("ui.theme", flg.Lookup("theme"))
+	_ = cfg.BindPFlag("ui.space", flg.Lookup("space"))
 
 	// setup default values
 	cfg.SetDefault("ui.state.n", true)

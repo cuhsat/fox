@@ -13,8 +13,6 @@ import (
 	"github.com/edsrzf/mmap-go"
 )
 
-const Tab = "    "
-
 type action func(ch chan<- String, c *chunk)
 
 type SMap []String
@@ -66,22 +64,24 @@ func (s *SMap) String() string {
 	return sb.String()
 }
 
-func (s *SMap) Render() *SMap {
+func (s *SMap) Render(e int) *SMap {
+	tab := strings.Repeat(" ", e)
 	return apply(func(ch chan<- String, c *chunk) {
 		for _, s := range (*s)[c.min:c.max] {
-			ch <- String{s.Nr, s.Grp, indent(s.Str)}
+			ch <- String{s.Nr, s.Grp, expand(s.Str, tab)}
 		}
 	}, len(*s))
 }
 
-func (s *SMap) Format() *SMap {
+func (s *SMap) Format(e int) *SMap {
+	tab := strings.Repeat(" ", e)
 	return apply(func(ch chan<- String, c *chunk) {
 		var buf bytes.Buffer
 
 		for _, s := range (*s)[c.min:c.max] {
 			buf.Reset()
 
-			if json.Indent(&buf, []byte(s.Str), "", "  ") != nil {
+			if json.Indent(&buf, []byte(s.Str), "", tab) != nil {
 				ch <- String{s.Nr, s.Grp, s.Str}
 				continue
 			}
@@ -93,13 +93,14 @@ func (s *SMap) Format() *SMap {
 	}, len(*s))
 }
 
-func (s *SMap) Wrap(w int) *SMap {
+func (s *SMap) Wrap(e, w int) *SMap {
+	tab := strings.Repeat(" ", e)
 	return apply(func(ch chan<- String, c *chunk) {
 		var i = 0
 		var l string
 
 		for _, s := range (*s)[c.min:c.max] {
-			i, l = 0, indent(s.Str)
+			i, l = 0, expand(s.Str, tab)
 
 			for i < len(l)-w {
 				ch <- String{s.Nr, s.Grp, l[i : i+w]}
@@ -211,6 +212,6 @@ func sort(ch <-chan String) *SMap {
 	return &s
 }
 
-func indent(s string) string {
-	return strings.ReplaceAll(s, "\t", Tab)
+func expand(s, t string) string {
+	return strings.ReplaceAll(s, "\t", t)
 }

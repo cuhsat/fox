@@ -53,6 +53,7 @@ type Flags struct {
 	UI struct {
 		Theme  string
 		State  string
+		Space  int
 		Legacy bool
 		Mode   mode.Mode
 	}

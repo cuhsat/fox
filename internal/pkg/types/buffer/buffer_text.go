@@ -46,11 +46,11 @@ func Text(ctx *Context) (buf TextBuffer) {
 		buf.FMap = ctx.Heap.FMap()
 
 		if ctx.Wrap && buf.FMap.CanFormat() {
-			buf.FMap = buf.FMap.Format()
+			buf.FMap = buf.FMap.Format(ctx.Space)
 		} else if ctx.Wrap {
-			buf.FMap = buf.FMap.Wrap(ctx.W)
+			buf.FMap = buf.FMap.Wrap(ctx.Space, ctx.W)
 		} else {
-			buf.FMap = buf.FMap.Render()
+			buf.FMap = buf.FMap.Render(ctx.Space)
 		}
 
 		ctx.Heap.Cache.Store(key, buf.FMap)

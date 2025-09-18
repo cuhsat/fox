@@ -49,6 +49,7 @@ Path(s) to open or `-` for **STDIN**
 ### UI flags
 - `--state={N|W|T|-}` — sets the used UI state flags
 - `--theme=THEME` — sets the used UI theme
+- `--space=NUMBER` — sets the used indentation space (*default:* `2`)
 - `--legacy` — don't use any unicode decorations (**ISO 8859-1**)
 
 ### Evidence bag

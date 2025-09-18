@@ -25,6 +25,8 @@ type Context struct {
 	model string
 	theme string
 
+	space atomic.Uint32
+
 	n atomic.Bool
 	w atomic.Bool
 	t atomic.Bool
@@ -50,6 +52,8 @@ func NewContext(root tcell.Screen) *Context {
 		// theme
 		theme: cfg.GetString("ui.theme"),
 	}
+
+	ctx.space.Store(cfg.GetUint32("ui.space"))
 
 	ctx.n.Store(cfg.GetBool("ui.state.n"))
 	ctx.w.Store(cfg.GetBool("ui.state.w"))
@@ -94,6 +98,10 @@ func (ctx *Context) Theme() string {
 	ctx.RLock()
 	defer ctx.RUnlock()
 	return ctx.theme
+}
+
+func (ctx *Context) Space() int {
+	return int(ctx.space.Load())
 }
 
 func (ctx *Context) IsNavi() bool {
@@ -175,6 +183,7 @@ func (ctx *Context) Save() {
 
 	cfg.Set("ai.model", ctx.Model())
 	cfg.Set("ui.theme", ctx.Theme())
+	cfg.Set("ui.space", ctx.Space())
 	cfg.Set("ui.state.n", ctx.IsNavi())
 	cfg.Set("ui.state.w", ctx.IsWrap())
 	cfg.Set("ui.state.t", ctx.IsFollow())

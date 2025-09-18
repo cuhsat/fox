@@ -42,6 +42,8 @@ type Context struct {
 	Navi    bool
 	Wrap    bool
 
+	Space int
+
 	Nr int
 
 	X int
@@ -52,11 +54,12 @@ type Context struct {
 
 func NewContext(h *heap.Heap) *Context {
 	return &Context{
+		Heap:    h,
 		Context: true,
 		Pinned:  false,
 		Navi:    true,
 		Wrap:    false,
-		Heap:    h,
+		Space:   2,
 		X:       0,
 		Y:       0,
 		W:       math.MaxInt,
@@ -65,7 +68,7 @@ func NewContext(h *heap.Heap) *Context {
 }
 
 func (ctx *Context) Hash() string {
-	return fmt.Sprintf("%s[%d:%d]#%d:%t:%t:%t@%d:%d",
+	return fmt.Sprintf("%s[%d:%d]#%d:%t:%t:%t@%d:%d:%d",
 		ctx.Heap.LastFilter().Pattern,
 		ctx.Heap.LastFilter().Context.B,
 		ctx.Heap.LastFilter().Context.A,
@@ -73,6 +76,7 @@ func (ctx *Context) Hash() string {
 		ctx.Context,
 		ctx.Navi,
 		ctx.Wrap,
+		ctx.Space,
 		ctx.W,
 		ctx.H,
 	)

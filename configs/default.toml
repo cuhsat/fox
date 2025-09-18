@@ -30,6 +30,7 @@ topp = '0.5'
 #
 [ui]
 theme = 'examiner-dark'
+space = 2
 
 [ui.state]
 n = true

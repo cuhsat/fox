@@ -20,6 +20,7 @@ func (v *View) textRender(p *panel) {
 		Pinned:  v.ctx.IsPinned(),
 		Navi:    v.ctx.IsNavi(),
 		Wrap:    v.ctx.IsWrap(),
+		Space:   v.ctx.Space(),
 		Nr:      v.nr,
 		X:       v.delta.X,
 		Y:       v.delta.Y,

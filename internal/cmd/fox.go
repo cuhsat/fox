@@ -82,6 +82,7 @@ AI model:
 UI flags:
       --state={N|W|T|-}    sets the used UI state flags
       --theme=THEME        sets the used UI theme
+      --space=NUMBER       sets the used indentation space (default: 2)
       --legacy             don't use any unicode decorations (ISO 8859-1)
 
 Evidence bag:
@@ -276,6 +277,7 @@ func init() {
 
 	Fox.Flags().StringVarP(&flg.UI.State, "state", "", "", "sets the used UI state flags")
 	Fox.Flags().StringVarP(&flg.UI.Theme, "theme", "", themes.Default, "sets the used UI theme")
+	Fox.Flags().IntVarP(&flg.UI.Space, "space", "", 2, "sets the used indentation space")
 	Fox.Flags().BoolVarP(&flg.UI.Legacy, "legacy", "", false, "don't use any unicode decorations")
 
 	Fox.Flags().StringVarP(&flg.Bag.Case, "case", "N", "", "evidence bag case name")
